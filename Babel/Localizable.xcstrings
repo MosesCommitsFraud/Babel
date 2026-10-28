@@ -3395,6 +3395,66 @@
           }
         }
       }
+    },
+    "Über 75.000 freie Bücher, viele auf Deutsch.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Over 75,000 free books, many in German."
+          }
+        }
+      }
+    },
+    "Rund 1.000 Klassiker, sorgfältig gesetzt und korrigiert – nur Englisch.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Around 1,000 classics, carefully typeset and proofread – English only."
+          }
+        }
+      }
+    },
+    "Internet Archive: Zehntausende gemeinfreie Bücher als EPUB. Oft automatisch aus Scans erzeugt, Qualität schwankt.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Internet Archive: tens of thousands of public-domain books as EPUB. Often generated from scans automatically, so quality varies."
+          }
+        }
+      }
+    },
+    "Für diesen Eintrag gibt es kein freies EPUB.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There's no free EPUB for this item."
+          }
+        }
+      }
+    },
+    "Standard Ebooks": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard Ebooks"
+          }
+        }
+      }
+    },
+    "Internet Archive": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Internet Archive"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

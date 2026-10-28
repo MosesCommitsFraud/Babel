@@ -207,7 +207,7 @@ struct StoryDetailView: View {
         add(String(localized: "Wörter"), story.words?.grouped, "textformat.size")
         add(String(localized: "Kapitel"), chapterLabel, "list.number")
         add(String(localized: "Kudos"), story.kudos?.compact, "heart")
-        add(story.source == .gutenberg ? "Downloads" : "Aufrufe", story.hits?.compact, "eye")
+        add(story.source.isOnlineBook ? "Downloads" : "Aufrufe", story.hits?.compact, "eye")
         add(String(localized: "Reviews"), story.reviews?.compact, "text.bubble")
         add(String(localized: "Favs"), story.favs?.compact, "star")
         add(String(localized: "Follows"), story.follows?.compact, "bell")
@@ -234,7 +234,7 @@ struct StoryDetailView: View {
     }
 
     private var chapterLabel: String {
-        if story.source == .epub || story.source == .gutenberg {
+        if !story.source.isWebFiction {
             return story.spinePaths.isEmpty ? "–" : "\(story.spinePaths.count)"
         }
         if let total = story.totalChapters { return "\(story.knownChapterCount)/\(total)" }
@@ -256,7 +256,7 @@ struct StoryDetailView: View {
         tagSection("Genres", story.genres)
         tagSection("Beziehungen", story.relationships)
         tagSection("Charaktere", story.characters)
-        tagSection(story.source == .gutenberg ? "Themen" : "Tags", story.tags)
+        tagSection(story.source.isOnlineBook ? "Themen" : "Tags", story.tags)
     }
 
     @ViewBuilder

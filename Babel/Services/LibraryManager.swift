@@ -79,7 +79,7 @@ final class LibraryManager {
     /// Gibt die Datei-URL eines Kapitels zurück und lädt es bei Bedarf herunter.
     func ensureChapter(_ story: Story, index: Int) async throws -> URL {
         switch story.source {
-        case .epub, .gutenberg:
+        case .epub, .gutenberg, .standardEbooks, .archive:
             if story.spinePaths.isEmpty { try await prepareBook(story) }
             guard index < story.spinePaths.count else { throw BabelError.notFound }
             return ContentStore.bookFolder(for: story).appendingPathComponent(story.spinePaths[index])
@@ -143,7 +143,7 @@ final class LibraryManager {
                 i += 1
                 downloads[key] = Double(i) / Double(max(story.chapterCount, 1))
             }
-        case .epub, .gutenberg:
+        case .epub, .gutenberg, .standardEbooks, .archive:
             if story.spinePaths.isEmpty { try await prepareBook(story) }
         }
     }
@@ -163,7 +163,7 @@ final class LibraryManager {
         case .ao3, .ffn:
             try await downloadAll(story)
             return try EPUBBuilder.build(story)
-        case .gutenberg, .epub:
+        case .gutenberg, .standardEbooks, .archive, .epub:
             throw BabelError.unsupported(String(localized: "Bücher liegen schon als EPUB vor"))
         }
     }
@@ -202,8 +202,15 @@ final class LibraryManager {
 
     /// Gutenberg-Suchergebnisse haben kaum Metadaten – die Buchseite liefert Zusammenfassung und Themen.
     func enrichGutenberg(_ story: Story) async {
-        guard story.source == .gutenberg, story.tags.isEmpty else { return }
-        guard let details = try? await GutenbergService.details(id: story.sourceID) else { return }
+        guard story.source.isOnlineBook, story.summary.isEmpty, story.tags.isEmpty else { return }
+        let details: RemoteStory?
+        switch story.source {
+        case .gutenberg: details = try? await GutenbergService.details(id: story.sourceID)
+        case .standardEbooks: details = try? await StandardEbooksService.details(path: story.sourceID)
+        case .archive: details = try? await ArchiveService.details(id: story.sourceID)
+        default: details = nil
+        }
+        guard let details else { return }
         story.apply(remote: details)
         try? story.modelContext?.save()
     }
@@ -230,7 +237,7 @@ final class LibraryManager {
                 story.chapterTitles = result.titles
                 story.chapterCount = result.titles.count
             }
-        case .epub, .gutenberg:
+        case .epub, .gutenberg, .standardEbooks, .archive:
             return 0
         }
         let diff = max(0, story.knownChapterCount - before)
@@ -265,9 +272,11 @@ final class LibraryManager {
     /// Lädt bei Gutenberg-Büchern das EPUB herunter und entpackt es.
     func prepareBook(_ story: Story) async throws {
         guard story.spinePaths.isEmpty else { return }
-        guard story.source == .gutenberg, let url = story.downloadURLString.flatMap(URL.init(string:)) else {
-            throw BabelError.epub(String(localized: "Buchdatei fehlt"))
-        }
+        guard story.source.isOnlineBook else { throw BabelError.epub(String(localized: "Buchdatei fehlt")) }
+        var url = story.downloadURLString.flatMap(URL.init(string:))
+        // Internet Archive: Dateiname des EPUB steht erst in den Metadaten.
+        if url == nil, story.source == .archive { url = try await ArchiveService.epubURL(id: story.sourceID) }
+        guard let url else { throw BabelError.epub(String(localized: "Buchdatei fehlt")) }
         let key = story.key
         downloads[key] = 0.1
         defer { downloads[key] = nil }

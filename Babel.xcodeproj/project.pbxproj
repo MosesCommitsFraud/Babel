@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0271E26458F3B19F8D470480 /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = E735728B0AFF95B40783A557 /* Story.swift */; };
+		0890284DBBA41DA4531B79E9 /* BookSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DFFB30CE2C2C950703DA46 /* BookSources.swift */; };
 		0C46A0D6B6BC9385CC9C4B34 /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D657FB996B8337736AC567 /* ReaderView.swift */; };
 		0DA714B684DBD559E3892E67 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1811B210919E19E1A46579 /* Helpers.swift */; };
 		12161EB20D743F3E8016D0E7 /* BabelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39075793117956CC5038008F /* BabelApp.swift */; };
@@ -57,6 +58,7 @@
 		39075793117956CC5038008F /* BabelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabelApp.swift; sourceTree = "<group>"; };
 		42D657FB996B8337736AC567 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
 		43258D30B4D0134B7E85AF1E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		50DFFB30CE2C2C950703DA46 /* BookSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookSources.swift; sourceTree = "<group>"; };
 		53EA69B1B09A7733617C8235 /* AuthorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorView.swift; sourceTree = "<group>"; };
 		5DD73D35F0F5B3196BF1AABF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		62CC4316CAB5285483CFA67B /* AO3SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AO3SearchView.swift; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 			isa = PBXGroup;
 			children = (
 				A63E22E5889EBD4EC8319283 /* AO3Service.swift */,
+				50DFFB30CE2C2C950703DA46 /* BookSources.swift */,
 				9986DF66E3ABEC855199BF5B /* ContentStore.swift */,
 				3038A35919D0B5A3CFE1089F /* CookieSync.swift */,
 				E6CC39F8CD101E8E82A7E445 /* EPUBBuilder.swift */,
@@ -362,6 +365,7 @@
 				C3D00F7142E7A4E6F5491C78 /* AccountViews.swift in Sources */,
 				9C2904BBE87CC8E11CD4EA90 /* AuthorView.swift in Sources */,
 				12161EB20D743F3E8016D0E7 /* BabelApp.swift in Sources */,
+				0890284DBBA41DA4531B79E9 /* BookSources.swift in Sources */,
 				630FB6C74F3E633D6B3BFA26 /* BooksView.swift in Sources */,
 				B6312220DFB957280DBA02E7 /* Components.swift in Sources */,
 				908E56D44AC630ADD86597DE /* ContentStore.swift in Sources */,

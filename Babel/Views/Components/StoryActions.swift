@@ -20,7 +20,7 @@ struct RemoteStoryActions: ViewModifier {
             }
             .contextMenu {
                 Button("In die Bibliothek", systemImage: "bookmark") { add() }
-                if remote.source.isWebFiction || remote.source == .gutenberg {
+                if remote.source.isWebFiction || remote.source.isOnlineBook {
                     Button("Herunterladen (offline)", systemImage: "arrow.down.circle") { download() }
                 }
                 if remote.url.scheme?.hasPrefix("http") == true {

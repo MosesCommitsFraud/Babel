@@ -2,11 +2,12 @@ import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
 
-/// Freie Online-Bücher (Project Gutenberg) + eigene EPUBs.
+/// Freie Online-Bücher (Project Gutenberg, Standard Ebooks, Internet Archive) + eigene EPUBs.
 struct BooksView: View {
     @Environment(\.modelContext) private var context
     @Environment(LibraryManager.self) private var library
     @AppStorage("books.filters") private var filtersData: Data = Data()
+    @AppStorage("books.library") private var bookLibrary: BookLibrary = .gutenberg
 
     @State private var filters = GutenbergFilters()
     @State private var didLoadFilters = false
@@ -23,21 +24,34 @@ struct BooksView: View {
     var body: some View {
         List {
             Section {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    GlassEffectContainer(spacing: 8) {
-                        HStack(spacing: 8) {
-                            GlassChip(title: String(localized: "Alle"), isSelected: filters.subject.isEmpty) { setSubject("") }
-                            ForEach(GutenbergService.subjects, id: \.query) { s in
-                                GlassChip(title: s.label, isSelected: filters.subject == s.query) { setSubject(s.query) }
-                            }
-                        }
-                        .padding(.horizontal)
-                        .padding(.vertical, 6)
-                    }
+                VStack(alignment: .leading, spacing: 6) {
+                    GlassSegmented(options: BookLibrary.allCases.map { ($0, $0.label) }, selection: $bookLibrary)
+                    Text(bookLibrary.about).font(.caption).foregroundStyle(.secondary)
                 }
-                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                .padding(.horizontal)
+                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
+            }
+
+            if bookLibrary.supportsSubjects {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        GlassEffectContainer(spacing: 8) {
+                            HStack(spacing: 8) {
+                                GlassChip(title: String(localized: "Alle"), isSelected: filters.subject.isEmpty) { setSubject("") }
+                                ForEach(GutenbergService.subjects, id: \.query) { s in
+                                    GlassChip(title: s.label, isSelected: filters.subject == s.query) { setSubject(s.query) }
+                                }
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 6)
+                        }
+                    }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                }
             }
 
             Section {
@@ -100,12 +114,13 @@ struct BooksView: View {
             }
         }
         .sheet(isPresented: $showFilters) {
-            GutenbergFilterSheet(filters: filters) { new in
+            GutenbergFilterSheet(filters: filters, library: bookLibrary) { new in
                 filters = new
                 reload()
             }
         }
         .onChange(of: filters.sort) { reload() }
+        .onChange(of: bookLibrary) { books = []; reload() }
         .onChange(of: filters) { _, new in filtersData = (try? JSONEncoder().encode(new)) ?? Data() }
         .task {
             if !didLoadFilters {
@@ -154,9 +169,10 @@ struct BooksView: View {
         error = nil
         defer { isLoading = false }
         let current = filters
+        let source = bookLibrary
         do {
-            let result = try await GutenbergService.search(current, page: page)
-            guard !Task.isCancelled, current == filters else { return }
+            let result = try await bookLibrary.search(current, page: page)
+            guard !Task.isCancelled, current == filters, source == bookLibrary else { return }
             if page == 1 {
                 books = result.books
             } else {
@@ -174,11 +190,13 @@ struct BooksView: View {
 }
 
 struct GutenbergFilterSheet: View {
+    var library: BookLibrary = .gutenberg
     var onApply: (GutenbergFilters) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var draft: GutenbergFilters
 
-    init(filters: GutenbergFilters, onApply: @escaping (GutenbergFilters) -> Void) {
+    init(filters: GutenbergFilters, library: BookLibrary, onApply: @escaping (GutenbergFilters) -> Void) {
+        self.library = library
         self.onApply = onApply
         _draft = State(initialValue: filters)
     }
@@ -196,10 +214,12 @@ struct GutenbergFilterSheet: View {
                 }
                 .themedRows()
                 Section {
-                    Picker("Sprache", selection: $draft.language) {
-                        ForEach(GutenbergService.languages) { Text($0.name).tag($0.code) }
+                    if library.supportsLanguage {
+                        Picker("Sprache", selection: $draft.language) {
+                            ForEach(GutenbergService.languages) { Text($0.name).tag($0.code) }
+                        }
+                        .pickerStyle(.navigationLink)
                     }
-                    .pickerStyle(.navigationLink)
                     Picker("Sortieren nach", selection: $draft.sort) {
                         ForEach(GutenbergSort.allCases, id: \.self) { Text($0.label).tag($0) }
                     }

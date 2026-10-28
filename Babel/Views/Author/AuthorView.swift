@@ -131,7 +131,7 @@ struct AuthorView: View {
                 guard let user = ao3User else { throw BabelError.invalidLink }
                 profile = try await AO3Service.authorProfile(user: user)
                 nextPage = [.stories: 1, .favorites: 1]
-            case .gutenberg, .epub:
+            case .gutenberg, .standardEbooks, .archive, .epub:
                 throw BabelError.unsupported(url.host ?? "")
             }
         } catch {

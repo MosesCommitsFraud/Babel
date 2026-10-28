@@ -18,7 +18,7 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 - Kommunikation auf Deutsch.
 - Eigene Themes (`Support/Theme.swift`, `PaletteID`): Hexagon (Standard, Salbeigrün passend zum Icon), Pergament, Nebel, Lavendel, Rosé, Tinte – ruhige, entsättigte Töne, je hell + dunkel. Auswahl: `Views/Settings/ThemeSettingsView.swift` (ein Tipp = beide Modi, Mischen optional). Früher t3code-Paletten, auf Wunsch des Nutzers ersetzt.
 - FFN: Fandom-Suche über alle Kategorien (`FFNFandomStore`, Cache 7 Tage in Caches/ffn-fandoms.json).
-- Bücher = Project Gutenberg; Suche mit Bereichen (Alles/Titel/Autor:in/Thema), EPUB-Import oben rechts.
+- Bücher-Tab mit drei Quellen (`Services/BookSources.swift`, `BookLibrary`): Project Gutenberg, Standard Ebooks (HTML-Suche, EPUB-Link braucht `?source=download`, sonst Dankeseite), Internet Archive (advancedsearch-API, nur freie Texte mit EPUB, ohne Zeitschriften; EPUB-Dateiname über `/metadata/<id>`). Suche mit Bereichen (Alles/Titel/Autor:in/Thema), EPUB-Import oben rechts.
 - Git: `main`, Remote `origin` = https://github.com/MosesCommitsFraud/Babel.git. Regelmäßig committen und pushen, **ohne** Claude als Co-Autor, Commit-Nachrichten **auf Englisch**.
 - FFN-Stichwortsuche: standardmäßig `match=title` (FFN-Standard `any` vergräbt exakte Titel), dazu Titel-Ranking im Client.
 - Reader: Titel oben öffnet die Storyseite als Sheet (`readerJump` springt im offenen Reader), Wischen links/rechts wechselt Kapitel, keine Prozentanzeige.
@@ -26,7 +26,7 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 - AO3-Tab startet mit der Filterwand (eigener `NavigationPath` – nicht `navigationDestination(item:)`, das baute die Ergebnisliste beim Öffnen einer Story neu); Filter lassen sich als Presets speichern (AO3 und FFN).
 - Login (AO3 + FFN) optional, um Lesezeichen/Favoriten/Follows zu importieren.
 
-- App-Icon: Icon-Composer-Datei `Babel/AppIcon.icon` (stilisiertes Buch, hellgrüner Hintergrund, SVG-Ebenen in `Assets/`). Vorschau: `ictool Babel/AppIcon.icon --export-image --output-file x.png --platform iOS --rendition Default --width 1024 --height 1024 --scale 1` (ictool liegt in `Icon Composer.app/Contents/Executables`). Altes Logo-Entwurf in `Design/Icon/`.
+- App-Icon: Icon-Composer-Datei `Babel/AppIcon.icon` – hexagonale Galerie mit Bücherregal (Borges' Bibliothek von Babel) auf hellgrünem Wabenmuster; SVG-Ebenen werden per Python erzeugt (Hexagon, Regale, Waben). Vorschau mit `ictool … --export-image` (in `Icon Composer.app/Contents/Executables`).
 - Autorenseiten (`Views/Author/AuthorView.swift`): FFN `/u/<id>/` (eigene Geschichten + Favoriten), AO3 `/users/<name>/profile`, `/works`, `/bookmarks` (seitenweise).
 - Listenzeilen kompakt: eine Chip-Zeile (Quelle nur mit `showSource` – Bibliothek/Suche –, Rating, Status, Wörter, Sprache) und eine graue Textzeile (Datum, Bewertungen, Pairing/Genre), Zusammenfassung 2 Zeilen. Tags neutral, nicht farbig.
 - FFN-„Verlauf“ der offiziellen FFN-App (bei Nutzer ~2500) liegt nur lokal in der App – auf der Website gibt es nur Favoriten (80) und Follows (70).

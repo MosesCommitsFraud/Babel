@@ -30,14 +30,14 @@ enum ContentStore {
     }
 
     static func hasChapter(_ story: Story, _ index: Int) -> Bool {
-        if story.source == .epub || story.source == .gutenberg {
+        if !story.source.isWebFiction {
             return index < story.spinePaths.count
         }
         return FileManager.default.fileExists(atPath: chapterURL(story, index).path)
     }
 
     static func countDownloaded(_ story: Story) -> Int {
-        if story.source == .epub || story.source == .gutenberg { return story.spinePaths.count }
+        if !story.source.isWebFiction { return story.spinePaths.count }
         let files = (try? FileManager.default.contentsOfDirectory(atPath: folder(for: story).path)) ?? []
         return files.filter { $0.hasPrefix("ch_") }.count
     }

@@ -245,7 +245,7 @@ struct StoryRow: View {
             add("eye", story.hits, String(localized: "Aufrufe"))
             add("bookmark", story.bookmarks, String(localized: "Lesezeichen"))
             add("text.bubble", story.comments, String(localized: "Kommentare"))
-        case .gutenberg:
+        case .gutenberg, .standardEbooks, .archive:
             add("arrow.down.circle", story.hits, String(localized: "Downloads"))
         case .epub:
             break
@@ -261,7 +261,7 @@ struct StoryRow: View {
 
     /// „Fertig · 12 Kap.“ bzw. „3/? Kap.“ – Status und Länge in einem Chip.
     private var statusText: String {
-        if story.source == .epub || story.source == .gutenberg { return String(localized: "Buch") }
+        if !story.source.isWebFiction { return String(localized: "Buch") }
         if story.isComplete { return "Fertig · \(story.chapters) Kap." }
         return chapterText
     }
@@ -277,7 +277,7 @@ struct StoryRow: View {
     }
 
     private var chapterText: String {
-        if story.source == .epub || story.source == .gutenberg { return String(localized: "Buch") }
+        if !story.source.isWebFiction { return String(localized: "Buch") }
         if let total = story.totalChapters, total != story.chapters { return "\(story.chapters)/\(total) Kap." }
         if !story.isComplete, story.source == .ao3 { return "\(story.chapters)/? Kap." }
         return "\(story.chapters) Kap."
@@ -366,7 +366,7 @@ struct GlassSegmented<Value: Hashable>: View {
                         Text(option.label)
                             .font(.subheadline.weight(selected ? .semibold : .regular))
                             .lineLimit(1)
-                            .minimumScaleFactor(0.8)
+                            .minimumScaleFactor(0.7)
                             .foregroundStyle(selected ? theme.primaryForeground : .primary)
                             .padding(.horizontal, 12).padding(.vertical, 7)
                             .frame(maxWidth: .infinity)
