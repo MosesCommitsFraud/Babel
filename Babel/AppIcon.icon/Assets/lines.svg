@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Textzeilen auf den Seiten -->
+  <g fill="none" stroke="#9FD3AE" stroke-width="18" stroke-linecap="round">
+    <path d="M282 372 C 340 360 400 362 450 382"/>
+    <path d="M282 446 C 340 434 400 436 450 456"/>
+    <path d="M282 520 C 340 508 400 510 450 530"/>
+    <path d="M282 594 C 330 584 370 585 402 596"/>
+    <path d="M574 382 C 624 362 684 360 742 372"/>
+    <path d="M574 456 C 624 436 684 434 742 446"/>
+  </g>
+</svg>

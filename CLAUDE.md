@@ -19,14 +19,14 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 - Farben aus t3code (`~/DEV/t3code/apps/mobile/generated-uniwind-themes.css`): Standard hell **Iris**, dunkel **Grove** (wie in t3code eingestellt). Einstellungsseite nach dem Vorbild von t3code (`apps/web/src/components/settings/ThemeSettings.tsx`): Modus-Kacheln System/Hell/Dunkel und Palettenkarten mit App-Wireframe (`Views/Settings/ThemeSettingsView.swift`, Paletten in `Support/Theme.swift`).
 - FFN: Fandom-Suche über alle Kategorien (`FFNFandomStore`, Cache 7 Tage in Caches/ffn-fandoms.json).
 - Bücher = Project Gutenberg; Suche mit Bereichen (Alles/Titel/Autor:in/Thema), EPUB-Import oben rechts.
-- Git: `main`, Remote `origin` = https://github.com/MosesCommitsFraud/Babel.git. Regelmäßig committen und pushen, **ohne** Claude als Co-Autor.
+- Git: `main`, Remote `origin` = https://github.com/MosesCommitsFraud/Babel.git. Regelmäßig committen und pushen, **ohne** Claude als Co-Autor, Commit-Nachrichten **auf Englisch**.
 - FFN-Stichwortsuche: standardmäßig `match=title` (FFN-Standard `any` vergräbt exakte Titel), dazu Titel-Ranking im Client.
 - Reader: Titel oben öffnet die Storyseite als Sheet (`readerJump` springt im offenen Reader), Wischen links/rechts wechselt Kapitel, keine Prozentanzeige.
 - Bibliothek: Verlauf (`Story.viewedAt` + `lastOpenedAt`), unter „Alle“ „Zuletzt angesehen“, Chips nach Anzahl sortiert.
 - AO3-Tab startet mit der Filterwand (eigener `NavigationPath` – nicht `navigationDestination(item:)`, das baute die Ergebnisliste beim Öffnen einer Story neu); Filter lassen sich als Presets speichern (AO3 und FFN).
 - Login (AO3 + FFN) optional, um Lesezeichen/Favoriten/Follows zu importieren.
 
-- App-Icon: `Design/Icon/Icon-iOS-Dark-1024@1x.png` (Vorlage des Nutzers, transparente Ecken) → auf die Hintergrundfarbe #0F0E0F geflacht und 1,15× skaliert nach `Assets.xcassets/AppIcon.appiconset/AppIcon.png`.
+- App-Icon: Icon-Composer-Datei `Babel/AppIcon.icon` (stilisiertes Buch, hellgrüner Hintergrund, SVG-Ebenen in `Assets/`). Vorschau: `ictool Babel/AppIcon.icon --export-image --output-file x.png --platform iOS --rendition Default --width 1024 --height 1024 --scale 1` (ictool liegt in `Icon Composer.app/Contents/Executables`). Altes Logo-Entwurf in `Design/Icon/`.
 - Autorenseiten (`Views/Author/AuthorView.swift`): FFN `/u/<id>/` (eigene Geschichten + Favoriten), AO3 `/users/<name>/profile`, `/works`, `/bookmarks` (seitenweise).
 - Listenzeilen: zwei Chip-Zeilen (Quelle, Rating farbig, Status/Kapitel, Wörter | Datum, Sprache, Pairing oder Genre).
 - FFN-„Verlauf“ der offiziellen FFN-App (bei Nutzer ~2500) liegt nur lokal in der App – auf der Website gibt es nur Favoriten (80) und Follows (70).
