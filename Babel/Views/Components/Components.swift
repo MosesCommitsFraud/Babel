@@ -255,13 +255,13 @@ struct StoryRow: View {
 
     static func wordsShort(_ w: Int) -> String {
         if w >= 1_000_000 { return "\((Double(w) / 1_000_000).formatted(.number.precision(.fractionLength(1)))) Mio. Wörter" }
-        if w >= 1_000 { return "\(w / 1_000)k Wörter" }
-        return "\(w) Wörter"
+        if w >= 1_000 { return String(localized: "\(w / 1_000)k Wörter") }
+        return String(localized: "\(w) Wörter")
     }
 
     /// „Fertig · 12 Kap.“ bzw. „3/? Kap.“ – Status und Länge in einem Chip.
     private var statusText: String {
-        if story.source == .epub || story.source == .gutenberg { return "Buch" }
+        if story.source == .epub || story.source == .gutenberg { return String(localized: "Buch") }
         if story.isComplete { return "Fertig · \(story.chapters) Kap." }
         return chapterText
     }
@@ -277,7 +277,7 @@ struct StoryRow: View {
     }
 
     private var chapterText: String {
-        if story.source == .epub || story.source == .gutenberg { return "Buch" }
+        if story.source == .epub || story.source == .gutenberg { return String(localized: "Buch") }
         if let total = story.totalChapters, total != story.chapters { return "\(story.chapters)/\(total) Kap." }
         if !story.isComplete, story.source == .ao3 { return "\(story.chapters)/? Kap." }
         return "\(story.chapters) Kap."
@@ -343,7 +343,7 @@ struct TriStateControl: View {
         .glassEffect(selected ? .regular.tint(value == .any ? Color.gray.opacity(0.45) : color).interactive() : .regular.interactive(),
                      in: .capsule)
         .glassEffectID(value, in: glass)
-        .accessibilityLabel(value == .any ? "egal" : value == .include ? "muss" : "ausschließen")
+        .accessibilityLabel(value == .any ? "egal" : value == .include ? "muss" : String(localized: "ausschließen"))
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

@@ -31,16 +31,16 @@ enum AO3Sort: String, Codable, CaseIterable, Sendable, Hashable {
 
     var label: String {
         switch self {
-        case .bestMatch: "Beste Treffer"
-        case .updated: "Zuletzt aktualisiert"
-        case .posted: "Veröffentlicht"
-        case .kudos: "Kudos"
-        case .hits: "Aufrufe"
-        case .words: "Wortanzahl"
-        case .comments: "Kommentare"
-        case .bookmarks: "Lesezeichen"
-        case .title: "Titel"
-        case .author: "Autor:in"
+        case .bestMatch: String(localized: "Beste Treffer")
+        case .updated: String(localized: "Zuletzt aktualisiert")
+        case .posted: String(localized: "Veröffentlicht")
+        case .kudos: String(localized: "Kudos")
+        case .hits: String(localized: "Aufrufe")
+        case .words: String(localized: "Wortanzahl")
+        case .comments: String(localized: "Kommentare")
+        case .bookmarks: String(localized: "Lesezeichen")
+        case .title: String(localized: "Titel")
+        case .author: String(localized: "Autor:in")
         }
     }
 }
@@ -48,14 +48,14 @@ enum AO3Sort: String, Codable, CaseIterable, Sendable, Hashable {
 enum AO3Completion: String, Codable, CaseIterable, Sendable, Hashable {
     case any, complete, inProgress
     var label: String {
-        switch self { case .any: "Alle"; case .complete: "Abgeschlossen"; case .inProgress: "In Arbeit" }
+        switch self { case .any: String(localized: "Alle"); case .complete: String(localized: "Abgeschlossen"); case .inProgress: String(localized: "In Arbeit") }
     }
 }
 
 enum AO3Crossover: String, Codable, CaseIterable, Sendable, Hashable {
     case any, exclude, only
     var label: String {
-        switch self { case .any: "Egal"; case .exclude: "Keine Crossover"; case .only: "Nur Crossover" }
+        switch self { case .any: String(localized: "Egal"); case .exclude: String(localized: "Keine Crossover"); case .only: String(localized: "Nur Crossover") }
     }
 }
 
@@ -63,8 +63,8 @@ enum AO3UpdatedWithin: String, Codable, CaseIterable, Sendable, Hashable {
     case any, week, month, halfYear, year
     var label: String {
         switch self {
-        case .any: "Jederzeit"; case .week: "Letzte Woche"; case .month: "Letzter Monat"
-        case .halfYear: "Letzte 6 Monate"; case .year: "Letztes Jahr"
+        case .any: String(localized: "Jederzeit"); case .week: String(localized: "Letzte Woche"); case .month: String(localized: "Letzter Monat")
+        case .halfYear: String(localized: "Letzte 6 Monate"); case .year: String(localized: "Letztes Jahr")
         }
     }
     var query: String? {
@@ -122,7 +122,7 @@ struct AO3Filters: Codable, Hashable, Sendable {
         parts += fandoms + relationships + characters + freeforms + otherTags
         if completion == .complete { parts.append("abgeschlossen") }
         if !language.isEmpty { parts.append(language) }
-        return parts.isEmpty ? "Alle Werke" : parts.joined(separator: " · ")
+        return parts.isEmpty ? String(localized: "Alle Werke") : parts.joined(separator: " · ")
     }
 }
 
@@ -139,7 +139,7 @@ enum AO3Service {
 
     static let warnings: [AO3TagOption] = [
         .init(id: 14, name: "Creator Chose Not To Use Archive Warnings", short: "CNTW"),
-        .init(id: 16, name: "No Archive Warnings Apply", short: "Keine"),
+        .init(id: 16, name: String(localized: "No Archive Warnings Apply"), short: String(localized: "Keine")),
         .init(id: 17, name: "Graphic Depictions Of Violence", short: "Gewalt"),
         .init(id: 18, name: "Major Character Death", short: "MCD"),
         .init(id: 19, name: "Rape/Non-Con", short: "Non-Con"),
@@ -156,7 +156,7 @@ enum AO3Service {
     ]
 
     static let languages: [LanguageOption] = [
-        .init(code: "", name: "Alle Sprachen"), .init(code: "en", name: "English"), .init(code: "de", name: "Deutsch"), .init(code: "es", name: "Español"),
+        .init(code: "", name: String(localized: "Alle Sprachen")), .init(code: "en", name: String(localized: "English")), .init(code: "de", name: String(localized: "Deutsch")), .init(code: "es", name: String(localized: "Español")),
         .init(code: "fr", name: "Français"), .init(code: "it", name: "Italiano"), .init(code: "ptBR", name: "Português brasileiro"),
         .init(code: "ru", name: "Русский"), .init(code: "pl", name: "Polski"), .init(code: "nl", name: "Nederlands"), .init(code: "sv", name: "Svenska"),
         .init(code: "tr", name: "Türkçe"), .init(code: "uk", name: "Українська"), .init(code: "vi", name: "Tiếng Việt"), .init(code: "id", name: "Bahasa Indonesia"),
@@ -222,19 +222,19 @@ enum AO3Service {
 
         switch f.completion {
         case .any: break
-        case .complete: add("complete", "T")
-        case .inProgress: add("complete", "F")
+        case .complete: add("complete", String(localized: "T"))
+        case .inProgress: add("complete", String(localized: "F"))
         }
         switch f.crossover {
         case .any: break
-        case .exclude: add("crossover", "F")
-        case .only: add("crossover", "T")
+        case .exclude: add("crossover", String(localized: "F"))
+        case .only: add("crossover", String(localized: "T"))
         }
         if f.singleChapter { add("single_chapter", "1") }
         add("language_id", f.language)
         add("words_from", f.wordsFrom.filter(\.isNumber))
         add("words_to", f.wordsTo.filter(\.isNumber))
-        if let k = f.minKudos.digitsInt { add("kudos_count", "> \(max(k - 1, 0))") }
+        if let k = f.minKudos.digitsInt { add("kudos_count", String(localized: "> \(max(k - 1, 0))")) }
         if let r = f.updatedWithin.query { add("revised_at", r) }
         add("sort_column", f.sort.rawValue)
         add("sort_direction", f.ascending ? "asc" : "desc")
@@ -355,10 +355,10 @@ enum AO3Service {
 
         var label: String {
             switch self {
-            case .bookmarks: "Lesezeichen"
-            case .markedForLater: "Später lesen"
-            case .subscriptions: "Abonnements"
-            case .history: "Verlauf"
+            case .bookmarks: String(localized: "Lesezeichen")
+            case .markedForLater: String(localized: "Später lesen")
+            case .subscriptions: String(localized: "Abonnements")
+            case .history: String(localized: "Verlauf")
             }
         }
 
@@ -576,7 +576,7 @@ enum AO3Service {
         var result: [ChapterContent] = []
         let workNotes = try doc.select("#workskin > div.preface.group div.notes.module blockquote.userstuff").first()?.html()
         let workEndNotes = try doc.select("#workskin div.afterword div.end.notes blockquote.userstuff").first()?.html()
-        let workTitle = try doc.select("div.preface.group h2.title").first()?.text() ?? "Kapitel 1"
+        let workTitle = try doc.select("div.preface.group h2.title").first()?.text() ?? String(localized: "Kapitel 1")
 
         let chapterDivs = try doc.select("#chapters > div.chapter").array()
         if chapterDivs.isEmpty {
@@ -591,7 +591,7 @@ enum AO3Service {
         for (i, div) in chapterDivs.enumerated() {
             var title = try div.select("h3.title").first()?.text() ?? ""
             if let m = title.firstMatch(#"^Chapter\s+\d+\s*:?\s*(.*)$"#) { title = m[1].trimmed }
-            if title.isEmpty { title = "Kapitel \(i + 1)" }
+            if title.isEmpty { title = String(localized: "Kapitel \(i + 1)") }
 
             let notes = try div.select("div.chapter.preface div.notes blockquote.userstuff").first()?.html()
             let endNotes = try div.select("div.end.notes blockquote.userstuff").first()?.html()
@@ -613,9 +613,9 @@ enum AO3Service {
 
     private static func assemble(notes: String?, body: String, endNotes: String?) -> String {
         var html = ""
-        if let notes { html += "<aside class=\"babel-notes\"><div class=\"babel-notes-label\">Notizen</div>\(notes)</aside>" }
+        if let notes { html += "<aside class=\"babel-notes\"><div class=\"babel-notes-label\">\(String(localized: "Notizen"))</div>\(notes)</aside>" }
         html += body
-        if let endNotes { html += "<aside class=\"babel-notes end\"><div class=\"babel-notes-label\">Notizen am Ende</div>\(endNotes)</aside>" }
+        if let endNotes { html += "<aside class=\"babel-notes end\"><div class=\"babel-notes-label\">\(String(localized: "Notizen am Ende"))</div>\(endNotes)</aside>" }
         return html
     }
 

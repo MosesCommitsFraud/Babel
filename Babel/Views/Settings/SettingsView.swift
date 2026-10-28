@@ -61,6 +61,21 @@ struct SettingsView: View {
                 }
                 .themedRows()
 
+                Section {
+                    Button {
+                        if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+                    } label: {
+                        LabeledContent {
+                            Text(Locale.current.localizedString(forLanguageCode: Bundle.main.preferredLocalizations.first ?? "de")?.capitalized ?? "")
+                        } label: {
+                            Label("Sprache", systemImage: "globe")
+                        }
+                    }
+                } footer: {
+                    Text("Babel gibt es auf Deutsch und Englisch. Die Sprache stellst du in den iOS-Einstellungen der App um.")
+                }
+                .themedRows()
+
                 Section("Lesen") {
                     NavigationLink("Darstellung im Reader") {
                         Form { ReaderSettingsControls() }.navigationTitle("Darstellung")

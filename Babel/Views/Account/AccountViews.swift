@@ -142,7 +142,7 @@ final class FFNAccount {
         guard isLoggedIn, !isSyncing else { return }
         isSyncing = true
         defer { isSyncing = false }
-        library.updateMessage = "Lade deine FFN-Favoriten und Follows …"
+        library.showProgress(String(localized: "Lade deine FFN-Favoriten und Follows …"))
         var added = 0
         var counts: [String] = []
         for list in FFNService.AccountList.allCases {
@@ -151,12 +151,12 @@ final class FFNAccount {
                 added += library.importAll(stories, context: context) { Self.configure($0, for: list) }
                 counts.append("\(list.label): \(stories.count)")
             } catch {
-                counts.append("\(list.label): Fehler")
+                counts.append(String(localized: "\(list.label): Fehler"))
             }
         }
         UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: Self.lastSyncKey)
         let summary = counts.joined(separator: " · ")
-        library.updateMessage = added > 0 ? "FFN: \(added) neu übernommen (\(summary))" : "FFN abgeglichen (\(summary))"
+        library.updateMessage = added > 0 ? String(localized: "FFN: \(added) neu übernommen (\(summary))") : String(localized: "FFN abgeglichen (\(summary))")
     }
 
     func logout() async {
@@ -190,7 +190,7 @@ struct FFNAccountView: View {
                     Button {
                         Task { await account.sync(library: library, context: context) }
                     } label: {
-                        Label(account.isSyncing ? "Wird abgeglichen …" : "Favoriten & Follows in die Bibliothek", systemImage: "arrow.triangle.2.circlepath")
+                        Label(account.isSyncing ? String(localized: "Wird abgeglichen …") : String(localized: "Favoriten & Follows in die Bibliothek"), systemImage: "arrow.triangle.2.circlepath")
                     }
                     .disabled(account.isSyncing)
                 } else {
@@ -198,8 +198,8 @@ struct FFNAccountView: View {
                 }
             } footer: {
                 Text(account.isLoggedIn
-                     ? "Favoriten werden als Favorit markiert, Follows bekommen „Lese ich“. Bereits vorhandene Geschichten bleiben, wie sie sind."
-                     : "Die Anmeldung läuft direkt auf fanfiction.net. Danach holt Babel deine Favoriten und Follows automatisch in die Bibliothek. Babel speichert kein Passwort.")
+                     ? String(localized: "Favoriten werden als Favorit markiert, Follows bekommen „Lese ich“. Bereits vorhandene Geschichten bleiben, wie sie sind.")
+                     : String(localized: "Die Anmeldung läuft direkt auf fanfiction.net. Danach holt Babel deine Favoriten und Follows automatisch in die Bibliothek. Babel speichert kein Passwort."))
             }
             .themedRows()
 
@@ -208,7 +208,7 @@ struct FFNAccountView: View {
                     ForEach(FFNService.AccountList.allCases) { list in
                         NavigationLink {
                             AccountStoryList(title: list.label,
-                                             importHint: list == .favorites ? "Übernommene Favoriten werden als Favorit markiert." : "Übernommene Follows bekommen den Status „Lese ich“.") { page in
+                                             importHint: list == .favorites ? String(localized: "Übernommene Favoriten werden als Favorit markiert.") : String(localized: "Übernommene Follows bekommen den Status „Lese ich“.")) { page in
                                 guard page == 1 else { return ([], false) }
                                 return (try await FFNService.accountList(list, username: account.username), false)
                             } configure: { story in
@@ -349,6 +349,6 @@ struct AccountStoryList: View {
             if stories.count == before { break }
         }
         let added = library.importAll(stories, context: context, configure: configure)
-        library.updateMessage = added == 1 ? "1 Geschichte übernommen" : "\(added) Geschichten übernommen"
+        library.updateMessage = added == 1 ? String(localized: "1 Geschichte übernommen") : String(localized: "\(added) Geschichten übernommen")
     }
 }

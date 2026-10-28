@@ -6,10 +6,10 @@ enum StorySource: String, Codable, CaseIterable, Sendable, Hashable {
 
     var label: String {
         switch self {
-        case .ao3: "Archive of Our Own"
-        case .ffn: "FanFiction.net"
-        case .gutenberg: "Project Gutenberg"
-        case .epub: "Eigenes EPUB"
+        case .ao3: String(localized: "Archive of Our Own")
+        case .ffn: String(localized: "FanFiction.net")
+        case .gutenberg: String(localized: "Project Gutenberg")
+        case .epub: String(localized: "Eigenes EPUB")
         }
     }
 
@@ -50,12 +50,12 @@ enum ReadingStatus: String, Codable, CaseIterable, Sendable, Hashable {
 
     var label: String {
         switch self {
-        case .none: "Ohne Status"
-        case .reading: "Lese ich"
-        case .planned: "Später lesen"
-        case .paused: "Pausiert"
-        case .finished: "Gelesen"
-        case .dropped: "Abgebrochen"
+        case .none: String(localized: "Ohne Status")
+        case .reading: String(localized: "Lese ich")
+        case .planned: String(localized: "Später lesen")
+        case .paused: String(localized: "Pausiert")
+        case .finished: String(localized: "Gelesen")
+        case .dropped: String(localized: "Abgebrochen")
         }
     }
 

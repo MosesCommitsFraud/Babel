@@ -26,7 +26,7 @@ struct BooksView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     GlassEffectContainer(spacing: 8) {
                         HStack(spacing: 8) {
-                            GlassChip(title: "Alle", isSelected: filters.subject.isEmpty) { setSubject("") }
+                            GlassChip(title: String(localized: "Alle"), isSelected: filters.subject.isEmpty) { setSubject("") }
                             ForEach(GutenbergService.subjects, id: \.query) { s in
                                 GlassChip(title: s.label, isSelected: filters.subject == s.query) { setSubject(s.query) }
                             }
@@ -123,7 +123,7 @@ struct BooksView: View {
                 do { _ = try library.importEPUB(at: url, context: context); ok += 1 }
                 catch { failures.append(error.localizedDescription) }
             }
-            importMessage = failures.isEmpty ? "\(ok) Buch/Bücher in deine Bibliothek gelegt." : failures.joined(separator: "\n")
+            importMessage = failures.isEmpty ? String(localized: "\(ok) Buch/Bücher in deine Bibliothek gelegt.") : failures.joined(separator: String(localized: "\n"))
         }
         .alert("Import", isPresented: .constant(importMessage != nil), presenting: importMessage) { _ in
             Button("OK") { importMessage = nil }

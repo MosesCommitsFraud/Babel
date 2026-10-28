@@ -55,17 +55,17 @@ enum BabelError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .http(let code): "Der Server hat mit Fehler \(code) geantwortet."
-        case .rateLimited: "Zu viele Anfragen – die Seite bremst gerade. Versuch es in einer Minute nochmal."
-        case .loginRequired: "Dieses Werk ist nur für angemeldete AO3-Nutzer sichtbar. Melde dich in den Einstellungen bei AO3 an."
-        case .ffnLoginRequired: "Dafür musst du bei FanFiction.net angemeldet sein. Melde dich in den Einstellungen an."
-        case .notFound: "Nicht gefunden – vielleicht wurde die Geschichte gelöscht."
-        case .cloudflare: "Die Sicherheitsprüfung von FanFiction.net wurde nicht abgeschlossen. Versuch es nochmal."
-        case .timeout: "Die Seite hat zu lange gebraucht."
-        case .parsing(let what): "Die Seite konnte nicht gelesen werden (\(what)). Vielleicht hat sich ihr Aufbau geändert."
-        case .invalidLink: "Das ist kein gültiger Link."
-        case .unsupported(let what): "Dieser Link wird nicht unterstützt: \(what)"
-        case .epub(let what): "Das EPUB konnte nicht geöffnet werden: \(what)"
+        case .http(let code): String(localized: "Der Server hat mit Fehler \(code) geantwortet.")
+        case .rateLimited: String(localized: "Zu viele Anfragen – die Seite bremst gerade. Versuch es in einer Minute nochmal.")
+        case .loginRequired: String(localized: "Dieses Werk ist nur für angemeldete AO3-Nutzer sichtbar. Melde dich in den Einstellungen bei AO3 an.")
+        case .ffnLoginRequired: String(localized: "Dafür musst du bei FanFiction.net angemeldet sein. Melde dich in den Einstellungen an.")
+        case .notFound: String(localized: "Nicht gefunden – vielleicht wurde die Geschichte gelöscht.")
+        case .cloudflare: String(localized: "Die Sicherheitsprüfung von FanFiction.net wurde nicht abgeschlossen. Versuch es nochmal.")
+        case .timeout: String(localized: "Die Seite hat zu lange gebraucht.")
+        case .parsing(let what): String(localized: "Die Seite konnte nicht gelesen werden (\(what)). Vielleicht hat sich ihr Aufbau geändert.")
+        case .invalidLink: String(localized: "Das ist kein gültiger Link.")
+        case .unsupported(let what): String(localized: "Dieser Link wird nicht unterstützt: \(what)")
+        case .epub(let what): String(localized: "Das EPUB konnte nicht geöffnet werden: \(what)")
         }
     }
 }

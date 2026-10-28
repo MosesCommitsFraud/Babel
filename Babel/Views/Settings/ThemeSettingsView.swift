@@ -95,7 +95,7 @@ struct ThemeSettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 26) {
-                section("Erscheinungsbild") {
+                section(String(localized: "Erscheinungsbild")) {
                     GlassEffectContainer(spacing: 8) {
                         HStack(spacing: 8) {
                             ForEach(AppearanceMode.allCases) { m in modeButton(m) }
@@ -103,7 +103,7 @@ struct ThemeSettingsView: View {
                     }
                 }
 
-                section("Paletten") {
+                section(String(localized: "Paletten")) {
                     GlassEffectContainer(spacing: 12) {
                         HStack(spacing: 12) {
                             slotCard(dark: false)
@@ -112,7 +112,7 @@ struct ThemeSettingsView: View {
                     }
                 }
 
-                section(editingDark ? "Palette für Dunkel" : "Palette für Hell") {
+                section(editingDark ? String(localized: "Palette für Dunkel") : String(localized: "Palette für Hell")) {
                     GlassEffectContainer(spacing: 10) {
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 3), spacing: 10) {
                             ForEach(PaletteID.allCases) { p in paletteButton(p) }
@@ -189,7 +189,7 @@ struct ThemeSettingsView: View {
                 HStack(spacing: 6) {
                     Image(systemName: isDark ? "moon.fill" : "sun.max.fill")
                     VStack(alignment: .leading, spacing: 0) {
-                        Text(isDark ? "Dunkel" : "Hell").font(.caption).foregroundStyle(.secondary)
+                        Text(isDark ? String(localized: "Dunkel") : String(localized: "Hell")).font(.caption).foregroundStyle(.secondary)
                         Text(palette.label).font(.subheadline.weight(.semibold))
                     }
                     Spacer(minLength: 0)

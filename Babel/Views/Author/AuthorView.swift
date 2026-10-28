@@ -54,7 +54,7 @@ struct AuthorView: View {
             } else if let error, profile == nil {
                 ErrorBanner(message: error) { Task { await load() } }
             } else if profile != nil && visible.isEmpty && nextPage[tab] == nil {
-                ContentUnavailableView(tab == .stories ? "Keine Geschichten" : "Keine Einträge", systemImage: "tray")
+                ContentUnavailableView(tab == .stories ? String(localized: "Keine Geschichten") : String(localized: "Keine Einträge"), systemImage: "tray")
             }
         }
         .toolbar {
@@ -91,7 +91,7 @@ struct AuthorView: View {
                         .lineLimit(showFullBio ? nil : 4)
                         .textSelection(.enabled)
                     if bio.count > 180 {
-                        Button(showFullBio ? "Weniger anzeigen" : "Ganze Bio anzeigen",
+                        Button(showFullBio ? String(localized: "Weniger anzeigen") : String(localized: "Ganze Bio anzeigen"),
                                systemImage: showFullBio ? "chevron.up" : "chevron.down") {
                             withAnimation(.snappy) { showFullBio.toggle() }
                         }
@@ -102,8 +102,8 @@ struct AuthorView: View {
             }
             if profile != nil {
                 GlassSegmented(options: [
-                    (Tab.stories, label(source == .ao3 ? "Werke" : "Geschichten", profile?.storyCount)),
-                    (Tab.favorites, label(source == .ao3 ? "Lesezeichen" : "Favoriten", profile?.favoriteCount)),
+                    (Tab.stories, label(source == .ao3 ? String(localized: "Werke") : String(localized: "Geschichten"), profile?.storyCount)),
+                    (Tab.favorites, label(source == .ao3 ? String(localized: "Lesezeichen") : String(localized: "Favoriten"), profile?.favoriteCount)),
                 ], selection: $tab)
             }
         }

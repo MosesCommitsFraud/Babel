@@ -6,6 +6,8 @@ options:
   deploymentTarget:
     iOS: "26.0"
   developmentLanguage: de
+  # Englisch als zweite Sprache (String Catalog Babel/Localizable.xcstrings).
+  knownRegions: [de, en, Base]
 packages:
   SwiftSoup:
     url: https://github.com/scinfu/SwiftSoup.git
@@ -25,6 +27,8 @@ targets:
         CODE_SIGN_STYLE: Automatic
         PRODUCT_NAME: Babel
         SWIFT_VERSION: "5.0"
+        SWIFT_EMIT_LOC_STRINGS: YES
+        LOCALIZATION_PREFERS_STRING_CATALOGS: YES
         TARGETED_DEVICE_FAMILY: "1,2"
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_FILE: Support/Info.plist

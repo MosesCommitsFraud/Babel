@@ -52,15 +52,15 @@ enum FFNService {
     static let base = URL(string: "https://www.fanfiction.net")!
 
     static let categories: [FFNCategory] = [
-        .init(id: "anime", name: "Anime/Manga", symbol: "sparkles"),
-        .init(id: "book", name: "Bücher", symbol: "book.closed"),
-        .init(id: "cartoon", name: "Cartoons", symbol: "paintpalette"),
-        .init(id: "comic", name: "Comics", symbol: "bubble.left.and.bubble.right"),
-        .init(id: "game", name: "Games", symbol: "gamecontroller"),
-        .init(id: "misc", name: "Sonstiges", symbol: "square.grid.2x2"),
-        .init(id: "movie", name: "Filme", symbol: "film"),
-        .init(id: "play", name: "Theater/Musicals", symbol: "theatermasks"),
-        .init(id: "tv", name: "TV-Serien", symbol: "tv"),
+        .init(id: "anime", name: String(localized: "Anime/Manga"), symbol: "sparkles"),
+        .init(id: "book", name: String(localized: "Bücher"), symbol: "book.closed"),
+        .init(id: "cartoon", name: String(localized: "Cartoons"), symbol: "paintpalette"),
+        .init(id: "comic", name: String(localized: "Comics"), symbol: "bubble.left.and.bubble.right"),
+        .init(id: "game", name: String(localized: "Games"), symbol: "gamecontroller"),
+        .init(id: "misc", name: String(localized: "Sonstiges"), symbol: "square.grid.2x2"),
+        .init(id: "movie", name: String(localized: "Filme"), symbol: "film"),
+        .init(id: "play", name: String(localized: "Theater/Musicals"), symbol: "theatermasks"),
+        .init(id: "tv", name: String(localized: "TV-Serien"), symbol: "tv"),
     ]
 
     static let knownGenres: Set<String> = [
@@ -133,7 +133,7 @@ enum FFNService {
     enum SearchMatch: String, CaseIterable, Sendable {
         case title, summary, any
         var label: String {
-            switch self { case .title: "Titel"; case .summary: "Zusammenfassung"; case .any: "Beides" }
+            switch self { case .title: String(localized: "Titel"); case .summary: String(localized: "Zusammenfassung"); case .any: String(localized: "Beides") }
         }
     }
 
@@ -263,7 +263,7 @@ enum FFNService {
             options = options.map { o in
                 o.text.hasPrefix(label + ": ") ? FFNOption(value: o.value, text: String(o.text.dropFirst(label.count + 2))) : o
             }
-            if name.hasPrefix("_") { label = "Ohne: " + label }
+            if name.hasPrefix("_") { label = String(localized: "Ohne: \(label)") }
             result.append(FFNFilterSelect(name: name, label: label, options: options, selected: selected))
         }
         return result
@@ -343,7 +343,7 @@ enum FFNService {
         return try await Task.detached(priority: .userInitiated) {
             let doc = try SwiftSoup.parse(html, base.absoluteString)
             let name = try doc.select("#content_wrapper_inner span[style*=font-size]").first()?.text().trimmed ?? ""
-            var p = AuthorProfile(name: name.isEmpty ? "Autor:in" : name, url: finalURL)
+            var p = AuthorProfile(name: name.isEmpty ? String(localized: "Autor:in") : name, url: finalURL)
             if let first = try doc.select("#content_wrapper_inner span[data-xutime]").first(),
                let t = Double(try first.attr("data-xutime")) {
                 p.joined = Date(timeIntervalSince1970: t)
@@ -365,7 +365,7 @@ enum FFNService {
     enum AccountList: String, CaseIterable, Identifiable, Sendable {
         case favorites, follows
         var id: String { rawValue }
-        var label: String { self == .favorites ? "Favoriten" : "Follows" }
+        var label: String { self == .favorites ? String(localized: "Favoriten") : String(localized: "Follows") }
         var symbol: String { self == .favorites ? "heart.fill" : "bell.fill" }
         var path: String { self == .favorites ? "favorites/story.php" : "alert/story.php" }
     }
@@ -505,7 +505,7 @@ enum FFNService {
             }
             if !titles.isEmpty { meta.chapters = titles.count }
 
-            let title = number - 1 < titles.count ? titles[number - 1] : (meta.title.isEmpty ? "Kapitel \(number)" : meta.title)
+            let title = number - 1 < titles.count ? titles[number - 1] : (meta.title.isEmpty ? String(localized: "Kapitel \(number)") : meta.title)
             return (meta, titles, ChapterContent(title: title, html: try text.html()))
         }.value
     }

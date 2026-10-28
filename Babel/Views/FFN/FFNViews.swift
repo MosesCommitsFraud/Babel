@@ -602,7 +602,7 @@ struct FFNKeywordSearchView: View {
         .listStyle(.plain)
         .themedBackground()
         .navigationTitle("FFN-Suche")
-        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: match == .title ? "Titel" : "Titel oder Stichwort")
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: match == .title ? String(localized: "Titel") : String(localized: "Titel oder Stichwort"))
         .searchScopes($match, activation: .onSearchPresentation) {
             ForEach(FFNService.SearchMatch.allCases, id: \.self) { Text($0.label).tag($0) }
         }

@@ -14,12 +14,12 @@ enum LibrarySort: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var label: String {
         switch self {
-        case .recent: "Zuletzt gelesen"
-        case .added: "Zuletzt hinzugefügt"
-        case .updated: "Zuletzt aktualisiert"
-        case .title: "Titel"
-        case .author: "Autor:in"
-        case .progress: "Fortschritt"
+        case .recent: String(localized: "Zuletzt gelesen")
+        case .added: String(localized: "Zuletzt hinzugefügt")
+        case .updated: String(localized: "Zuletzt aktualisiert")
+        case .title: String(localized: "Titel")
+        case .author: String(localized: "Autor:in")
+        case .progress: String(localized: "Fortschritt")
         }
     }
 }
@@ -174,21 +174,21 @@ struct LibraryView: View {
             if hideEmpty && n == 0 { return }
             items.append(ChipItem(title: title, symbol: symbol, value: value, count: n))
         }
-        add("Neue Kapitel", "sparkles", .updates, hideEmpty: true)
+        add(String(localized: "Neue Kapitel"), "sparkles", .updates, hideEmpty: true)
         for status in [ReadingStatus.reading, .planned, .finished, .paused, .dropped] {
             add(status.label, status.symbol, .status(status))
         }
-        add("Favoriten", "heart.fill", .favorites)
-        add("Offline", "arrow.down.circle.fill", .offline, hideEmpty: true)
+        add(String(localized: "Favoriten"), "heart.fill", .favorites)
+        add(String(localized: "Offline"), "arrow.down.circle.fill", .offline, hideEmpty: true)
         for shelf in shelves { add(shelf.name, shelf.symbol, .shelf(shelf.name)) }
         // AO3 und FFN immer anbieten, Gutenberg/EPUB nur, wenn etwas da ist.
         for source in StorySource.allCases { add(source.shortLabel, source.symbol, .source(source), hideEmpty: !source.isWebFiction) }
-        add("Verlauf", "clock.arrow.circlepath", .history, hideEmpty: true)
+        add(String(localized: "Verlauf"), "clock.arrow.circlepath", .history, hideEmpty: true)
         // Stabil sortieren: bei gleicher Anzahl bleibt die Reihenfolge von oben.
         let sorted = items.enumerated().sorted { a, b in
             a.element.count != b.element.count ? a.element.count > b.element.count : a.offset < b.offset
         }.map(\.element)
-        return [ChipItem(title: "Alle", symbol: nil, value: .all, count: stories.count)] + sorted
+        return [ChipItem(title: String(localized: "Alle"), symbol: nil, value: .all, count: stories.count)] + sorted
     }
 
     private var filterBar: some View {
@@ -345,7 +345,7 @@ struct StoryContextMenu: View {
     @Query(sort: \Shelf.createdAt) private var shelves: [Shelf]
 
     var body: some View {
-        Button(story.hasStarted ? "Weiterlesen" : "Lesen", systemImage: "book.fill") { reader.open(story) }
+        Button(story.hasStarted ? String(localized: "Weiterlesen") : String(localized: "Lesen"), systemImage: "book.fill") { reader.open(story) }
         Picker("Status", selection: $story.status) {
             ForEach(ReadingStatus.allCases, id: \.self) { Label($0.label, systemImage: $0.symbol).tag($0) }
         }

@@ -77,7 +77,7 @@ struct StoryDetailView: View {
                 }
                 TagChip(text: story.source.label, symbol: story.source.symbol)
                 if story.newChapters > 0 {
-                    Label(story.newChapters == 1 ? "1 neues Kapitel" : "\(story.newChapters) neue Kapitel", systemImage: "sparkles")
+                    Label(story.newChapters == 1 ? String(localized: "1 neues Kapitel") : String(localized: "\(story.newChapters) neue Kapitel"), systemImage: "sparkles")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.red)
                 }
@@ -100,7 +100,7 @@ struct StoryDetailView: View {
                 Button {
                     open(at: nil)
                 } label: {
-                    Label(story.hasStarted ? "Weiterlesen" : "Lesen", systemImage: "book.fill")
+                    Label(story.hasStarted ? String(localized: "Weiterlesen") : String(localized: "Lesen"), systemImage: "book.fill")
                         .foregroundStyle(theme.primaryForeground)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 2)
@@ -116,7 +116,7 @@ struct StoryDetailView: View {
                         .frame(width: 22, height: 22)
                 }
                 .buttonStyle(.glass)
-                .accessibilityLabel(story.inLibrary ? "Aus Bibliothek entfernen" : "Zur Bibliothek hinzufügen")
+                .accessibilityLabel(story.inLibrary ? String(localized: "Aus Bibliothek entfernen") : String(localized: "Zur Bibliothek hinzufügen"))
 
                 if story.source.isWebFiction || story.spinePaths.isEmpty {
                     Button {
@@ -179,7 +179,7 @@ struct StoryDetailView: View {
                     ))
                 }
             } label: {
-                Label(story.shelves.isEmpty ? "Sammlung" : story.shelves.map(\.name).joined(separator: ", "),
+                Label(story.shelves.isEmpty ? String(localized: "Sammlung") : story.shelves.map(\.name).joined(separator: ", "),
                       systemImage: "folder")
                     .font(.subheadline.weight(.medium))
                     .lineLimit(1)
@@ -204,18 +204,18 @@ struct StoryDetailView: View {
         func add(_ label: String, _ value: String?, _ symbol: String) {
             if let value, !value.isEmpty { items.append(StatItem(label: label, value: value, symbol: symbol)) }
         }
-        add("Wörter", story.words?.grouped, "textformat.size")
-        add("Kapitel", chapterLabel, "list.number")
-        add("Kudos", story.kudos?.compact, "heart")
+        add(String(localized: "Wörter"), story.words?.grouped, "textformat.size")
+        add(String(localized: "Kapitel"), chapterLabel, "list.number")
+        add(String(localized: "Kudos"), story.kudos?.compact, "heart")
         add(story.source == .gutenberg ? "Downloads" : "Aufrufe", story.hits?.compact, "eye")
-        add("Reviews", story.reviews?.compact, "text.bubble")
-        add("Favs", story.favs?.compact, "star")
-        add("Follows", story.follows?.compact, "bell")
-        add("Lesezeichen", story.bookmarks?.compact, "bookmark")
-        add("Aktualisiert", story.lastUpdated?.formatted(date: .abbreviated, time: .omitted), "clock")
-        add("Veröffentlicht", story.published?.formatted(date: .abbreviated, time: .omitted), "calendar")
-        add("Sprache", story.language, "globe")
-        add("Rating", story.rating, "exclamationmark.shield")
+        add(String(localized: "Reviews"), story.reviews?.compact, "text.bubble")
+        add(String(localized: "Favs"), story.favs?.compact, "star")
+        add(String(localized: "Follows"), story.follows?.compact, "bell")
+        add(String(localized: "Lesezeichen"), story.bookmarks?.compact, "bookmark")
+        add(String(localized: "Aktualisiert"), story.lastUpdated?.formatted(date: .abbreviated, time: .omitted), "clock")
+        add(String(localized: "Veröffentlicht"), story.published?.formatted(date: .abbreviated, time: .omitted), "calendar")
+        add(String(localized: "Sprache"), story.language, "globe")
+        add(String(localized: "Rating"), story.rating, "exclamationmark.shield")
         return items
     }
 
@@ -291,7 +291,7 @@ struct StoryDetailView: View {
                     Text("Kapitel").font(.headline)
                     Spacer()
                     if count > 12 {
-                        Button(showAllChapters ? "Weniger" : "Alle \(count)") { withAnimation { showAllChapters.toggle() } }
+                        Button(showAllChapters ? String(localized: "Weniger") : String(localized: "Alle \(count)")) { withAnimation { showAllChapters.toggle() } }
                             .font(.subheadline)
                     }
                 }
@@ -395,7 +395,7 @@ struct StoryDetailView: View {
     private func checkUpdates() async {
         do {
             let n = try await library.checkForUpdates(story)
-            library.updateMessage = n == 0 ? "Keine neuen Kapitel" : "\(n) neue Kapitel"
+            library.updateMessage = n == 0 ? String(localized: "Keine neuen Kapitel") : String(localized: "\(n) neue Kapitel")
         } catch {
             errorMessage = error.localizedDescription
         }

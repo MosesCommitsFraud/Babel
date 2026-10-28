@@ -11,7 +11,14 @@ final class LibraryManager {
     /// Download-Fortschritt pro Story-Key (0…1)
     var downloads: [String: Double] = [:]
     var isCheckingUpdates = false
-    var updateMessage: String?
+    var updateMessage: String? { didSet { messageIsProgress = false } }
+    /// Laufende Aktion („Lade …“): Meldung bleibt stehen, bis die nächste kommt.
+    var messageIsProgress = false
+
+    func showProgress(_ message: String) {
+        updateMessage = message
+        messageIsProgress = true
+    }
 
     private init() {}
 
@@ -157,7 +164,7 @@ final class LibraryManager {
             try await downloadAll(story)
             return try EPUBBuilder.build(story)
         case .gutenberg, .epub:
-            throw BabelError.unsupported("Bücher liegen schon als EPUB vor")
+            throw BabelError.unsupported(String(localized: "Bücher liegen schon als EPUB vor"))
         }
     }
 
@@ -247,9 +254,9 @@ final class LibraryManager {
             do { total += try await checkForUpdates(story) } catch { failed += 1 }
         }
         if total > 0 {
-            updateMessage = total == 1 ? "1 neues Kapitel" : "\(total) neue Kapitel"
+            updateMessage = total == 1 ? String(localized: "1 neues Kapitel") : String(localized: "\(total) neue Kapitel")
         } else if !candidates.isEmpty {
-            updateMessage = failed > 0 ? "Keine neuen Kapitel (\(failed) nicht erreichbar)" : "Alles aktuell"
+            updateMessage = failed > 0 ? String(localized: "Keine neuen Kapitel (\(failed) nicht erreichbar)") : String(localized: "Alles aktuell")
         }
     }
 
@@ -259,7 +266,7 @@ final class LibraryManager {
     func prepareBook(_ story: Story) async throws {
         guard story.spinePaths.isEmpty else { return }
         guard story.source == .gutenberg, let url = story.downloadURLString.flatMap(URL.init(string:)) else {
-            throw BabelError.epub("Buchdatei fehlt")
+            throw BabelError.epub(String(localized: "Buchdatei fehlt"))
         }
         let key = story.key
         downloads[key] = 0.1

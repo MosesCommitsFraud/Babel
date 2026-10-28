@@ -20,12 +20,12 @@ enum PaletteID: String, CaseIterable, Identifiable, Sendable {
 
     var label: String {
         switch self {
-        case .standard: "Standard"
-        case .t3chat: "T3 Chat"
-        case .grove: "Grove"
-        case .ocean: "Ocean"
-        case .ember: "Ember"
-        case .iris: "Iris"
+        case .standard: String(localized: "Standard")
+        case .t3chat: String(localized: "T3 Chat")
+        case .grove: String(localized: "Grove")
+        case .ocean: String(localized: "Ocean")
+        case .ember: String(localized: "Ember")
+        case .iris: String(localized: "Iris")
         }
     }
 
@@ -110,7 +110,7 @@ enum AppearanceMode: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 
     var label: String {
-        switch self { case .system: "System"; case .light: "Hell"; case .dark: "Dunkel" }
+        switch self { case .system: String(localized: "System"); case .light: String(localized: "Hell"); case .dark: String(localized: "Dunkel") }
     }
 
     var colorScheme: ColorScheme? {

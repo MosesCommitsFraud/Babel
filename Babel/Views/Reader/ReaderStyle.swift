@@ -6,7 +6,7 @@ enum ReaderTheme: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .system: "Auto"; case .light: "Hell"; case .sepia: "Sepia"; case .dark: "Dunkel"; case .black: "Schwarz"
+        case .system: String(localized: "Auto"); case .light: String(localized: "Hell"); case .sepia: String(localized: "Sepia"); case .dark: String(localized: "Dunkel"); case .black: String(localized: "Schwarz")
         }
     }
 

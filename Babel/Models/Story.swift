@@ -96,7 +96,7 @@ final class Story {
 
     func title(ofChapter index: Int) -> String {
         if index < chapterTitles.count, !chapterTitles[index].isEmpty { return chapterTitles[index] }
-        return "Kapitel \(index + 1)"
+        return String(localized: "Kapitel \(index + 1)")
     }
 
     /// Übernimmt Metadaten. Leere Felder überschreiben keine vorhandenen Werte.

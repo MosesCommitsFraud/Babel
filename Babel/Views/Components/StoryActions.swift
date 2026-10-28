@@ -32,17 +32,17 @@ struct RemoteStoryActions: ViewModifier {
     private func add() {
         let story = library.story(for: remote, context: context)
         library.addToLibrary(story, context: context)
-        library.updateMessage = "„\(remote.title)“ in der Bibliothek"
+        library.updateMessage = String(localized: "„\(remote.title)“ in der Bibliothek")
     }
 
     private func download() {
-        library.updateMessage = "Lade „\(remote.title)“ …"
+        library.showProgress(String(localized: "Lade „\(remote.title)“ …"))
         Task {
             do {
                 try await library.download(remote, context: context)
-                library.updateMessage = "„\(remote.title)“ offline gespeichert"
+                library.updateMessage = String(localized: "„\(remote.title)“ offline gespeichert")
             } catch {
-                library.updateMessage = "Download fehlgeschlagen: \(error.localizedDescription)"
+                library.updateMessage = String(localized: "Download fehlgeschlagen: \(error.localizedDescription)")
             }
         }
     }
@@ -61,10 +61,10 @@ struct StatusToast: View {
             RateLimitBanner()
             // Die Update-Suche zeigt die Bibliothek selbst (kleiner Kreisel), damit sie nicht über allen Tabs hängt.
             if let message = library.updateMessage {
-                toast(message, message.hasPrefix("Lade") ? "arrow.down.circle" : "checkmark.circle.fill")
+                toast(message, library.messageIsProgress ? "arrow.down.circle" : "checkmark.circle.fill")
                     .id(message)
                     .task(id: message) {
-                        guard !message.hasPrefix("Lade") else { return }
+                        guard !library.messageIsProgress else { return }
                         try? await Task.sleep(for: .seconds(3))
                         withAnimation { if library.updateMessage == message { library.updateMessage = nil } }
                     }

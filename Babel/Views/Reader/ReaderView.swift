@@ -110,7 +110,7 @@ final class ReaderModel {
           });
           if (\(hasNext ? "true" : "false") && document.body) {
             var end = document.createElement('div'); end.id = 'babel-end';
-            var b = document.createElement('button'); b.id = 'babel-next'; b.textContent = 'Nächstes Kapitel →';
+            var b = document.createElement('button'); b.id = 'babel-next'; b.textContent = \(Self.jsString(String(localized: "Nächstes Kapitel →")));
             b.addEventListener('click', function(ev){ ev.stopPropagation(); post({ type: 'next' }); });
             end.appendChild(b); document.body.appendChild(end);
           }

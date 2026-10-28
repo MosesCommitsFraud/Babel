@@ -119,10 +119,10 @@ struct AO3FilterWallView: View {
 
             Section("Schnellstart") {
                 FlowLayout(spacing: 8) {
-                    quick("Neu aktualisiert", sort: .updated)
-                    quick("Meiste Kudos", sort: .kudos)
-                    quick("Abgeschlossen & beliebt", sort: .kudos, complete: true)
-                    quick("Auf Deutsch", sort: .updated, language: "de")
+                    quick(String(localized: "Neu aktualisiert"), sort: .updated)
+                    quick(String(localized: "Meiste Kudos"), sort: .kudos)
+                    quick(String(localized: "Abgeschlossen & beliebt"), sort: .kudos, complete: true)
+                    quick(String(localized: "Auf Deutsch"), sort: .updated, language: "de")
                 }
                 .padding(.vertical, 4)
             }
@@ -222,10 +222,10 @@ struct AO3FilterWallView: View {
 enum AO3SearchScope: String, CaseIterable {
     case all, title, author
     var label: String {
-        switch self { case .all: "Alles"; case .title: "Titel"; case .author: "Autor:in" }
+        switch self { case .all: String(localized: "Alles"); case .title: String(localized: "Titel"); case .author: String(localized: "Autor:in") }
     }
     var prompt: String {
-        switch self { case .all: "Werke, Tags, Autor:innen …"; case .title: "Titel"; case .author: "Autor:in" }
+        switch self { case .all: String(localized: "Werke, Tags, Autor:innen …"); case .title: String(localized: "Titel"); case .author: String(localized: "Autor:in") }
     }
 }
 
@@ -276,7 +276,7 @@ struct AO3SearchView: View {
         .onChange(of: scope) { if !searchText.trimmed.isEmpty { applySearchText() } }
         .overlay {
             if model.isLoading && model.results.isEmpty {
-                SlowLoadingView(text: "Suche auf AO3 …", slowHint: "AO3 ist gerade langsam. Das kann bis zu einer Minute dauern.")
+                SlowLoadingView(text: String(localized: "Suche auf AO3 …"), slowHint: String(localized: "AO3 ist gerade langsam. Das kann bis zu einer Minute dauern."))
             } else if let error = model.error, model.results.isEmpty {
                 ErrorBanner(message: error) { Task { await model.search() } }
             } else if model.hasSearched && model.results.isEmpty {

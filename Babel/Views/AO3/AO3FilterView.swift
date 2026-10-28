@@ -42,10 +42,10 @@ struct AO3FilterSections: View {
             }
 
             Section {
-                TagTokenField(title: "Fandoms", kind: .fandom, tags: $draft.fandoms)
-                TagTokenField(title: "Beziehungen", kind: .relationship, tags: $draft.relationships)
-                TagTokenField(title: "Charaktere", kind: .character, tags: $draft.characters)
-                TagTokenField(title: "Weitere Tags", kind: .freeform, tags: $draft.freeforms)
+                TagTokenField(title: String(localized: "Fandoms"), kind: .fandom, tags: $draft.fandoms)
+                TagTokenField(title: String(localized: "Beziehungen"), kind: .relationship, tags: $draft.relationships)
+                TagTokenField(title: String(localized: "Charaktere"), kind: .character, tags: $draft.characters)
+                TagTokenField(title: String(localized: "Weitere Tags"), kind: .freeform, tags: $draft.freeforms)
             } header: {
                 Text("Muss enthalten")
             } footer: {
@@ -53,7 +53,7 @@ struct AO3FilterSections: View {
             }
 
             Section("Ausschließen") {
-                TagTokenField(title: "Tags ausschließen", kind: .tag, tags: $draft.excludedTags)
+                TagTokenField(title: String(localized: "Tags ausschließen"), kind: .tag, tags: $draft.excludedTags)
             }
 
             Section {

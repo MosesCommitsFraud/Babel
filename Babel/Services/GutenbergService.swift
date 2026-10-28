@@ -6,10 +6,10 @@ enum GutenbergSort: String, Codable, CaseIterable, Sendable, Hashable {
 
     var label: String {
         switch self {
-        case .downloads: "Beliebtheit"
-        case .releaseDate: "Neu bei Gutenberg"
-        case .title: "Titel"
-        case .author: "Autor:in"
+        case .downloads: String(localized: "Beliebtheit")
+        case .releaseDate: String(localized: "Neu bei Gutenberg")
+        case .title: String(localized: "Titel")
+        case .author: String(localized: "Autor:in")
         }
     }
 }
@@ -19,7 +19,7 @@ enum GutenbergScope: String, Codable, CaseIterable, Sendable, Hashable {
     case all, title, author, subject
 
     var label: String {
-        switch self { case .all: "Alles"; case .title: "Titel"; case .author: "Autor:in"; case .subject: "Thema" }
+        switch self { case .all: String(localized: "Alles"); case .title: String(localized: "Titel"); case .author: String(localized: "Autor:in"); case .subject: String(localized: "Thema") }
     }
 
     var prefix: String? {
@@ -73,7 +73,7 @@ enum GutenbergService {
     static let base = URL(string: "https://www.gutenberg.org")!
 
     static let languages: [LanguageOption] = [
-        .init(code: "", name: "Alle Sprachen"), .init(code: "de", name: "Deutsch"), .init(code: "en", name: "English"),
+        .init(code: "", name: String(localized: "Alle Sprachen")), .init(code: "de", name: String(localized: "Deutsch")), .init(code: "en", name: String(localized: "English")),
         .init(code: "fr", name: "Français"), .init(code: "es", name: "Español"), .init(code: "it", name: "Italiano"),
         .init(code: "nl", name: "Nederlands"), .init(code: "pt", name: "Português"), .init(code: "fi", name: "Suomi"),
         .init(code: "sv", name: "Svenska"), .init(code: "la", name: "Latina"), .init(code: "el", name: "Ελληνικά"),
@@ -81,9 +81,9 @@ enum GutenbergService {
 
     /// Beliebte Themen als Schnellstart.
     static let subjects: [(label: String, query: String)] = [
-        ("Romane", "fiction"), ("Abenteuer", "adventure"), ("Krimis", "detective"), ("Science-Fiction", "science fiction"),
-        ("Fantasy", "fantasy"), ("Liebe", "love stories"), ("Märchen", "fairy tales"), ("Lyrik", "poetry"),
-        ("Drama", "drama"), ("Philosophie", "philosophy"), ("Geschichte", "history"), ("Kinderbücher", "juvenile"),
+        (String(localized: "Romane"), "fiction"), (String(localized: "Abenteuer"), "adventure"), (String(localized: "Krimis"), "detective"), (String(localized: "Science-Fiction"), "science fiction"),
+        (String(localized: "Fantasy"), "fantasy"), (String(localized: "Liebe"), "love stories"), (String(localized: "Märchen"), "fairy tales"), (String(localized: "Lyrik"), "poetry"),
+        (String(localized: "Drama"), "drama"), (String(localized: "Philosophie"), "philosophy"), (String(localized: "Geschichte"), "history"), (String(localized: "Kinderbücher"), "juvenile"),
     ]
 
     struct Page: Sendable {
@@ -112,7 +112,7 @@ enum GutenbergService {
                 guard let a = try li.select("a.link").first(),
                       let id = try a.attr("href").firstMatch(#"/ebooks/(\d+)"#)?[1] else { continue }
                 var s = RemoteStory(source: .gutenberg, sourceID: id,
-                                    title: cleanTitle(try li.select("span.title").first()?.text() ?? "Ohne Titel"),
+                                    title: cleanTitle(try li.select("span.title").first()?.text() ?? String(localized: "Ohne Titel")),
                                     url: base.appendingPathComponent("ebooks/\(id)"))
                 s.author = try li.select("span.subtitle").first()?.text() ?? ""
                 s.hits = try li.select("span.extra").first()?.text().firstMatch(#"(\d+)"#)?[1].digitsInt

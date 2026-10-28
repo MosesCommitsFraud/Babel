@@ -16,14 +16,14 @@ enum EPUBParser {
     static func parse(folder: URL) throws -> EPUBBook {
         let containerURL = folder.appendingPathComponent("META-INF/container.xml")
         guard let containerXML = try? String(contentsOf: containerURL, encoding: .utf8) else {
-            throw BabelError.epub("META-INF/container.xml fehlt")
+            throw BabelError.epub(String(localized: "META-INF/container.xml fehlt"))
         }
         let container = try SwiftSoup.parse(containerXML, "", Parser.xmlParser())
         guard let opfPath = try container.select("rootfile").first()?.attr("full-path"), !opfPath.isEmpty else {
-            throw BabelError.epub("Kein OPF gefunden")
+            throw BabelError.epub(String(localized: "Kein OPF gefunden"))
         }
         let opfURL = folder.appendingPathComponent(opfPath)
-        guard let opfXML = try? String(contentsOf: opfURL, encoding: .utf8) else { throw BabelError.epub("OPF nicht lesbar") }
+        guard let opfXML = try? String(contentsOf: opfURL, encoding: .utf8) else { throw BabelError.epub(String(localized: "OPF nicht lesbar")) }
         let opf = try SwiftSoup.parse(opfXML, "", Parser.xmlParser())
         let opfDir = (opfPath as NSString).deletingLastPathComponent
 
@@ -90,7 +90,7 @@ enum EPUBParser {
             let path = rel(item.href)
             spine.append(EPUBBook.Item(path: path, title: tocTitles[path] ?? "Abschnitt \(i + 1)"))
         }
-        guard !spine.isEmpty else { throw BabelError.epub("Das Buch enthält keine lesbaren Kapitel") }
+        guard !spine.isEmpty else { throw BabelError.epub(String(localized: "Das Buch enthält keine lesbaren Kapitel")) }
 
         // Cover
         var coverPath: String?
