@@ -90,15 +90,49 @@ struct FFNBrowseView: View {
     private var visibleFandoms: [FFNFandom] {
         var list = fandoms
         if sortByPopularity { list.sort { $0.countValue > $1.countValue } }
+        else { list.sort { $0.name.localizedStandardCompare($1.name) == .orderedAscending } }
         return list
     }
 
+    static func indexLetter(_ name: String) -> String {
+        guard let c = name.folding(options: .diacriticInsensitive, locale: nil).uppercased().first, c.isLetter, c.isASCII else { return "#" }
+        return String(c)
+    }
+
+    /// Erster Fandom je Buchstabe (alphabetisch) – Sprungziele für die A–Z-Leiste.
+    private var letterAnchors: [(letter: String, id: String)] {
+        var seen = Set<String>()
+        return fandoms
+            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+            .compactMap { f in
+                let l = Self.indexLetter(f.name)
+                return seen.insert(l).inserted ? (l, f.id) : nil
+            }
+    }
+
     var body: some View {
-        List {
-            if isSearching {
-                searchResults
-            } else {
-                browseContent
+        ScrollViewReader { proxy in
+            List {
+                if isSearching {
+                    searchResults
+                } else {
+                    browseContent
+                }
+            }
+            .overlay(alignment: .trailing) {
+                if !isSearching && fandoms.count > 30 {
+                    AlphabetIndexBar(letters: letterAnchors.map(\.letter)) { letter in
+                        guard let target = letterAnchors.first(where: { $0.letter == letter })?.id else { return }
+                        if sortByPopularity {
+                            sortByPopularity = false
+                            // Erst neu sortieren lassen, dann springen.
+                            Task { @MainActor in proxy.scrollTo(target, anchor: .top) }
+                        } else {
+                            proxy.scrollTo(target, anchor: .top)
+                        }
+                    }
+                    .padding(.trailing, 4)
+                }
             }
         }
         .themedBackground()
@@ -543,6 +577,7 @@ struct FFNFilterSheet: View {
 struct FFNKeywordSearchView: View {
     var initialQuery = ""
     @State private var query = ""
+    @AppStorage("ffn.searchMatch") private var match: FFNService.SearchMatch = .title
     @State private var stories: [RemoteStory] = []
     @State private var page = 1
     @State private var hasNext = false
@@ -567,8 +602,12 @@ struct FFNKeywordSearchView: View {
         .listStyle(.plain)
         .themedBackground()
         .navigationTitle("FFN-Suche")
-        .searchable(text: $query, prompt: "Titel oder Stichwort")
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: match == .title ? "Titel" : "Titel oder Stichwort")
+        .searchScopes($match, activation: .onSearchPresentation) {
+            ForEach(FFNService.SearchMatch.allCases, id: \.self) { Text($0.label).tag($0) }
+        }
         .onSubmit(of: .search) { Task { await search(page: 1) } }
+        .onChange(of: match) { if searched { Task { await search(page: 1) } } }
         .overlay {
             if isLoading && stories.isEmpty {
                 ProgressView("Suche auf FanFiction.net …")
@@ -595,7 +634,7 @@ struct FFNKeywordSearchView: View {
         error = nil
         defer { isLoading = false; searched = true }
         do {
-            let result = try await FFNService.search(keywords: query, page: page)
+            let result = try await FFNService.search(keywords: query, match: match, page: page)
             if page == 1 {
                 stories = result.stories
             } else {
@@ -608,5 +647,61 @@ struct FFNKeywordSearchView: View {
             if page == 1 { self.error = error.localizedDescription }
             hasNext = false
         }
+    }
+}
+
+// MARK: - A–Z-Leiste
+
+/// Buchstabenleiste am rechten Rand (wie in Kontakte), aus Liquid Glass.
+/// Antippen oder darüberziehen springt zum Buchstaben; beim Ziehen erscheint er groß in einer Glasblase.
+struct AlphabetIndexBar: View {
+    let letters: [String]
+    var onSelect: (String) -> Void
+    @Environment(\.theme) private var theme
+    @State private var active: String?
+
+    var body: some View {
+        GeometryReader { geo in
+            let rowHeight = min(16, (geo.size.height - 24) / CGFloat(max(letters.count, 1)))
+            HStack(spacing: 8) {
+                if let active {
+                    Text(active)
+                        .font(.title.weight(.bold))
+                        .foregroundStyle(theme.primary)
+                        .frame(width: 56, height: 56)
+                        .glassEffect(.regular, in: .circle)
+                        .transition(.scale.combined(with: .opacity))
+                }
+                VStack(spacing: 0) {
+                    ForEach(letters, id: \.self) { l in
+                        Text(l)
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(active == l ? theme.primary : .secondary)
+                            .frame(width: 22, height: rowHeight)
+                    }
+                }
+                .padding(.vertical, 8)
+                .glassEffect(.regular.interactive(), in: .capsule)
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            let index = Int((value.location.y - 8) / rowHeight)
+                            guard letters.indices.contains(index) else { return }
+                            let letter = letters[index]
+                            if letter != active {
+                                withAnimation(.snappy(duration: 0.15)) { active = letter }
+                                UISelectionFeedbackGenerator().selectionChanged()
+                                onSelect(letter)
+                            }
+                        }
+                        .onEnded { _ in withAnimation(.snappy) { active = nil } }
+                )
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
+        }
+        .frame(width: 100)
+        .frame(maxHeight: CGFloat(letters.count) * 16 + 24)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Alphabetischer Index")
     }
 }

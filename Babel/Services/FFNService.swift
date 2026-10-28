@@ -128,15 +128,48 @@ enum FFNService {
         try await list(url: setPage(url, page: page))
     }
 
-    static func search(keywords: String, page: Int) async throws -> FFNListPage {
+    /// Worin die FFN-Suche sucht. FFN selbst nimmt sonst „any“: dann reicht ein einzelnes Wort,
+    /// und exakte Titel gehen in den Treffern unter.
+    enum SearchMatch: String, CaseIterable, Sendable {
+        case title, summary, any
+        var label: String {
+            switch self { case .title: "Titel"; case .summary: "Zusammenfassung"; case .any: "Beides" }
+        }
+    }
+
+    static func search(keywords: String, match: SearchMatch = .title, page: Int) async throws -> FFNListPage {
         var comps = URLComponents(url: base.appendingPathComponent("search/"), resolvingAgainstBaseURL: false)!
         comps.queryItems = [
             URLQueryItem(name: "keywords", value: keywords.trimmed),
             URLQueryItem(name: "ready", value: "1"),
             URLQueryItem(name: "type", value: "story"),
+            URLQueryItem(name: "match", value: match.rawValue),
         ]
         if page > 1 { comps.queryItems?.append(URLQueryItem(name: "ppage", value: String(page))) }
-        return try await list(url: comps.url!)
+        var result = try await list(url: comps.url!)
+        if page == 1 { result.stories = rankByTitle(result.stories, query: keywords) }
+        return result
+    }
+
+    /// Exakter Titel zuerst, dann Titel mit allen Wörtern, dann der Rest in FFNs Reihenfolge.
+    static func rankByTitle(_ stories: [RemoteStory], query: String) -> [RemoteStory] {
+        func norm(_ s: String) -> String {
+            s.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+                .components(separatedBy: CharacterSet.alphanumerics.inverted).filter { !$0.isEmpty }.joined(separator: " ")
+        }
+        let q = norm(query)
+        let words = q.split(separator: " ")
+        func score(_ s: RemoteStory) -> Int {
+            let t = norm(s.title)
+            if t == q { return 0 }
+            if t.hasPrefix(q) { return 1 }
+            if words.allSatisfy({ t.contains($0) }) { return 2 }
+            return 3
+        }
+        return stories.enumerated().sorted { a, b in
+            let sa = score(a.element), sb = score(b.element)
+            return sa != sb ? sa < sb : a.offset < b.offset
+        }.map(\.element)
     }
 
     /// Filter anwenden: Werte in die Dropdowns der echten Seite setzen und "Apply" drücken.
