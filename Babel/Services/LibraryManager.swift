@@ -208,7 +208,9 @@ final class LibraryManager {
             return 0
         }
         let diff = max(0, story.knownChapterCount - before)
-        if diff > 0 { story.newChapters += diff }
+        // Nur bei angefangenen Geschichten zählt das als „neu“ – sonst wären es beim ersten Abgleich
+        // importierter Favoriten einfach alle Kapitel.
+        if diff > 0, story.hasStarted { story.newChapters += diff }
         story.lastCheckedAt = .now
         try? story.modelContext?.save()
         return diff
@@ -218,7 +220,7 @@ final class LibraryManager {
         guard !isCheckingUpdates else { return }
         isCheckingUpdates = true
         defer { isCheckingUpdates = false }
-        let descriptor = FetchDescriptor<Story>(predicate: #Predicate { $0.inLibrary && !$0.isComplete })
+        let descriptor = FetchDescriptor<Story>(predicate: #Predicate { $0.inLibrary && !$0.isComplete && $0.lastOpenedAt != nil })
         let candidates = ((try? context.fetch(descriptor)) ?? []).filter { $0.source.isWebFiction }
         var total = 0
         var failed = 0

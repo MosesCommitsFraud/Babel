@@ -270,8 +270,14 @@ struct AccountStoryList: View {
                     .themedRows(grouped: false)
             }
             ForEach(stories) { story in
-                NavigationLink(value: story) { StoryRow(story: story, showSummary: false) }
-                    .remoteStoryActions(story)
+                // Ziel direkt angeben: Diese Seite liegt hinter einem Closure-NavigationLink,
+                // dort griffen die wertbasierten Ziele vom Tab nicht.
+                NavigationLink {
+                    RemoteStoryDetail(remote: story)
+                } label: {
+                    StoryRow(story: story)
+                }
+                .remoteStoryActions(story)
             }
             .themedRows(grouped: false)
             if hasNext {
