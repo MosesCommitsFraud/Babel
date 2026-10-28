@@ -105,6 +105,16 @@ final class FFNAccount {
     private(set) var isChecking = false
     private(set) var isSyncing = false
     var isLoggedIn: Bool { !username.isEmpty }
+    private static let lastSyncKey = "ffn.lastSync"
+
+    /// Beim App-Start: angemeldet? Dann höchstens alle 6 Stunden still abgleichen.
+    func syncIfDue(library: LibraryManager, context: ModelContext) async {
+        guard isLoggedIn else { return }
+        let last = UserDefaults.standard.double(forKey: Self.lastSyncKey)
+        guard Date().timeIntervalSince1970 - last > 6 * 3600 else { return }
+        await check()
+        await sync(library: library, context: context)
+    }
 
     private func setUsername(_ name: String) {
         username = name
@@ -132,22 +142,21 @@ final class FFNAccount {
         guard isLoggedIn, !isSyncing else { return }
         isSyncing = true
         defer { isSyncing = false }
-        library.updateMessage = "Lade deine FFN-Favoriten …"
+        library.updateMessage = "Lade deine FFN-Favoriten und Follows …"
         var added = 0
-        var failed = false
+        var counts: [String] = []
         for list in FFNService.AccountList.allCases {
             do {
                 let stories = try await FFNService.accountList(list, username: username)
                 added += library.importAll(stories, context: context) { Self.configure($0, for: list) }
+                counts.append("\(list.label): \(stories.count)")
             } catch {
-                failed = true
+                counts.append("\(list.label): Fehler")
             }
         }
-        if added > 0 {
-            library.updateMessage = added == 1 ? "1 Geschichte von FFN übernommen" : "\(added) Geschichten von FFN übernommen"
-        } else {
-            library.updateMessage = failed ? "FFN-Listen konnten nicht geladen werden" : "FFN-Bibliothek ist aktuell"
-        }
+        UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: Self.lastSyncKey)
+        let summary = counts.joined(separator: " · ")
+        library.updateMessage = added > 0 ? "FFN: \(added) neu übernommen (\(summary))" : "FFN abgeglichen (\(summary))"
     }
 
     func logout() async {

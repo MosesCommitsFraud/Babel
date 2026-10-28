@@ -14,6 +14,7 @@ struct RootView: View {
     @AppStorage("checkUpdatesOnLaunch") private var checkUpdatesOnLaunch = true
 
     @State private var tab: AppTab = .library
+    @State private var ao3Path = NavigationPath()
     @State private var importError: String?
 
     var body: some View {
@@ -24,7 +25,11 @@ struct RootView: View {
                 NavigationStack { LibraryView().babelDestinations() }
             }
             Tab("AO3", systemImage: "archivebox.fill", value: AppTab.ao3) {
-                NavigationStack { AO3FilterWallView().babelDestinations() }
+                // Eigener Pfad: Die Filterwand schiebt die Ergebnisse als Wert auf den Stapel.
+                // (Mit navigationDestination(item:) wurde die Liste beim Öffnen einer Story neu gebaut.)
+                NavigationStack(path: $ao3Path) {
+                    AO3FilterWallView(path: $ao3Path).babelDestinations()
+                }
             }
             Tab("FanFiction", systemImage: "text.book.closed.fill", value: AppTab.ffn) {
                 NavigationStack { FFNBrowseView().babelDestinations() }
@@ -69,6 +74,7 @@ struct RootView: View {
         } message: { Text($0) }
         .task {
             if checkUpdatesOnLaunch { await library.checkAllUpdates(context: context) }
+            await FFNAccount.shared.syncIfDue(library: library, context: context)
         }
     }
 }
@@ -83,7 +89,9 @@ struct ContinueReadingAccessory: View {
         if let story = recent.first {
             Button { reader.open(story) } label: {
                 HStack(spacing: 12) {
-                    CoverView(story: story.asRemote, localCover: ContentStore.coverFileURL(story), width: 28)
+                    // Klein und mit Abstand, damit das Cover nicht an die runde Kante der Leiste stößt.
+                    CoverView(story: story.asRemote, localCover: ContentStore.coverFileURL(story), width: 22)
+                        .padding(.vertical, 6)
                     VStack(alignment: .leading, spacing: 1) {
                         Text(story.title).font(.subheadline.weight(.semibold)).lineLimit(1)
                         Text("\(story.title(ofChapter: story.currentChapter)) · \(Int(story.overallProgress * 100)) %")
@@ -92,7 +100,8 @@ struct ContinueReadingAccessory: View {
                     Spacer(minLength: 8)
                     Image(systemName: "play.fill").font(.body)
                 }
-                .padding(.horizontal, 14)
+                .padding(.leading, 20)
+                .padding(.trailing, 16)
                 .contentShape(.rect)
             }
             .buttonStyle(.plain)

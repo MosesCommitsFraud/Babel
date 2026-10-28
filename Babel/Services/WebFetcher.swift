@@ -155,6 +155,11 @@ final class WebFetcher: NSObject, ObservableObject, WKNavigationDelegate {
         }
     }
 
+    /// HTML der gerade offenen Seite (z. B. wenn sie Inhalte per Skript nachlädt).
+    func currentHTML() async -> String? {
+        try? await webView.callAsyncJavaScript("return document.documentElement.outerHTML;", arguments: [:], in: nil, contentWorld: .page) as? String
+    }
+
     // MARK: - Dateien über die geladene Seite holen
 
     /// Lädt z. B. ein Cover mit `fetch()` innerhalb der gerade offenen FFN-Seite – mit deren Cookies.

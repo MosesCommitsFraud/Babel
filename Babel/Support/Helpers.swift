@@ -85,3 +85,29 @@ enum DateParsing {
         return f
     }()
 }
+
+/// Suchtreffer nach Titel sortieren: exakter Titel zuerst, dann Titel, die so anfangen,
+/// dann Titel mit allen Wörtern, danach der Rest in der Reihenfolge der Seite.
+/// (AO3 und FFN gewichten Titel kaum – exakte Titel landeten sonst weit hinten.)
+enum TitleRanking {
+    static func rank(_ stories: [RemoteStory], query: String) -> [RemoteStory] {
+        func norm(_ s: String) -> String {
+            s.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+                .components(separatedBy: CharacterSet.alphanumerics.inverted).filter { !$0.isEmpty }.joined(separator: " ")
+        }
+        let q = norm(query)
+        guard !q.isEmpty else { return stories }
+        let words = q.split(separator: " ")
+        func score(_ s: RemoteStory) -> Int {
+            let t = norm(s.title)
+            if t == q { return 0 }
+            if t.hasPrefix(q) { return 1 }
+            if words.allSatisfy({ t.contains($0) }) { return 2 }
+            return 3
+        }
+        return stories.enumerated().sorted { a, b in
+            let sa = score(a.element), sb = score(b.element)
+            return sa != sb ? sa < sb : a.offset < b.offset
+        }.map(\.element)
+    }
+}

@@ -51,8 +51,10 @@ struct BooksView: View {
                         .task { await load(page: page + 1) }
                 }
             }
-            .themedRows()
+            .themedRows(grouped: false)
         }
+        // Wie die FFN-Listen: schlicht, ohne Kartenhintergrund.
+        .listStyle(.plain)
         .themedBackground()
         .navigationTitle("Bücher")
         .searchable(text: $filters.query, placement: .navigationBarDrawer(displayMode: .always), prompt: searchPrompt)

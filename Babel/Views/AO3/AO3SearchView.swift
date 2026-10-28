@@ -24,7 +24,8 @@ final class AO3SearchModel {
         defer { isLoading = false; hasSearched = true }
         do {
             let result = try await AO3Service.search(filters, page: 1)
-            results = result.works
+            let text = filters.title.trimmed.isEmpty ? filters.query : filters.title
+            results = filters.sort == .bestMatch ? TitleRanking.rank(result.works, query: text) : result.works
             total = result.total
             hasNext = result.hasNext
         } catch {
@@ -63,7 +64,7 @@ struct AO3FilterWallView: View {
     @AppStorage("ao3.lastFilters") private var lastData: Data = Data()
     @State private var draft = AO3Filters()
     @State private var didLoad = false
-    @State private var route: AO3SearchRoute?
+    @Binding var path: NavigationPath
     @State private var showSave = false
     @State private var presetName = ""
     @State private var loadedPreset: String?
@@ -138,16 +139,13 @@ struct AO3FilterWallView: View {
                 Button {
                     search(draft, title: draft.summary == "Alle Werke" ? "AO3" : draft.summary)
                 } label: {
-                    Label(draft.activeCount > 0 ? "Suchen (\(draft.activeCount) Filter)" : "Suchen", systemImage: "magnifyingglass")
-                        .font(.headline)
+                    Label(draft.activeCount > 0 ? "Suchen · \(draft.activeCount)" : "Suchen", systemImage: "magnifyingglass")
+                        .font(.subheadline.weight(.semibold))
                         .foregroundStyle(theme.primaryForeground)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, 8)
                 }
                 .buttonStyle(.glassProminent)
-                .controlSize(.large)
-                .padding(.horizontal)
-                .padding(.bottom, 6)
+                .padding(.bottom, 8)
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in keyboardVisible = true }
@@ -174,9 +172,6 @@ struct AO3FilterWallView: View {
                 }
             }
         }
-        .navigationDestination(item: $route) { r in
-            AO3SearchView(initialFilters: r.filters, title: r.title)
-        }
         .alert("Filter speichern", isPresented: $showSave) {
             TextField("Name", text: $presetName)
             Button("Abbrechen", role: .cancel) {}
@@ -198,7 +193,7 @@ struct AO3FilterWallView: View {
     }
 
     private func search(_ filters: AO3Filters, title: String) {
-        route = AO3SearchRoute(filters: filters, title: title)
+        path.append(AO3SearchRoute(filters: filters, title: title))
     }
 
     private func delete(_ preset: SavedAO3Search) {
@@ -221,6 +216,17 @@ struct AO3FilterWallView: View {
 
 // MARK: - Ergebnisse
 
+/// Worin das Suchfeld auf der Ergebnisseite sucht.
+enum AO3SearchScope: String, CaseIterable {
+    case all, title, author
+    var label: String {
+        switch self { case .all: "Alles"; case .title: "Titel"; case .author: "Autor:in" }
+    }
+    var prompt: String {
+        switch self { case .all: "Werke, Tags, Autor:innen …"; case .title: "Titel"; case .author: "Autor:in" }
+    }
+}
+
 struct AO3SearchView: View {
     var initialFilters: AO3Filters
     var title: String = "AO3"
@@ -230,6 +236,8 @@ struct AO3SearchView: View {
     @State private var didStart = false
     @State private var showSave = false
     @State private var presetName = ""
+    @State private var searchText = ""
+    @AppStorage("ao3.searchScope") private var scope: AO3SearchScope = .all
     @AppStorage(AO3Presets.key) private var savedData: Data = Data()
 
     var body: some View {
@@ -258,8 +266,12 @@ struct AO3SearchView: View {
         .themedBackground()
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $model.filters.query, prompt: "Werke, Tags, Autor:innen …")
-        .onSubmit(of: .search) { Task { await model.search() } }
+        .searchable(text: $searchText, prompt: scope.prompt)
+        .searchScopes($scope, activation: .onSearchPresentation) {
+            ForEach(AO3SearchScope.allCases, id: \.self) { Text($0.label).tag($0) }
+        }
+        .onSubmit(of: .search) { applySearchText() }
+        .onChange(of: scope) { if !searchText.trimmed.isEmpty { applySearchText() } }
         .overlay {
             if model.isLoading && model.results.isEmpty {
                 SlowLoadingView(text: "Suche auf AO3 …", slowHint: "AO3 ist gerade langsam. Das kann bis zu einer Minute dauern.")
@@ -313,7 +325,19 @@ struct AO3SearchView: View {
             guard !didStart else { return }
             didStart = true
             model.filters = initialFilters
+            searchText = initialFilters.query
             await model.search()
         }
+    }
+
+    /// Text aus dem Suchfeld in das passende Filterfeld schreiben und neu suchen.
+    private func applySearchText() {
+        let text = searchText.trimmed
+        switch scope {
+        case .all: model.filters.query = text
+        case .title: model.filters.title = text; model.filters.query = ""
+        case .author: model.filters.author = text; model.filters.query = ""
+        }
+        Task { await model.search() }
     }
 }

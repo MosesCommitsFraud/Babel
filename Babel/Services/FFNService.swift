@@ -147,29 +147,8 @@ enum FFNService {
         ]
         if page > 1 { comps.queryItems?.append(URLQueryItem(name: "ppage", value: String(page))) }
         var result = try await list(url: comps.url!)
-        if page == 1 { result.stories = rankByTitle(result.stories, query: keywords) }
+        if page == 1 { result.stories = TitleRanking.rank(result.stories, query: keywords) }
         return result
-    }
-
-    /// Exakter Titel zuerst, dann Titel mit allen Wörtern, dann der Rest in FFNs Reihenfolge.
-    static func rankByTitle(_ stories: [RemoteStory], query: String) -> [RemoteStory] {
-        func norm(_ s: String) -> String {
-            s.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
-                .components(separatedBy: CharacterSet.alphanumerics.inverted).filter { !$0.isEmpty }.joined(separator: " ")
-        }
-        let q = norm(query)
-        let words = q.split(separator: " ")
-        func score(_ s: RemoteStory) -> Int {
-            let t = norm(s.title)
-            if t == q { return 0 }
-            if t.hasPrefix(q) { return 1 }
-            if words.allSatisfy({ t.contains($0) }) { return 2 }
-            return 3
-        }
-        return stories.enumerated().sorted { a, b in
-            let sa = score(a.element), sb = score(b.element)
-            return sa != sb ? sa < sb : a.offset < b.offset
-        }.map(\.element)
     }
 
     /// Filter anwenden: Werte in die Dropdowns der echten Seite setzen und "Apply" drücken.
@@ -400,10 +379,16 @@ enum FFNService {
         var pages = 0
         while let current = url, pages < 30 {
             pages += 1
-            let (html, finalURL) = try await load(current)
+            var (html, finalURL) = try await load(current)
             if finalURL.path.contains("login") { throw BabelError.ffnLoginRequired }
+            // Konto-Seiten bauen ihre Listen teils erst per Skript auf – dann kurz warten und neu lesen.
+            if !html.contains("/s/") {
+                try? await Task.sleep(for: .seconds(2))
+                html = await WebFetcher.shared.currentHTML() ?? html
+            }
+            let pageHTML = html
             let parsed = try await Task.detached(priority: .userInitiated) { () -> ([RemoteStory], URL?) in
-                let doc = try SwiftSoup.parse(html, base.absoluteString)
+                let doc = try SwiftSoup.parse(pageHTML, base.absoluteString)
                 var stories = try parseStories(doc)
                 if stories.isEmpty { stories = try parseStoryLinks(doc) }
                 let next = try doc.select("a").array().first { (try? $0.text().trimmed.hasPrefix("Next")) ?? false }
