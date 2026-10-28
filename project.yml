@@ -21,6 +21,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: de.babelreader.app
+        DEVELOPMENT_TEAM: 6Y9DZT5MQZ
+        CODE_SIGN_STYLE: Automatic
         PRODUCT_NAME: Babel
         SWIFT_VERSION: "5.0"
         TARGETED_DEVICE_FAMILY: "1,2"
