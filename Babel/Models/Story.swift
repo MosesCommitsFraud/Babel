@@ -44,6 +44,8 @@ final class Story {
     var inLibrary: Bool = false
     var addedAt: Date? = nil
     var lastOpenedAt: Date? = nil
+    /// Wann die Storyseite zuletzt angesehen wurde (für den Verlauf in der Bibliothek).
+    var viewedAt: Date? = nil
     var statusRaw: String = ReadingStatus.none.rawValue
     var isFavorite: Bool = false
     var currentChapter: Int = 0

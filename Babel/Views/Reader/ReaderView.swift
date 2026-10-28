@@ -202,6 +202,7 @@ struct ReaderView: View {
     @ObservedObject private var fetcher = WebFetcher.shared
     @State private var showSettings = false
     @State private var showChapters = false
+    @State private var showDetail = false
 
     init(story: Story) {
         _model = State(initialValue: ReaderModel(story: story))
@@ -273,6 +274,24 @@ struct ReaderView: View {
             ChapterListSheet(model: model)
                 .presentationDetents([.medium, .large])
         }
+        .sheet(isPresented: $showDetail) {
+            NavigationStack {
+                StoryDetailView(story: model.story)
+                    .babelDestinations()
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button("Zurück zum Text", systemImage: "book") { showDetail = false }
+                        }
+                    }
+            }
+            // „Lesen“ oder ein Kapitel auf der Storyseite springt im offenen Reader dorthin.
+            .environment(\.readerJump, ReaderJump { chapter in
+                showDetail = false
+                if let chapter, chapter != model.chapterIndex {
+                    Task { await model.load(chapter) }
+                }
+            })
+        }
         .onChange(of: style.css) { _, css in model.applyCSS(css) }
         .onChange(of: scenePhase) { _, phase in if phase != .active { model.save() } }
         .task {
@@ -297,14 +316,22 @@ struct ReaderView: View {
                 .buttonBorderShape(.circle)
                 .accessibilityLabel("Schließen")
 
-                VStack(spacing: 1) {
-                    Text(model.story.title).font(.subheadline.weight(.semibold)).lineLimit(1)
-                    Text(model.chapterTitle).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                Button {
+                    model.save()
+                    showDetail = true
+                } label: {
+                    VStack(spacing: 1) {
+                        Text(model.story.title).font(.subheadline.weight(.semibold)).lineLimit(1)
+                        Text(model.chapterTitle).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 14)
+                    .contentShape(.capsule)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 8)
-                .padding(.horizontal, 14)
-                .glassEffect(.regular, in: .capsule)
+                .buttonStyle(.plain)
+                .glassEffect(.regular.interactive(), in: .capsule)
+                .accessibilityLabel("Zur Storyseite")
 
                 Button {
                     showSettings = true
@@ -332,12 +359,8 @@ struct ReaderView: View {
 
                 Button { showChapters = true } label: {
                     VStack(spacing: 5) {
-                        HStack {
-                            Text("Kapitel \(model.chapterIndex + 1) von \(model.chapterCount)")
-                            Spacer()
-                            Text("\(Int(model.overall * 100)) %").monospacedDigit()
-                        }
-                        .font(.caption.weight(.medium))
+                        Text("Kapitel \(model.chapterIndex + 1) von \(model.chapterCount)")
+                            .font(.caption.weight(.medium))
                         ProgressView(value: model.progress).tint(model.story.source.tint)
                     }
                     .padding(.horizontal, 16)
@@ -415,6 +438,13 @@ struct ReaderWebView: UIViewRepresentable {
         view.scrollView.contentInsetAdjustmentBehavior = .never
         view.scrollView.showsHorizontalScrollIndicator = false
         view.allowsLinkPreview = false
+        // Wischen nach links/rechts wechselt das Kapitel.
+        for direction in [UISwipeGestureRecognizer.Direction.left, .right] {
+            let swipe = UISwipeGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.swiped(_:)))
+            swipe.direction = direction
+            swipe.delegate = context.coordinator
+            view.addGestureRecognizer(swipe)
+        }
         model.webView = view
         return view
     }
@@ -429,9 +459,23 @@ struct ReaderWebView: UIViewRepresentable {
     }
 
     @MainActor
-    final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate {
         let model: ReaderModel
         init(model: ReaderModel) { self.model = model }
+
+        @objc func swiped(_ gesture: UISwipeGestureRecognizer) {
+            guard !model.isLoading else { return }
+            if gesture.direction == .left, model.hasNext {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                model.next()
+            } else if gesture.direction == .right, model.hasPrevious {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                model.previous()
+            }
+        }
+
+        /// Neben dem Scrollen des Textes erkennen.
+        nonisolated func gestureRecognizer(_ g: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith other: UIGestureRecognizer) -> Bool { true }
 
         func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
             if let body = message.body as? [String: Any] { model.handle(message: body) }
@@ -461,5 +505,22 @@ final class WeakScriptHandler: NSObject, WKScriptMessageHandler {
     init(_ target: WKScriptMessageHandler) { self.target = target }
     func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
         target?.userContentController(controller, didReceive: message)
+    }
+}
+
+/// Aus dem Reader geöffnete Storyseite: „Lesen“/Kapitel springt im offenen Reader, statt ihn neu zu öffnen.
+struct ReaderJump {
+    let jump: (Int?) -> Void
+    init(_ jump: @escaping (Int?) -> Void) { self.jump = jump }
+}
+
+private struct ReaderJumpKey: EnvironmentKey {
+    static let defaultValue: ReaderJump? = nil
+}
+
+extension EnvironmentValues {
+    var readerJump: ReaderJump? {
+        get { self[ReaderJumpKey.self] }
+        set { self[ReaderJumpKey.self] = newValue }
     }
 }

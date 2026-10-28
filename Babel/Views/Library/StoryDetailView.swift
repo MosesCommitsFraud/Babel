@@ -9,6 +9,7 @@ struct StoryDetailView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.dismiss) private var dismiss
     @Environment(\.theme) private var theme
+    @Environment(\.readerJump) private var readerJump
     @Query(sort: \Shelf.createdAt) private var shelves: [Shelf]
 
     @State private var errorMessage: String?
@@ -36,7 +37,11 @@ struct StoryDetailView: View {
         .navigationTitle(story.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbarContent }
-        .task { await library.enrichGutenberg(story) }
+        .task {
+            story.viewedAt = .now
+            try? context.save()
+            await library.enrichGutenberg(story)
+        }
         .sheet(item: $exportedFile) { file in
             ShareSheet(items: [file]).ignoresSafeArea()
         }
@@ -338,6 +343,10 @@ struct StoryDetailView: View {
     // MARK: - Aktionen
 
     private func open(at chapter: Int?) {
+        if let readerJump {
+            readerJump.jump(chapter)
+            return
+        }
         if let chapter {
             if chapter != story.currentChapter { story.chapterProgress = 0 }
             story.currentChapter = chapter

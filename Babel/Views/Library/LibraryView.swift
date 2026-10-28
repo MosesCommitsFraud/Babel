@@ -3,7 +3,7 @@ import SwiftData
 import UniformTypeIdentifiers
 
 enum LibraryFilter: Hashable {
-    case all, updates, favorites, offline
+    case all, updates, favorites, offline, history
     case status(ReadingStatus)
     case source(StorySource)
     case shelf(String)
@@ -31,6 +31,7 @@ struct LibraryView: View {
     @Environment(\.theme) private var theme
 
     @Query(filter: #Predicate<Story> { $0.inLibrary }) private var stories: [Story]
+    @Query(filter: #Predicate<Story> { $0.viewedAt != nil || $0.lastOpenedAt != nil }) private var history: [Story]
     @Query(sort: \Shelf.createdAt) private var shelves: [Shelf]
 
     @State private var filter: LibraryFilter = .all
@@ -61,8 +62,22 @@ struct LibraryView: View {
                             .tint(theme.primary)
                     }
                     .swipeActions(edge: .trailing) {
-                        Button(role: .destructive) { library.removeFromLibrary(story, context: context) } label: {
-                            Label("Entfernen", systemImage: "trash")
+                        if story.inLibrary {
+                            Button(role: .destructive) { library.removeFromLibrary(story, context: context) } label: {
+                                Label("Entfernen", systemImage: "trash")
+                            }
+                        } else {
+                            Button { library.addToLibrary(story, context: context) } label: {
+                                Label("Merken", systemImage: "bookmark")
+                            }
+                            .tint(.indigo)
+                            Button(role: .destructive) {
+                                story.viewedAt = nil
+                                story.lastOpenedAt = nil
+                                try? context.save()
+                            } label: {
+                                Label("Aus Verlauf", systemImage: "clock.badge.xmark")
+                            }
                         }
                         Button { story.isFavorite.toggle() } label: {
                             Label("Favorit", systemImage: story.isFavorite ? "heart.slash" : "heart")
@@ -83,7 +98,7 @@ struct LibraryView: View {
         .navigationTitle("Bibliothek")
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Titel, Autor:in, Fandom, Tag")
         .overlay {
-            if stories.isEmpty {
+            if stories.isEmpty && history.isEmpty {
                 emptyState
             } else if filtered.isEmpty {
                 ContentUnavailableView.search(text: searchText)
@@ -112,31 +127,46 @@ struct LibraryView: View {
 
     // MARK: - Filter
 
+    private struct ChipItem: Identifiable {
+        let title: String
+        let symbol: String?
+        let value: LibraryFilter
+        let count: Int
+        var id: String { title }
+    }
+
+    /// Alle Filter-Chips mit Anzahl – „Alle“ vorn, der Rest nach Anzahl sortiert.
+    private var chipItems: [ChipItem] {
+        func count(_ f: LibraryFilter) -> Int { stories.filter { matches($0, f) }.count }
+        var items: [ChipItem] = []
+        func add(_ title: String, _ symbol: String?, _ value: LibraryFilter, hideEmpty: Bool = false) {
+            let n = value == .history ? history.count : count(value)
+            if hideEmpty && n == 0 { return }
+            items.append(ChipItem(title: title, symbol: symbol, value: value, count: n))
+        }
+        add("Neue Kapitel", "sparkles", .updates, hideEmpty: true)
+        for status in [ReadingStatus.reading, .planned, .finished, .paused, .dropped] {
+            add(status.label, status.symbol, .status(status))
+        }
+        add("Favoriten", "heart.fill", .favorites)
+        add("Offline", "arrow.down.circle.fill", .offline, hideEmpty: true)
+        for shelf in shelves { add(shelf.name, shelf.symbol, .shelf(shelf.name)) }
+        for source in StorySource.allCases { add(source.shortLabel, source.symbol, .source(source), hideEmpty: true) }
+        add("Verlauf", "clock.arrow.circlepath", .history, hideEmpty: true)
+        // Stabil sortieren: bei gleicher Anzahl bleibt die Reihenfolge von oben.
+        let sorted = items.enumerated().sorted { a, b in
+            a.element.count != b.element.count ? a.element.count > b.element.count : a.offset < b.offset
+        }.map(\.element)
+        return [ChipItem(title: "Alle", symbol: nil, value: .all, count: stories.count)] + sorted
+    }
+
     private var filterBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             GlassEffectContainer(spacing: 8) {
                 HStack(spacing: 8) {
-                    chip("Alle", nil, .all)
-                    if stories.contains(where: { $0.newChapters > 0 }) {
-                        chip("Neue Kapitel", "sparkles", .updates)
+                    ForEach(chipItems) { item in
+                        chip(item.count > 0 && item.value != .all ? "\(item.title) \(item.count)" : item.title, item.symbol, item.value)
                     }
-                    chip(ReadingStatus.reading.label, ReadingStatus.reading.symbol, .status(.reading))
-                    chip(ReadingStatus.planned.label, ReadingStatus.planned.symbol, .status(.planned))
-                    chip(ReadingStatus.finished.label, ReadingStatus.finished.symbol, .status(.finished))
-                    chip("Favoriten", "heart.fill", .favorites)
-                    if stories.contains(where: { $0.source.isWebFiction && $0.downloadedCount > 0 }) {
-                        chip("Offline", "arrow.down.circle.fill", .offline)
-                    }
-                    ForEach(shelves) { shelf in
-                        chip(shelf.name, shelf.symbol, .shelf(shelf.name))
-                    }
-                    ForEach(StorySource.allCases, id: \.self) { source in
-                        if stories.contains(where: { $0.source == source }) {
-                            chip(source.shortLabel, source.symbol, .source(source))
-                        }
-                    }
-                    chip(ReadingStatus.paused.label, ReadingStatus.paused.symbol, .status(.paused))
-                    chip(ReadingStatus.dropped.label, ReadingStatus.dropped.symbol, .status(.dropped))
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 6)
@@ -150,24 +180,30 @@ struct LibraryView: View {
         }
     }
 
-    private var filtered: [Story] {
-        var list = stories.filter { story in
-            switch filter {
-            case .all: true
-            case .updates: story.newChapters > 0
-            case .favorites: story.isFavorite
-            case .offline: story.source.isWebFiction ? story.downloadedCount >= story.knownChapterCount : !story.spinePaths.isEmpty
-            case .status(let s): story.status == s
-            case .source(let s): story.source == s
-            case .shelf(let name): story.shelves.contains { $0.name == name }
-            }
+    private func matches(_ story: Story, _ filter: LibraryFilter) -> Bool {
+        switch filter {
+        case .all, .history: true
+        case .updates: story.newChapters > 0
+        case .favorites: story.isFavorite
+        case .offline: story.source.isWebFiction ? story.downloadedCount >= story.knownChapterCount : !story.spinePaths.isEmpty
+        case .status(let s): story.status == s
+        case .source(let s): story.source == s
+        case .shelf(let name): story.shelves.contains { $0.name == name }
         }
+    }
+
+    private var filtered: [Story] {
+        // Verlauf: alles, was angesehen oder gelesen wurde – auch ohne „in die Bibliothek“.
+        var list = filter == .history ? history : stories.filter { matches($0, filter) }
         let q = searchText.trimmed.lowercased()
         if !q.isEmpty {
             list = list.filter { s in
                 [[s.title, s.author], s.fandoms, s.relationships, s.characters, s.tags].joined()
                     .contains { $0.lowercased().contains(q) }
             }
+        }
+        if filter == .history {
+            return list.sorted { Self.lastSeen($0) > Self.lastSeen($1) }
         }
         switch sort {
         case .recent: list.sort { Self.recency($0) > Self.recency($1) }
@@ -178,6 +214,10 @@ struct LibraryView: View {
         case .progress: list.sort { $0.overallProgress > $1.overallProgress }
         }
         return list
+    }
+
+    private static func lastSeen(_ s: Story) -> Date {
+        max(s.viewedAt ?? .distantPast, s.lastOpenedAt ?? .distantPast)
     }
 
     private static func recency(_ s: Story) -> Date {
