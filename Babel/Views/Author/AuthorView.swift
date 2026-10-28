@@ -77,7 +77,7 @@ struct AuthorView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(profile?.name ?? name).font(.title3.weight(.bold))
                     HStack(spacing: 6) {
-                        TagChip(text: source.shortLabel, tint: source.tint, symbol: source.symbol)
+                        TagChip(text: source.shortLabel, symbol: source.symbol)
                         if let joined = profile?.joined {
                             TagChip(text: "seit \(joined.formatted(.dateTime.month(.abbreviated).year()))", symbol: "calendar")
                         }
@@ -85,10 +85,20 @@ struct AuthorView: View {
                 }
             }
             if let bio = profile?.bio, !bio.isEmpty {
-                Text(bio)
-                    .font(.subheadline).foregroundStyle(.secondary)
-                    .lineLimit(showFullBio ? nil : 4)
-                    .onTapGesture { withAnimation(.snappy) { showFullBio.toggle() } }
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(bio)
+                        .font(.subheadline).foregroundStyle(.secondary)
+                        .lineLimit(showFullBio ? nil : 4)
+                        .textSelection(.enabled)
+                    if bio.count > 180 {
+                        Button(showFullBio ? "Weniger anzeigen" : "Ganze Bio anzeigen",
+                               systemImage: showFullBio ? "chevron.up" : "chevron.down") {
+                            withAnimation(.snappy) { showFullBio.toggle() }
+                        }
+                        .font(.subheadline.weight(.semibold))
+                        .buttonStyle(.borderless)
+                    }
+                }
             }
             if profile != nil {
                 GlassSegmented(options: [

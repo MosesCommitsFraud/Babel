@@ -75,7 +75,7 @@ struct StoryDetailView: View {
                         Text(story.author).font(.headline).foregroundStyle(.secondary)
                     }
                 }
-                TagChip(text: story.source.label, tint: story.source.tint, symbol: story.source.symbol)
+                TagChip(text: story.source.label, symbol: story.source.symbol)
                 if story.newChapters > 0 {
                     Label(story.newChapters == 1 ? "1 neues Kapitel" : "\(story.newChapters) neue Kapitel", systemImage: "sparkles")
                         .font(.footnote.weight(.semibold))
@@ -251,11 +251,11 @@ struct StoryDetailView: View {
     @ViewBuilder
     private var tagSections: some View {
         tagSection("Fandoms", story.fandoms)
-        tagSection("Warnungen", story.warnings, tint: .orange)
+        tagSection("Warnungen", story.warnings)
         tagSection("Kategorien", story.categories)
         tagSection("Genres", story.genres)
-        tagSection("Beziehungen", story.relationships, tint: .pink)
-        tagSection("Charaktere", story.characters, tint: .blue)
+        tagSection("Beziehungen", story.relationships)
+        tagSection("Charaktere", story.characters)
         tagSection(story.source == .gutenberg ? "Themen" : "Tags", story.tags)
     }
 

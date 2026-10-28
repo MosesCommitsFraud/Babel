@@ -172,10 +172,9 @@ struct StoryRow: View {
                 // Zwei feste Zeilen mit den wichtigsten Angaben – was nicht passt, wird gekürzt statt umgebrochen.
                 VStack(alignment: .leading, spacing: 5) {
                     HStack(spacing: 5) {
-                        TagChip(text: story.source.shortLabel, tint: story.source.tint, symbol: story.source.symbol)
-                        if !story.rating.isEmpty { TagChip(text: shortRating, tint: ratingTint) }
-                        TagChip(text: statusText, tint: story.isComplete ? theme.include : nil,
-                                symbol: story.isComplete ? "checkmark" : nil)
+                        TagChip(text: story.source.shortLabel, symbol: story.source.symbol)
+                        if !story.rating.isEmpty { TagChip(text: shortRating) }
+                        TagChip(text: statusText, symbol: story.isComplete ? "checkmark" : nil)
                         if let w = story.words { TagChip(text: Self.wordsShort(w)).layoutPriority(-1) }
                     }
                     HStack(spacing: 5) {
@@ -184,13 +183,29 @@ struct StoryRow: View {
                         }
                         if !story.language.isEmpty { TagChip(text: languageShort, symbol: "globe") }
                         if let pairing = story.relationships.first {
-                            TagChip(text: pairing, tint: .pink).layoutPriority(-1)
+                            TagChip(text: pairing).layoutPriority(-1)
                         } else if !story.genres.isEmpty {
                             TagChip(text: story.genres.joined(separator: "/")).layoutPriority(-1)
                         }
                     }
                 }
                 .lineLimit(1)
+
+                if !stats.isEmpty {
+                    HStack(spacing: 12) {
+                        ForEach(stats, id: \.symbol) { stat in
+                            HStack(spacing: 3) {
+                                Image(systemName: stat.symbol).imageScale(.small)
+                                Text(stat.value)
+                            }
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel("\(stat.value) \(stat.name)")
+                        }
+                    }
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                }
 
                 if showSummary, !story.summary.isEmpty {
                     Text(story.summary).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
@@ -214,13 +229,28 @@ struct StoryRow: View {
         return parts.filter { !$0.isEmpty }.joined(separator: " · ")
     }
 
-    private var ratingTint: Color? {
-        switch shortRating {
-        case "E", "M": theme.exclude
-        case "T", "K+": .orange
-        case "G", "K": theme.include
-        default: nil
+    /// Wie die Geschichte ankommt: FFN Favs/Follows/Reviews, AO3 Kudos/Aufrufe/Lesezeichen, Gutenberg Downloads.
+    private var stats: [(symbol: String, value: String, name: String)] {
+        var list: [(String, String, String)] = []
+        func add(_ symbol: String, _ value: Int?, _ name: String) {
+            if let value, value > 0 { list.append((symbol, value.formatted(.number.notation(.compactName)), name)) }
         }
+        switch story.source {
+        case .ffn:
+            add("heart", story.favs, String(localized: "Favoriten"))
+            add("bell", story.follows, String(localized: "Follows"))
+            add("text.bubble", story.reviews, String(localized: "Reviews"))
+        case .ao3:
+            add("heart", story.kudos, String(localized: "Kudos"))
+            add("eye", story.hits, String(localized: "Aufrufe"))
+            add("bookmark", story.bookmarks, String(localized: "Lesezeichen"))
+            add("text.bubble", story.comments, String(localized: "Kommentare"))
+        case .gutenberg:
+            add("arrow.down.circle", story.hits, String(localized: "Downloads"))
+        case .epub:
+            break
+        }
+        return list.map { (symbol: $0.0, value: $0.1, name: $0.2) }
     }
 
     static func wordsShort(_ w: Int) -> String {
