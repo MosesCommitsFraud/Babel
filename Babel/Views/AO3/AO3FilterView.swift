@@ -74,14 +74,16 @@ struct AO3FilterSections: View {
 
             Section("Weitere Filter") {
                 // Auswahl als eigene Seite statt Menü: Menüs in langen Formularen springen beim Öffnen weg.
-                Picker("Status", selection: $draft.completion) {
-                    ForEach(AO3Completion.allCases, id: \.self) { Text($0.label).tag($0) }
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Status")
+                    GlassSegmented(options: AO3Completion.allCases.map { ($0, $0.label) }, selection: $draft.completion)
                 }
-                .pickerStyle(.navigationLink)
-                Picker("Crossover", selection: $draft.crossover) {
-                    ForEach(AO3Crossover.allCases, id: \.self) { Text($0.label).tag($0) }
+                .padding(.vertical, 4)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Crossover")
+                    GlassSegmented(options: AO3Crossover.allCases.map { ($0, $0.label) }, selection: $draft.crossover)
                 }
-                .pickerStyle(.navigationLink)
+                .padding(.vertical, 4)
                 Toggle("Nur Oneshots (ein Kapitel)", isOn: $draft.singleChapter)
                 Picker("Sprache", selection: $draft.language) {
                     ForEach(AO3Service.languages) { Text($0.name).tag($0.code) }
@@ -240,10 +242,10 @@ struct TagTokenField: View {
                                 Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
                             }
                             .font(.caption)
-                            .padding(.horizontal, 9).padding(.vertical, 5)
-                            .background(theme.primary.opacity(0.16), in: .capsule)
+                            .padding(.horizontal, 10).padding(.vertical, 6)
                         }
                         .buttonStyle(.borderless)
+                        .glassEffect(.regular.tint(theme.primary.opacity(0.25)).interactive(), in: .capsule)
                     }
                 }
             }
@@ -262,11 +264,19 @@ struct TagTokenField: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
 
-            ForEach(suggestions.prefix(6), id: \.self) { s in
-                Button { add(s) } label: {
-                    Label(s, systemImage: "plus.circle").font(.subheadline).lineLimit(1)
+            if !suggestions.isEmpty {
+                GlassEffectContainer(spacing: 6) {
+                    FlowLayout(spacing: 6) {
+                        ForEach(suggestions.prefix(8), id: \.self) { s in
+                            Button { add(s) } label: {
+                                Label(s, systemImage: "plus").font(.subheadline).lineLimit(1)
+                                    .padding(.horizontal, 10).padding(.vertical, 6)
+                            }
+                            .buttonStyle(.borderless)
+                            .glassEffect(.regular.interactive(), in: .capsule)
+                        }
+                    }
                 }
-                .buttonStyle(.borderless)
             }
         }
         .padding(.vertical, 2)

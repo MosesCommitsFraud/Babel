@@ -233,40 +233,73 @@ struct ErrorBanner: View {
     }
 }
 
-/// Dreifach-Schalter für Filter: egal / muss (grün) / ausschließen (rot).
+/// Dreifach-Schalter für Filter: egal / muss (grün) / ausschließen (rot) – als Liquid Glass.
+/// Die Auswahl ist eine eingefärbte Glaskapsel, die beim Wechsel zwischen den Feldern fließt.
 struct TriStateControl: View {
     @Environment(\.theme) private var theme
     @Binding var state: TriState
+    @Namespace private var glass
 
     var body: some View {
-        HStack(spacing: 4) {
-            segment(.any, "circle.dashed", .secondary)
-            segment(.include, "checkmark", theme.include)
-            segment(.exclude, "xmark", theme.exclude)
+        GlassEffectContainer(spacing: 6) {
+            HStack(spacing: 6) {
+                segment(.any, "circle.dashed", .secondary)
+                segment(.include, "checkmark", theme.include)
+                segment(.exclude, "xmark", theme.exclude)
+            }
         }
-        .padding(3)
-        .background(.fill.tertiary, in: .capsule)
     }
 
     private func segment(_ value: TriState, _ symbol: String, _ color: Color) -> some View {
         let selected = state == value
         return Button {
-            withAnimation(.snappy(duration: 0.2)) { state = value }
+            withAnimation(.bouncy(duration: 0.3)) { state = value }
         } label: {
             Image(systemName: symbol)
                 .font(.subheadline.weight(.bold))
-                .foregroundStyle(selected ? (value == .any ? theme.foreground : .white) : color.opacity(0.85))
-                .frame(width: 40, height: 28)
-                .background {
-                    if selected {
-                        Capsule().fill(value == .any ? AnyShapeStyle(.background) : AnyShapeStyle(color))
-                    }
-                }
+                .foregroundStyle(selected ? (value == .any ? theme.foreground : .white) : color)
+                .frame(width: 38, height: 30)
                 .contentShape(.capsule)
         }
         .buttonStyle(.plain)
+        .glassEffect(selected ? .regular.tint(value == .any ? Color.gray.opacity(0.45) : color).interactive() : .regular.interactive(),
+                     in: .capsule)
+        .glassEffectID(value, in: glass)
         .accessibilityLabel(value == .any ? "egal" : value == .include ? "muss" : "ausschließen")
         .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+}
+
+/// Wenige Auswahlmöglichkeiten als Glaskapseln nebeneinander (fließende Auswahl).
+struct GlassSegmented<Value: Hashable>: View {
+    let options: [(value: Value, label: String)]
+    @Binding var selection: Value
+    @Environment(\.theme) private var theme
+    @Namespace private var glass
+
+    var body: some View {
+        GlassEffectContainer(spacing: 6) {
+            HStack(spacing: 6) {
+                ForEach(options, id: \.value) { option in
+                    let selected = option.value == selection
+                    Button {
+                        withAnimation(.bouncy(duration: 0.3)) { selection = option.value }
+                    } label: {
+                        Text(option.label)
+                            .font(.subheadline.weight(selected ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                            .foregroundStyle(selected ? theme.primaryForeground : .primary)
+                            .padding(.horizontal, 12).padding(.vertical, 7)
+                            .frame(maxWidth: .infinity)
+                            .contentShape(.capsule)
+                    }
+                    .buttonStyle(.plain)
+                    .glassEffect(selected ? .regular.tint(theme.primary).interactive() : .regular.interactive(), in: .capsule)
+                    .glassEffectID(option.value, in: glass)
+                }
+            }
+        }
     }
 }
 
