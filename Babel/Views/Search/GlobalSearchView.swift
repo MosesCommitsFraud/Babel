@@ -39,7 +39,7 @@ struct GlobalSearchView: View {
                             ForEach(recent) { s in
                                 NavigationLink(value: s) {
                                     StoryRow(story: s.asRemote, localCover: ContentStore.coverFileURL(s),
-                                             progress: s.overallProgress, showSummary: false)
+                                             progress: s.overallProgress, showSummary: false, showSource: true)
                                 }
                             }
                         }
@@ -62,7 +62,7 @@ struct GlobalSearchView: View {
                             ForEach(matches) { s in
                                 NavigationLink(value: s) {
                                     StoryRow(story: s.asRemote, localCover: ContentStore.coverFileURL(s),
-                                             progress: s.hasStarted ? s.overallProgress : nil, showSummary: false)
+                                             progress: s.hasStarted ? s.overallProgress : nil, showSummary: false, showSource: true)
                                 }
                             }
                         }
@@ -111,7 +111,7 @@ struct LinkImportSheet: View {
 
                 if let imported {
                     Section("Hinzugefügt") {
-                        StoryRow(story: imported.asRemote, localCover: ContentStore.coverFileURL(imported), showSummary: false)
+                        StoryRow(story: imported.asRemote, localCover: ContentStore.coverFileURL(imported), showSummary: false, showSource: true)
                         Button("Jetzt lesen", systemImage: "book.fill") {
                             dismiss()
                             reader.open(imported)

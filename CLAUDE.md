@@ -16,7 +16,7 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 - Liquid Glass so konsequent wie sinnvoll (`.glassEffect`, `GlassEffectContainer`, `.buttonStyle(.glass)`, Tab-Bar-Accessory). Glas nur für Bedienelemente, nicht für Inhalt.
 - Hauptlesestoff: AO3 + FFN. Filter wie auf den Websites, Library zum Wiederfinden.
 - Kommunikation auf Deutsch.
-- Farben aus t3code (`~/DEV/t3code/apps/mobile/generated-uniwind-themes.css`): Standard hell **Iris**, dunkel **Grove** (wie in t3code eingestellt). Einstellungsseite nach dem Vorbild von t3code (`apps/web/src/components/settings/ThemeSettings.tsx`): Modus-Kacheln System/Hell/Dunkel und Palettenkarten mit App-Wireframe (`Views/Settings/ThemeSettingsView.swift`, Paletten in `Support/Theme.swift`).
+- Eigene Themes (`Support/Theme.swift`, `PaletteID`): Hexagon (Standard, Salbeigrün passend zum Icon), Pergament, Nebel, Lavendel, Rosé, Tinte – ruhige, entsättigte Töne, je hell + dunkel. Auswahl: `Views/Settings/ThemeSettingsView.swift` (ein Tipp = beide Modi, Mischen optional). Früher t3code-Paletten, auf Wunsch des Nutzers ersetzt.
 - FFN: Fandom-Suche über alle Kategorien (`FFNFandomStore`, Cache 7 Tage in Caches/ffn-fandoms.json).
 - Bücher = Project Gutenberg; Suche mit Bereichen (Alles/Titel/Autor:in/Thema), EPUB-Import oben rechts.
 - Git: `main`, Remote `origin` = https://github.com/MosesCommitsFraud/Babel.git. Regelmäßig committen und pushen, **ohne** Claude als Co-Autor, Commit-Nachrichten **auf Englisch**.
@@ -28,7 +28,7 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 
 - App-Icon: Icon-Composer-Datei `Babel/AppIcon.icon` (stilisiertes Buch, hellgrüner Hintergrund, SVG-Ebenen in `Assets/`). Vorschau: `ictool Babel/AppIcon.icon --export-image --output-file x.png --platform iOS --rendition Default --width 1024 --height 1024 --scale 1` (ictool liegt in `Icon Composer.app/Contents/Executables`). Altes Logo-Entwurf in `Design/Icon/`.
 - Autorenseiten (`Views/Author/AuthorView.swift`): FFN `/u/<id>/` (eigene Geschichten + Favoriten), AO3 `/users/<name>/profile`, `/works`, `/bookmarks` (seitenweise).
-- Listenzeilen: zwei Chip-Zeilen (Quelle, Rating farbig, Status/Kapitel, Wörter | Datum, Sprache, Pairing oder Genre).
+- Listenzeilen kompakt: eine Chip-Zeile (Quelle nur mit `showSource` – Bibliothek/Suche –, Rating, Status, Wörter, Sprache) und eine graue Textzeile (Datum, Bewertungen, Pairing/Genre), Zusammenfassung 2 Zeilen. Tags neutral, nicht farbig.
 - FFN-„Verlauf“ der offiziellen FFN-App (bei Nutzer ~2500) liegt nur lokal in der App – auf der Website gibt es nur Favoriten (80) und Follows (70).
 - Innerhalb von Seiten, die per Closure-`NavigationLink` geöffnet werden (Konto, Autor:in, Tags), ebenfalls Closure-Links verwenden – wertbasierte Links griffen dort nicht.
 

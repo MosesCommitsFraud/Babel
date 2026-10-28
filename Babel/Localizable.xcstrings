@@ -3245,6 +3245,156 @@
           }
         }
       }
+    },
+    "Hexagon": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hexagon"
+          }
+        }
+      }
+    },
+    "Pergament": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parchment"
+          }
+        }
+      }
+    },
+    "Nebel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mist"
+          }
+        }
+      }
+    },
+    "Lavendel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lavender"
+          }
+        }
+      }
+    },
+    "Rosé": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rosé"
+          }
+        }
+      }
+    },
+    "Tinte": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ink"
+          }
+        }
+      }
+    },
+    "Salbeigrün wie die Galerien der Bibliothek von Babel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sage green like the galleries of the Library of Babel"
+          }
+        }
+      }
+    },
+    "Warmes Papier und Sepia, wie alte Bücher": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warm paper and sepia, like old books"
+          }
+        }
+      }
+    },
+    "Kühles Graublau für lange Nächte": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cool blue-grey for long nights"
+          }
+        }
+      }
+    },
+    "Sanftes Violett, leicht verträumt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soft violet, a little dreamy"
+          }
+        }
+      }
+    },
+    "Gedecktes Altrosa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muted dusty rose"
+          }
+        }
+      }
+    },
+    "Schwarz auf Weiß, ganz ohne Farbe": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Black on white, no color at all"
+          }
+        }
+      }
+    },
+    "Gemischt: %@ & %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mixed: %@ & %@"
+          }
+        }
+      }
+    },
+    "Hell und Dunkel einzeln wählen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose Light and Dark Separately"
+          }
+        }
+      }
+    },
+    "%@ & %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ & %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

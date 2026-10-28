@@ -76,84 +76,53 @@ private struct WireframePane: View {
     }
 }
 
-/// Einstellungsseite „Farben“ in Liquid Glass: Modus wählen, dann für Hell und Dunkel je eine Palette.
-/// Oben wählt man, welche Hälfte man gerade einstellt; ein Tipp auf eine Palette übernimmt sie sofort.
+/// Einstellungsseite „Farben“: Modus wählen und ein Theme (hell + dunkel) mit einem Tipp übernehmen.
+/// Wer mag, mischt unten unter „Hell und Dunkel einzeln“ zwei Themes.
 struct ThemeSettingsView: View {
     @AppStorage(AppTheme.lightKey) private var light = AppTheme.defaultLight.rawValue
     @AppStorage(AppTheme.darkKey) private var dark = AppTheme.defaultDark.rawValue
     @AppStorage(AppearanceMode.key) private var mode = AppearanceMode.system.rawValue
     @Environment(\.theme) private var theme
-    @Environment(\.colorScheme) private var colorScheme
-    @State private var editingDark = false
-    @State private var didInit = false
+    @State private var showMixer = false
     @Namespace private var glass
 
     private var lightID: PaletteID { PaletteID(rawValue: light) ?? AppTheme.defaultLight }
     private var darkID: PaletteID { PaletteID(rawValue: dark) ?? AppTheme.defaultDark }
-    private var editedID: PaletteID { editingDark ? darkID : lightID }
+    private var isMixed: Bool { lightID != darkID }
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 26) {
-                section(String(localized: "Erscheinungsbild")) {
-                    GlassEffectContainer(spacing: 8) {
-                        HStack(spacing: 8) {
-                            ForEach(AppearanceMode.allCases) { m in modeButton(m) }
-                        }
+            VStack(alignment: .leading, spacing: 24) {
+                GlassEffectContainer(spacing: 8) {
+                    HStack(spacing: 8) {
+                        ForEach(AppearanceMode.allCases) { m in modeButton(m) }
                     }
                 }
 
-                section(String(localized: "Paletten")) {
-                    GlassEffectContainer(spacing: 12) {
-                        HStack(spacing: 12) {
-                            slotCard(dark: false)
-                            slotCard(dark: true)
-                        }
-                    }
+                VStack(spacing: 12) {
+                    ForEach(PaletteID.allCases) { p in themeCard(p) }
                 }
 
-                section(editingDark ? String(localized: "Palette für Dunkel") : String(localized: "Palette für Hell")) {
-                    GlassEffectContainer(spacing: 10) {
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 3), spacing: 10) {
-                            ForEach(PaletteID.allCases) { p in paletteButton(p) }
-                        }
+                DisclosureGroup(isExpanded: $showMixer) {
+                    VStack(alignment: .leading, spacing: 14) {
+                        mixRow(String(localized: "Hell"), "sun.max.fill", selection: $light, half: \.light)
+                        mixRow(String(localized: "Dunkel"), "moon.fill", selection: $dark, half: \.dark)
                     }
-                    Text("Gedrückt halten, um eine Palette für Hell und Dunkel zu nehmen. Die Farben stammen aus t3code.")
-                        .font(.footnote).foregroundStyle(.secondary)
+                    .padding(.top, 10)
+                } label: {
+                    Label(isMixed ? "Gemischt: \(lightID.label) & \(darkID.label)" : "Hell und Dunkel einzeln wählen",
+                          systemImage: "circle.lefthalf.filled")
+                        .font(.subheadline.weight(.semibold))
                 }
-
-                if lightID != AppTheme.defaultLight || darkID != AppTheme.defaultDark {
-                    Button {
-                        withAnimation(.bouncy) {
-                            light = AppTheme.defaultLight.rawValue
-                            dark = AppTheme.defaultDark.rawValue
-                        }
-                    } label: {
-                        Label("Standard: Iris & Grove", systemImage: "arrow.counterclockwise")
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 4)
-                    }
-                    .buttonStyle(.glass)
-                    .controlSize(.large)
-                }
+                .padding(14)
+                .glassEffect(.regular, in: .rect(cornerRadius: 22))
             }
             .padding()
         }
         .background(theme.screen.ignoresSafeArea())
         .navigationTitle("Farben")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            guard !didInit else { return }
-            didInit = true
-            editingDark = colorScheme == .dark
-        }
-    }
-
-    private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title).font(.headline)
-            content()
-        }
+        .onAppear { if isMixed { showMixer = true } }
     }
 
     // MARK: Modus
@@ -175,74 +144,86 @@ struct ThemeSettingsView: View {
         .glassEffectID("mode-\(m.rawValue)", in: glass)
     }
 
-    // MARK: Hell / Dunkel
+    // MARK: Themes
 
-    private func slotCard(dark isDark: Bool) -> some View {
-        let selected = editingDark == isDark
-        let palette = isDark ? darkID : lightID
-        return Button {
-            withAnimation(.bouncy(duration: 0.35)) { editingDark = isDark }
-        } label: {
-            VStack(alignment: .leading, spacing: 10) {
-                AppWireframe(light: isDark ? palette.dark : palette.light)
-                    .aspectRatio(0.8, contentMode: .fit)
-                HStack(spacing: 6) {
-                    Image(systemName: isDark ? "moon.fill" : "sun.max.fill")
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text(isDark ? String(localized: "Dunkel") : String(localized: "Hell")).font(.caption).foregroundStyle(.secondary)
-                        Text(palette.label).font(.subheadline.weight(.semibold))
-                    }
-                    Spacer(minLength: 0)
-                    if selected {
-                        Image(systemName: "pencil.circle.fill").foregroundStyle(theme.primary)
-                            .transition(.scale.combined(with: .opacity))
-                    }
-                }
-            }
-            .padding(10)
-            .contentShape(.rect(cornerRadius: 24))
-        }
-        .buttonStyle(.plain)
-        .glassEffect(selected ? .regular.tint(theme.primary.opacity(0.35)).interactive() : .regular.interactive(),
-                     in: .rect(cornerRadius: 24))
-        .glassEffectID(isDark ? "slot-dark" : "slot-light", in: glass)
-    }
-
-    // MARK: Paletten
-
-    private func paletteButton(_ p: PaletteID) -> some View {
-        let selected = editedID == p
-        let half = editingDark ? p.dark : p.light
+    private func themeCard(_ p: PaletteID) -> some View {
+        let selected = !isMixed && lightID == p
         return Button {
             withAnimation(.bouncy(duration: 0.35)) {
-                if editingDark { dark = p.rawValue } else { light = p.rawValue }
+                light = p.rawValue
+                dark = p.rawValue
             }
             UISelectionFeedbackGenerator().selectionChanged()
         } label: {
-            VStack(spacing: 6) {
-                AppWireframe(light: half)
-                    .aspectRatio(0.72, contentMode: .fit)
-                    .overlay(alignment: .topTrailing) {
-                        if selected {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.title3)
-                                .symbolRenderingMode(.palette)
-                                .foregroundStyle(Color(uiColor: UIColor(hex: half.primaryForeground)), Color(uiColor: UIColor(hex: half.primary)))
-                                .padding(5)
-                                .transition(.scale.combined(with: .opacity))
-                        }
+            HStack(spacing: 14) {
+                HStack(spacing: -14) {
+                    AppWireframe(light: p.light)
+                        .frame(width: 58, height: 84)
+                        .rotationEffect(.degrees(-4))
+                    AppWireframe(light: p.dark)
+                        .frame(width: 58, height: 84)
+                        .rotationEffect(.degrees(4))
+                        .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                }
+                .padding(.leading, 4)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(p.label).font(.headline)
+                    Text(p.tagline).font(.footnote).foregroundStyle(.secondary)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                    HStack(spacing: 5) {
+                        swatch(p.light.primary)
+                        swatch(p.light.card)
+                        swatch(p.dark.primary)
+                        swatch(p.dark.screen)
                     }
-                Text(p.label).font(.caption.weight(selected ? .semibold : .regular))
+                    .padding(.top, 2)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+                    .font(.title2)
+                    .foregroundStyle(selected ? theme.primary : Color.secondary.opacity(0.4))
+                    .contentTransition(.symbolEffect(.replace))
             }
-            .padding(7)
-            .contentShape(.rect(cornerRadius: 20))
+            .padding(12)
+            .contentShape(.rect(cornerRadius: 22))
         }
         .buttonStyle(.plain)
-        .glassEffect(selected ? .regular.tint(Color(uiColor: UIColor(hex: half.primary)).opacity(0.45)).interactive() : .regular.interactive(),
-                     in: .rect(cornerRadius: 20))
-        .contextMenu {
-            Button("Für Hell und Dunkel verwenden", systemImage: "circle.lefthalf.filled") {
-                withAnimation(.bouncy) { light = p.rawValue; dark = p.rawValue }
+        .glassEffect(selected ? .regular.tint(theme.primary.opacity(0.18)).interactive() : .regular.interactive(),
+                     in: .rect(cornerRadius: 22))
+    }
+
+    private func swatch(_ hex: UInt32) -> some View {
+        Circle()
+            .fill(Color(uiColor: UIColor(hex: hex)))
+            .frame(width: 12, height: 12)
+            .overlay(Circle().strokeBorder(.black.opacity(0.08), lineWidth: 0.5))
+    }
+
+    private func mixRow(_ title: String, _ symbol: String, selection: Binding<String>, half: KeyPath<PaletteID, PaletteHalf>) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label(title, systemImage: symbol).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(PaletteID.allCases) { p in
+                        let isOn = selection.wrappedValue == p.rawValue
+                        Button {
+                            withAnimation(.bouncy(duration: 0.3)) { selection.wrappedValue = p.rawValue }
+                        } label: {
+                            VStack(spacing: 5) {
+                                AppWireframe(light: p[keyPath: half])
+                                    .frame(width: 46, height: 64)
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .strokeBorder(isOn ? theme.primary : .clear, lineWidth: 2.5)
+                                    }
+                                Text(p.label).font(.caption2.weight(isOn ? .semibold : .regular))
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.vertical, 2)
             }
         }
     }
@@ -265,7 +246,7 @@ struct ThemeSettingsRow: View {
                     .frame(width: 54, height: 72)
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Farben").font(.headline)
-                    Text("Hell: \(l.label) · Dunkel: \(d.label)").font(.subheadline).foregroundStyle(.secondary)
+                    Text(l == d ? l.label : "\(l.label) & \(d.label)").font(.subheadline).foregroundStyle(.secondary)
                     Text("Modus: \(AppearanceMode(rawValue: mode)?.label ?? "System")").font(.caption).foregroundStyle(.secondary)
                 }
             }

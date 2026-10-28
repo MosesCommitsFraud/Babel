@@ -54,7 +54,8 @@ struct LibraryView: View {
                             localCover: ContentStore.coverFileURL(story),
                             progress: story.hasStarted ? story.overallProgress : nil,
                             newChapters: story.newChapters,
-                            showSummary: false
+                            showSummary: false,
+                            showSource: true
                         )
                     }
                     .swipeActions(edge: .leading) {
@@ -99,7 +100,7 @@ struct LibraryView: View {
                     ForEach(recentlyViewed.prefix(8)) { story in
                         NavigationLink(value: story) {
                             StoryRow(story: story.asRemote, localCover: ContentStore.coverFileURL(story),
-                                     progress: story.hasStarted ? story.overallProgress : nil, showSummary: false)
+                                     progress: story.hasStarted ? story.overallProgress : nil, showSummary: false, showSource: true)
                         }
                         .swipeActions(edge: .trailing) {
                             Button { library.addToLibrary(story, context: context) } label: {

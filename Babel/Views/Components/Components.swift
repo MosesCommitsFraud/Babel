@@ -73,10 +73,10 @@ struct TagChip: View {
             if let symbol { Image(systemName: symbol).imageScale(.small) }
             Text(text).lineLimit(1)
         }
-        .font(.caption)
-        .padding(.horizontal, 9)
-        .padding(.vertical, 4)
-        .foregroundStyle(tint ?? .primary)
+        .font(.caption2.weight(.medium))
+        .padding(.horizontal, 7)
+        .padding(.vertical, 3)
+        .foregroundStyle(tint ?? .secondary)
         .background((tint ?? .secondary).opacity(0.13), in: .capsule)
     }
 }
@@ -151,11 +151,13 @@ struct StoryRow: View {
     var newChapters: Int = 0
     var status: ReadingStatus? = nil
     var showSummary = true
+    /// Quelle (AO3/FFN …) nur dort zeigen, wo Quellen gemischt sind – nicht auf der jeweiligen Quellen-Seite.
+    var showSource = false
 
     var body: some View {
-        HStack(alignment: .top, spacing: 14) {
-            CoverView(story: story, localCover: localCover, width: 58)
-            VStack(alignment: .leading, spacing: 5) {
+        HStack(alignment: .top, spacing: 12) {
+            CoverView(story: story, localCover: localCover, width: 50)
+            VStack(alignment: .leading, spacing: 4) {
                 HStack(alignment: .firstTextBaseline) {
                     Text(story.title).font(.headline).lineLimit(2)
                     Spacer(minLength: 4)
@@ -167,48 +169,21 @@ struct StoryRow: View {
                             .background(theme.primary, in: .capsule)
                     }
                 }
-                Text(byline).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+                Text(byline).font(.footnote).foregroundStyle(.secondary).lineLimit(1)
 
-                // Zwei feste Zeilen mit den wichtigsten Angaben – was nicht passt, wird gekürzt statt umgebrochen.
-                VStack(alignment: .leading, spacing: 5) {
-                    HStack(spacing: 5) {
-                        TagChip(text: story.source.shortLabel, symbol: story.source.symbol)
-                        if !story.rating.isEmpty { TagChip(text: shortRating) }
-                        TagChip(text: statusText, symbol: story.isComplete ? "checkmark" : nil)
-                        if let w = story.words { TagChip(text: Self.wordsShort(w)).layoutPriority(-1) }
-                    }
-                    HStack(spacing: 5) {
-                        if let d = story.updated {
-                            TagChip(text: d.formatted(.dateTime.day().month(.abbreviated).year(.twoDigits)), symbol: "clock")
-                        }
-                        if !story.language.isEmpty { TagChip(text: languageShort, symbol: "globe") }
-                        if let pairing = story.relationships.first {
-                            TagChip(text: pairing).layoutPriority(-1)
-                        } else if !story.genres.isEmpty {
-                            TagChip(text: story.genres.joined(separator: "/")).layoutPriority(-1)
-                        }
-                    }
+                // Eine Zeile Chips (das Wichtigste) und eine schlichte Textzeile mit Datum und Bewertungen.
+                HStack(spacing: 4) {
+                    if showSource { TagChip(text: story.source.shortLabel, symbol: story.source.symbol) }
+                    if !story.rating.isEmpty { TagChip(text: shortRating) }
+                    TagChip(text: statusText, symbol: story.isComplete ? "checkmark" : nil)
+                    if let w = story.words { TagChip(text: Self.wordsShort(w)).layoutPriority(-1) }
+                    if !story.language.isEmpty { TagChip(text: languageShort).layoutPriority(-2) }
                 }
                 .lineLimit(1)
 
-                if !stats.isEmpty {
-                    HStack(spacing: 12) {
-                        ForEach(stats, id: \.symbol) { stat in
-                            HStack(spacing: 3) {
-                                Image(systemName: stat.symbol).imageScale(.small)
-                                Text(stat.value)
-                            }
-                            .accessibilityElement(children: .ignore)
-                            .accessibilityLabel("\(stat.value) \(stat.name)")
-                        }
-                    }
-                    .font(.caption.monospacedDigit())
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                }
-
+                metaLine
                 if showSummary, !story.summary.isEmpty {
-                    Text(story.summary).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
+                    Text(story.summary).font(.footnote).foregroundStyle(.secondary).lineLimit(2)
                 }
 
                 if let progress, progress > 0 {
@@ -220,7 +195,32 @@ struct StoryRow: View {
                 }
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 2)
+    }
+
+    /// „28. Okt. 26 · ♡ 5K · 🔔 3K · Naruto U./Sakura H.“ – klein und grau, eine Zeile.
+    private var metaLine: some View {
+        HStack(spacing: 9) {
+            if let d = story.updated {
+                Text(d.formatted(.dateTime.day().month(.abbreviated).year(.twoDigits)))
+            }
+            ForEach(stats, id: \.symbol) { stat in
+                HStack(spacing: 2) {
+                    Image(systemName: stat.symbol).imageScale(.small)
+                    Text(stat.value)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(stat.value) \(stat.name)")
+            }
+            if let pairing = story.relationships.first {
+                Text(pairing).layoutPriority(-1)
+            } else if !story.genres.isEmpty {
+                Text(story.genres.joined(separator: "/")).layoutPriority(-1)
+            }
+        }
+        .font(.caption2.monospacedDigit())
+        .foregroundStyle(.secondary)
+        .lineLimit(1)
     }
 
     private var byline: String {
