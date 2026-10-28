@@ -45,9 +45,10 @@ struct RootView: View {
         .tabViewBottomAccessory {
             ContinueReadingAccessory()
         }
-        .overlay(alignment: .bottom) {
+        // Oben statt unten: unten liegen Suchknöpfe, Weiterlesen-Leiste und Tab-Bar.
+        .overlay(alignment: .top) {
             StatusToast()
-                .padding(.bottom, 104)
+                .padding(.top, 54)
                 .allowsHitTesting(false)
         }
         .background(WebFetcherHost().frame(width: 1, height: 1).allowsHitTesting(false))

@@ -23,7 +23,7 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 - FFN-Stichwortsuche: standardmäßig `match=title` (FFN-Standard `any` vergräbt exakte Titel), dazu Titel-Ranking im Client.
 - Reader: Titel oben öffnet die Storyseite als Sheet (`readerJump` springt im offenen Reader), Wischen links/rechts wechselt Kapitel, keine Prozentanzeige.
 - Bibliothek: Verlauf (`Story.viewedAt` + `lastOpenedAt`), unter „Alle“ „Zuletzt angesehen“, Chips nach Anzahl sortiert.
-- AO3-Tab startet mit der Filterwand; Filter lassen sich als Presets speichern (AO3 und FFN).
+- AO3-Tab startet mit der Filterwand (eigener `NavigationPath` – nicht `navigationDestination(item:)`, das baute die Ergebnisliste beim Öffnen einer Story neu); Filter lassen sich als Presets speichern (AO3 und FFN).
 - Login (AO3 + FFN) optional, um Lesezeichen/Favoriten/Follows zu importieren.
 
 ## Architektur
@@ -45,7 +45,7 @@ AO3-Suche/Blurbs, FFN-Fandoms/Listen/Filter-Apply/Cover, Gutenberg-Suche + Detai
 
 ## Ungetestete Annahmen (zuerst prüfen)
 - AO3-Konto: Benutzername aus `#greeting`, Listen `/users/<n>/bookmarks`, `readings?show=to-read`, `subscriptions?type=works`.
-- FFN-Konto mit echtem Login: Login-Erkennung über `#name_login` (FFN schreibt dort per `XUNAME` Name + „Logout“), Favoriten vom öffentlichen Profil `/~name` (`div.z-list.favstories`, im Browser geprüft), Follows über `alert/story.php` (generisches Parsen von `/s/`-Links, ungeprüft).
+- FFN-Konto mit echtem Login: Login-Erkennung über `#name_login` (FFN schreibt dort per `XUNAME` Name + „Logout“), Favoriten vom öffentlichen Profil `/~name` (`div.z-list.favstories`, im Browser geprüft), Follows über `alert/story.php` (generisches Parsen von `/s/`-Links, mit echtem Konto geprüft: 2 Seiten, `?p=2`). FFN hat keinen Leseverlauf. Abgleich automatisch beim Start (höchstens alle 6 h).
 - EPUB-Export in Apple Books öffnen.
 - Cloudflare-Challenge im WKWebView auf echtem Gerät.
 - AO3 ist zeitweise extrem langsam (60–100 s pro Seite) bzw. liefert 525 – dann helfen nur Cache/Timeouts.

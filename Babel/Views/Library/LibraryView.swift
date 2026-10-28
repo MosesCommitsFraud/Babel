@@ -267,6 +267,15 @@ struct LibraryView: View {
         ToolbarItem(placement: .topBarLeading) {
             Button("Einstellungen", systemImage: "gearshape") { showSettings = true }
         }
+        if library.isCheckingUpdates {
+            ToolbarItem(placement: .principal) {
+                Label("Suche nach neuen Kapiteln", systemImage: "arrow.triangle.2.circlepath")
+                    .labelStyle(.iconOnly)
+                    .symbolEffect(.rotate, options: .repeating)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel("Suche nach neuen Kapiteln")
+            }
+        }
         ToolbarItemGroup(placement: .topBarTrailing) {
             Menu {
                 Picker("Sortieren", selection: $sort) {

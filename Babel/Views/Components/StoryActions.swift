@@ -59,9 +59,8 @@ struct StatusToast: View {
     var body: some View {
         VStack(spacing: 8) {
             RateLimitBanner()
-            if library.isCheckingUpdates {
-                toast("Suche nach neuen Kapiteln …", "arrow.triangle.2.circlepath")
-            } else if let message = library.updateMessage {
+            // Die Update-Suche zeigt die Bibliothek selbst (kleiner Kreisel), damit sie nicht über allen Tabs hängt.
+            if let message = library.updateMessage {
                 toast(message, message.hasPrefix("Lade") ? "arrow.down.circle" : "checkmark.circle.fill")
                     .id(message)
                     .task(id: message) {
@@ -72,7 +71,6 @@ struct StatusToast: View {
             }
         }
         .animation(.snappy, value: library.updateMessage)
-        .padding(.bottom, 8)
     }
 
     private func toast(_ text: String, _ symbol: String) -> some View {
