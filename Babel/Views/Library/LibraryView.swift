@@ -92,6 +92,33 @@ struct LibraryView: View {
                     .textCase(nil)
                     .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
             }
+
+            // Unter „Alle“: zuletzt angesehene Geschichten, die (noch) nicht in der Bibliothek liegen.
+            if filter == .all && searchText.trimmed.isEmpty && !recentlyViewed.isEmpty {
+                Section {
+                    ForEach(recentlyViewed.prefix(8)) { story in
+                        NavigationLink(value: story) {
+                            StoryRow(story: story.asRemote, localCover: ContentStore.coverFileURL(story),
+                                     progress: story.hasStarted ? story.overallProgress : nil, showSummary: false)
+                        }
+                        .swipeActions(edge: .trailing) {
+                            Button { library.addToLibrary(story, context: context) } label: {
+                                Label("Merken", systemImage: "bookmark")
+                            }
+                            .tint(.indigo)
+                        }
+                    }
+                    .themedRows(grouped: false)
+                    if recentlyViewed.count > 8 {
+                        Button("Ganzen Verlauf anzeigen (\(history.count))") { withAnimation(.snappy) { filter = .history } }
+                            .themedRows(grouped: false)
+                    }
+                } header: {
+                    Label("Zuletzt angesehen", systemImage: "clock.arrow.circlepath")
+                        .font(.subheadline.weight(.semibold))
+                        .textCase(nil)
+                }
+            }
         }
         .listStyle(.plain)
         .themedBackground()
@@ -100,8 +127,11 @@ struct LibraryView: View {
         .overlay {
             if stories.isEmpty && history.isEmpty {
                 emptyState
-            } else if filtered.isEmpty {
+            } else if filtered.isEmpty && !searchText.trimmed.isEmpty {
                 ContentUnavailableView.search(text: searchText)
+            } else if filtered.isEmpty && !(filter == .all && !recentlyViewed.isEmpty) {
+                ContentUnavailableView("Hier ist noch nichts", systemImage: "tray",
+                                       description: Text("In dieser Auswahl liegen keine Geschichten."))
             }
         }
         .refreshable { await library.checkAllUpdates(context: context) }
@@ -214,6 +244,10 @@ struct LibraryView: View {
         case .progress: list.sort { $0.overallProgress > $1.overallProgress }
         }
         return list
+    }
+
+    private var recentlyViewed: [Story] {
+        history.filter { !$0.inLibrary }.sorted { Self.lastSeen($0) > Self.lastSeen($1) }
     }
 
     private static func lastSeen(_ s: Story) -> Date {

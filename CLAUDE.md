@@ -19,7 +19,10 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 - Farben aus t3code (`~/DEV/t3code/apps/mobile/generated-uniwind-themes.css`): Standard hell **Iris**, dunkel **Grove** (wie in t3code eingestellt). Einstellungsseite nach dem Vorbild von t3code (`apps/web/src/components/settings/ThemeSettings.tsx`): Modus-Kacheln System/Hell/Dunkel und Palettenkarten mit App-Wireframe (`Views/Settings/ThemeSettingsView.swift`, Paletten in `Support/Theme.swift`).
 - FFN: Fandom-Suche über alle Kategorien (`FFNFandomStore`, Cache 7 Tage in Caches/ffn-fandoms.json).
 - Bücher = Project Gutenberg; Suche mit Bereichen (Alles/Titel/Autor:in/Thema), EPUB-Import oben rechts.
-- Git: `main`, Remote `origin` = https://github.com/MosesCommitsFraud/Babel.git
+- Git: `main`, Remote `origin` = https://github.com/MosesCommitsFraud/Babel.git. Regelmäßig committen und pushen, **ohne** Claude als Co-Autor.
+- FFN-Stichwortsuche: standardmäßig `match=title` (FFN-Standard `any` vergräbt exakte Titel), dazu Titel-Ranking im Client.
+- Reader: Titel oben öffnet die Storyseite als Sheet (`readerJump` springt im offenen Reader), Wischen links/rechts wechselt Kapitel, keine Prozentanzeige.
+- Bibliothek: Verlauf (`Story.viewedAt` + `lastOpenedAt`), unter „Alle“ „Zuletzt angesehen“, Chips nach Anzahl sortiert.
 - AO3-Tab startet mit der Filterwand; Filter lassen sich als Presets speichern (AO3 und FFN).
 - Login (AO3 + FFN) optional, um Lesezeichen/Favoriten/Follows zu importieren.
 
@@ -42,7 +45,7 @@ AO3-Suche/Blurbs, FFN-Fandoms/Listen/Filter-Apply/Cover, Gutenberg-Suche + Detai
 
 ## Ungetestete Annahmen (zuerst prüfen)
 - AO3-Konto: Benutzername aus `#greeting`, Listen `/users/<n>/bookmarks`, `readings?show=to-read`, `subscriptions?type=works`.
-- FFN-Konto: `favorites/story.php` und `alert/story.php` (generisches Parsen von `/s/`-Links), Login-Erkennung über Weiterleitung auf `login.php`.
+- FFN-Konto mit echtem Login: Login-Erkennung über `#name_login` (FFN schreibt dort per `XUNAME` Name + „Logout“), Favoriten vom öffentlichen Profil `/~name` (`div.z-list.favstories`, im Browser geprüft), Follows über `alert/story.php` (generisches Parsen von `/s/`-Links, ungeprüft).
 - EPUB-Export in Apple Books öffnen.
 - Cloudflare-Challenge im WKWebView auf echtem Gerät.
 - AO3 ist zeitweise extrem langsam (60–100 s pro Seite) bzw. liefert 525 – dann helfen nur Cache/Timeouts.
