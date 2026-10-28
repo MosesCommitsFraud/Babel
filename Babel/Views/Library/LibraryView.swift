@@ -181,7 +181,8 @@ struct LibraryView: View {
         add("Favoriten", "heart.fill", .favorites)
         add("Offline", "arrow.down.circle.fill", .offline, hideEmpty: true)
         for shelf in shelves { add(shelf.name, shelf.symbol, .shelf(shelf.name)) }
-        for source in StorySource.allCases { add(source.shortLabel, source.symbol, .source(source), hideEmpty: true) }
+        // AO3 und FFN immer anbieten, Gutenberg/EPUB nur, wenn etwas da ist.
+        for source in StorySource.allCases { add(source.shortLabel, source.symbol, .source(source), hideEmpty: !source.isWebFiction) }
         add("Verlauf", "clock.arrow.circlepath", .history, hideEmpty: true)
         // Stabil sortieren: bei gleicher Anzahl bleibt die Reihenfolge von oben.
         let sorted = items.enumerated().sorted { a, b in

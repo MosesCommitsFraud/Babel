@@ -28,6 +28,7 @@
 		95CB4B7D63C5E17F931D5A68 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD73D35F0F5B3196BF1AABF /* SettingsView.swift */; };
 		964B3DED70E71B09C6EF4A27 /* EPUBParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B5E984C8A0B7C0D77620F7 /* EPUBParser.swift */; };
 		9B1F5B8FD70683DBBC905887 /* StoryActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E202982CEC37159A37C774C0 /* StoryActions.swift */; };
+		9C2904BBE87CC8E11CD4EA90 /* AuthorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EA69B1B09A7733617C8235 /* AuthorView.swift */; };
 		9FF4F789DCC989C692245A1E /* ZipArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C90CCF74C3909B300CD6ADA /* ZipArchive.swift */; };
 		A5268CAFFA9B82692662DA5A /* AO3Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63E22E5889EBD4EC8319283 /* AO3Service.swift */; };
 		A6A4CC3337ADB6898736C49C /* GutenbergService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D5EC56C7C09627597A997A /* GutenbergService.swift */; };
@@ -53,6 +54,7 @@
 		39075793117956CC5038008F /* BabelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabelApp.swift; sourceTree = "<group>"; };
 		42D657FB996B8337736AC567 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
 		43258D30B4D0134B7E85AF1E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		53EA69B1B09A7733617C8235 /* AuthorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorView.swift; sourceTree = "<group>"; };
 		5DD73D35F0F5B3196BF1AABF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		62CC4316CAB5285483CFA67B /* AO3SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AO3SearchView.swift; sourceTree = "<group>"; };
 		7E7FD3E3D4C03C8DF90E3BEF /* AO3FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AO3FilterView.swift; sourceTree = "<group>"; };
@@ -201,11 +203,20 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		BC693D8B6D7797A1566A605F /* Author */ = {
+			isa = PBXGroup;
+			children = (
+				53EA69B1B09A7733617C8235 /* AuthorView.swift */,
+			);
+			path = Author;
+			sourceTree = "<group>";
+		};
 		BC8978CDCC3DBFB1C879A445 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				A0BB940C4231DD08AAAEE941 /* Account */,
 				54BB3A917CB5A0108FEBD13D /* AO3 */,
+				BC693D8B6D7797A1566A605F /* Author */,
 				7BACE7B1547DB8184F768BFA /* Books */,
 				F24F6CAA09AF475781CAEF50 /* Components */,
 				E261701EC0368025C6928F38 /* FFN */,
@@ -340,6 +351,7 @@
 				EE67FAF4A655B5D920F1FE8B /* AO3SearchView.swift in Sources */,
 				A5268CAFFA9B82692662DA5A /* AO3Service.swift in Sources */,
 				C3D00F7142E7A4E6F5491C78 /* AccountViews.swift in Sources */,
+				9C2904BBE87CC8E11CD4EA90 /* AuthorView.swift in Sources */,
 				12161EB20D743F3E8016D0E7 /* BabelApp.swift in Sources */,
 				630FB6C74F3E633D6B3BFA26 /* BooksView.swift in Sources */,
 				B6312220DFB957280DBA02E7 /* Components.swift in Sources */,

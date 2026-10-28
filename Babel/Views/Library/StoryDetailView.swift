@@ -41,6 +41,7 @@ struct StoryDetailView: View {
             story.viewedAt = .now
             try? context.save()
             await library.enrichGutenberg(story)
+            await library.refreshMetadataIfSparse(story)
         }
         .sheet(item: $exportedFile) { file in
             ShareSheet(items: [file]).ignoresSafeArea()
@@ -59,7 +60,20 @@ struct StoryDetailView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(story.title).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
                 if !story.author.isEmpty {
-                    Text(story.author).font(.headline).foregroundStyle(.secondary)
+                    if let authorURL = story.authorURLString.flatMap(URL.init(string:)), story.source.isWebFiction {
+                        NavigationLink {
+                            AuthorView(source: story.source, name: story.author, url: authorURL)
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text(story.author).font(.headline)
+                                Image(systemName: "chevron.right").font(.caption.weight(.bold))
+                            }
+                            .foregroundStyle(theme.primaryText)
+                        }
+                        .buttonStyle(.plain)
+                    } else {
+                        Text(story.author).font(.headline).foregroundStyle(.secondary)
+                    }
                 }
                 TagChip(text: story.source.label, tint: story.source.tint, symbol: story.source.symbol)
                 if story.newChapters > 0 {
@@ -89,7 +103,7 @@ struct StoryDetailView: View {
                     Label(story.hasStarted ? "Weiterlesen" : "Lesen", systemImage: "book.fill")
                         .foregroundStyle(theme.primaryForeground)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
+                        .padding(.vertical, 2)
                 }
                 .buttonStyle(.glassProminent)
                 .tint(theme.primary)
@@ -99,7 +113,7 @@ struct StoryDetailView: View {
                     else { library.addToLibrary(story, context: context) }
                 } label: {
                     Image(systemName: story.inLibrary ? "checkmark" : "plus")
-                        .frame(width: 26, height: 26)
+                        .frame(width: 22, height: 22)
                 }
                 .buttonStyle(.glass)
                 .accessibilityLabel(story.inLibrary ? "Aus Bibliothek entfernen" : "Zur Bibliothek hinzufügen")
@@ -109,10 +123,10 @@ struct StoryDetailView: View {
                         Task { await downloadAll() }
                     } label: {
                         if let p = library.downloads[story.key] {
-                            ProgressView(value: p).progressViewStyle(.circular).frame(width: 26, height: 26)
+                            ProgressView(value: p).progressViewStyle(.circular).frame(width: 22, height: 22)
                         } else {
                             Image(systemName: isFullyDownloaded ? "arrow.down.circle.fill" : "arrow.down.circle")
-                                .frame(width: 26, height: 26)
+                                .frame(width: 22, height: 22)
                         }
                     }
                     .buttonStyle(.glass)
@@ -125,14 +139,14 @@ struct StoryDetailView: View {
                     try? context.save()
                 } label: {
                     Image(systemName: story.isFavorite ? "heart.fill" : "heart")
-                        .frame(width: 26, height: 26)
+                        .frame(width: 22, height: 22)
                         .foregroundStyle(story.isFavorite ? .pink : .primary)
                 }
                 .buttonStyle(.glass)
                 .accessibilityLabel("Favorit")
             }
         }
-        .controlSize(.large)
+        .controlSize(.regular)
     }
 
     private var isFullyDownloaded: Bool {
@@ -253,8 +267,12 @@ struct StoryDetailView: View {
                 FlowLayout(spacing: 6) {
                     ForEach(tags, id: \.self) { tag in
                         if story.source == .ao3 {
-                            NavigationLink(value: TagSearchRoute(tag: tag)) { TagChip(text: tag, tint: tint) }
-                                .buttonStyle(.plain)
+                            NavigationLink {
+                                AO3SearchView(initialFilters: AO3Filters(otherTags: [tag]), title: tag)
+                            } label: {
+                                TagChip(text: tag, tint: tint)
+                            }
+                            .buttonStyle(.plain)
                         } else {
                             TagChip(text: tag, tint: tint)
                         }

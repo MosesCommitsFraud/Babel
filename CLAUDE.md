@@ -26,6 +26,12 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 - AO3-Tab startet mit der Filterwand (eigener `NavigationPath` – nicht `navigationDestination(item:)`, das baute die Ergebnisliste beim Öffnen einer Story neu); Filter lassen sich als Presets speichern (AO3 und FFN).
 - Login (AO3 + FFN) optional, um Lesezeichen/Favoriten/Follows zu importieren.
 
+- App-Icon: `Design/Icon/Icon-iOS-Dark-1024@1x.png` (Vorlage des Nutzers, transparente Ecken) → auf die Hintergrundfarbe #0F0E0F geflacht und 1,15× skaliert nach `Assets.xcassets/AppIcon.appiconset/AppIcon.png`.
+- Autorenseiten (`Views/Author/AuthorView.swift`): FFN `/u/<id>/` (eigene Geschichten + Favoriten), AO3 `/users/<name>/profile`, `/works`, `/bookmarks` (seitenweise).
+- Listenzeilen: zwei Chip-Zeilen (Quelle, Rating farbig, Status/Kapitel, Wörter | Datum, Sprache, Pairing oder Genre).
+- FFN-„Verlauf“ der offiziellen FFN-App (bei Nutzer ~2500) liegt nur lokal in der App – auf der Website gibt es nur Favoriten (80) und Follows (70).
+- Innerhalb von Seiten, die per Closure-`NavigationLink` geöffnet werden (Konto, Autor:in, Tags), ebenfalls Closure-Links verwenden – wertbasierte Links griffen dort nicht.
+
 ## Architektur
 - `Services/AO3Service.swift` – Such-URL (`/works/search?work_search[...]`), Blurb-/Werk-/Kapitel-Parser, Autocomplete (`/autocomplete/{fandom,relationship,character,freeform,tag}?term=`). Tag-IDs: Ratings 9–13, Warnungen 14,16–20, Kategorien 21–24,116,2246. Mehrere „muss“-Ratings/Kategorien werden als Ausschluss der übrigen umgesetzt (AO3 verknüpft mit UND).
 - `Services/FFNService.swift` – FFN liegt hinter Cloudflare → alles über `WebFetcher` (unsichtbarer WKWebView, Challenge-Sheet bei Bedarf). Filter werden live aus den `<select>` der Seite gelesen und per JS angewendet; Fallback-URL-Parameter (srt, g1, r, lan, len, s, c1…).

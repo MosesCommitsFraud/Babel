@@ -113,3 +113,16 @@ struct ChapterContent: Sendable {
     var title: String
     var html: String
 }
+
+/// Profil einer Autorin / eines Autors (AO3 oder FFN).
+struct AuthorProfile: Sendable {
+    var name: String
+    var joined: Date? = nil
+    var bio: String = ""
+    var storyCount: Int? = nil
+    var favoriteCount: Int? = nil
+    var url: URL
+    /// FFN liefert alles auf einer Seite; AO3 lädt seitenweise nach.
+    var stories: [RemoteStory] = []
+    var favorites: [RemoteStory] = []
+}

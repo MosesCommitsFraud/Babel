@@ -335,6 +335,31 @@ enum FFNService {
         if story.isComplete { story.totalChapters = story.chapters }
     }
 
+    // MARK: - Autor:innen
+
+    /// Profilseite: eigene Geschichten und Favoriten stehen beide auf `/u/<id>/`.
+    static func authorProfile(url: URL) async throws -> AuthorProfile {
+        let (html, finalURL) = try await load(url)
+        return try await Task.detached(priority: .userInitiated) {
+            let doc = try SwiftSoup.parse(html, base.absoluteString)
+            let name = try doc.select("#content_wrapper_inner span[style*=font-size]").first()?.text().trimmed ?? ""
+            var p = AuthorProfile(name: name.isEmpty ? "Autor:in" : name, url: finalURL)
+            if let first = try doc.select("#content_wrapper_inner span[data-xutime]").first(),
+               let t = Double(try first.attr("data-xutime")) {
+                p.joined = Date(timeIntervalSince1970: t)
+            }
+            if let bio = try doc.select("#bio").first() {
+                try bio.select("img").remove()
+                p.bio = try bio.text().trimmed
+            }
+            p.stories = try parseStories(doc, selector: "div.z-list.mystories")
+            p.favorites = try parseStories(doc, selector: "div.z-list.favstories")
+            p.storyCount = p.stories.count
+            p.favoriteCount = p.favorites.count
+            return p
+        }.value
+    }
+
     // MARK: - Konto (nur mit Anmeldung)
 
     enum AccountList: String, CaseIterable, Identifiable, Sendable {

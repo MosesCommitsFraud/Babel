@@ -169,12 +169,28 @@ struct StoryRow: View {
                 }
                 Text(byline).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
 
-                HStack(spacing: 6) {
-                    TagChip(text: story.source.shortLabel, tint: story.source.tint, symbol: story.source.symbol)
-                    if !story.rating.isEmpty { TagChip(text: shortRating) }
-                    if let w = story.words { TagChip(text: "\(w.compact) Wörter") }
-                    TagChip(text: chapterText, symbol: story.isComplete ? "checkmark" : nil)
+                // Zwei feste Zeilen mit den wichtigsten Angaben – was nicht passt, wird gekürzt statt umgebrochen.
+                VStack(alignment: .leading, spacing: 5) {
+                    HStack(spacing: 5) {
+                        TagChip(text: story.source.shortLabel, tint: story.source.tint, symbol: story.source.symbol)
+                        if !story.rating.isEmpty { TagChip(text: shortRating, tint: ratingTint) }
+                        TagChip(text: statusText, tint: story.isComplete ? theme.include : nil,
+                                symbol: story.isComplete ? "checkmark" : nil)
+                        if let w = story.words { TagChip(text: Self.wordsShort(w)).layoutPriority(-1) }
+                    }
+                    HStack(spacing: 5) {
+                        if let d = story.updated {
+                            TagChip(text: d.formatted(.dateTime.day().month(.abbreviated).year(.twoDigits)), symbol: "clock")
+                        }
+                        if !story.language.isEmpty { TagChip(text: languageShort, symbol: "globe") }
+                        if let pairing = story.relationships.first {
+                            TagChip(text: pairing, tint: .pink).layoutPriority(-1)
+                        } else if !story.genres.isEmpty {
+                            TagChip(text: story.genres.joined(separator: "/")).layoutPriority(-1)
+                        }
+                    }
                 }
+                .lineLimit(1)
 
                 if showSummary, !story.summary.isEmpty {
                     Text(story.summary).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
@@ -196,6 +212,38 @@ struct StoryRow: View {
         var parts = [story.author]
         if let f = story.fandoms.first { parts.append(story.fandoms.count > 1 ? "\(f) +\(story.fandoms.count - 1)" : f) }
         return parts.filter { !$0.isEmpty }.joined(separator: " · ")
+    }
+
+    private var ratingTint: Color? {
+        switch shortRating {
+        case "E", "M": theme.exclude
+        case "T", "K+": .orange
+        case "G", "K": theme.include
+        default: nil
+        }
+    }
+
+    static func wordsShort(_ w: Int) -> String {
+        if w >= 1_000_000 { return "\((Double(w) / 1_000_000).formatted(.number.precision(.fractionLength(1)))) Mio. Wörter" }
+        if w >= 1_000 { return "\(w / 1_000)k Wörter" }
+        return "\(w) Wörter"
+    }
+
+    /// „Fertig · 12 Kap.“ bzw. „3/? Kap.“ – Status und Länge in einem Chip.
+    private var statusText: String {
+        if story.source == .epub || story.source == .gutenberg { return "Buch" }
+        if story.isComplete { return "Fertig · \(story.chapters) Kap." }
+        return chapterText
+    }
+
+    private var languageShort: String {
+        let map = ["English": "EN", "Deutsch": "DE", "German": "DE", "Español": "ES", "Spanish": "ES", "Français": "FR",
+                   "French": "FR", "Italiano": "IT", "Italian": "IT", "Português": "PT", "Portuguese": "PT",
+                   "Русский": "RU", "Russian": "RU", "中文-普通话 國語": "ZH", "Chinese": "ZH", "日本語": "JA", "Japanese": "JA",
+                   "Polski": "PL", "Polish": "PL", "Nederlands": "NL", "Dutch": "NL", "Tiếng Việt": "VI", "Vietnamese": "VI",
+                   "Indonesian": "ID", "Bahasa Indonesia": "ID", "Türkçe": "TR", "Turkish": "TR", "한국어": "KO", "Korean": "KO"]
+        if let short = map[story.language] { return short }
+        return story.language.count <= 3 ? story.language.uppercased() : String(story.language.prefix(10))
     }
 
     private var chapterText: String {

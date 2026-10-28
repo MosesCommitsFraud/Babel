@@ -40,7 +40,7 @@ struct BooksView: View {
                 .listRowBackground(Color.clear)
             }
 
-            Section(sectionTitle) {
+            Section {
                 ForEach(books) { book in
                     NavigationLink(value: book) { StoryRow(story: book) }
                         .remoteStoryActions(book)
@@ -128,11 +128,6 @@ struct BooksView: View {
         .alert("Import", isPresented: .constant(importMessage != nil), presenting: importMessage) { _ in
             Button("OK") { importMessage = nil }
         } message: { Text($0) }
-    }
-
-    private var sectionTitle: String {
-        let isBrowsing = filters.query.trimmed.isEmpty && filters.activeCount == 0
-        return isBrowsing ? "\(filters.sort.label) bei Project Gutenberg" : "Ergebnisse bei Project Gutenberg"
     }
 
     private var searchPrompt: String {

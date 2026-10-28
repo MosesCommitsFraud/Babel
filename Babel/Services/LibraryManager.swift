@@ -174,6 +174,25 @@ final class LibraryManager {
         return added
     }
 
+    /// Aus Konto-Listen übernommene Geschichten kennen oft nur Titel und Autor:in.
+    /// Dann einmal die Werkseite holen (AO3) bzw. Kapitel 1 (FFN, landet gleich im Offline-Speicher).
+    func refreshMetadataIfSparse(_ story: Story) async {
+        guard story.source.isWebFiction, story.lastCheckedAt == nil else { return }
+        let sparse = story.summary.isEmpty || (story.tags.isEmpty && story.genres.isEmpty && story.characters.isEmpty) || story.rating.isEmpty
+        guard sparse else { return }
+        do {
+            switch story.source {
+            case .ao3:
+                story.apply(remote: try await AO3Service.fetchWorkMeta(id: story.sourceID))
+            case .ffn:
+                _ = try await ensureChapter(story, index: 0)
+            default: break
+            }
+            story.lastCheckedAt = .now
+            try? story.modelContext?.save()
+        } catch {}
+    }
+
     /// Gutenberg-Suchergebnisse haben kaum Metadaten – die Buchseite liefert Zusammenfassung und Themen.
     func enrichGutenberg(_ story: Story) async {
         guard story.source == .gutenberg, story.tags.isEmpty else { return }

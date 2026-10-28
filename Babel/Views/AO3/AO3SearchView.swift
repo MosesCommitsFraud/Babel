@@ -140,11 +140,13 @@ struct AO3FilterWallView: View {
                     search(draft, title: draft.summary == "Alle Werke" ? "AO3" : draft.summary)
                 } label: {
                     Label(draft.activeCount > 0 ? "Suchen · \(draft.activeCount)" : "Suchen", systemImage: "magnifyingglass")
-                        .font(.subheadline.weight(.semibold))
+                        .font(.headline)
                         .foregroundStyle(theme.primaryForeground)
-                        .padding(.horizontal, 8)
+                        .padding(.horizontal, 22)
+                        .padding(.vertical, 4)
                 }
                 .buttonStyle(.glassProminent)
+                .controlSize(.large)
                 .padding(.bottom, 8)
             }
         }

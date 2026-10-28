@@ -429,6 +429,46 @@ enum AO3Service {
         return works
     }
 
+    // MARK: - Autor:innen
+
+    /// "/users/NAME/pseuds/PSEUD" → "NAME"
+    static func username(from url: URL) -> String? {
+        let parts = url.path.split(separator: "/").map(String.init)
+        guard let i = parts.firstIndex(of: "users"), i + 1 < parts.count else { return nil }
+        return parts[i + 1].removingPercentEncoding ?? parts[i + 1]
+    }
+
+    static func authorProfile(user: String) async throws -> AuthorProfile {
+        let url = base.appendingPathComponent("users/\(user)/profile")
+        let (html, _, status) = try await fetchHTML(url)
+        if status == 404 { throw BabelError.notFound }
+        return try await Task.detached(priority: .userInitiated) {
+            let doc = try SwiftSoup.parse(html, base.absoluteString)
+            var p = AuthorProfile(name: user, url: base.appendingPathComponent("users/\(user)"))
+            p.bio = try doc.select("div.bio blockquote.userstuff").first().map { try paragraphText($0) } ?? ""
+            let dts = try doc.select("dl.meta dt").array(), dds = try doc.select("dl.meta dd").array()
+            for (dt, dd) in zip(dts, dds) where try dt.text().contains("joined") {
+                p.joined = DateParsing.iso.date(from: try dd.text())
+            }
+            for a in try doc.select("#dashboard a").array() {
+                let text = try a.text()
+                let n = text.firstMatch(#"\((\d[\d,]*)\)"#)?[1].digitsInt
+                if text.hasPrefix("Works") { p.storyCount = n }
+                if text.hasPrefix("Bookmarks") { p.favoriteCount = n }
+            }
+            return p
+        }.value
+    }
+
+    enum AuthorList: Sendable { case works, bookmarks }
+
+    static func authorList(_ list: AuthorList, user: String, page: Int) async throws -> ListPage {
+        var comps = URLComponents(url: base.appendingPathComponent("users/\(user)/\(list == .works ? "works" : "bookmarks")"),
+                                  resolvingAgainstBaseURL: false)!
+        if page > 1 { comps.queryItems = [URLQueryItem(name: "page", value: String(page))] }
+        return try await self.list(url: comps.url!)
+    }
+
     // MARK: - Parser
 
     static func parseWorkList(_ html: String) throws -> ListPage {
