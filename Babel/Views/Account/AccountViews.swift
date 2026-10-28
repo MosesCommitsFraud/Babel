@@ -93,49 +93,142 @@ struct AO3AccountView: View {
 
 // MARK: - FanFiction.net
 
+/// Anmeldestatus bei FFN und Abgleich der Favoriten/Follows mit der Bibliothek.
+@MainActor
+@Observable
+final class FFNAccount {
+    static let shared = FFNAccount()
+    private static let key = "ffn.username"
+
+    /// Leer = nicht angemeldet.
+    private(set) var username = UserDefaults.standard.string(forKey: key) ?? ""
+    private(set) var isChecking = false
+    private(set) var isSyncing = false
+    var isLoggedIn: Bool { !username.isEmpty }
+
+    private func setUsername(_ name: String) {
+        username = name
+        UserDefaults.standard.set(name, forKey: Self.key)
+    }
+
+    /// Fragt FFN, wer angemeldet ist (steht oben auf jeder Seite).
+    func check() async {
+        guard !isChecking else { return }
+        isChecking = true
+        defer { isChecking = false }
+        await CookieSync.syncFromWebKit()
+        if let name = try? await FFNService.currentUsername() { setUsername(name) }
+        else { setUsername("") }
+    }
+
+    /// Nach der Anmeldung: Status prüfen und Favoriten + Follows in die Bibliothek holen.
+    func afterLogin(library: LibraryManager, context: ModelContext) async {
+        let wasLoggedIn = isLoggedIn
+        await check()
+        if isLoggedIn && !wasLoggedIn { await sync(library: library, context: context) }
+    }
+
+    func sync(library: LibraryManager, context: ModelContext) async {
+        guard isLoggedIn, !isSyncing else { return }
+        isSyncing = true
+        defer { isSyncing = false }
+        library.updateMessage = "Lade deine FFN-Favoriten …"
+        var added = 0
+        var failed = false
+        for list in FFNService.AccountList.allCases {
+            do {
+                let stories = try await FFNService.accountList(list, username: username)
+                added += library.importAll(stories, context: context) { Self.configure($0, for: list) }
+            } catch {
+                failed = true
+            }
+        }
+        if added > 0 {
+            library.updateMessage = added == 1 ? "1 Geschichte von FFN übernommen" : "\(added) Geschichten von FFN übernommen"
+        } else {
+            library.updateMessage = failed ? "FFN-Listen konnten nicht geladen werden" : "FFN-Bibliothek ist aktuell"
+        }
+    }
+
+    func logout() async {
+        await CookieSync.logoutFFN()
+        setUsername("")
+    }
+
+    static func configure(_ story: Story, for list: FFNService.AccountList) {
+        if list == .favorites { story.isFavorite = true }
+        else if story.status == .planned || story.status == .none { story.status = .reading }
+    }
+}
+
 struct FFNAccountView: View {
+    @Environment(\.modelContext) private var context
+    @Environment(LibraryManager.self) private var library
+    @State private var account = FFNAccount.shared
     @State private var showLogin = false
     @State private var reloadToken = UUID()
 
     var body: some View {
         Form {
             Section {
-                Button("Bei FanFiction.net anmelden", systemImage: "person.crop.circle.badge.plus") { showLogin = true }
+                HStack {
+                    Label(account.isLoggedIn ? "Angemeldet als \(account.username)" : "Nicht angemeldet",
+                          systemImage: account.isLoggedIn ? "person.crop.circle.badge.checkmark" : "person.crop.circle.badge.questionmark")
+                    Spacer()
+                    if account.isChecking { ProgressView() }
+                }
+                if account.isLoggedIn {
+                    Button {
+                        Task { await account.sync(library: library, context: context) }
+                    } label: {
+                        Label(account.isSyncing ? "Wird abgeglichen …" : "Favoriten & Follows in die Bibliothek", systemImage: "arrow.triangle.2.circlepath")
+                    }
+                    .disabled(account.isSyncing)
+                } else {
+                    Button("Bei FanFiction.net anmelden", systemImage: "person.crop.circle.badge.plus") { showLogin = true }
+                }
             } footer: {
-                Text("Die Anmeldung läuft direkt auf fanfiction.net und bleibt im Hintergrund-Browser der App erhalten. Babel speichert kein Passwort.")
+                Text(account.isLoggedIn
+                     ? "Favoriten werden als Favorit markiert, Follows bekommen „Lese ich“. Bereits vorhandene Geschichten bleiben, wie sie sind."
+                     : "Die Anmeldung läuft direkt auf fanfiction.net. Danach holt Babel deine Favoriten und Follows automatisch in die Bibliothek. Babel speichert kein Passwort.")
             }
             .themedRows()
 
-            Section("Deine Listen") {
-                ForEach(FFNService.AccountList.allCases) { list in
-                    NavigationLink {
-                        AccountStoryList(title: list.label,
-                                         importHint: list == .favorites ? "Übernommene Favoriten werden als Favorit markiert." : "Übernommene Follows bekommen den Status „Lese ich“.") { page in
-                            guard page == 1 else { return ([], false) }
-                            return (try await FFNService.accountList(list), false)
-                        } configure: { story in
-                            if list == .favorites { story.isFavorite = true }
-                            else if story.status == .planned || story.status == .none { story.status = .reading }
+            if account.isLoggedIn {
+                Section("Deine Listen") {
+                    ForEach(FFNService.AccountList.allCases) { list in
+                        NavigationLink {
+                            AccountStoryList(title: list.label,
+                                             importHint: list == .favorites ? "Übernommene Favoriten werden als Favorit markiert." : "Übernommene Follows bekommen den Status „Lese ich“.") { page in
+                                guard page == 1 else { return ([], false) }
+                                return (try await FFNService.accountList(list, username: account.username), false)
+                            } configure: { story in
+                                FFNAccount.configure(story, for: list)
+                            }
+                            .id(reloadToken)
+                        } label: {
+                            Label(list.label, systemImage: list.symbol)
                         }
-                        .id(reloadToken)
-                    } label: {
-                        Label(list.label, systemImage: list.symbol)
                     }
                 }
-            }
-            .themedRows()
+                .themedRows()
 
-            Section {
-                Button("Abmelden", role: .destructive) {
-                    Task { await CookieSync.logoutFFN() }
+                Section {
+                    Button("Abmelden", role: .destructive) {
+                        Task { await account.logout() }
+                    }
                 }
+                .themedRows()
             }
-            .themedRows()
         }
         .themedBackground()
         .navigationTitle("FFN-Konto")
+        .task { await account.check() }
         .sheet(isPresented: $showLogin, onDismiss: {
-            Task { await CookieSync.syncFromWebKit(); reloadToken = UUID() }
+            Task {
+                await account.afterLogin(library: library, context: context)
+                reloadToken = UUID()
+            }
         }) {
             WebLoginSheet(title: "FFN-Anmeldung", url: URL(string: "https://www.fanfiction.net/login.php")!)
         }

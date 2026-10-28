@@ -199,9 +199,9 @@ enum FFNService {
         }.value
     }
 
-    static func parseStories(_ doc: Document) throws -> [RemoteStory] {
+    static func parseStories(_ doc: Document, selector: String = "div.z-list") throws -> [RemoteStory] {
         var result: [RemoteStory] = []
-        for z in try doc.select("div.z-list").array() {
+        for z in try doc.select(selector).array() {
             guard let a = try z.select("a.stitle").first() else { continue }
             let href = try a.attr("href")
             guard let id = href.firstMatch(#"/s/(\d+)"#)?[1] else { continue }
@@ -333,8 +333,34 @@ enum FFNService {
         var path: String { self == .favorites ? "favorites/story.php" : "alert/story.php" }
     }
 
-    /// Favoriten oder Follows der angemeldeten Person (alle Seiten).
-    static func accountList(_ list: AccountList) async throws -> [RemoteStory] {
+    /// Name der angemeldeten Person – FFN schreibt ihn oben rechts neben „Logout“ (`#name_login`).
+    /// `nil` heißt: nicht angemeldet.
+    static func currentUsername() async throws -> String? {
+        let (html, _) = try await load(base, minInterval: 0.8)
+        return try await Task.detached(priority: .userInitiated) {
+            let doc = try SwiftSoup.parse(html, base.absoluteString)
+            guard let box = try doc.select("#name_login").first(), try box.text().contains("Logout"),
+                  let name = try box.select("a").first()?.text().trimmed, !name.isEmpty else { return nil }
+            return name
+        }.value
+    }
+
+    /// Favoriten oder Follows der angemeldeten Person.
+    /// Favoriten kommen vom öffentlichen Profil (`/~name`, sauberes `z-list favstories`),
+    /// Follows nur über die Konto-Seite.
+    static func accountList(_ list: AccountList, username: String) async throws -> [RemoteStory] {
+        if list == .favorites, !username.isEmpty,
+           let profile = URL(string: "~" + (username.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? username), relativeTo: base) {
+            let (html, _) = try await load(profile.absoluteURL)
+            let favorites = try await Task.detached(priority: .userInitiated) {
+                try parseStories(SwiftSoup.parse(html, base.absoluteString), selector: "div.z-list.favstories")
+            }.value
+            if !favorites.isEmpty { return favorites }
+        }
+        return try await accountPages(list)
+    }
+
+    private static func accountPages(_ list: AccountList) async throws -> [RemoteStory] {
         var url: URL? = base.appendingPathComponent(list.path)
         var result: [RemoteStory] = []
         var seen = Set<String>()
@@ -362,8 +388,10 @@ enum FFNService {
     static func parseStoryLinks(_ doc: Document) throws -> [RemoteStory] {
         var result: [RemoteStory] = []
         var seen = Set<String>()
-        for a in try doc.select("a[href^=\"/s/\"]").array() {
-            guard let id = try a.attr("href").firstMatch(#"^/s/(\d+)"#)?[1], !seen.contains(id) else { continue }
+        for a in try doc.select("a[href*=\"/s/\"]").array() {
+            let href = try a.attr("href")
+            guard href.hasPrefix("/s/") || href.contains("fanfiction.net/s/"),
+                  let id = href.firstMatch(#"/s/(\d+)"#)?[1], !seen.contains(id) else { continue }
             let title = try a.text().trimmed
             guard !title.isEmpty, title.rangeOfCharacter(from: .letters) != nil else { continue }
             seen.insert(id)

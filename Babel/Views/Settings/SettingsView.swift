@@ -9,6 +9,7 @@ struct SettingsView: View {
     @AppStorage("checkUpdatesOnLaunch") private var checkUpdatesOnLaunch = true
 
     @AppStorage("ao3.username") private var ao3User = ""
+    @State private var ffn = FFNAccount.shared
     @State private var showAO3Login = false
     @State private var showFFNLogin = false
     @State private var showFFNCheck = false
@@ -39,10 +40,18 @@ struct SettingsView: View {
                             }
                         }
                     }
-                    Label("FanFiction.net", systemImage: StorySource.ffn.symbol)
-                    Button("Bei FanFiction.net anmelden", systemImage: "person.crop.circle.badge.plus") { showFFNLogin = true }
-                    Button("Bei FanFiction.net abmelden", role: .destructive) {
-                        Task { await CookieSync.logoutFFN() }
+                    HStack {
+                        Label("FanFiction.net", systemImage: StorySource.ffn.symbol)
+                        Spacer()
+                        if ffn.isChecking { ProgressView() }
+                        else { Text(ffn.isLoggedIn ? ffn.username : "Nicht angemeldet").foregroundStyle(.secondary) }
+                    }
+                    if ffn.isLoggedIn {
+                        Button("Bei FanFiction.net abmelden", role: .destructive) {
+                            Task { await ffn.logout() }
+                        }
+                    } else {
+                        Button("Bei FanFiction.net anmelden", systemImage: "person.crop.circle.badge.plus") { showFFNLogin = true }
                     }
                     Button("FanFiction.net-Prüfung manuell öffnen", systemImage: "checkmark.shield") { showFFNCheck = true }
                 } header: {
@@ -85,7 +94,10 @@ struct SettingsView: View {
                     Button("Fertig", systemImage: "checkmark") { dismiss() }
                 }
             }
-            .task { storage = ContentStore.totalSize() }
+            .task {
+                storage = ContentStore.totalSize()
+                await ffn.check()
+            }
             .sheet(isPresented: $showAO3Login, onDismiss: {
                 Task {
                     await CookieSync.syncFromWebKit()
@@ -94,7 +106,7 @@ struct SettingsView: View {
             }) {
                 WebLoginSheet(title: "AO3-Anmeldung", url: URL(string: "https://archiveofourown.org/users/login")!)
             }
-            .sheet(isPresented: $showFFNLogin, onDismiss: { Task { await CookieSync.syncFromWebKit() } }) {
+            .sheet(isPresented: $showFFNLogin, onDismiss: { Task { await ffn.afterLogin(library: library, context: context) } }) {
                 WebLoginSheet(title: "FFN-Anmeldung", url: URL(string: "https://www.fanfiction.net/login.php")!)
             }
             .sheet(isPresented: $showFFNCheck) {
