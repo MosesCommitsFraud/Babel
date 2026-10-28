@@ -1,0 +1,38 @@
+{
+  "name": "Babel",
+  "identifier": "de.babelreader.source",
+  "subtitle": "E-Reader für AO3, FanFiction.net und freie Bücher",
+  "description": "Private Quelle für Babel. In SideStore unter „Quellen“ hinzufügen, dann kommen neue Versionen automatisch als Update.",
+  "iconURL": "https://raw.githubusercontent.com/MosesCommitsFraud/Babel/main/Design/Icon/AppIcon-1024.png",
+  "website": "https://github.com/MosesCommitsFraud/Babel",
+  "tintColor": "3F8F5C",
+  "apps": [
+    {
+      "name": "Babel",
+      "bundleIdentifier": "de.babelreader.app",
+      "developerName": "Moritz",
+      "subtitle": "Fanfiction und freie Bücher lesen",
+      "localizedDescription": "Babel liest Geschichten von Archive of Our Own und FanFiction.net sowie freie Bücher von Project Gutenberg, Standard Ebooks und dem Internet Archive. Mit Filtern wie auf den Websites, Offline-Speicher, Bibliothek mit Verlauf, optionalem Login für Favoriten und Follows und einem Reader im Liquid-Glass-Design.",
+      "iconURL": "https://raw.githubusercontent.com/MosesCommitsFraud/Babel/main/Design/Icon/AppIcon-1024.png",
+      "tintColor": "3F8F5C",
+      "category": "entertainment",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "1.0",
+          "buildVersion": "1",
+          "date": "2026-10-28",
+          "localizedDescription": "Erste Version.",
+          "downloadURL": "https://github.com/MosesCommitsFraud/Babel/releases/download/v1.0/Babel-1.0.ipa",
+          "size": 8285175,
+          "minOSVersion": "26.0"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    }
+  ],
+  "news": []
+}
