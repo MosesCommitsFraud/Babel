@@ -19,6 +19,15 @@
       "screenshots": [],
       "versions": [
         {
+          "version": "1.1",
+          "buildVersion": "22",
+          "date": "2026-10-28",
+          "localizedDescription": "Bibliothek: Wischen für Laden, Favorit und Löschen. Gelöschte Geschichten bleiben beim FFN-Abgleich draußen. Neue Themes, kompaktere Listen, neues Icon, Standard Ebooks und Internet Archive als Bücherquellen.",
+          "downloadURL": "https://github.com/MosesCommitsFraud/Babel/releases/download/v1.1/Babel-1.1.ipa",
+          "size": 8288420,
+          "minOSVersion": "26.0"
+        },
+        {
           "version": "1.0",
           "buildVersion": "1",
           "date": "2026-10-28",
