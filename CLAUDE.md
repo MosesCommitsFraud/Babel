@@ -26,7 +26,7 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 - AO3-Tab startet mit der Filterwand (eigener `NavigationPath` – nicht `navigationDestination(item:)`, das baute die Ergebnisliste beim Öffnen einer Story neu); Filter lassen sich als Presets speichern (AO3 und FFN).
 - Login (AO3 + FFN) optional, um Lesezeichen/Favoriten/Follows zu importieren.
 
-- App-Icon: Icon-Composer-Datei `Babel/AppIcon.icon` – hexagonale Galerie mit Bücherregal (Borges' Bibliothek von Babel) auf hellgrünem Wabenmuster; SVG-Ebenen werden per Python erzeugt (Hexagon, Regale, Waben). Vorschau mit `ictool … --export-image` (in `Icon Composer.app/Contents/Executables`).
+- App-Icon: Icon-Composer-Datei `Babel/AppIcon.icon` (Variante F): drei grüne Glas-Buchrücken auf einem Regalbrett, ohne Rahmen, auf fast weißem Grund; jedes Buch eine eigene Glas-Gruppe für Tiefe im iOS-27-Look. Weitere Entwürfe A–G in `Design/Icon/`. Vorschau: `ictool <datei>.icon --export-image … --design-generation 27` (in `Icon Composer.app/Contents/Executables`).
 - Autorenseiten (`Views/Author/AuthorView.swift`): FFN `/u/<id>/` (eigene Geschichten + Favoriten), AO3 `/users/<name>/profile`, `/works`, `/bookmarks` (seitenweise).
 - Listenzeilen kompakt: eine Chip-Zeile (Quelle nur mit `showSource` – Bibliothek/Suche –, Rating, Status, Wörter, Sprache) und eine graue Textzeile (Datum, Bewertungen, Pairing/Genre), Zusammenfassung 2 Zeilen. Tags neutral, nicht farbig.
 - FFN-„Verlauf“ der offiziellen FFN-App (bei Nutzer ~2500) liegt nur lokal in der App – auf der Website gibt es nur Favoriten (80) und Follows (70).

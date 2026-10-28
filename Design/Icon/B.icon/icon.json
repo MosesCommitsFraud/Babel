@@ -1,0 +1,46 @@
+{
+  "fill": {
+    "solid": "display-p3:0.64000,0.86000,0.62000,1.00000"
+  },
+  "groups": [
+    {
+      "layers": [
+        {
+          "image-name": "bottom.svg",
+          "name": "bottom",
+          "glass": true
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.3
+      }
+    },
+    {
+      "layers": [
+        {
+          "image-name": "top.svg",
+          "name": "top",
+          "glass": true
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.3
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": [
+      "iOS"
+    ]
+  }
+}
