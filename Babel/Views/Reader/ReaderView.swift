@@ -437,6 +437,9 @@ struct ReaderWebView: UIViewRepresentable {
         view.scrollView.backgroundColor = UIColor(background)
         view.scrollView.contentInsetAdjustmentBehavior = .never
         view.scrollView.showsHorizontalScrollIndicator = false
+        // Nur senkrecht scrollen – waagerecht wechselt das Wischen das Kapitel.
+        view.scrollView.alwaysBounceHorizontal = false
+        view.scrollView.isDirectionalLockEnabled = true
         view.allowsLinkPreview = false
         // Wischen nach links/rechts wechselt das Kapitel.
         for direction in [UISwipeGestureRecognizer.Direction.left, .right] {

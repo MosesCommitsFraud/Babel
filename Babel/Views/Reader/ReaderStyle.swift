@@ -70,7 +70,9 @@ struct ReaderStyle {
     var css: String {
         """
         :root { color-scheme: \(theme.colorScheme == .dark ? "dark" : "light"); }
-        html { -webkit-text-size-adjust: 100%; background: \(theme.background) !important; }
+        html { -webkit-text-size-adjust: 100%; background: \(theme.background) !important; overflow-x: hidden !important; }
+        body { overflow-x: hidden !important; }
+        pre, table { white-space: pre-wrap; max-width: 100% !important; }
         body {
             margin: 0 !important;
             padding: calc(env(safe-area-inset-top) + 72px) \(Int(margin))px calc(env(safe-area-inset-bottom) + 120px) \(Int(margin))px !important;
