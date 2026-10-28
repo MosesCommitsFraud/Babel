@@ -148,7 +148,7 @@ final class FFNAccount {
         for list in FFNService.AccountList.allCases {
             do {
                 let stories = try await FFNService.accountList(list, username: username)
-                added += library.importAll(stories, context: context) { Self.configure($0, for: list) }
+                added += library.importAll(stories, context: context, skipRemoved: true) { Self.configure($0, for: list) }
                 counts.append("\(list.label): \(stories.count)")
             } catch {
                 counts.append(String(localized: "\(list.label): Fehler"))

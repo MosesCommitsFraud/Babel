@@ -40,6 +40,7 @@ final class LibraryManager {
 
     func addToLibrary(_ story: Story, context: ModelContext) {
         story.inLibrary = true
+        story.userRemoved = false
         if story.addedAt == nil { story.addedAt = .now }
         if story.status == .none { story.status = story.hasStarted ? .reading : .planned }
         try? context.save()
@@ -169,10 +170,11 @@ final class LibraryManager {
     }
 
     /// Viele Geschichten auf einmal übernehmen (z. B. AO3-Lesezeichen oder FFN-Favoriten).
-    func importAll(_ remotes: [RemoteStory], context: ModelContext, configure: (Story) -> Void) -> Int {
+    func importAll(_ remotes: [RemoteStory], context: ModelContext, skipRemoved: Bool = false, configure: (Story) -> Void) -> Int {
         var added = 0
         for remote in remotes {
             let story = story(for: remote, context: context)
+            if skipRemoved && story.userRemoved { continue }
             if !story.inLibrary { added += 1 }
             addToLibrary(story, context: context)
             configure(story)

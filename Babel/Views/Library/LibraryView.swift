@@ -62,29 +62,7 @@ struct LibraryView: View {
                         Button { reader.open(story) } label: { Label("Lesen", systemImage: "book.fill") }
                             .tint(theme.primary)
                     }
-                    .swipeActions(edge: .trailing) {
-                        if story.inLibrary {
-                            Button(role: .destructive) { library.removeFromLibrary(story, context: context) } label: {
-                                Label("Entfernen", systemImage: "trash")
-                            }
-                        } else {
-                            Button { library.addToLibrary(story, context: context) } label: {
-                                Label("Merken", systemImage: "bookmark")
-                            }
-                            .tint(.indigo)
-                            Button(role: .destructive) {
-                                story.viewedAt = nil
-                                story.lastOpenedAt = nil
-                                try? context.save()
-                            } label: {
-                                Label("Aus Verlauf", systemImage: "clock.badge.xmark")
-                            }
-                        }
-                        Button { story.isFavorite.toggle() } label: {
-                            Label("Favorit", systemImage: story.isFavorite ? "heart.slash" : "heart")
-                        }
-                        .tint(.pink)
-                    }
+                    .librarySwipeActions(story)
                     .contextMenu { StoryContextMenu(story: story) }
                 }
                 .themedRows(grouped: false)
@@ -102,12 +80,7 @@ struct LibraryView: View {
                             StoryRow(story: story.asRemote, localCover: ContentStore.coverFileURL(story),
                                      progress: story.hasStarted ? story.overallProgress : nil, showSummary: false, showSource: true)
                         }
-                        .swipeActions(edge: .trailing) {
-                            Button { library.addToLibrary(story, context: context) } label: {
-                                Label("Merken", systemImage: "bookmark")
-                            }
-                            .tint(.indigo)
-                        }
+                        .librarySwipeActions(story)
                     }
                     .themedRows(grouped: false)
                     if recentlyViewed.count > 8 {
@@ -366,4 +339,81 @@ struct StoryContextMenu: View {
             }
         }
     }
+}
+
+/// Wischen in der Bibliothek: Laden, Favorit, Löschen – runde Glasknöpfe von iOS in gedämpften Themefarben.
+/// Ganz durchwischen löscht.
+struct LibrarySwipeActions: ViewModifier {
+    @Bindable var story: Story
+    @Environment(\.modelContext) private var context
+    @Environment(LibraryManager.self) private var library
+    @Environment(\.theme) private var theme
+
+    private var isDownloaded: Bool {
+        story.source.isWebFiction
+            ? story.downloadedCount > 0 && story.downloadedCount >= story.knownChapterCount
+            : !story.spinePaths.isEmpty
+    }
+
+    func body(content: Content) -> some View {
+        content.swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            Button(role: .destructive) {
+                withAnimation { remove() }
+            } label: {
+                Label("Löschen", systemImage: "trash")
+            }
+            .tint(theme.exclude)
+
+            Button {
+                story.isFavorite.toggle()
+                try? context.save()
+            } label: {
+                Label(story.isFavorite ? "Kein Favorit" : "Favorit", systemImage: story.isFavorite ? "heart.slash.fill" : "heart.fill")
+            }
+            .tint(Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0xD39C96) : UIColor(hex: 0xB0726D) }))
+
+            if story.source != .epub {
+                Button {
+                    download()
+                } label: {
+                    Label(isDownloaded ? "Offline" : "Laden", systemImage: isDownloaded ? "checkmark.circle.fill" : "arrow.down.circle.fill")
+                }
+                .tint(theme.primary)
+                .disabled(isDownloaded || library.downloads[story.key] != nil)
+            }
+        }
+    }
+
+    /// Aus der Bibliothek nehmen, Offline-Kopie und Verlaufseintrag entfernen.
+    /// Eigene EPUBs gibt es nur lokal – die verschwinden ganz.
+    private func remove() {
+        if story.source == .epub {
+            library.delete(story, context: context)
+            return
+        }
+        library.removeFromLibrary(story, context: context)
+        library.deleteOfflineContent(story, context: context)
+        if !story.source.isWebFiction { ContentStore.deleteContent(of: story); story.spinePaths = [] }
+        story.viewedAt = nil
+        story.lastOpenedAt = nil
+        story.userRemoved = true
+        try? context.save()
+    }
+
+    private func download() {
+        if !story.inLibrary { library.addToLibrary(story, context: context) }
+        library.showProgress(String(localized: "Lade „\(story.title)“ …"))
+        Task {
+            do {
+                try await library.downloadAll(story)
+                library.updateMessage = String(localized: "„\(story.title)“ offline gespeichert")
+            } catch {
+                library.updateMessage = String(localized: "Download fehlgeschlagen: \(error.localizedDescription)")
+            }
+        }
+    }
+}
+
+extension View {
+    func librarySwipeActions(_ story: Story) -> some View { modifier(LibrarySwipeActions(story: story)) }
 }

@@ -46,6 +46,8 @@ final class Story {
     var lastOpenedAt: Date? = nil
     /// Wann die Storyseite zuletzt angesehen wurde (für den Verlauf in der Bibliothek).
     var viewedAt: Date? = nil
+    /// Bewusst aus der Bibliothek gelöscht – der automatische FFN-/AO3-Abgleich holt sie dann nicht zurück.
+    var userRemoved: Bool = false
     var statusRaw: String = ReadingStatus.none.rawValue
     var isFavorite: Bool = false
     var currentChapter: Int = 0
