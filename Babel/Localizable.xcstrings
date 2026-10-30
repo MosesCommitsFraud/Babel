@@ -4,6 +4,7 @@
     "\n" : {},
     "–" : {},
     "„%@“ auf AO3 suchen" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -14,6 +15,7 @@
       }
     },
     "„%@“ auf FanFiction.net suchen" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -49,6 +51,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "\"%@\" saved offline"
+          }
+        }
+      }
+    },
+    "„%@“ überall suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search everywhere for “%@”"
           }
         }
       }
@@ -566,6 +578,16 @@
         }
       }
     },
+    "Alle Treffer auf %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All results on %@"
+          }
+        }
+      }
+    },
     "Alle übernehmen" : {
       "localizations" : {
         "en" : {
@@ -764,6 +786,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "AO3 Account"
+          }
+        }
+      }
+    },
+    "AO3, FanFiction.net und Project Gutenberg gleichzeitig." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AO3, FanFiction.net and Project Gutenberg at once."
           }
         }
       }
@@ -1071,11 +1103,22 @@
       }
     },
     "Bibliothek, AO3, FanFiction.net" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Library, AO3, FanFiction.net"
+          }
+        }
+      }
+    },
+    "Bibliothek, AO3, FanFiction.net, Bücher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Library, AO3, FanFiction.net, books"
           }
         }
       }
@@ -1383,6 +1426,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "FanFiction.net's security check wasn't completed. Please try again."
+          }
+        }
+      }
+    },
+    "Die Suche geht über deine Bibliothek, AO3, FanFiction.net und Project Gutenberg gleichzeitig." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search covers your library, AO3, FanFiction.net and Project Gutenberg at once."
           }
         }
       }
@@ -2124,6 +2177,16 @@
         }
       }
     },
+    "Gespeicherte AO3-Filter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved AO3 filters"
+          }
+        }
+      }
+    },
     "Gespeicherte Filter" : {
       "localizations" : {
         "en" : {
@@ -2170,6 +2233,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gutenberg searches most reliably with English terms, even for German books (subject \"poetry\" rather than \"Lyrik\")."
+          }
+        }
+      }
+    },
+    "Gutenberg: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gutenberg: %@"
           }
         }
       }
@@ -2866,6 +2939,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Last 6 months"
+          }
+        }
+      }
+    },
+    "Letzte Suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recent searches"
           }
         }
       }
@@ -3954,6 +4037,16 @@
         }
       }
     },
+    "Suche …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching…"
+          }
+        }
+      }
+    },
     "Suche auf AO3 …" : {
       "localizations" : {
         "en" : {
@@ -4360,6 +4453,7 @@
       }
     },
     "Weitersuchen" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4501,6 +4595,7 @@
       }
     },
     "Zuletzt geöffnet" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4566,16 +4661,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Summary"
-          }
-        }
-      }
-    },
-    "Durchsucht deine Bibliothek und den Verlauf; auf AO3 und FanFiction.net geht es mit einem Tipp weiter." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Searches your library and history; one more tap continues the search on AO3 and FanFiction.net."
           }
         }
       }

@@ -182,12 +182,13 @@ struct LibraryView: View {
         for shelf in shelves { add(shelf.name, shelf.symbol, .shelf(shelf.name)) }
         // AO3 und FFN immer anbieten, Gutenberg/EPUB nur, wenn etwas da ist.
         for source in StorySource.allCases { add(source.shortLabel, source.symbol, .source(source), hideEmpty: !source.isWebFiction) }
-        add(String(localized: "Verlauf"), "clock.arrow.circlepath", .history, hideEmpty: true)
         // Stabil sortieren: bei gleicher Anzahl bleibt die Reihenfolge von oben.
         let sorted = items.enumerated().sorted { a, b in
             a.element.count != b.element.count ? a.element.count > b.element.count : a.offset < b.offset
         }.map(\.element)
-        return [ChipItem(title: String(localized: "Alle"), symbol: nil, value: .all, count: stories.count)] + sorted
+        // „Alle“ und „Verlauf“ (alles je Angesehene/Gelesene) immer vorn, der Rest nach Anzahl.
+        return [ChipItem(title: String(localized: "Alle"), symbol: nil, value: .all, count: stories.count),
+                ChipItem(title: String(localized: "Verlauf"), symbol: "clock.arrow.circlepath", value: .history, count: history.count)] + sorted
     }
 
     private var filterBar: some View {
