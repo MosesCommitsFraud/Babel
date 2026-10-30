@@ -82,6 +82,8 @@ struct LibraryView: View {
 
         }
         .listStyle(.plain)
+        // Eine Animation für jeden Filterwechsel – Chip, Filter-Sheet, aktive Filter, Sortierung, Suche.
+        .animation(.snappy, value: filterState)
         .themedBackground()
         .navigationTitle("Bibliothek")
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Titel, Autor:in, Fandom, Pairing, Tag")
@@ -185,7 +187,7 @@ struct LibraryView: View {
                 Text("\(filtered.count) Treffer").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
                 ForEach(Array(items.enumerated()), id: \.offset) { _, item in
                     Button {
-                        withAnimation(.snappy) { item.1() }
+                        item.1()
                     } label: {
                         HStack(spacing: 4) {
                             Text(item.0).lineLimit(1)
@@ -205,7 +207,7 @@ struct LibraryView: View {
 
     private func chip(_ title: String, _ symbol: String?, _ value: LibraryFilter) -> some View {
         GlassChip(title: title, symbol: symbol, isSelected: filter == value) {
-            withAnimation(.snappy) { filter = value }
+            filter = value
         }
     }
 
@@ -219,6 +221,17 @@ struct LibraryView: View {
         case .source(let s): story.source == s
         case .shelf(let name): story.shelves.contains { $0.name == name }
         }
+    }
+
+    private struct FilterState: Equatable {
+        var filter: LibraryFilter
+        var sort: LibrarySort
+        var query: LibraryQuery
+        var search: String
+    }
+
+    private var filterState: FilterState {
+        FilterState(filter: filter, sort: sort, query: query, search: searchText.trimmed)
     }
 
     private var filtered: [Story] {

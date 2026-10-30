@@ -143,7 +143,7 @@ struct LibraryFilterSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Zurücksetzen", systemImage: "arrow.counterclockwise") { withAnimation { query = LibraryQuery() } }
+                    Button("Zurücksetzen", systemImage: "arrow.counterclockwise") { withAnimation(.snappy) { query = LibraryQuery() } }
                         .disabled(query.activeCount == 0)
                 }
                 ToolbarItem(placement: .confirmationAction) {
