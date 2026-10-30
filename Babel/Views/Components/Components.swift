@@ -203,8 +203,10 @@ struct StoryRow: View {
             if let progress, progress > 0 {
                 HStack(spacing: 8) {
                     ProgressView(value: progress).tint(theme.primary)
-                    Text("\(Int(progress * 100)) %").font(.caption.monospacedDigit()).foregroundStyle(.secondary)
+                    Text("\(Int(progress * 100)) %").font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
                 }
+                // Der Balken ist dünn – mit normalem Abstand wirkt die Lücke zum Trenner zu groß.
+                .padding(.bottom, -14)
             }
         }
         .padding(.vertical, 3)
