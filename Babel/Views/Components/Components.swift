@@ -171,6 +171,12 @@ struct StoryRow: View {
                                 .foregroundStyle(Self.leafGreen)
                                 .accessibilityLabel("Neue Geschichte")
                         }
+                        if story.source.isWebFiction && story.isComplete {
+                            Image(systemName: "checkmark.seal.fill")
+                                .font(.footnote)
+                                .foregroundStyle(Self.completeBlue)
+                                .accessibilityLabel("Abgeschlossen")
+                        }
                         if newChapters > 0 {
                             Text("+\(newChapters)")
                                 .font(.caption.weight(.bold))
@@ -185,7 +191,7 @@ struct StoryRow: View {
                     HStack(spacing: 4) {
                         if showSource { TagChip(text: story.source.shortLabel, symbol: story.source.symbol) }
                         if !story.rating.isEmpty { TagChip(text: shortRating) }
-                        TagChip(text: statusText, symbol: story.isComplete ? "checkmark" : nil)
+                        TagChip(text: statusText)
                         if let w = story.words { TagChip(text: Self.wordsShort(w)).layoutPriority(-1) }
                         if !story.language.isEmpty { TagChip(text: languageShort).layoutPriority(-2) }
                     }
@@ -219,6 +225,7 @@ struct StoryRow: View {
     }
 
     static let leafGreen = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0x7ED492) : UIColor(hex: 0x3E9A57) })
+    static let completeBlue = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0x7FB2F0) : UIColor(hex: 0x3D7CC9) })
     static let heartRed = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0xFF6B6B) : UIColor(hex: 0xE0393E) })
     static let followYellow = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0xFFD25E) : UIColor(hex: 0xE3A000) })
 
