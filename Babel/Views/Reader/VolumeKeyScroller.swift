@@ -41,13 +41,13 @@ final class VolumeKeyScroller {
         keyWindow?.addSubview(view)
         volumeView = view
 
-        Self.audioQueue.async {
+        Self.audioQueue.async { [weak self] in
             let session = AVAudioSession.sharedInstance()
             // Mischt sich mit laufender Musik, unterbricht nichts.
             try? session.setCategory(.ambient, options: [.mixWithOthers])
             try? session.setActive(true)
             let current = session.outputVolume
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async {
                 guard let self, self.isRunning, self.generation == token else { return }
                 self.begin(at: current)
             }
