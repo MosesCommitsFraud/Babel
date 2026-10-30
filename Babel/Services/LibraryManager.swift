@@ -183,6 +183,16 @@ final class LibraryManager {
         return added
     }
 
+    /// Lädt für Geschichten ohne Angaben (nur Titel/Link) die Daten nach – nacheinander,
+    /// FFN über die Storyseite (Kapitel 1 landet dabei gleich im Offline-Speicher).
+    func completeMetadata(of remotes: [RemoteStory], context: ModelContext) async {
+        for remote in remotes {
+            let story = story(for: remote, context: context)
+            guard story.words == nil, story.lastCheckedAt == nil else { continue }
+            await refreshMetadataIfSparse(story)
+        }
+    }
+
     /// Aus Konto-Listen übernommene Geschichten kennen oft nur Titel und Autor:in.
     /// Dann einmal die Werkseite holen (AO3) bzw. Kapitel 1 (FFN, landet gleich im Offline-Speicher).
     func refreshMetadataIfSparse(_ story: Story) async {

@@ -66,7 +66,7 @@ AO3-Suche/Blurbs, FFN-Fandoms/Listen/Filter-Apply/Cover, Gutenberg-Suche + Detai
 
 ## Ungetestete Annahmen (zuerst prüfen)
 - AO3-Konto: Benutzername aus `#greeting`, Listen `/users/<n>/bookmarks`, `readings?show=to-read`, `subscriptions?type=works`.
-- FFN-Konto mit echtem Login: Login-Erkennung über `#name_login` (FFN schreibt dort per `XUNAME` Name + „Logout“), Favoriten vom öffentlichen Profil `/~name` (`div.z-list.favstories`, im Browser geprüft), Follows über `alert/story.php` (generisches Parsen von `/s/`-Links, mit echtem Konto geprüft: 2 Seiten, `?p=2`). FFN hat keinen Leseverlauf. Abgleich automatisch beim Start (höchstens alle 6 h).
+- FFN-Konto mit echtem Login: Login-Erkennung über `#name_login` (FFN schreibt dort per `XUNAME` Name + „Logout“), Favoriten vom öffentlichen Profil `/~name` (`div.z-list.favstories`, im Browser geprüft), Follows über `alert/story.php` (generisches Parsen von `/s/`-Links, mit echtem Konto geprüft: 2 Seiten, `?p=2`). FFN hat keinen Leseverlauf. Abgleich automatisch beim Start (höchstens alle 6 h). Follows kommen nur als Links (`RemoteStory.isLinkOnly`) – `Story.apply` übernimmt von solchen Einträgen keine Kapitelzahl/Status (früher überschrieben sie die Favoriten-Daten mit „1 Kapitel, unfertig“); fehlende Angaben lädt `LibraryManager.completeMetadata` nach dem Abgleich einzeln nach. Einmalige Reparatur über `ffn.metaRepair.1` (erzwingt einen Abgleich).
 - EPUB-Export in Apple Books öffnen.
 - Cloudflare-Challenge im WKWebView auf echtem Gerät.
 - AO3 ist zeitweise extrem langsam (60–100 s pro Seite) bzw. liefert 525 – dann helfen nur Cache/Timeouts.

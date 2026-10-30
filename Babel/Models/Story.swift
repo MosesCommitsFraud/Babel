@@ -120,9 +120,11 @@ final class Story {
         set(r.rating, &rating)
         set(r.language, &language)
         words = r.words ?? words
-        if r.chapters > 0 { chapterCount = max(r.chapters, chapterTitles.count) }
-        totalChapters = r.totalChapters
-        isComplete = r.isComplete
+        if !r.isLinkOnly {
+            if r.chapters > 0 { chapterCount = max(r.chapters, chapterTitles.count) }
+            totalChapters = r.totalChapters
+            isComplete = r.isComplete
+        }
         lastUpdated = r.updated ?? lastUpdated
         published = r.published ?? published
         kudos = r.kudos ?? kudos

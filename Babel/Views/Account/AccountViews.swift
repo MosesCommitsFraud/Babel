@@ -106,12 +106,15 @@ final class FFNAccount {
     private(set) var isSyncing = false
     var isLoggedIn: Bool { !username.isEmpty }
     private static let lastSyncKey = "ffn.lastSync"
+    /// Einmal neu abgleichen: Früher haben Follows (nur Titel) die Kapitelzahl aus den Favoriten mit 1 überschrieben.
+    private static let repairKey = "ffn.metaRepair.1"
 
     /// Beim App-Start: angemeldet? Dann höchstens alle 6 Stunden still abgleichen.
     func syncIfDue(library: LibraryManager, context: ModelContext) async {
         guard isLoggedIn else { return }
         let last = UserDefaults.standard.double(forKey: Self.lastSyncKey)
-        guard Date().timeIntervalSince1970 - last > 6 * 3600 else { return }
+        let needsRepair = !UserDefaults.standard.bool(forKey: Self.repairKey)
+        guard needsRepair || Date().timeIntervalSince1970 - last > 6 * 3600 else { return }
         await check()
         await sync(library: library, context: context)
     }
@@ -145,18 +148,23 @@ final class FFNAccount {
         library.showProgress(String(localized: "Lade deine FFN-Favoriten und Follows …"))
         var added = 0
         var counts: [String] = []
+        var linkOnly: [RemoteStory] = []
         for list in FFNService.AccountList.allCases {
             do {
                 let stories = try await FFNService.accountList(list, username: username)
                 added += library.importAll(stories, context: context, skipRemoved: true) { Self.configure($0, for: list) }
+                linkOnly += stories.filter(\.isLinkOnly)
                 counts.append("\(list.label): \(stories.count)")
             } catch {
                 counts.append(String(localized: "\(list.label): Fehler"))
             }
         }
         UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: Self.lastSyncKey)
+        UserDefaults.standard.set(true, forKey: Self.repairKey)
         let summary = counts.joined(separator: " · ")
         library.updateMessage = added > 0 ? String(localized: "FFN: \(added) neu übernommen (\(summary))") : String(localized: "FFN abgeglichen (\(summary))")
+        // Follows, die nur als Link kamen und auch nicht unter den Favoriten stehen: Angaben einzeln nachladen.
+        await library.completeMetadata(of: linkOnly, context: context)
     }
 
     func logout() async {

@@ -101,6 +101,9 @@ struct RemoteStory: Identifiable, Hashable, Codable, Sendable {
     var language: String = ""
     var words: Int? = nil
     var chapters: Int = 1
+    /// Nur Titel/Autor:in aus einer Linkliste (z. B. FFN-Follows) – Kapitel und Status sind dann unbekannt,
+    /// nicht „1 Kapitel, unfertig“. Darf vorhandene Angaben nicht überschreiben.
+    var isLinkOnly: Bool { source.isWebFiction && words == nil && rating.isEmpty && summary.isEmpty }
     var totalChapters: Int? = nil
     var isComplete: Bool = false
     var updated: Date? = nil
