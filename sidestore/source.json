@@ -19,6 +19,15 @@
       "screenshots": [],
       "versions": [
         {
+          "version": "1.2",
+          "buildVersion": "25",
+          "date": "2026-10-30",
+          "localizedDescription": "FFN: Kategorie „Alle“, Pairing-Filter, alle Ratings standardmäßig (Einstellung). Deutlichere Listen mit Bewertungen, Pairing und Zusammenfassung. Hinweis, wenn AO3 oder FFN nicht erreichbar sind. Bibliothek: Suche und Filter über alle Quellen (Fandom, Rating, Status, Länge, Sprache).",
+          "downloadURL": "https://github.com/MosesCommitsFraud/Babel/releases/download/v1.2/Babel-1.2.ipa",
+          "size": 8400844,
+          "minOSVersion": "26.0"
+        },
+        {
           "version": "1.1",
           "buildVersion": "22",
           "date": "2026-10-28",
