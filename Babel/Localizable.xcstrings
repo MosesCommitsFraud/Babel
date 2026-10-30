@@ -910,6 +910,16 @@
         }
       }
     },
+    "Bedienung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controls"
+          }
+        }
+      }
+    },
     "Bei AO3 abmelden" : {
       "localizations" : {
         "en" : {
@@ -1301,6 +1311,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You log in directly on fanfiction.net. Babel then brings your favorites and follows into your library automatically. Babel never stores your password."
+          }
+        }
+      }
+    },
+    "Die Geschichte wird gleich in die neue Sammlung gelegt." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The story will be added to the new collection right away."
           }
         }
       }
@@ -2790,12 +2810,12 @@
         }
       }
     },
-    "Lege Sammlungen in der Bibliothek über „+“ an." : {
+    "Leiser scrollt eine Bildschirmseite weiter, lauter zurück. Am Kapitelende geht es mit „leiser“ zum nächsten Kapitel. Die Lautstärke bleibt dabei unverändert." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Create collections in the library with \"+\"."
+            "value" : "Volume down scrolls one screen forward, volume up scrolls back. At the end of a chapter, volume down moves to the next chapter. Your volume stays unchanged."
           }
         }
       }
@@ -3041,6 +3061,16 @@
         }
       }
     },
+    "Mit Lautstärketasten blättern" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn pages with volume buttons"
+          }
+        }
+      }
+    },
     "Modus: %@" : {
       "localizations" : {
         "en" : {
@@ -3187,6 +3217,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "New Collection"
+          }
+        }
+      }
+    },
+    "Neue Sammlung …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Collection…"
           }
         }
       }
@@ -4505,36 +4545,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Summary"
-          }
-        }
-      }
-    },
-    "Mit Lautstärketasten blättern" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turn pages with volume buttons"
-          }
-        }
-      }
-    },
-    "Bedienung" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Controls"
-          }
-        }
-      }
-    },
-    "Leiser scrollt eine Bildschirmseite weiter, lauter zurück. Am Kapitelende geht es mit „leiser“ zum nächsten Kapitel. Die Lautstärke bleibt dabei unverändert." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volume down scrolls one screen forward, volume up scrolls back. At the end of a chapter, volume down moves to the next chapter. Your volume stays unchanged."
           }
         }
       }

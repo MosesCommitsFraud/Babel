@@ -97,6 +97,49 @@ enum FFNService {
         }.value
     }
 
+    /// Mehrere Kategorien auf einmal: `fetch()` in der offenen FFN-Seite (mit deren Cookies), je drei
+    /// gleichzeitig, ausgewertet schon im WebView – statt jede Seite einzeln anzusteuern und zu rendern.
+    /// Kategorien, die dabei leer bleiben (Cloudflare, Fehler), fehlen im Ergebnis.
+    static func fandoms(categories: [String]) async throws -> [String: [FFNFandom]] {
+        let script = """
+        const parse = (cat, html) => {
+          const doc = new DOMParser().parseFromString(html, 'text/html');
+          let links = doc.querySelectorAll('#list_output a[href]');
+          if (!links.length) links = doc.querySelectorAll('a[href^="/' + cat + '/"]');
+          const seen = new Set(), out = [];
+          for (const a of links) {
+            const href = a.getAttribute('href') || '';
+            const parts = href.split('/').filter(Boolean);
+            if (parts.length !== 2 || parts[0] !== cat || seen.has(href)) continue;
+            seen.add(href);
+            const name = (a.getAttribute('title') || a.textContent).replace(/\\s+/g, ' ').trim();
+            const sib = a.nextElementSibling;
+            const count = (sib && sib.tagName === 'SPAN') ? sib.textContent.replace(/^[()\\s]+|[()\\s]+$/g, '') : '';
+            out.push([name, href, count]);
+          }
+          return out;
+        };
+        const queue = cats.slice(), result = {};
+        const worker = async () => {
+          while (queue.length) {
+            const cat = queue.shift();
+            try {
+              const r = await fetch('/' + cat + '/', { credentials: 'include' });
+              if (r.ok) result[cat] = parse(cat, await r.text());
+            } catch (e) {}
+          }
+        };
+        await Promise.all([worker(), worker(), worker()]);
+        return JSON.stringify(result);
+        """
+        let json = try await WebFetcher.shared.evaluate(onSite: base, body: script, arguments: ["cats": categories]) as? String
+        guard let data = json?.data(using: .utf8),
+              let raw = try? JSONDecoder().decode([String: [[String]]].self, from: data) else { return [:] }
+        return raw.mapValues { rows in
+            rows.compactMap { $0.count == 3 ? FFNFandom(name: $0[0], path: $0[1], countText: $0[2]) : nil }
+        }
+    }
+
     // MARK: - Geschichten-Listen
 
     /// m.fanfiction.net → www.fanfiction.net (die mobile Seite hat ein anderes HTML).

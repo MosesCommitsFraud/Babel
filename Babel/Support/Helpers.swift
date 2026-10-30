@@ -38,6 +38,14 @@ extension String {
 extension Int {
     var compact: String { formatted(.number.notation(.compactName)) }
     var grouped: String { formatted(.number) }
+    /// Immer kurz, auch wo die Sprache keine Tausender-Abkürzung kennt (de: „12.345“): 8707, 12k, 1,2M.
+    var short: String {
+        switch self {
+        case ..<10_000: "\(self)"
+        case ..<1_000_000: "\(self / 1_000)k"
+        default: (Double(self) / 1_000_000).formatted(.number.precision(.fractionLength(0...1))) + "M"
+        }
+    }
 }
 
 enum BabelError: LocalizedError {

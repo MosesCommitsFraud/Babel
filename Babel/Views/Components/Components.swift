@@ -160,7 +160,10 @@ struct StoryRow: View {
                 CoverView(story: story, localCover: localCover, width: 54)
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        // fixedSize: Die Zelle wird mit der Idealhöhe vermessen – ohne das bekam der Titel
+                        // beim Anzeigen manchmal nur eine Zeile, und der übrige Platz landete als Lücke ober- und unterhalb.
                         Text(story.title).font(.body.weight(.semibold)).lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
                         Spacer(minLength: 4)
                         if isNew {
                             Image(systemName: "leaf.fill")
@@ -197,7 +200,10 @@ struct StoryRow: View {
                 Text(tags).font(.footnote.weight(.medium)).foregroundStyle(theme.primaryText).lineLimit(1)
             }
             if showSummary, !story.summary.isEmpty {
-                Text(story.summary).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
+                // Zeilenumbrüche aus der Quelle raus – sonst misst Text mit lineLimit teils eine Zeile zu viel
+                // und der Abstand zum Trenner schwankt von Zeile zu Zeile.
+                Text(summaryPreview).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             if let progress, progress > 0 {
@@ -205,8 +211,8 @@ struct StoryRow: View {
                     ProgressView(value: progress).tint(theme.primary)
                     Text("\(Int(progress * 100)) %").font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
                 }
-                // Der Balken ist dünn – mit normalem Abstand wirkt die Lücke zum Trenner zu groß.
-                .padding(.bottom, -14)
+                // Der Balken ist dünn – so liegt er so weit vom Trenner weg wie sonst die Zusammenfassung.
+                .padding(.bottom, -5)
             }
         }
         .padding(.vertical, 3)
@@ -223,25 +229,23 @@ struct StoryRow: View {
         return story.source == .ao3 && story.chapters == 1 && (story.updated ?? .distantPast) > cutoff
     }
 
-    /// Bewertungen links, Daten rechts daneben. Reicht der Platz nicht, erst nur das jüngste Datum,
-    /// sonst beide Daten in einer eigenen Zeile darunter – die Zahlen werden nie abgeschnitten.
+    /// Bewertungen links, Daten rechts daneben – immer in einer Zeile. Reicht der Platz nicht,
+    /// erst nur das jüngste Datum, dann weniger Kennzahlen (die wichtigsten stehen vorn).
     private var statsAndDates: some View {
-        let hasDates = story.published != nil || story.updated != nil
+        let all = stats
         return ViewThatFits(in: .horizontal) {
-            HStack(spacing: 8) {
-                statsLine
-                Spacer(minLength: 0)
-                if hasDates { dateLabel(latestOnly: false) }
-            }
-            HStack(spacing: 8) {
-                statsLine
-                Spacer(minLength: 0)
-                if hasDates { dateLabel(latestOnly: true) }
-            }
-            VStack(alignment: .leading, spacing: 3) {
-                statsLine
-                if hasDates { dateLabel(latestOnly: false) }
-            }
+            statsRow(all, latestOnly: false)
+            statsRow(all, latestOnly: true)
+            statsRow(Array(all.prefix(2)), latestOnly: true)
+            statsRow(Array(all.prefix(1)), latestOnly: true)
+        }
+    }
+
+    private func statsRow(_ shown: [Stat], latestOnly: Bool) -> some View {
+        HStack(spacing: 8) {
+            statsLine(shown)
+            Spacer(minLength: 0)
+            if story.published != nil || story.updated != nil { dateLabel(latestOnly: latestOnly) }
         }
     }
 
@@ -283,9 +287,9 @@ struct StoryRow: View {
     }
 
     /// Bewertungen deutlich: ♥ rot, 🔔 gelb, Rest in der Akzentfarbe.
-    private var statsLine: some View {
+    private func statsLine(_ shown: [Stat]) -> some View {
         HStack(spacing: 10) {
-            ForEach(stats, id: \.symbol) { stat in
+            ForEach(shown, id: \.symbol) { stat in
                 HStack(spacing: 3) {
                     Image(systemName: stat.symbol + ".fill").foregroundStyle(statColor(stat.symbol))
                     Text(stat.value).foregroundStyle(.primary)
@@ -296,6 +300,7 @@ struct StoryRow: View {
         }
         .font(.footnote.weight(.semibold).monospacedDigit())
         .lineLimit(1)
+        .fixedSize()
     }
 
     private func statColor(_ symbol: String) -> Color {
@@ -304,6 +309,10 @@ struct StoryRow: View {
         case "bell": Self.followYellow
         default: theme.primary
         }
+    }
+
+    private var summaryPreview: String {
+        story.summary.split(whereSeparator: \.isWhitespace).joined(separator: " ")
     }
 
     /// „Naruto U./Sakura H. · Romance/Adventure“ – Pairing zuerst, dann Genres.
@@ -319,10 +328,12 @@ struct StoryRow: View {
     }
 
     /// Wie die Geschichte ankommt: FFN Favs/Follows/Reviews, AO3 Kudos/Aufrufe/Lesezeichen, Gutenberg Downloads.
-    private var stats: [(symbol: String, value: String, name: String)] {
+    private typealias Stat = (symbol: String, value: String, name: String)
+
+    private var stats: [Stat] {
         var list: [(String, String, String)] = []
         func add(_ symbol: String, _ value: Int?, _ name: String) {
-            if let value, value > 0 { list.append((symbol, value.formatted(.number.notation(.compactName)), name)) }
+            if let value, value > 0 { list.append((symbol, value.short, name)) }
         }
         switch story.source {
         case .ffn:

@@ -102,6 +102,18 @@ final class WebFetcher: NSObject, ObservableObject, WKNavigationDelegate {
         return try await webView.callAsyncJavaScript(body, arguments: arguments, in: nil, contentWorld: .page)
     }
 
+    /// Wie `evaluate(on:)`, aber jede schon offene Seite derselben Website genügt.
+    func evaluate(onSite siteURL: URL, body: String, arguments: [String: Any]) async throws -> Any? {
+        await acquire()
+        defer { release() }
+        if webView.url?.host != siteURL.host || webView.isLoading {
+            try await politePause(1.2)
+            start(siteURL)
+            _ = try await waitForPage(timeout: 30)
+        }
+        return try await webView.callAsyncJavaScript(body, arguments: arguments, in: nil, contentWorld: .page)
+    }
+
     private func politePause(_ minInterval: Double) async throws {
         let wait = minInterval - Date().timeIntervalSince(lastLoad)
         if wait > 0 { try await Task.sleep(for: .seconds(wait)) }

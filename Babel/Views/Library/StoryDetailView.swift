@@ -17,6 +17,8 @@ struct StoryDetailView: View {
     @State private var downloadedCount = 0
     @State private var exportedFile: URL?
     @State private var isExporting = false
+    @State private var showNewShelf = false
+    @State private var newShelfName = ""
 
     var body: some View {
         ScrollView {
@@ -51,6 +53,29 @@ struct StoryDetailView: View {
             Button("OK") { errorMessage = nil }
         } message: { Text($0) }
         .task(id: story.downloadedCount) { downloadedCount = ContentStore.countDownloaded(story) }
+        .alert("Neue Sammlung", isPresented: $showNewShelf) {
+            TextField("Name", text: $newShelfName)
+            Button("Abbrechen", role: .cancel) { newShelfName = "" }
+            Button("Anlegen") { createShelf() }
+        } message: {
+            Text("Die Geschichte wird gleich in die neue Sammlung gelegt.")
+        }
+    }
+
+    /// Neue Sammlung anlegen und die Geschichte direkt hineinlegen.
+    private func createShelf() {
+        let name = newShelfName.trimmed
+        newShelfName = ""
+        guard !name.isEmpty else { return }
+        let shelf = shelves.first { $0.name.localizedCaseInsensitiveCompare(name) == .orderedSame } ?? {
+            let shelf = Shelf(name: name)
+            context.insert(shelf)
+            return shelf
+        }()
+        if !story.shelves.contains(where: { $0.persistentModelID == shelf.persistentModelID }) {
+            story.shelves.append(shelf)
+        }
+        try? context.save()
     }
 
     // MARK: - Kopf
@@ -168,7 +193,8 @@ struct StoryDetailView: View {
             .glassEffect(.regular.interactive(), in: .capsule)
 
             Menu {
-                if shelves.isEmpty { Text("Lege Sammlungen in der Bibliothek über „+“ an.") }
+                Button { showNewShelf = true } label: { Label("Neue Sammlung …", systemImage: "folder.badge.plus") }
+                if !shelves.isEmpty { Divider() }
                 ForEach(shelves) { shelf in
                     Toggle(shelf.name, isOn: Binding(
                         get: { story.shelves.contains { $0.persistentModelID == shelf.persistentModelID } },
@@ -208,8 +234,8 @@ struct StoryDetailView: View {
         add(String(localized: "Wörter"), story.words?.grouped, "textformat.size")
         add(String(localized: "Kapitel"), chapterLabel, "list.number")
         if story.source.isOnlineBook { add(String(localized: "Downloads"), story.hits?.compact, "arrow.down.circle") }
-        add(String(localized: "Aktualisiert"), story.lastUpdated?.formatted(date: .abbreviated, time: .omitted), "clock")
         add(String(localized: "Veröffentlicht"), story.published?.formatted(date: .abbreviated, time: .omitted), "calendar")
+        add(String(localized: "Aktualisiert"), story.lastUpdated?.formatted(date: .abbreviated, time: .omitted), "arrow.clockwise")
         add(String(localized: "Sprache"), story.language, "globe")
         add(String(localized: "Rating"), story.rating, "exclamationmark.shield")
         return items
@@ -307,18 +333,31 @@ struct StoryDetailView: View {
         .buttonStyle(.plain)
     }
 
+    /// Eine Karte, eine Zeile pro Angabe – gleich hoch, egal wie lang der Wert oder wie schmal das Gerät ist.
     private var stats: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 10)], spacing: 10) {
-            ForEach(statItems) { item in
-                VStack(alignment: .leading, spacing: 3) {
-                    Label(item.label, systemImage: item.symbol).font(.caption).foregroundStyle(.secondary)
-                    Text(item.value).font(.subheadline.weight(.semibold)).lineLimit(2).minimumScaleFactor(0.8)
+        VStack(spacing: 0) {
+            ForEach(Array(statItems.enumerated()), id: \.element.id) { index, item in
+                if index > 0 { Divider().padding(.leading, 48) }
+                HStack(spacing: 12) {
+                    // Feste Höhe: Symbole wie Schild/Globus sind höher und machten die Zeilen ungleich.
+                    Image(systemName: item.symbol)
+                        .foregroundStyle(theme.primaryText)
+                        .frame(width: 22, height: 18)
+                    Text(item.label).foregroundStyle(.secondary)
+                    Spacer(minLength: 12)
+                    Text(item.value)
+                        .fontWeight(.medium)
+                        .monospacedDigit()
+                        .multilineTextAlignment(.trailing)
+                        .lineLimit(2)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(10)
-                .background(theme.card, in: .rect(cornerRadius: 14))
+                .font(.subheadline)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 11)
+                .accessibilityElement(children: .combine)
             }
         }
+        .background(theme.card, in: .rect(cornerRadius: 16))
     }
 
     private var chapterLabel: String {

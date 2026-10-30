@@ -2,14 +2,54 @@ import SwiftUI
 
 // MARK: - Fandom-Listen (alle Kategorien, zwischengespeichert)
 
+/// Fertig sortierte Fandom-Liste samt A–Z-Sprungzielen. Wird im Hintergrund gebaut –
+/// über 13.000 Fandoms bei jedem Neuzeichnen zu sortieren ließ die Liste ruckeln.
+struct FFNFandomIndex: Sendable {
+    struct Anchor: Sendable, Hashable {
+        let letter: String
+        let id: String
+    }
+
+    var popular: [FFNFandom] = []
+    var alphabetical: [FFNFandom] = []
+    /// Erster Fandom je Buchstabe (alphabetisch).
+    var anchors: [Anchor] = []
+
+    static let empty = FFNFandomIndex()
+
+    private init() {}
+
+    init(_ fandoms: [FFNFandom]) {
+        // Schlüssel einmal berechnen statt bei jedem Vergleich.
+        let keyed = fandoms.map { (fandom: $0, count: $0.countValue) }
+        popular = keyed.sorted { $0.count > $1.count }.map(\.fandom)
+        alphabetical = fandoms.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+        var seen = Set<String>()
+        anchors = alphabetical.compactMap { f in
+            let l = Self.letter(f.name)
+            return seen.insert(l).inserted ? Anchor(letter: l, id: f.id) : nil
+        }
+    }
+
+    static func letter(_ name: String) -> String {
+        guard let c = name.folding(options: .diacriticInsensitive, locale: nil).uppercased().first, c.isLetter, c.isASCII else { return "#" }
+        return String(c)
+    }
+}
+
 /// Hält die Fandom-Listen aller Kategorien, damit man über alle Franchises hinweg suchen kann.
 /// Liegt 7 Tage im Cache-Ordner – FFN-Seiten zu laden ist langsam (Cloudflare, Pausen).
 @MainActor
 @Observable
 final class FFNFandomStore {
     static let shared = FFNFandomStore()
+    static let allID = "all"
     private(set) var lists: [String: [FFNFandom]] = [:]
     private(set) var isLoadingAll = false
+    /// Sortierte Listen je Kategorie und für „Alle“ (`allID`).
+    private(set) var indexes: [String: FFNFandomIndex] = [:]
+    private(set) var isIndexing = false
+    private var indexTask: Task<Void, Never>?
 
     private struct Snapshot: Codable {
         var date: Date
@@ -25,31 +65,59 @@ final class FFNFandomStore {
            let snap = try? JSONDecoder().decode(Snapshot.self, from: data),
            Date().timeIntervalSince(snap.date) < 7 * 24 * 3600 {
             lists = snap.lists
+            rebuildIndexes()
         }
     }
+
+    func index(for key: String) -> FFNFandomIndex { indexes[key] ?? .empty }
 
     func fandoms(category: String, force: Bool = false) async throws -> [FFNFandom] {
         if !force, let cached = lists[category] { return cached }
         let result = try await FFNService.fandoms(category: category)
         lists[category] = result
         save()
+        rebuildIndexes()
         return result
     }
 
-    /// Lädt alle Kategorien, die noch fehlen (nacheinander, mit den üblichen Pausen).
+    /// Lädt alle Kategorien, die noch fehlen: erst gebündelt über die offene FFN-Seite,
+    /// was dabei nicht klappt, einzeln nacheinander (mit den üblichen Pausen).
     func loadAll() async {
         guard !isLoadingAll else { return }
         isLoadingAll = true
         defer { isLoadingAll = false }
-        for c in FFNService.categories where lists[c.id] == nil {
-            _ = try? await fandoms(category: c.id)
+        let missing = FFNService.categories.map(\.id).filter { lists[$0] == nil }
+        guard !missing.isEmpty else { return }
+        if missing.count > 1, let batch = try? await FFNService.fandoms(categories: missing) {
+            for (id, fandoms) in batch where !fandoms.isEmpty { lists[id] = fandoms }
+            save()
+            rebuildIndexes()
+        }
+        for id in missing where lists[id] == nil {
+            _ = try? await fandoms(category: id)
         }
     }
 
-    /// Alle Fandoms aller Kategorien (für den „Alle“-Chip), doppelte Crossover-Einträge nur einmal.
-    var allFandoms: [FFNFandom] {
+    /// Alle Fandoms aller Kategorien, doppelte Crossover-Einträge nur einmal.
+    nonisolated private static func merged(_ lists: [String: [FFNFandom]]) -> [FFNFandom] {
         var seen = Set<String>()
         return FFNService.categories.flatMap { lists[$0.id] ?? [] }.filter { seen.insert($0.path).inserted }
+    }
+
+    private func rebuildIndexes() {
+        let snapshot = lists, allID = Self.allID
+        indexTask?.cancel()
+        isIndexing = true
+        indexTask = Task {
+            let built = await Task.detached(priority: .userInitiated) {
+                var result = snapshot.mapValues(FFNFandomIndex.init)
+                result[allID] = FFNFandomIndex(Self.merged(snapshot))
+                return result
+            }.value
+            guard !Task.isCancelled else { return }
+            indexes = built
+            isIndexing = false
+        }
     }
 
     /// Kategorie eines Fandoms (aus dem Pfad „/anime/Naruto/“).
@@ -88,9 +156,10 @@ struct FFNBrowseView: View {
     @State private var searchText = ""
     @State private var sortByPopularity = true
 
-    private static let allID = "all"
+    private static let allID = FFNFandomStore.allID
     private var isAll: Bool { categoryID == Self.allID }
-    private var fandoms: [FFNFandom] { isAll ? store.allFandoms : store.lists[categoryID] ?? [] }
+    private var index: FFNFandomIndex { store.index(for: categoryID) }
+    private var fandomCount: Int { index.popular.count }
     private var isSearching: Bool { !searchText.trimmed.isEmpty }
 
     private var pinned: [FFNFandom] {
@@ -101,28 +170,7 @@ struct FFNBrowseView: View {
         (try? JSONDecoder().decode([FFNFandom].self, from: savedData)) ?? []
     }
 
-    private var visibleFandoms: [FFNFandom] {
-        var list = fandoms
-        if sortByPopularity { list.sort { $0.countValue > $1.countValue } }
-        else { list.sort { $0.name.localizedStandardCompare($1.name) == .orderedAscending } }
-        return list
-    }
-
-    static func indexLetter(_ name: String) -> String {
-        guard let c = name.folding(options: .diacriticInsensitive, locale: nil).uppercased().first, c.isLetter, c.isASCII else { return "#" }
-        return String(c)
-    }
-
-    /// Erster Fandom je Buchstabe (alphabetisch) – Sprungziele für die A–Z-Leiste.
-    private var letterAnchors: [(letter: String, id: String)] {
-        var seen = Set<String>()
-        return fandoms
-            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-            .compactMap { f in
-                let l = Self.indexLetter(f.name)
-                return seen.insert(l).inserted ? (l, f.id) : nil
-            }
-    }
+    private var visibleFandoms: [FFNFandom] { sortByPopularity ? index.popular : index.alphabetical }
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -134,9 +182,10 @@ struct FFNBrowseView: View {
                 }
             }
             .overlay(alignment: .trailing) {
-                if !isSearching && fandoms.count > 30 {
-                    AlphabetIndexBar(letters: letterAnchors.map(\.letter)) { letter in
-                        guard let target = letterAnchors.first(where: { $0.letter == letter })?.id else { return }
+                if !isSearching && fandomCount > 30 {
+                    let anchors = index.anchors
+                    AlphabetIndexBar(letters: anchors.map(\.letter)) { letter in
+                        guard let target = anchors.first(where: { $0.letter == letter })?.id else { return }
                         if sortByPopularity {
                             sortByPopularity = false
                             // Erst neu sortieren lassen, dann springen.
@@ -154,12 +203,12 @@ struct FFNBrowseView: View {
         .navigationTitle("FanFiction.net")
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Fandom suchen, z. B. Harry Potter")
         .overlay {
-            if !isSearching && isLoading && fandoms.isEmpty {
+            if !isSearching && fandomCount == 0 && (isLoading || store.isLoadingAll || store.isIndexing) {
                 VStack(spacing: 10) {
                     ProgressView()
                     Text("Lade Fandoms …").font(.footnote).foregroundStyle(.secondary)
                 }
-            } else if !isSearching, let error, fandoms.isEmpty {
+            } else if !isSearching, let error, fandomCount == 0 {
                 ErrorBanner(message: error) { Task { await load(force: true) } }
             }
         }
