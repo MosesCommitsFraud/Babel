@@ -188,20 +188,13 @@ struct StoryRow: View {
                     }
                     .lineLimit(1)
 
-                    statsLine
+                    statsAndDates
                 }
             }
 
-            // Unter dem Cover über die ganze Breite: Pairing/Genre links, Daten rechts – dort ist Platz.
-            if tagLine != nil || story.updated != nil || story.published != nil {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    if let tags = tagLine {
-                        Text(tags).font(.footnote.weight(.medium)).foregroundStyle(theme.primaryText).lineLimit(1)
-                            .layoutPriority(1)
-                    }
-                    Spacer(minLength: 0)
-                    dateLabel
-                }
+            // Unter dem Cover über die ganze Breite – Pairing/Genre bekommen die Zeile für sich.
+            if let tags = tagLine {
+                Text(tags).font(.footnote.weight(.medium)).foregroundStyle(theme.primaryText).lineLimit(1)
             }
             if showSummary, !story.summary.isEmpty {
                 Text(story.summary).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
@@ -228,13 +221,36 @@ struct StoryRow: View {
         return story.source == .ao3 && story.chapters == 1 && (story.updated ?? .distantPast) > cutoff
     }
 
-    /// Veröffentlicht und (falls später) aktualisiert – Icon + Datum, ohne Kapsel.
-    @ViewBuilder
+    /// Bewertungen links, Daten rechts daneben. Reicht der Platz nicht, erst nur das jüngste Datum,
+    /// sonst beide Daten in einer eigenen Zeile darunter – die Zahlen werden nie abgeschnitten.
+    private var statsAndDates: some View {
+        let hasDates = story.published != nil || story.updated != nil
+        return ViewThatFits(in: .horizontal) {
+            HStack(spacing: 8) {
+                statsLine
+                Spacer(minLength: 0)
+                if hasDates { dateLabel(latestOnly: false) }
+            }
+            HStack(spacing: 8) {
+                statsLine
+                Spacer(minLength: 0)
+                if hasDates { dateLabel(latestOnly: true) }
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                statsLine
+                if hasDates { dateLabel(latestOnly: false) }
+            }
+        }
+    }
+
+    private var wasUpdated: Bool {
+        story.updated.map { u in story.published.map { abs($0.timeIntervalSince(u)) > 60 } ?? true } ?? false
+    }
+
     /// Ein einziger kurzer Text: Symbole direkt vor dem Datum, statt zwei Labels mit Abstand.
-    private var dateLabel: some View {
-        let published = story.published
+    private func dateLabel(latestOnly: Bool) -> some View {
+        let published = (latestOnly && wasUpdated) ? nil : story.published
         let updated = story.updated
-        let wasUpdated = updated.map { u in published.map { abs($0.timeIntervalSince(u)) > 60 } ?? true } ?? false
         var text = Text(verbatim: "")
         var spoken: [String] = []
         if let published {
