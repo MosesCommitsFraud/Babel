@@ -39,6 +39,7 @@
 		9FF4F789DCC989C692245A1E /* ZipArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C90CCF74C3909B300CD6ADA /* ZipArchive.swift */; };
 		A5268CAFFA9B82692662DA5A /* AO3Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63E22E5889EBD4EC8319283 /* AO3Service.swift */; };
 		A6A4CC3337ADB6898736C49C /* GutenbergService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D5EC56C7C09627597A997A /* GutenbergService.swift */; };
+		AAB21C33EEE1D5A559BDF51F /* VolumeKeyScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40635D758914BA1C4099AA11 /* VolumeKeyScroller.swift */; };
 		AD3B3AF4B87BD630A207278D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 6B874D8A91BFF9BC9BAA2B7A /* Localizable.xcstrings */; };
 		B2465E95D0DF6B5B30AC2D2B /* ThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3222CDECAFA3DC2D9B46024 /* ThemeSettingsView.swift */; };
 		B6312220DFB957280DBA02E7 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA69A74409A6C2344B1584F /* Components.swift */; };
@@ -65,6 +66,7 @@
 		3038A35919D0B5A3CFE1089F /* CookieSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieSync.swift; sourceTree = "<group>"; };
 		370D9AD0B044F7C14B9EFC45 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		39075793117956CC5038008F /* BabelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabelApp.swift; sourceTree = "<group>"; };
+		40635D758914BA1C4099AA11 /* VolumeKeyScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeKeyScroller.swift; sourceTree = "<group>"; };
 		42D657FB996B8337736AC567 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
 		43258D30B4D0134B7E85AF1E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		4AD8775395A2F517D1783152 /* CustomThemeEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomThemeEditor.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 				96F1FC8C973626D38718C981 /* ReaderPager.swift */,
 				F6DCF18AABE1204DB9E937FE /* ReaderStyle.swift */,
 				42D657FB996B8337736AC567 /* ReaderView.swift */,
+				40635D758914BA1C4099AA11 /* VolumeKeyScroller.swift */,
 			);
 			path = Reader;
 			sourceTree = "<group>";
@@ -423,6 +426,7 @@
 				14D9AFB2ACE37CC2FFBB1AAA /* StoryTypes.swift in Sources */,
 				1BE376BE330A3D1BEAE0498E /* Theme.swift in Sources */,
 				B2465E95D0DF6B5B30AC2D2B /* ThemeSettingsView.swift in Sources */,
+				AAB21C33EEE1D5A559BDF51F /* VolumeKeyScroller.swift in Sources */,
 				F6B4F60BAD44FA308223CA7B /* WebFetcher.swift in Sources */,
 				9FF4F789DCC989C692245A1E /* ZipArchive.swift in Sources */,
 			);
@@ -445,6 +449,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Babel;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -537,6 +543,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Babel;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

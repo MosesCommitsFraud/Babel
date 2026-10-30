@@ -1,12 +1,8 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
-    "\n" : {
-
-    },
-    "–" : {
-
-    },
+    "\n" : {},
+    "–" : {},
     "„%@“ auf AO3 suchen" : {
       "localizations" : {
         "en" : {
@@ -88,9 +84,7 @@
         }
       }
     },
-    "%@ · %lld %%" : {
-
-    },
+    "%@ · %lld %%" : {},
     "%@ & %@" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -192,12 +186,8 @@
         }
       }
     },
-    "%lld" : {
-
-    },
-    "%lld %%" : {
-
-    },
+    "%lld" : {},
+    "%lld %%" : {},
     "%lld %% gelesen" : {
       "localizations" : {
         "en" : {
@@ -288,9 +278,7 @@
         }
       }
     },
-    "+%lld" : {
-
-    },
+    "+%lld" : {},
     "< 10k" : {
       "localizations" : {
         "en" : {
@@ -301,9 +289,7 @@
         }
       }
     },
-    "> %lld" : {
-
-    },
+    "> %lld" : {},
     "> 150k" : {
       "localizations" : {
         "en" : {
@@ -314,9 +300,7 @@
         }
       }
     },
-    "0" : {
-
-    },
+    "0" : {},
     "1 Geschichte übernommen" : {
       "localizations" : {
         "en" : {
@@ -357,9 +341,7 @@
         }
       }
     },
-    "Aa" : {
-
-    },
+    "Aa" : {},
     "Abbrechen" : {
       "localizations" : {
         "en" : {
@@ -704,9 +686,7 @@
         }
       }
     },
-    "Anime/Manga" : {
-
-    },
+    "Anime/Manga" : {},
     "Anlegen" : {
       "localizations" : {
         "en" : {
@@ -747,9 +727,7 @@
         }
       }
     },
-    "AO3" : {
-
-    },
+    "AO3" : {},
     "AO3 antwortet gerade langsam. Du kannst den Tag auch ganz eintippen und mit ↵ übernehmen." : {
       "localizations" : {
         "en" : {
@@ -891,9 +869,7 @@
         }
       }
     },
-    "Auto" : {
-
-    },
+    "Auto" : {},
     "Autor:in" : {
       "localizations" : {
         "en" : {
@@ -1164,9 +1140,7 @@
         }
       }
     },
-    "Cartoons" : {
-
-    },
+    "Cartoons" : {},
     "Charakter %@" : {
       "localizations" : {
         "en" : {
@@ -1197,12 +1171,8 @@
         }
       }
     },
-    "Comics" : {
-
-    },
-    "Crossover" : {
-
-    },
+    "Comics" : {},
+    "Crossover" : {},
     "Dafür musst du bei FanFiction.net angemeldet sein. Melde dich in den Einstellungen an." : {
       "localizations" : {
         "en" : {
@@ -1324,9 +1294,7 @@
         }
       }
     },
-    "Deutsch" : {
-
-    },
+    "Deutsch" : {},
     "Die Anmeldung läuft direkt auf fanfiction.net. Danach holt Babel deine Favoriten und Follows automatisch in die Bibliothek. Babel speichert kein Passwort." : {
       "localizations" : {
         "en" : {
@@ -1429,12 +1397,8 @@
         }
       }
     },
-    "Downloads" : {
-
-    },
-    "Drama" : {
-
-    },
+    "Downloads" : {},
+    "Drama" : {},
     "Dunkel" : {
       "localizations" : {
         "en" : {
@@ -1565,9 +1529,7 @@
         }
       }
     },
-    "English" : {
-
-    },
+    "English" : {},
     "Entfernen" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1630,12 +1592,8 @@
         }
       }
     },
-    "Español" : {
-
-    },
-    "F" : {
-
-    },
+    "Español" : {},
+    "F" : {},
     "Fandom merken" : {
       "localizations" : {
         "en" : {
@@ -1667,15 +1625,9 @@
         }
       }
     },
-    "Fandoms" : {
-
-    },
-    "FanFiction" : {
-
-    },
-    "FanFiction.net" : {
-
-    },
+    "Fandoms" : {},
+    "FanFiction" : {},
+    "FanFiction.net" : {},
     "FanFiction.net möchte prüfen, dass du kein Bot bist. Tippe auf das Kästchen – danach geht's automatisch weiter." : {
       "localizations" : {
         "en" : {
@@ -1707,9 +1659,7 @@
         }
       }
     },
-    "Fantasy" : {
-
-    },
+    "Fantasy" : {},
     "Farbe" : {
       "localizations" : {
         "en" : {
@@ -1950,9 +1900,7 @@
         }
       }
     },
-    "Follows" : {
-
-    },
+    "Follows" : {},
     "Fortschritt" : {
       "localizations" : {
         "en" : {
@@ -2004,9 +1952,7 @@
         }
       }
     },
-    "Games" : {
-
-    },
+    "Games" : {},
     "Ganze Bio anzeigen" : {
       "localizations" : {
         "en" : {
@@ -2299,9 +2245,7 @@
         }
       }
     },
-    "https://archiveofourown.org/works/…" : {
-
-    },
+    "https://archiveofourown.org/works/…" : {},
     "Im Browser öffnen" : {
       "localizations" : {
         "en" : {
@@ -2312,9 +2256,7 @@
         }
       }
     },
-    "Import" : {
-
-    },
+    "Import" : {},
     "Import fehlgeschlagen" : {
       "localizations" : {
         "en" : {
@@ -2716,9 +2658,7 @@
         }
       }
     },
-    "Kudos" : {
-
-    },
+    "Kudos" : {},
     "Kühles Graublau für lange Nächte" : {
       "localizations" : {
         "en" : {
@@ -3301,9 +3241,7 @@
         }
       }
     },
-    "No Archive Warnings Apply" : {
-
-    },
+    "No Archive Warnings Apply" : {},
     "Noch keine %@" : {
       "localizations" : {
         "en" : {
@@ -3504,9 +3442,7 @@
         }
       }
     },
-    "OK" : {
-
-    },
+    "OK" : {},
     "OPF nicht lesbar" : {
       "localizations" : {
         "en" : {
@@ -3600,9 +3536,7 @@
         }
       }
     },
-    "Project Gutenberg" : {
-
-    },
+    "Project Gutenberg" : {},
     "Quelle" : {
       "localizations" : {
         "en" : {
@@ -3613,9 +3547,7 @@
         }
       }
     },
-    "Rating" : {
-
-    },
+    "Rating" : {},
     "Rating %@" : {
       "localizations" : {
         "en" : {
@@ -3626,9 +3558,7 @@
         }
       }
     },
-    "Reviews" : {
-
-    },
+    "Reviews" : {},
     "Romane" : {
       "localizations" : {
         "en" : {
@@ -3789,9 +3719,7 @@
         }
       }
     },
-    "Sepia" : {
-
-    },
+    "Sepia" : {},
     "Sichern" : {
       "localizations" : {
         "en" : {
@@ -3934,9 +3862,7 @@
         }
       }
     },
-    "Status" : {
-
-    },
+    "Status" : {},
     "Stichwortsuche" : {
       "localizations" : {
         "en" : {
@@ -4027,12 +3953,8 @@
         }
       }
     },
-    "System" : {
-
-    },
-    "T" : {
-
-    },
+    "System" : {},
+    "T" : {},
     "Tags ausschließen" : {
       "localizations" : {
         "en" : {
@@ -4285,9 +4207,7 @@
         }
       }
     },
-    "Version" : {
-
-    },
+    "Version" : {},
     "Versuch es mit weniger Filtern." : {
       "localizations" : {
         "en" : {
@@ -4585,6 +4505,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Summary"
+          }
+        }
+      }
+    },
+    "Mit Lautstärketasten blättern" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn pages with volume buttons"
+          }
+        }
+      }
+    },
+    "Bedienung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controls"
+          }
+        }
+      }
+    },
+    "Leiser scrollt eine Bildschirmseite weiter, lauter zurück. Am Kapitelende geht es mit „leiser“ zum nächsten Kapitel. Die Lautstärke bleibt dabei unverändert." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume down scrolls one screen forward, volume up scrolls back. At the end of a chapter, volume down moves to the next chapter. Your volume stays unchanged."
           }
         }
       }

@@ -123,6 +123,7 @@ struct ReaderSettingsControls: View {
     @AppStorage("reader.margin") private var margin = 22.0
     @AppStorage("reader.justify") private var justify = false
     @AppStorage("reader.paragraphSpacing") private var paragraphSpacing = 0.9
+    @AppStorage(VolumeKeyScroller.settingKey) private var volumeScroll = false
 
     var body: some View {
         Section("Farbe") {
@@ -172,6 +173,14 @@ struct ReaderSettingsControls: View {
                 Slider(value: $margin, in: 8...48, step: 2)
             }
             Toggle("Blocksatz", isOn: $justify)
+        }
+
+        Section {
+            Toggle("Mit Lautstärketasten blättern", isOn: $volumeScroll)
+        } header: {
+            Text("Bedienung")
+        } footer: {
+            Text("Leiser scrollt eine Bildschirmseite weiter, lauter zurück. Am Kapitelende geht es mit „leiser“ zum nächsten Kapitel. Die Lautstärke bleibt dabei unverändert.")
         }
     }
 }

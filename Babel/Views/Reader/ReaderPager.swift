@@ -97,6 +97,16 @@ final class ReaderPagerCoordinator: NSObject, UIPageViewControllerDataSource, UI
         pages[model.chapterIndex]?.load()
     }
 
+    /// Eine Bildschirmseite weiter (+1) oder zurück (-1); am Kapitelende weiter zum nächsten Kapitel.
+    func scrollPage(_ direction: Int) {
+        guard let page = pages[model.chapterIndex], page.isReady else { return }
+        if direction > 0, model.progress > 0.995 {
+            model.next()
+        } else {
+            page.scrollPage(direction)
+        }
+    }
+
     private func becameCurrent(_ page: ChapterPageController) {
         model.didShow(page.index, progress: page.progress, loading: page.isWaiting, error: page.errorText)
         // Nur aktuelles Kapitel ± 2 im Speicher halten.
@@ -219,6 +229,12 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         guard isViewLoaded else { return }
         webView.backgroundColor = color
         webView.scrollView.backgroundColor = color
+    }
+
+    func scrollPage(_ direction: Int) {
+        // Etwas Überlappung, damit die letzte Zeile oben wieder zu sehen ist.
+        webView.evaluateJavaScript("window.scrollBy({ top: \(direction) * window.innerHeight * 0.85, behavior: 'smooth' }); true",
+                                   completionHandler: nil)
     }
 
     private func scroll(to fraction: Double) {

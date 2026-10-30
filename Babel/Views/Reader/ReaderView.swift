@@ -184,6 +184,8 @@ struct ReaderView: View {
     @AppStorage("reader.margin") private var margin = 22.0
     @AppStorage("reader.justify") private var justify = false
     @AppStorage("reader.paragraphSpacing") private var paragraphSpacing = 0.9
+    @AppStorage(VolumeKeyScroller.settingKey) private var volumeScroll = false
+    @State private var volumeKeys = VolumeKeyScroller()
 
     @State private var model: ReaderModel
     @ObservedObject private var fetcher = WebFetcher.shared
@@ -278,9 +280,25 @@ struct ReaderView: View {
             })
         }
         .onChange(of: style.css) { _, css in model.applyCSS(css) }
-        .onChange(of: scenePhase) { _, phase in if phase != .active { model.save() } }
-        .task { model.start() }
-        .onDisappear { model.save() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active { model.save() }
+            updateVolumeKeys()
+        }
+        .onChange(of: volumeScroll) { _, _ in updateVolumeKeys() }
+        .task {
+            model.start()
+            volumeKeys.onPress = { [model] direction in model.pager?.scrollPage(direction) }
+            updateVolumeKeys()
+        }
+        .onDisappear {
+            model.save()
+            volumeKeys.stop()
+        }
+    }
+
+    /// Lautstärketasten nur abfangen, solange der Reader vorne ist und die Option an ist.
+    private func updateVolumeKeys() {
+        if volumeScroll && scenePhase == .active { volumeKeys.start() } else { volumeKeys.stop() }
     }
 
     // MARK: - Leisten (Liquid Glass)
