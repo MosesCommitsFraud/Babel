@@ -250,30 +250,29 @@ struct StoryDetailView: View {
         return items
     }
 
-    /// Wie die Kennzahlen im App Store: große Zahlen, farbige Symbole, durch Linien getrennt – ohne Karten.
+    /// Kennzahlen offen auf dem Hintergrund: Symbol direkt vor der Zahl, Bezeichnung darunter, dünne Trennlinien.
     private var ratingBar: some View {
         HStack(spacing: 0) {
             ForEach(Array(ratingItems.enumerated()), id: \.element.id) { index, item in
                 if index > 0 {
-                    Divider().frame(height: 44)
+                    Divider().frame(height: 36)
                 }
-                let column = VStack(spacing: 4) {
-                    Image(systemName: item.symbol)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(item.color)
-                        .frame(width: 30, height: 30)
-                        .background(item.color.opacity(0.15), in: .circle)
-                    Text(item.value.formatted(.number.notation(.compactName)))
-                        .font(.title2.weight(.bold).monospacedDigit())
-                        .fontDesign(.rounded)
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
+                let column = VStack(spacing: 2) {
+                    HStack(spacing: 5) {
+                        Image(systemName: item.symbol)
+                            .font(.body)
+                            .foregroundStyle(item.color)
+                        Text(item.value.formatted(.number.notation(.compactName)))
+                            .font(.title3.weight(.bold).monospacedDigit())
+                            .foregroundStyle(.primary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                    }
                     HStack(spacing: 2) {
                         Text(item.label)
                         if item.opensComments { Image(systemName: "chevron.right").font(.caption2.weight(.bold)) }
                     }
-                    .font(.caption.weight(.medium))
+                    .font(.caption)
                     .foregroundStyle(item.opensComments ? AnyShapeStyle(theme.primaryText) : AnyShapeStyle(.secondary))
                     .lineLimit(1)
                 }
@@ -288,7 +287,6 @@ struct StoryDetailView: View {
                 }
             }
         }
-        .padding(.vertical, 4)
     }
 
     private var commentsLink: some View {

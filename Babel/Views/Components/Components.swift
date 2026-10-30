@@ -230,34 +230,35 @@ struct StoryRow: View {
 
     /// Veröffentlicht und (falls später) aktualisiert – Icon + Datum, ohne Kapsel.
     @ViewBuilder
+    /// Ein einziger kurzer Text: Symbole direkt vor dem Datum, statt zwei Labels mit Abstand.
     private var dateLabel: some View {
         let published = story.published
         let updated = story.updated
         let wasUpdated = updated.map { u in published.map { abs($0.timeIntervalSince(u)) > 60 } ?? true } ?? false
-        HStack(spacing: 8) {
-            if let published {
-                datePill(published, symbol: "calendar", label: String(localized: "Veröffentlicht"))
-            }
-            if wasUpdated, let updated {
-                datePill(updated, symbol: "arrow.clockwise", label: String(localized: "Aktualisiert"))
-            }
+        var text = Text(verbatim: "")
+        var spoken: [String] = []
+        if let published {
+            text = text + Text(Image(systemName: "calendar")).font(.caption2) + Text(verbatim: "\u{2009}\(Self.shortDate(published))")
+            spoken.append(String(localized: "Veröffentlicht \(Self.shortDate(published))"))
         }
-        .fixedSize()
-    }
-
-    private func datePill(_ date: Date, symbol: String, label: String) -> some View {
-        // Im laufenden Jahr ohne Jahreszahl – spart Platz.
-        let sameYear = Calendar.current.isDate(date, equalTo: .now, toGranularity: .year)
-        let text = sameYear
-            ? date.formatted(.dateTime.day().month(.abbreviated))
-            : date.formatted(.dateTime.day(.twoDigits).month(.twoDigits).year(.twoDigits))
-        return Label(text, systemImage: symbol)
-            .labelStyle(.titleAndIcon)
+        if wasUpdated, let updated {
+            if published != nil { text = text + Text(verbatim: "  ") }
+            text = text + Text(Image(systemName: "arrow.clockwise")).font(.caption2) + Text(verbatim: "\u{2009}\(Self.shortDate(updated))")
+            spoken.append(String(localized: "Aktualisiert \(Self.shortDate(updated))"))
+        }
+        return text
             .font(.caption.monospacedDigit())
             .foregroundStyle(.secondary)
             .lineLimit(1)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(label) \(text)")
+            .fixedSize()
+            .accessibilityLabel(spoken.joined(separator: ", "))
+    }
+
+    /// Im laufenden Jahr „14. Okt.“, sonst „16.04.09“.
+    private static func shortDate(_ date: Date) -> String {
+        Calendar.current.isDate(date, equalTo: .now, toGranularity: .year)
+            ? date.formatted(.dateTime.day().month(.abbreviated))
+            : date.formatted(.dateTime.day(.twoDigits).month(.twoDigits).year(.twoDigits))
     }
 
     /// Bewertungen deutlich: ♥ rot, 🔔 gelb, Rest in der Akzentfarbe.
