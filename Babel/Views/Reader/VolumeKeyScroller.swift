@@ -15,42 +15,62 @@ final class VolumeKeyScroller {
     private var observation: NSKeyValueObservation?
     private var volumeView: MPVolumeView?
     private var baseline: Float = 0.5
+    private var lastVolume: Float = 0.5
     private var original: Float?
-    private var isResetting = false
+    /// Zählt Start/Stop hoch, damit eine verspätete Aktivierung nach `stop()` nichts mehr einrichtet.
+    private var generation = 0
+    private(set) var isRunning = false
+
+    /// Aktivieren/Deaktivieren blockiert – nie auf dem Main Thread.
+    private static let audioQueue = DispatchQueue(label: "babel.volume-keys", qos: .userInitiated)
 
     private var slider: UISlider? {
         volumeView?.subviews.compactMap { $0 as? UISlider }.first
     }
 
-    var isRunning: Bool { observation != nil }
-
     func start() {
         guard !isRunning else { return }
-        let session = AVAudioSession.sharedInstance()
-        // Mischt sich mit laufender Musik, unterbricht nichts.
-        try? session.setCategory(.ambient, options: [.mixWithOthers])
-        try? session.setActive(true)
+        isRunning = true
+        generation += 1
+        let token = generation
 
+        // Muss früh im Fenster hängen, sonst zeigt iOS beim ersten Druck noch die Lautstärkeanzeige.
         let view = MPVolumeView(frame: CGRect(x: -200, y: -200, width: 100, height: 40))
         view.alpha = 0.01
         view.isUserInteractionEnabled = false
         keyWindow?.addSubview(view)
         volumeView = view
 
+        Self.audioQueue.async {
+            let session = AVAudioSession.sharedInstance()
+            // Mischt sich mit laufender Musik, unterbricht nichts.
+            try? session.setCategory(.ambient, options: [.mixWithOthers])
+            try? session.setActive(true)
+            let current = session.outputVolume
+            DispatchQueue.main.async { [weak self] in
+                guard let self, self.isRunning, self.generation == token else { return }
+                self.begin(at: current)
+            }
+        }
+    }
+
+    private func begin(at current: Float) {
         // Ganz laut oder ganz leise gäbe es in eine Richtung keine Änderung – eine Stufe hereinrücken.
-        let current = session.outputVolume
         original = current
         baseline = min(max(current, 1 / 16), 15 / 16)
+        lastVolume = current
         if baseline != current { setVolume(baseline) }
 
-        observation = session.observe(\.outputVolume, options: [.new]) { [weak self] _, change in
+        observation = AVAudioSession.sharedInstance().observe(\.outputVolume, options: [.new]) { [weak self] _, change in
             guard let volume = change.newValue else { return }
-            Task { @MainActor in self?.volumeChanged(volume) }
+            DispatchQueue.main.async { self?.volumeChanged(volume) }
         }
     }
 
     func stop() {
         guard isRunning else { return }
+        isRunning = false
+        generation += 1
         observation?.invalidate()
         observation = nil
         if let original, original != baseline { setVolume(original) }
@@ -60,28 +80,25 @@ final class VolumeKeyScroller {
         volumeView = nil
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             view?.removeFromSuperview()
+        }
+        Self.audioQueue.asyncAfter(deadline: .now() + 0.5) {
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         }
     }
 
+    /// Jede Änderung weg vom Ausgangswert ist ein Tastendruck – auch mehrere schnell hintereinander,
+    /// bevor das Zurücksetzen greift. Die Rückkehr zum Ausgangswert ist das eigene Zurücksetzen.
     private func volumeChanged(_ volume: Float) {
-        if isResetting {
-            if abs(volume - baseline) < 0.001 { isResetting = false }
-            return
-        }
+        defer { lastVolume = volume }
         guard abs(volume - baseline) > 0.001 else { return }
-        onPress?(volume < baseline ? 1 : -1)
+        let delta = volume - lastVolume
+        guard abs(delta) > 0.001 else { return }
+        onPress?(delta < 0 ? 1 : -1)
         setVolume(baseline)
     }
 
     private func setVolume(_ value: Float) {
-        isResetting = true
-        // Der Regler übernimmt den Wert erst im nächsten Durchlauf zuverlässig.
-        DispatchQueue.main.async { [weak self] in
-            self?.slider?.value = value
-        }
-        // Falls keine Rückmeldung kommt, nicht dauerhaft blockieren.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in self?.isResetting = false }
+        slider?.value = value
     }
 
     private var keyWindow: UIWindow? {

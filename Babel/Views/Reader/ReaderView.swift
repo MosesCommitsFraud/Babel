@@ -120,6 +120,24 @@ final class ReaderModel {
             var h = document.documentElement.scrollHeight - window.innerHeight;
             window.scrollTo(0, Math.max(0, h * f));
           };
+          // Seitenweise blättern (Lautstärketasten): kurze eigene Animation, schnelle Drücke addieren sich.
+          // Gibt 'end' zurück, wenn es schon am Kapitelende stand.
+          window.babelPage = function(dir){
+            var max = document.documentElement.scrollHeight - window.innerHeight;
+            var base = (window.babelTarget != null) ? window.babelTarget : window.scrollY;
+            if (dir > 0 && base >= max - 2) return 'end';
+            var target = Math.max(0, Math.min(max, base + dir * window.innerHeight * 0.85));
+            window.babelTarget = target;
+            var from = window.scrollY, t0 = performance.now(), dur = 160;
+            cancelAnimationFrame(window.babelAnim);
+            var step = function(t){
+              var p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+              window.scrollTo(0, from + (target - from) * e);
+              if (p < 1) { window.babelAnim = requestAnimationFrame(step); } else { window.babelTarget = null; }
+            };
+            window.babelAnim = requestAnimationFrame(step);
+            return 'ok';
+          };
           var post = function(m){ window.webkit.messageHandlers.babel.postMessage(m); };
           var timer = null;
           window.addEventListener('scroll', function(){

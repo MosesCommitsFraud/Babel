@@ -100,10 +100,8 @@ final class ReaderPagerCoordinator: NSObject, UIPageViewControllerDataSource, UI
     /// Eine Bildschirmseite weiter (+1) oder zurück (-1); am Kapitelende weiter zum nächsten Kapitel.
     func scrollPage(_ direction: Int) {
         guard let page = pages[model.chapterIndex], page.isReady else { return }
-        if direction > 0, model.progress > 0.995 {
-            model.next()
-        } else {
-            page.scrollPage(direction)
+        page.scrollPage(direction) { [weak self] atEnd in
+            if atEnd { self?.model.next() }
         }
     }
 
@@ -231,10 +229,11 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         webView.scrollView.backgroundColor = color
     }
 
-    func scrollPage(_ direction: Int) {
-        // Etwas Überlappung, damit die letzte Zeile oben wieder zu sehen ist.
-        webView.evaluateJavaScript("window.scrollBy({ top: \(direction) * window.innerHeight * 0.85, behavior: 'smooth' }); true",
-                                   completionHandler: nil)
+    /// Eine Bildschirmseite weiter/zurück (mit etwas Überlappung); meldet, ob es schon am Kapitelende stand.
+    func scrollPage(_ direction: Int, atEnd: @escaping (Bool) -> Void) {
+        webView.evaluateJavaScript("window.babelPage ? window.babelPage(\(direction)) : 'ok'") { result, _ in
+            atEnd(result as? String == "end")
+        }
     }
 
     private func scroll(to fraction: Double) {
