@@ -19,12 +19,6 @@ struct GlobalSearchView: View {
         }
     }
 
-    private var recent: [Story] {
-        allStories.filter { $0.lastOpenedAt != nil }
-            .sorted { ($0.lastOpenedAt ?? .distantPast) > ($1.lastOpenedAt ?? .distantPast) }
-            .prefix(15).map { $0 }
-    }
-
     var body: some View {
         List {
             Group {
@@ -33,17 +27,8 @@ struct GlobalSearchView: View {
                         Button { showLink = true } label: {
                             Label("Link von AO3, FanFiction.net oder EPUB einfügen", systemImage: "link.badge.plus")
                         }
-                    }
-                    if !recent.isEmpty {
-                        Section("Zuletzt geöffnet") {
-                            ForEach(recent) { s in
-                                NavigationLink(value: s) {
-                                    StoryRow(story: s.asRemote, localCover: ContentStore.coverFileURL(s),
-                                             progress: s.overallProgress, showSummary: false, showSource: true)
-                                }
-                                .navigationLinkIndicatorVisibility(.hidden)
-                            }
-                        }
+                    } footer: {
+                        Text("Durchsucht deine Bibliothek und den Verlauf; auf AO3 und FanFiction.net geht es mit einem Tipp weiter.")
                     }
                 } else {
                     Section("Weitersuchen") {

@@ -48,6 +48,20 @@ struct LibraryView: View {
 
     var body: some View {
         List {
+            // Ganz oben: zuletzt geöffnete Geschichten zum direkten Weiterlesen.
+            if searchText.trimmed.isEmpty && !recentlyOpened.isEmpty {
+                Section {
+                    continueReading
+                        .listRowInsets(EdgeInsets())
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                } header: {
+                    Label("Weiterlesen", systemImage: "book")
+                        .font(.subheadline.weight(.semibold))
+                        .textCase(nil)
+                }
+            }
+
             Section {
                 ForEach(filtered) { story in
                     NavigationLink(value: story) {
@@ -267,6 +281,37 @@ struct LibraryView: View {
         case .progress: list.sort { $0.overallProgress > $1.overallProgress }
         }
         return list
+    }
+
+    private var recentlyOpened: [Story] {
+        history.filter { $0.lastOpenedAt != nil }
+            .sorted { ($0.lastOpenedAt ?? .distantPast) > ($1.lastOpenedAt ?? .distantPast) }
+            .prefix(12).map { $0 }
+    }
+
+    /// Cover nebeneinander, Tippen öffnet den Reader an der letzten Stelle.
+    private var continueReading: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(alignment: .top, spacing: 14) {
+                ForEach(recentlyOpened) { story in
+                    Button { reader.open(story) } label: {
+                        VStack(alignment: .leading, spacing: 6) {
+                            CoverView(story: story.asRemote, localCover: ContentStore.coverFileURL(story), width: 84)
+                            Text(story.title)
+                                .font(.caption.weight(.semibold))
+                                .lineLimit(2, reservesSpace: true)
+                                .multilineTextAlignment(.leading)
+                            ProgressView(value: story.overallProgress).tint(theme.primary)
+                        }
+                        .frame(width: 84)
+                    }
+                    .buttonStyle(.plain)
+                    .contextMenu { StoryContextMenu(story: story) }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 6)
+        }
     }
 
     private var recentlyViewed: [Story] {

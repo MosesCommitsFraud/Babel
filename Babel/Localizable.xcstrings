@@ -85,6 +85,16 @@
       }
     },
     "%@ · %lld %%" : {},
+    "%@ (Build %@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ (build %2$@)"
+          }
+        }
+      }
+    },
     "%@ & %@" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -3171,6 +3181,16 @@
         }
       }
     },
+    "Neu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New"
+          }
+        }
+      }
+    },
     "Neu aktualisiert" : {
       "localizations" : {
         "en" : {
@@ -3192,6 +3212,7 @@
       }
     },
     "Neue Geschichte" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4549,22 +4570,12 @@
         }
       }
     },
-    "Neu" : {
+    "Durchsucht deine Bibliothek und den Verlauf; auf AO3 und FanFiction.net geht es mit einem Tipp weiter." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "New"
-          }
-        }
-      }
-    },
-    "%@ (Build %@)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ (build %2$@)"
+            "value" : "Searches your library and history; one more tap continues the search on AO3 and FanFiction.net."
           }
         }
       }
