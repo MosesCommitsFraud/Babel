@@ -192,13 +192,20 @@ struct StoryRow: View {
                     }
                     .lineLimit(1)
 
-                    statsAndDates
+                    // Ohne Bewertungen wandert das Datum in die Pairing/Genre-Zeile – keine fast leere Zeile.
+                    if !stats.isEmpty { statsAndDates }
                 }
             }
 
             // Unter dem Cover über die ganze Breite – Pairing/Genre bekommen die Zeile für sich.
-            if let tags = tagLine {
-                Text(tags).font(.footnote.weight(.medium)).foregroundStyle(theme.primaryText).lineLimit(1)
+            if stats.isEmpty && hasDates {
+                ViewThatFits(in: .horizontal) {
+                    tagRow(latestOnly: false, truncating: false)
+                    tagRow(latestOnly: true, truncating: false)
+                    tagRow(latestOnly: true, truncating: true)
+                }
+            } else if let tags = tagLine {
+                tagText(tags)
             }
             if showSummary, !story.summary.isEmpty {
                 // Zeilenumbrüche aus der Quelle raus – sonst misst Text mit lineLimit teils eine Zeile zu viel
@@ -259,7 +266,24 @@ struct StoryRow: View {
         HStack(spacing: 8) {
             statsLine(shown)
             Spacer(minLength: 0)
-            if story.published != nil || story.updated != nil { dateLabel(latestOnly: latestOnly) }
+            if hasDates { dateLabel(latestOnly: latestOnly) }
+        }
+    }
+
+    private var hasDates: Bool { story.published != nil || story.updated != nil }
+
+    private func tagText(_ tags: String) -> some View {
+        Text(tags).font(.footnote.weight(.medium)).foregroundStyle(theme.primaryText).lineLimit(1)
+    }
+
+    /// Pairing/Genre links, Datum rechts – nur für Geschichten ohne Bewertungen.
+    private func tagRow(latestOnly: Bool, truncating: Bool) -> some View {
+        HStack(spacing: 8) {
+            if let tags = tagLine {
+                if truncating { tagText(tags) } else { tagText(tags).fixedSize() }
+            }
+            Spacer(minLength: 0)
+            dateLabel(latestOnly: latestOnly)
         }
     }
 
