@@ -7,6 +7,7 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var context
     @Environment(LibraryManager.self) private var library
     @AppStorage("checkUpdatesOnLaunch") private var checkUpdatesOnLaunch = true
+    @AppStorage(FFNService.allRatingsKey) private var ffnAllRatings = true
 
     @AppStorage("ao3.username") private var ao3User = ""
     @State private var ffn = FFNAccount.shared
@@ -73,6 +74,15 @@ struct SettingsView: View {
                     }
                 } footer: {
                     Text("Babel gibt es auf Deutsch und Englisch. Die Sprache stellst du in den iOS-Einstellungen der App um.")
+                }
+                .themedRows()
+
+                Section {
+                    Toggle("Alle Ratings zeigen", isOn: $ffnAllRatings)
+                } header: {
+                    Text("Inhalte")
+                } footer: {
+                    Text("FanFiction.net zeigt ohne Filter nur K bis T. Eingeschaltet erscheinen auch Geschichten mit Rating M. Auf AO3 sind ohnehin alle Ratings sichtbar, solange du keine ausschließt.")
                 }
                 .themedRows()
 

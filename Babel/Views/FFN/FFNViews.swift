@@ -46,6 +46,18 @@ final class FFNFandomStore {
         }
     }
 
+    /// Alle Fandoms aller Kategorien (für den „Alle“-Chip), doppelte Crossover-Einträge nur einmal.
+    var allFandoms: [FFNFandom] {
+        var seen = Set<String>()
+        return FFNService.categories.flatMap { lists[$0.id] ?? [] }.filter { seen.insert($0.path).inserted }
+    }
+
+    /// Kategorie eines Fandoms (aus dem Pfad „/anime/Naruto/“).
+    func category(of fandom: FFNFandom) -> FFNCategory? {
+        let id = fandom.path.split(separator: "/").first.map(String.init)
+        return FFNService.categories.first { $0.id == id }
+    }
+
     /// Treffer pro Kategorie, beliebteste zuerst.
     func search(_ query: String) -> [(category: FFNCategory, fandoms: [FFNFandom])] {
         let words = query.lowercased().split(separator: " ")
@@ -76,7 +88,9 @@ struct FFNBrowseView: View {
     @State private var searchText = ""
     @State private var sortByPopularity = true
 
-    private var fandoms: [FFNFandom] { store.lists[categoryID] ?? [] }
+    private static let allID = "all"
+    private var isAll: Bool { categoryID == Self.allID }
+    private var fandoms: [FFNFandom] { isAll ? store.allFandoms : store.lists[categoryID] ?? [] }
     private var isSearching: Bool { !searchText.trimmed.isEmpty }
 
     private var pinned: [FFNFandom] {
@@ -210,7 +224,12 @@ struct FFNBrowseView: View {
     private func fandomRow(_ f: FFNFandom) -> some View {
         NavigationLink(value: f) {
             HStack {
-                Text(f.name).lineLimit(2)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(f.name).lineLimit(2)
+                    if isAll, let c = store.category(of: f) {
+                        Text(c.name).font(.caption2).foregroundStyle(.secondary)
+                    }
+                }
                 Spacer()
                 if !f.countText.isEmpty {
                     Text(f.countText).font(.caption.monospacedDigit()).foregroundStyle(.secondary)
@@ -269,8 +288,17 @@ struct FFNBrowseView: View {
         }
         .themedRows()
 
-        Section(FFNService.categories.first { $0.id == categoryID }?.name ?? "Fandoms") {
+        Section {
             ForEach(visibleFandoms) { f in fandomRow(f) }
+        } header: {
+            HStack {
+                Text(isAll ? String(localized: "Alle Kategorien") : FFNService.categories.first { $0.id == categoryID }?.name ?? "Fandoms")
+                if isAll && store.isLoadingAll {
+                    Spacer()
+                    ProgressView().controlSize(.small)
+                    Text("\(store.lists.count)/\(FFNService.categories.count)").font(.caption.monospacedDigit())
+                }
+            }
         }
         .themedRows()
     }
@@ -279,6 +307,9 @@ struct FFNBrowseView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             GlassEffectContainer(spacing: 8) {
                 HStack(spacing: 8) {
+                    GlassChip(title: String(localized: "Alle"), symbol: "square.stack.3d.up", isSelected: isAll) {
+                        withAnimation(.snappy) { categoryID = Self.allID }
+                    }
                     ForEach(FFNService.categories) { c in
                         GlassChip(title: c.name, symbol: c.symbol, isSelected: c.id == categoryID) {
                             withAnimation(.snappy) { categoryID = c.id }
@@ -292,6 +323,11 @@ struct FFNBrowseView: View {
     }
 
     private func load(force: Bool) async {
+        if isAll {
+            // Fehlende Kategorien nachladen; die schon geladenen erscheinen sofort.
+            await store.loadAll()
+            return
+        }
         guard force || store.lists[categoryID] == nil else { return }
         isLoading = true
         error = nil
@@ -564,11 +600,22 @@ struct FFNFilterSheet: View {
             get: { values[filter.name] ?? filter.selected },
             set: { values[filter.name] = $0 }
         )
-        // Eigene Auswahlseite statt Menü – Menüs springen in langen Formularen weg.
-        Picker(filter.label, selection: binding) {
-            ForEach(filter.options) { Text($0.text).tag($0.value) }
+        if filter.name.hasSuffix("pm") {
+            // Pairing ist bei FFN ein Häkchen: die gewählten Charaktere als Paar.
+            Toggle(isOn: Binding(get: { binding.wrappedValue == "1" }, set: { binding.wrappedValue = $0 ? "1" : "0" })) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(filter.label)
+                    Text(filter.name == "pm" ? "Die gewählten Charaktere sind ein Paar." : "Die gewählten Charaktere sind kein Paar.")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            }
+        } else {
+            // Eigene Auswahlseite statt Menü – Menüs springen in langen Formularen weg.
+            Picker(filter.label, selection: binding) {
+                ForEach(filter.options) { Text($0.text).tag($0.value) }
+            }
+            .pickerStyle(.navigationLink)
         }
-        .pickerStyle(.navigationLink)
     }
 }
 

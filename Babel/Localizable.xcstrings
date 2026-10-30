@@ -1,3479 +1,3567 @@
 {
-  "sourceLanguage": "de",
-  "strings": {
-    "\n": {},
-    "–": {},
-    "„%@“ auf AO3 suchen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search AO3 for \"%@\""
+  "sourceLanguage" : "de",
+  "strings" : {
+    "\n" : {
+
+    },
+    "–" : {
+
+    },
+    "„%@“ auf AO3 suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search AO3 for \"%@\""
           }
         }
       }
     },
-    "„%@“ auf FanFiction.net suchen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search FanFiction.net for \"%@\""
+    "„%@“ auf FanFiction.net suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search FanFiction.net for \"%@\""
           }
         }
       }
     },
-    "„%@“ in der Bibliothek": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "\"%@\" is in your library"
+    "„%@“ in der Bibliothek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"%@\" is in your library"
           }
         }
       }
     },
-    "„%@“ offline gespeichert": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "\"%@\" saved offline"
+    "„%@“ offline gespeichert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"%@\" saved offline"
           }
         }
       }
     },
-    "„Verlauf löschen“ entfernt Geschichten, die du nur angesehen, aber nicht in die Bibliothek gelegt hast.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "\"Clear History\" removes stories you only viewed but didn't add to your library."
+    "„Verlauf löschen“ entfernt Geschichten, die du nur angesehen, aber nicht in die Bibliothek gelegt hast." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"Clear History\" removes stories you only viewed but didn't add to your library."
           }
         }
       }
     },
-    "%@ · %lld %%": {},
-    "%@ & %@": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ & %@"
+    "%@ · %lld %%" : {
+
+    },
+    "%@ & %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ & %@"
           }
         }
       }
     },
-    "%@ %@": {},
-    "%@ bremst gerade – weiter in %lld s": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ is rate limiting – continuing in %lld s"
+    "%@ %@" : {
+
+    },
+    "%@ bremst gerade – weiter in %lld s" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is rate limiting – continuing in %lld s"
           }
         }
       }
     },
-    "%@ Werke gefunden": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ works found"
+    "%@ Werke gefunden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ works found"
           }
         }
       }
     },
-    "%@: Fehler": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@: error"
+    "%@: Fehler" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: error"
           }
         }
       }
+    },
+    "%lld" : {
+
     },
-    "%lld": {},
-    "%lld %%": {},
-    "%lld %% gelesen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld %% read"
+    "%lld %%" : {
+
+    },
+    "%lld %% gelesen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld %% read"
           }
         }
       }
     },
-    "%lld Buch/Bücher in deine Bibliothek gelegt.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Added %lld book(s) to your library."
+    "%lld Buch/Bücher in deine Bibliothek gelegt." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added %lld book(s) to your library."
           }
         }
       }
     },
-    "%lld Geschichten übernommen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Imported %lld stories"
+    "%lld Geschichten übernommen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported %lld stories"
           }
         }
       }
     },
-    "%lld neue Kapitel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld new chapters"
+    "%lld neue Kapitel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld new chapters"
           }
         }
       }
     },
-    "%lld Wörter": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld words"
+    "%lld Wörter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld words"
           }
         }
       }
     },
-    "%lldk Wörter": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lldk words"
+    "%lldk Wörter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lldk words"
           }
         }
       }
+    },
+    "+%lld" : {
+
     },
-    "+%lld": {},
-    "> %lld": {},
-    "0": {},
-    "1 Geschichte übernommen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Imported 1 story"
+    "> %lld" : {
+
+    },
+    "0" : {
+
+    },
+    "1 Geschichte übernommen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported 1 story"
           }
         }
       }
     },
-    "1 neues Kapitel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "1 new chapter"
+    "1 neues Kapitel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 new chapter"
           }
         }
       }
+    },
+    "Aa" : {
+
     },
-    "Aa": {},
-    "Abbrechen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancel"
+    "Abbrechen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
           }
         }
       }
     },
-    "Abenteuer": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Adventure"
+    "Abenteuer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adventure"
           }
         }
       }
     },
-    "Abgebrochen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dropped"
+    "Abgebrochen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dropped"
           }
         }
       }
     },
-    "Abgeschlossen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Complete"
+    "Abgeschlossen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete"
           }
         }
       }
     },
-    "Abgeschlossen & beliebt": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Complete & popular"
+    "Abgeschlossen & beliebt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete & popular"
           }
         }
       }
     },
-    "Abgeschnittene Datei": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Truncated file"
+    "Abgeschnittene Datei" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Truncated file"
           }
         }
       }
     },
-    "Abmelden": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Log Out"
+    "Abmelden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log Out"
           }
         }
       }
     },
-    "Abonnements": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subscriptions"
+    "Abonnements" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscriptions"
           }
         }
       }
     },
-    "Absatzabstand %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Paragraph spacing %@"
+    "Absatzabstand %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paragraph spacing %@"
           }
         }
       }
     },
-    "Aktualisiert": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Updated"
+    "Aktualisiert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updated"
           }
         }
       }
     },
-    "Alle": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "All"
+    "Alle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
           }
         }
       }
     },
-    "Alle %lld": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "All %lld"
+    "Alle %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All %lld"
           }
         }
       }
     },
-    "Alle Sprachen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "All languages"
+    "Alle Sprachen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All languages"
           }
         }
       }
     },
-    "Alle übernehmen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import All"
+    "Alle übernehmen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import All"
           }
         }
       }
     },
-    "Alle Werke": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "All works"
+    "Alle Werke" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All works"
           }
         }
       }
     },
-    "Alles": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "All"
+    "Alles" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
           }
         }
       }
     },
-    "Alles aktuell": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Everything is up to date"
+    "Alles aktuell" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everything is up to date"
           }
         }
       }
     },
-    "Alphabetisch": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alphabetical"
+    "Alphabetisch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alphabetical"
           }
         }
       }
     },
-    "Alphabetischer Index": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alphabetical index"
+    "Alphabetischer Index" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alphabetical index"
           }
         }
       }
     },
-    "Als EPUB exportieren": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Export as EPUB"
+    "Als EPUB exportieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export as EPUB"
           }
         }
       }
     },
-    "Als gelesen markieren": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mark as Read"
+    "Als gelesen markieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark as Read"
           }
         }
       }
     },
-    "Angemeldet als": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Logged in as"
+    "Angemeldet als" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logged in as"
           }
         }
       }
     },
-    "Angemeldet als %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Logged in as %@"
+    "Angemeldet als %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logged in as %@"
           }
         }
       }
     },
-    "Anime/Manga": {},
-    "Anlegen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create"
+    "Anime/Manga" : {
+
+    },
+    "Anlegen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create"
           }
         }
       }
     },
-    "Anwenden": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apply"
+    "Anwenden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apply"
           }
         }
       }
+    },
+    "AO3" : {
+
     },
-    "AO3": {},
-    "AO3 antwortet gerade langsam. Du kannst den Tag auch ganz eintippen und mit ↵ übernehmen.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AO3 is responding slowly. You can also type the full tag and press ↵ to add it."
+    "AO3 antwortet gerade langsam. Du kannst den Tag auch ganz eintippen und mit ↵ übernehmen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AO3 is responding slowly. You can also type the full tag and press ↵ to add it."
           }
         }
       }
     },
-    "AO3 ist gerade langsam. Das kann bis zu einer Minute dauern.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AO3 is slow right now. This can take up to a minute."
+    "AO3 ist gerade langsam. Das kann bis zu einer Minute dauern." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AO3 is slow right now. This can take up to a minute."
           }
         }
       }
     },
-    "AO3-Konto": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AO3 Account"
+    "AO3-Konto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AO3 Account"
           }
         }
       }
     },
-    "Archiv-Warnungen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archive Warnings"
+    "Archiv-Warnungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archive Warnings"
           }
         }
       }
     },
-    "Archive of Our Own": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archive of Our Own"
+    "Archive of Our Own" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archive of Our Own"
           }
         }
       }
     },
-    "Auf Deutsch": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "In German"
+    "Auf Deutsch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In German"
           }
         }
       }
     },
-    "Aufrufe": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hits"
+    "Aufrufe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hits"
           }
         }
       }
     },
-    "Aufsteigend": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ascending"
+    "Aufsteigend" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ascending"
           }
         }
       }
     },
-    "Aus Bibliothek entfernen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove from Library"
+    "Aus Bibliothek entfernen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove from Library"
           }
         }
       }
     },
-    "Aus Verlauf": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove from History"
+    "Aus Verlauf" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove from History"
           }
         }
       }
     },
-    "Aus Zwischenablage einfügen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Paste from Clipboard"
+    "Aus Zwischenablage einfügen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paste from Clipboard"
           }
         }
       }
     },
-    "ausschließen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "exclude"
+    "ausschließen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "exclude"
           }
         }
       }
     },
-    "Ausschließen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Exclude"
+    "Ausschließen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exclude"
           }
         }
       }
     },
-    "Auto": {},
-    "Autor:in": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Author"
+    "Auto" : {
+
+    },
+    "Autor:in" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Author"
           }
         }
       }
     },
-    "Babel gibt es auf Deutsch und Englisch. Die Sprache stellst du in den iOS-Einstellungen der App um.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Babel is available in German and English. Change the language in the app's iOS settings."
+    "Babel gibt es auf Deutsch und Englisch. Die Sprache stellst du in den iOS-Einstellungen der App um." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Babel is available in German and English. Change the language in the app's iOS settings."
           }
         }
       }
     },
-    "Babel lädt Seiten wie ein normaler Browser, mit Pausen zwischen den Anfragen, um AO3 und FanFiction.net nicht zu belasten. Bremst eine Seite (HTTP 429), wartet die App automatisch so lange, wie die Seite verlangt. Unterstütze die Autor:innen mit Kudos und Reviews auf der Originalseite.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Babel loads pages like a normal browser, pausing between requests so it doesn't strain AO3 and FanFiction.net. If a site rate limits (HTTP 429), the app automatically waits as long as the site asks. Support the authors with kudos and reviews on the original site."
+    "Babel lädt Seiten wie ein normaler Browser, mit Pausen zwischen den Anfragen, um AO3 und FanFiction.net nicht zu belasten. Bremst eine Seite (HTTP 429), wartet die App automatisch so lange, wie die Seite verlangt. Unterstütze die Autor:innen mit Kudos und Reviews auf der Originalseite." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Babel loads pages like a normal browser, pausing between requests so it doesn't strain AO3 and FanFiction.net. If a site rate limits (HTTP 429), the app automatically waits as long as the site asks. Support the authors with kudos and reviews on the original site."
           }
         }
       }
     },
-    "Bei AO3 abmelden": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Log Out of AO3"
+    "Bei AO3 abmelden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log Out of AO3"
           }
         }
       }
     },
-    "Bei AO3 anmelden": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Log In to AO3"
+    "Bei AO3 anmelden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log In to AO3"
           }
         }
       }
     },
-    "Bei FanFiction.net abmelden": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Log Out of FanFiction.net"
+    "Bei FanFiction.net abmelden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log Out of FanFiction.net"
           }
         }
       }
     },
-    "Bei FanFiction.net anmelden": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Log In to FanFiction.net"
+    "Bei FanFiction.net anmelden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log In to FanFiction.net"
           }
         }
       }
     },
-    "Beides": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Both"
+    "Beides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Both"
           }
         }
       }
     },
-    "Beim Start nach neuen Kapiteln suchen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Check for new chapters on launch"
+    "Beim Start nach neuen Kapiteln suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for new chapters on launch"
           }
         }
       }
     },
-    "Beliebtheit": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Popularity"
+    "Beliebtheit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popularity"
           }
         }
       }
     },
-    "Beschädigter Eintrag %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Damaged entry %@"
+    "Beschädigter Eintrag %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damaged entry %@"
           }
         }
       }
     },
-    "Beschädigtes Inhaltsverzeichnis": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Damaged table of contents"
+    "Beschädigtes Inhaltsverzeichnis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damaged table of contents"
           }
         }
       }
     },
-    "Beste Treffer": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Best Match"
+    "Beste Treffer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best Match"
           }
         }
       }
     },
-    "Beziehungen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Relationships"
+    "Beziehungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relationships"
           }
         }
       }
     },
-    "Bibliothek": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Library"
+    "Bibliothek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Library"
           }
         }
       }
     },
-    "Bibliothek, AO3, FanFiction.net": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Library, AO3, FanFiction.net"
+    "Bibliothek, AO3, FanFiction.net" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Library, AO3, FanFiction.net"
           }
         }
       }
     },
-    "bis": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "to"
+    "bis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "to"
           }
         }
       }
     },
-    "Blocksatz": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Justify"
+    "Blocksatz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Justify"
           }
         }
       }
     },
-    "Buch": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Book"
+    "Buch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Book"
           }
         }
       }
     },
-    "Buchdatei fehlt": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Book file is missing"
+    "Buchdatei fehlt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Book file is missing"
           }
         }
       }
     },
-    "Bücher": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Books"
+    "Bücher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Books"
           }
         }
       }
     },
-    "Bücher liegen schon als EPUB vor": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Books are already EPUB files"
+    "Bücher liegen schon als EPUB vor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Books are already EPUB files"
           }
         }
       }
     },
-    "Cartoons": {},
-    "Charaktere": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Characters"
+    "Cartoons" : {
+
+    },
+    "Charaktere" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Characters"
           }
         }
       }
+    },
+    "Comics" : {
+
     },
-    "Comics": {},
-    "Crossover": {},
-    "Dafür musst du bei FanFiction.net angemeldet sein. Melde dich in den Einstellungen an.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You need to be logged in to FanFiction.net for this. Log in in Settings."
+    "Crossover" : {
+
+    },
+    "Dafür musst du bei FanFiction.net angemeldet sein. Melde dich in den Einstellungen an." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You need to be logged in to FanFiction.net for this. Log in in Settings."
           }
         }
       }
     },
-    "Darstellung": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appearance"
+    "Darstellung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appearance"
           }
         }
       }
     },
-    "Darstellung im Reader": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reader Appearance"
+    "Darstellung im Reader" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reader Appearance"
           }
         }
       }
     },
-    "Das Buch enthält keine lesbaren Kapitel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The book has no readable chapters"
+    "Das Buch enthält keine lesbaren Kapitel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The book has no readable chapters"
           }
         }
       }
     },
-    "Das EPUB konnte nicht geöffnet werden: %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The EPUB couldn't be opened: %@"
+    "Das EPUB konnte nicht geöffnet werden: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The EPUB couldn't be opened: %@"
           }
         }
       }
     },
-    "Das ist kein gültiger Link.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "That's not a valid link."
+    "Das ist kein gültiger Link." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That's not a valid link."
           }
         }
       }
     },
-    "Das sind genau die Filter, die FanFiction.net für diesen Fandom anbietet – inklusive Charakteren.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "These are exactly the filters FanFiction.net offers for this fandom – including characters."
+    "Das sind genau die Filter, die FanFiction.net für diesen Fandom anbietet – inklusive Charakteren." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These are exactly the filters FanFiction.net offers for this fandom – including characters."
           }
         }
       }
     },
-    "Datei ist zu klein": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "File is too small"
+    "Datei ist zu klein" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File is too small"
           }
         }
       }
     },
-    "Deine Bibliothek ist leer": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your library is empty"
+    "Deine Bibliothek ist leer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your library is empty"
           }
         }
       }
     },
-    "Deine Listen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your Lists"
+    "Deine Listen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Lists"
           }
         }
       }
     },
-    "Der Server hat mit Fehler %lld geantwortet.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The server responded with error %lld."
+    "Der Server hat mit Fehler %lld geantwortet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server responded with error %lld."
           }
         }
       }
     },
-    "Deutsch": {},
-    "Die Anmeldung läuft direkt auf fanfiction.net. Danach holt Babel deine Favoriten und Follows automatisch in die Bibliothek. Babel speichert kein Passwort.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You log in directly on fanfiction.net. Babel then brings your favorites and follows into your library automatically. Babel never stores your password."
+    "Deutsch" : {
+
+    },
+    "Die Anmeldung läuft direkt auf fanfiction.net. Danach holt Babel deine Favoriten und Follows automatisch in die Bibliothek. Babel speichert kein Passwort." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You log in directly on fanfiction.net. Babel then brings your favorites and follows into your library automatically. Babel never stores your password."
           }
         }
       }
     },
-    "Die Seite hat zu lange gebraucht.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The site took too long to respond."
+    "Die Seite hat zu lange gebraucht." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The site took too long to respond."
           }
         }
       }
     },
-    "Die Seite konnte nicht gelesen werden (%@). Vielleicht hat sich ihr Aufbau geändert.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The page couldn't be read (%@). Its layout may have changed."
+    "Die Seite konnte nicht gelesen werden (%@). Vielleicht hat sich ihr Aufbau geändert." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The page couldn't be read (%@). Its layout may have changed."
           }
         }
       }
     },
-    "Die Sicherheitsprüfung von FanFiction.net wurde nicht abgeschlossen. Versuch es nochmal.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FanFiction.net's security check wasn't completed. Please try again."
+    "Die Sicherheitsprüfung von FanFiction.net wurde nicht abgeschlossen. Versuch es nochmal." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FanFiction.net's security check wasn't completed. Please try again."
           }
         }
       }
     },
-    "Diese Liste ist leer.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This list is empty."
+    "Diese Liste ist leer." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This list is empty."
           }
         }
       }
     },
-    "Dieser Link wird nicht unterstützt: %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This link isn't supported: %@"
+    "Dieser Link wird nicht unterstützt: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This link isn't supported: %@"
           }
         }
       }
     },
-    "Dieses Werk ist nur für angemeldete AO3-Nutzer sichtbar. Melde dich in den Einstellungen bei AO3 an.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This work is only visible to logged-in AO3 users. Log in to AO3 in Settings."
+    "Dieses Werk ist nur für angemeldete AO3-Nutzer sichtbar. Melde dich in den Einstellungen bei AO3 an." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This work is only visible to logged-in AO3 users. Log in to AO3 in Settings."
           }
         }
       }
     },
-    "Download fehlgeschlagen: %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Download failed: %@"
+    "Download fehlgeschlagen: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download failed: %@"
           }
         }
       }
+    },
+    "Downloads" : {
+
     },
-    "Downloads": {},
-    "Drama": {},
-    "Dunkel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dark"
+    "Drama" : {
+
+    },
+    "Dunkel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark"
           }
         }
       }
     },
-    "Durchsuche alle Kategorien … %lld/%lld": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Searching all categories … %lld/%lld"
+    "Durchsuche alle Kategorien … %lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching all categories … %lld/%lld"
           }
         }
       }
     },
-    "Durchsucht Titel und Zusammenfassungen auf FanFiction.net.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Searches titles and summaries on FanFiction.net."
+    "Durchsucht Titel und Zusammenfassungen auf FanFiction.net." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searches titles and summaries on FanFiction.net."
           }
         }
       }
     },
-    "egal": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "any"
+    "egal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "any"
           }
         }
       }
     },
-    "Egal": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Any"
+    "Egal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Any"
           }
         }
       }
     },
-    "Eigenes EPUB": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Own EPUB"
+    "Eigenes EPUB" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Own EPUB"
           }
         }
       }
     },
-    "Eigenes EPUB importieren": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import Your Own EPUB"
+    "Eigenes EPUB importieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import Your Own EPUB"
           }
         }
       }
     },
-    "Eine Anmeldung ist freiwillig. Damit holst du Lesezeichen, „Später lesen“ und Abos von AO3 bzw. Favoriten und Follows von FanFiction.net in die App (AO3- und FanFiction-Tab → Konto). Babel speichert keine Passwörter.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Logging in is optional. It lets you bring bookmarks, Marked for Later and subscriptions from AO3, or favorites and follows from FanFiction.net into the app (AO3 and FanFiction tab → Account). Babel never stores passwords."
+    "Eine Anmeldung ist freiwillig. Damit holst du Lesezeichen, „Später lesen“ und Abos von AO3 bzw. Favoriten und Follows von FanFiction.net in die App (AO3- und FanFiction-Tab → Konto). Babel speichert keine Passwörter." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logging in is optional. It lets you bring bookmarks, Marked for Later and subscriptions from AO3, or favorites and follows from FanFiction.net into the app (AO3 and FanFiction tab → Account). Babel never stores passwords."
           }
         }
       }
     },
-    "Einstellungen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Settings"
+    "Einstellungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
           }
         }
       }
     },
-    "English": {},
-    "Entfernen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove"
+    "English" : {
+
+    },
+    "Entfernen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove"
           }
         }
       }
     },
-    "Entpacken fehlgeschlagen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unpacking failed"
+    "Entpacken fehlgeschlagen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unpacking failed"
           }
         }
       }
     },
-    "EPUB importieren": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import EPUB"
+    "EPUB importieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import EPUB"
           }
         }
       }
     },
-    "EPUB wird erstellt …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Creating EPUB …"
+    "EPUB wird erstellt …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creating EPUB …"
           }
         }
       }
     },
-    "Erscheinungsbild": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appearance"
+    "Erscheinungsbild" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appearance"
           }
         }
       }
+    },
+    "Español" : {
+
     },
-    "Español": {},
-    "F": {},
-    "Fandom merken": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save Fandom"
+    "F" : {
+
+    },
+    "Fandom merken" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Fandom"
           }
         }
       }
     },
-    "Fandom suchen, z. B. Harry Potter": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search fandoms, e.g. Harry Potter"
+    "Fandom suchen, z. B. Harry Potter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search fandoms, e.g. Harry Potter"
           }
         }
       }
+    },
+    "Fandoms" : {
+
     },
-    "Fandoms": {},
-    "FanFiction": {},
-    "FanFiction.net": {},
-    "FanFiction.net möchte prüfen, dass du kein Bot bist. Tippe auf das Kästchen – danach geht's automatisch weiter.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FanFiction.net wants to check that you're not a bot. Tap the checkbox – it continues automatically afterwards."
+    "FanFiction" : {
+
+    },
+    "FanFiction.net" : {
+
+    },
+    "FanFiction.net möchte prüfen, dass du kein Bot bist. Tippe auf das Kästchen – danach geht's automatisch weiter." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FanFiction.net wants to check that you're not a bot. Tap the checkbox – it continues automatically afterwards."
           }
         }
       }
     },
-    "FanFiction.net-Prüfung manuell öffnen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open FanFiction.net Check Manually"
+    "FanFiction.net-Prüfung manuell öffnen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open FanFiction.net Check Manually"
           }
         }
       }
+    },
+    "Fantasy" : {
+
     },
-    "Fantasy": {},
-    "Farbe": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Color"
+    "Farbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
           }
         }
       }
     },
-    "Farben": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Colors"
+    "Farben" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colors"
           }
         }
       }
     },
-    "Favorit": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Favorite"
+    "Favorit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorite"
           }
         }
       }
     },
-    "Favoriten": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Favorites"
+    "Favoriten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorites"
           }
         }
       }
     },
-    "Favoriten & Follows in die Bibliothek": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add Favorites & Follows to Library"
+    "Favoriten & Follows in die Bibliothek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Favorites & Follows to Library"
           }
         }
       }
     },
-    "Favoriten werden als Favorit markiert, Follows bekommen „Lese ich“. Bereits vorhandene Geschichten bleiben, wie sie sind.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Favorites are marked as favorite, follows get \"Reading\". Stories already in your library stay as they are."
+    "Favoriten werden als Favorit markiert, Follows bekommen „Lese ich“. Bereits vorhandene Geschichten bleiben, wie sie sind." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorites are marked as favorite, follows get \"Reading\". Stories already in your library stay as they are."
           }
         }
       }
     },
-    "Favs": {},
-    "Fehler": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Error"
+    "Favs" : {
+
+    },
+    "Fehler" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error"
           }
         }
       }
     },
-    "Fertig": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Done"
+    "Fertig" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
           }
         }
       }
     },
-    "FFN abgeglichen (%@)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FFN synced (%@)"
+    "FFN abgeglichen (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FFN synced (%@)"
           }
         }
       }
     },
-    "FFN-Konto": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FFN Account"
+    "FFN-Konto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FFN Account"
           }
         }
       }
     },
-    "FFN-Suche": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FFN Search"
+    "FFN-Suche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FFN Search"
           }
         }
       }
     },
-    "FFN: %lld neu übernommen (%@)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FFN: %lld newly imported (%@)"
+    "FFN: %lld neu übernommen (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FFN: %lld newly imported (%@)"
           }
         }
       }
     },
-    "Filme": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Movies"
+    "Filme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Movies"
           }
         }
       }
     },
-    "Filter": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filters"
+    "Filter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filters"
           }
         }
       }
     },
-    "Filter speichern": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save Filters"
+    "Filter speichern" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Filters"
           }
         }
       }
     },
-    "Filter speichern …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save Filters …"
+    "Filter speichern …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Filters …"
           }
         }
       }
     },
-    "Findest du im AO3-Tab unter „Gespeicherte Filter“ wieder.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You'll find it in the AO3 tab under \"Saved Filters\"."
+    "Findest du im AO3-Tab unter „Gespeicherte Filter“ wieder." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You'll find it in the AO3 tab under \"Saved Filters\"."
           }
         }
       }
     },
-    "Findest du im FanFiction-Tab unter „Gespeicherte Filter“ wieder.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You'll find it in the FanFiction tab under \"Saved Filters\"."
+    "Findest du im FanFiction-Tab unter „Gespeicherte Filter“ wieder." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You'll find it in the FanFiction tab under \"Saved Filters\"."
           }
         }
       }
     },
-    "Follows": {},
-    "Fortschritt": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Progress"
+    "Follows" : {
+
+    },
+    "Fortschritt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progress"
           }
         }
       }
     },
-    "Freitext": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Any field"
+    "Freitext" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Any field"
           }
         }
       }
     },
-    "Funktioniert mit AO3-Werken, FanFiction.net-Geschichten und direkten .epub-Links.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Works with AO3 works, FanFiction.net stories and direct .epub links."
+    "Funktioniert mit AO3-Werken, FanFiction.net-Geschichten und direkten .epub-Links." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Works with AO3 works, FanFiction.net stories and direct .epub links."
           }
         }
       }
     },
-    "Für diesen Eintrag gibt es kein freies EPUB.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "There's no free EPUB for this item."
+    "Für diesen Eintrag gibt es kein freies EPUB." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There's no free EPUB for this item."
           }
         }
       }
     },
-    "Für Hell und Dunkel verwenden": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Use for Light and Dark"
+    "Für Hell und Dunkel verwenden" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use for Light and Dark"
           }
         }
       }
+    },
+    "Games" : {
+
     },
-    "Games": {},
-    "Ganze Bio anzeigen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Show Full Bio"
+    "Ganze Bio anzeigen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Full Bio"
           }
         }
       }
     },
-    "Ganzen Verlauf anzeigen (%lld)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Show Full History (%lld)"
+    "Ganzen Verlauf anzeigen (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Full History (%lld)"
           }
         }
       }
     },
-    "Gedecktes Altrosa": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Muted dusty rose"
+    "Gedecktes Altrosa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muted dusty rose"
           }
         }
       }
     },
-    "Gedrückt halten, um eine Palette für Hell und Dunkel zu nehmen. Die Farben stammen aus t3code.": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Press and hold to use a palette for both light and dark. The colors come from t3code."
+    "Gedrückt halten, um eine Palette für Hell und Dunkel zu nehmen. Die Farben stammen aus t3code." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press and hold to use a palette for both light and dark. The colors come from t3code."
           }
         }
       }
     },
-    "Gelesen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Finished"
+    "Gelesen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finished"
           }
         }
       }
     },
-    "Gemerkte Fandoms": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Saved Fandoms"
+    "Gemerkte Fandoms" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved Fandoms"
           }
         }
       }
     },
-    "Gemischt: %@ & %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mixed: %@ & %@"
+    "Gemischt: %@ & %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mixed: %@ & %@"
           }
         }
       }
     },
-    "Geschichte": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "History"
+    "Geschichte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History"
           }
         }
       }
     },
-    "Geschichten": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stories"
+    "Geschichten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stories"
           }
         }
       }
     },
-    "Geschichten mit „%@“ suchen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search Stories for \"%@\""
+    "Geschichten mit „%@“ suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Stories for \"%@\""
           }
         }
       }
     },
-    "Geschichten nach Stichwort suchen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search Stories by Keyword"
+    "Geschichten nach Stichwort suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Stories by Keyword"
           }
         }
       }
     },
-    "Gespeicherte Filter": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Saved Filters"
+    "Gespeicherte Filter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved Filters"
           }
         }
       }
     },
-    "Größe": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Size"
+    "Größe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Size"
           }
         }
       }
     },
-    "Gutenberg sucht nach englischen Begriffen am zuverlässigsten, auch bei deutschen Büchern (Thema „poetry“ statt „Lyrik“).": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gutenberg searches most reliably with English terms, even for German books (subject \"poetry\" rather than \"Lyrik\")."
+    "Gutenberg sucht nach englischen Begriffen am zuverlässigsten, auch bei deutschen Büchern (Thema „poetry“ statt „Lyrik“)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gutenberg searches most reliably with English terms, even for German books (subject \"poetry\" rather than \"Lyrik\")."
           }
         }
       }
     },
-    "Hell": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Light"
+    "Hell" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light"
           }
         }
       }
     },
-    "Hell und Dunkel einzeln wählen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choose Light and Dark Separately"
+    "Hell und Dunkel einzeln wählen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose Light and Dark Separately"
           }
         }
       }
     },
-    "Hell: %@ · Dunkel: %@": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Light: %@ · Dark: %@"
+    "Hell: %@ · Dunkel: %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light: %@ · Dark: %@"
           }
         }
       }
     },
-    "Herunterladen (offline)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Download (Offline)"
+    "Herunterladen (offline)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download (Offline)"
           }
         }
       }
     },
-    "Hexagon": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hexagon"
+    "Hexagon" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hexagon"
           }
         }
       }
     },
-    "Hier ist noch nichts": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nothing Here Yet"
+    "Hier ist noch nichts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing Here Yet"
           }
         }
       }
     },
-    "Hinzufügen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add"
+    "Hinzufügen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
           }
         }
       }
     },
-    "Hinzugefügt": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Added"
+    "Hinzugefügt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added"
           }
         }
       }
     },
-    "https://archiveofourown.org/works/…": {},
-    "Im Browser öffnen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open in Browser"
+    "https://archiveofourown.org/works/…" : {
+
+    },
+    "Im Browser öffnen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open in Browser"
           }
         }
       }
     },
-    "Import": {},
-    "Import fehlgeschlagen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import Failed"
+    "Import" : {
+
+    },
+    "Import fehlgeschlagen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import Failed"
           }
         }
       }
     },
-    "In Arbeit": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "In Progress"
+    "In Arbeit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Progress"
           }
         }
       }
     },
-    "In deiner Bibliothek & Verlauf": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "In Your Library & History"
+    "In deiner Bibliothek & Verlauf" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Your Library & History"
           }
         }
       }
     },
-    "In die Bibliothek": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add to Library"
+    "In die Bibliothek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add to Library"
           }
         }
       }
     },
-    "In dieser Auswahl liegen keine Geschichten.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "There are no stories in this selection."
+    "In dieser Auswahl liegen keine Geschichten." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are no stories in this selection."
           }
         }
       }
     },
-    "Internet Archive": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Internet Archive"
+    "Internet Archive" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Internet Archive"
           }
         }
       }
     },
-    "Internet Archive: Zehntausende gemeinfreie Bücher als EPUB. Oft automatisch aus Scans erzeugt, Qualität schwankt.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Internet Archive: tens of thousands of public-domain books as EPUB. Often generated from scans automatically, so quality varies."
+    "Internet Archive: Zehntausende gemeinfreie Bücher als EPUB. Oft automatisch aus Scans erzeugt, Qualität schwankt." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Internet Archive: tens of thousands of public-domain books as EPUB. Often generated from scans automatically, so quality varies."
           }
         }
       }
     },
-    "Jederzeit": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Any time"
+    "Jederzeit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Any time"
           }
         }
       }
     },
-    "Jetzt lesen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Read Now"
+    "Jetzt lesen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read Now"
           }
         }
       }
     },
-    "Kapitel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chapters"
+    "Kapitel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chapters"
           }
         }
       }
     },
-    "Kapitel %lld": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chapter %lld"
+    "Kapitel %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chapter %lld"
           }
         }
       }
     },
-    "Kapitel %lld von %lld": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chapter %lld of %lld"
+    "Kapitel %lld von %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chapter %lld of %lld"
           }
         }
       }
     },
-    "Kapitel 1": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chapter 1"
+    "Kapitel 1" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chapter 1"
           }
         }
       }
     },
-    "Kategorien": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Categories"
+    "Kategorien" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categories"
           }
         }
       }
     },
-    "Kein gültiges ZIP-Archiv": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not a valid ZIP archive"
+    "Kein Favorit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unfavorite"
           }
         }
       }
     },
-    "Kein OPF gefunden": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No OPF found"
+    "Kein gültiges ZIP-Archiv" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not a valid ZIP archive"
           }
         }
       }
     },
-    "Keine": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "None"
+    "Kein OPF gefunden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No OPF found"
           }
         }
       }
     },
-    "Keine Bücher": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Books"
+    "Keine" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
           }
         }
       }
     },
-    "Keine Crossover": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No crossovers"
+    "Keine Bücher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Books"
           }
         }
       }
     },
-    "Keine Einträge": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Entries"
+    "Keine Crossover" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No crossovers"
           }
         }
       }
     },
-    "Keine Geschichten": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Stories"
+    "Keine Einträge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Entries"
           }
         }
       }
     },
-    "Keine neuen Kapitel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No new chapters"
+    "Keine Geschichten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Stories"
           }
         }
       }
     },
-    "Keine neuen Kapitel (%lld nicht erreichbar)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No new chapters (%lld unreachable)"
+    "Keine neuen Kapitel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No new chapters"
           }
         }
       }
     },
-    "Keine Treffer": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Results"
+    "Keine neuen Kapitel (%lld nicht erreichbar)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No new chapters (%lld unreachable)"
           }
         }
       }
     },
-    "Kinderbücher": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Children's books"
+    "Keine Treffer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Results"
           }
         }
       }
     },
-    "Kommentare": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Comments"
+    "Kinderbücher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Children's books"
           }
         }
       }
     },
-    "Konten": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Accounts"
+    "Kommentare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comments"
           }
         }
       }
     },
-    "Konto": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Account"
+    "Konten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accounts"
           }
         }
       }
     },
-    "Krimis": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mysteries"
+    "Konto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Account"
           }
         }
       }
     },
-    "Kudos": {},
-    "Kühles Graublau für lange Nächte": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cool blue-grey for long nights"
+    "Krimis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mysteries"
           }
         }
       }
+    },
+    "Kudos" : {
+
     },
-    "Kurze Sicherheitsprüfung": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quick Security Check"
+    "Kühles Graublau für lange Nächte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cool blue-grey for long nights"
           }
         }
       }
     },
-    "Lade „%@“ …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Downloading \"%@\" …"
+    "Kurze Sicherheitsprüfung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick Security Check"
           }
         }
       }
     },
-    "Lade %@ …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loading %@ …"
+    "Lade „%@“ …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downloading \"%@\" …"
           }
         }
       }
     },
-    "Lade Bücher …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loading books …"
+    "Lade %@ …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading %@ …"
           }
         }
       }
     },
-    "Lade deine FFN-Favoriten und Follows …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loading your FFN favorites and follows …"
+    "Lade Bücher …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading books …"
           }
         }
       }
     },
-    "Lade Fandoms …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loading fandoms …"
+    "Lade deine FFN-Favoriten und Follows …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading your FFN favorites and follows …"
           }
         }
       }
     },
-    "Lade Profil …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loading profile …"
+    "Lade Fandoms …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading fandoms …"
           }
         }
       }
     },
-    "Lade von FanFiction.net …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loading from FanFiction.net …"
+    "Lade Profil …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading profile …"
           }
         }
       }
     },
-    "Laden": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Download"
+    "Lade von FanFiction.net …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading from FanFiction.net …"
           }
         }
       }
     },
-    "Lavendel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lavender"
+    "Laden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download"
           }
         }
       }
     },
-    "Lege Sammlungen in der Bibliothek über „+“ an.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create collections in the library with \"+\"."
+    "Lavendel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lavender"
           }
         }
       }
     },
-    "Lese ich": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reading"
+    "Lege Sammlungen in der Bibliothek über „+“ an." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create collections in the library with \"+\"."
           }
         }
       }
     },
-    "Lesen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Read"
+    "Lese ich" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading"
           }
         }
       }
     },
-    "Lesezeichen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bookmarks"
+    "Lesen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read"
           }
         }
       }
     },
-    "Letzte 6 Monate": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Last 6 months"
+    "Lesezeichen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bookmarks"
           }
         }
       }
     },
-    "Letzte Woche": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Last week"
+    "Letzte 6 Monate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last 6 months"
           }
         }
       }
     },
-    "Letzter Monat": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Last month"
+    "Letzte Woche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last week"
           }
         }
       }
     },
-    "Letztes Jahr": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Last year"
+    "Letzter Monat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last month"
           }
         }
       }
     },
-    "Liebe": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Romance"
+    "Letztes Jahr" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last year"
           }
         }
       }
     },
-    "Link hinzufügen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add Link"
+    "Liebe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Romance"
           }
         }
       }
     },
-    "Link von AO3, FanFiction.net oder EPUB einfügen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Paste a Link from AO3, FanFiction.net or an EPUB"
+    "Link hinzufügen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Link"
           }
         }
       }
     },
-    "Löschen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete"
+    "Link von AO3, FanFiction.net oder EPUB einfügen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paste a Link from AO3, FanFiction.net or an EPUB"
           }
         }
       }
     },
-    "Lyrik": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Poetry"
+    "Löschen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
           }
         }
       }
     },
-    "Märchen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fairy tales"
+    "Lyrik" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poetry"
           }
         }
       }
     },
-    "Mehr": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "More"
+    "Märchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fairy tales"
           }
         }
       }
     },
-    "Meiste Kudos": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Most kudos"
+    "Mehr" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More"
           }
         }
       }
     },
-    "Merken": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save"
+    "Meiste Kudos" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Most kudos"
           }
         }
       }
     },
-    "META-INF/container.xml fehlt": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "META-INF/container.xml is missing"
+    "Merken" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
           }
         }
       }
     },
-    "Mindestens Kudos": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Minimum kudos"
+    "META-INF/container.xml fehlt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "META-INF/container.xml is missing"
           }
         }
       }
     },
-    "Mit aktuellen Filtern überschreiben": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Overwrite with Current Filters"
+    "Mindestens Kudos" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum kudos"
           }
         }
       }
     },
-    "Mit Anmeldung siehst du hier deine Lesezeichen, „Später lesen“, Abos und deinen Verlauf und kannst sie in die Bibliothek übernehmen. Babel speichert kein Passwort – die Anmeldung läuft direkt auf archiveofourown.org.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When logged in, you'll see your bookmarks, Marked for Later, subscriptions and history here and can add them to your library. Babel never stores your password – you log in directly on archiveofourown.org."
+    "Mit aktuellen Filtern überschreiben" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overwrite with Current Filters"
           }
         }
       }
     },
-    "Mit diesen Filtern gibt es nichts.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nothing matches these filters."
+    "Mit Anmeldung siehst du hier deine Lesezeichen, „Später lesen“, Abos und deinen Verlauf und kannst sie in die Bibliothek übernehmen. Babel speichert kein Passwort – die Anmeldung läuft direkt auf archiveofourown.org." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When logged in, you'll see your bookmarks, Marked for Later, subscriptions and history here and can add them to your library. Babel never stores your password – you log in directly on archiveofourown.org."
           }
         }
       }
     },
-    "Modus: %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mode: %@"
+    "Mit diesen Filtern gibt es nichts." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing matches these filters."
           }
         }
       }
     },
-    "muss": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "must"
+    "Modus: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mode: %@"
           }
         }
       }
     },
-    "Muss enthalten": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Must include"
+    "muss" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "must"
           }
         }
       }
     },
-    "Nach Beliebtheit": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "By Popularity"
+    "Muss enthalten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Must include"
           }
         }
       }
     },
-    "Nach neuen Kapiteln suchen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Check for New Chapters"
+    "Nach Beliebtheit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By Popularity"
           }
         }
       }
     },
-    "Nächstes Kapitel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Next Chapter"
+    "Nach neuen Kapiteln suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for New Chapters"
           }
         }
       }
     },
-    "Nächstes Kapitel →": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Next Chapter →"
+    "Nächstes Kapitel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next Chapter"
           }
         }
       }
     },
-    "Name": {},
-    "Nebel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mist"
+    "Nächstes Kapitel →" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next Chapter →"
           }
         }
       }
     },
-    "Neu aktualisiert": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recently updated"
+    "Name" : {
+
+    },
+    "Nebel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mist"
           }
         }
       }
     },
-    "Neu bei Gutenberg": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "New at Gutenberg"
+    "Neu aktualisiert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recently updated"
           }
         }
       }
     },
-    "Neue Kapitel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "New Chapters"
+    "Neu bei Gutenberg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New at Gutenberg"
           }
         }
       }
     },
-    "Neue Sammlung": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "New Collection"
+    "Neue Kapitel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Chapters"
           }
         }
       }
     },
-    "Nicht angemeldet": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not logged in"
+    "Neue Sammlung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Collection"
           }
         }
       }
     },
-    "Nicht gefunden – vielleicht wurde die Geschichte gelöscht.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not found – the story may have been deleted."
+    "Nicht angemeldet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not logged in"
           }
         }
       }
     },
-    "Nicht mehr merken": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove Fandom"
+    "Nicht gefunden – vielleicht wurde die Geschichte gelöscht." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not found – the story may have been deleted."
           }
         }
       }
     },
-    "Nichts gefunden": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nothing Found"
+    "Nicht mehr merken" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove Fandom"
           }
         }
       }
     },
-    "No Archive Warnings Apply": {},
-    "Nochmal versuchen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Try Again"
+    "Nichts gefunden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing Found"
           }
         }
       }
+    },
+    "No Archive Warnings Apply" : {
+
     },
-    "Notizen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Notes"
+    "Nochmal versuchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try Again"
           }
         }
       }
     },
-    "Notizen am Ende": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "End Notes"
+    "Notizen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes"
           }
         }
       }
     },
-    "Nur Crossover": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Only crossovers"
+    "Notizen am Ende" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End Notes"
           }
         }
       }
     },
-    "Nur Oneshots (ein Kapitel)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "One-shots only (one chapter)"
+    "Nur Crossover" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only crossovers"
           }
         }
       }
     },
-    "Offline": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Offline"
+    "Nur Oneshots (ein Kapitel)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One-shots only (one chapter)"
           }
         }
       }
     },
-    "Offline speichern": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save Offline"
+    "Offline" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline"
           }
         }
       }
     },
-    "Offline-Kopie löschen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete Offline Copy"
+    "Offline speichern" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Offline"
           }
         }
       }
     },
-    "Offline-Speicher": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Offline Storage"
+    "Offline-Kopie löschen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Offline Copy"
           }
         }
       }
     },
-    "Öffne eine Geschichte, um hier weiterzulesen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open a story to continue reading here"
+    "Offline-Speicher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline Storage"
           }
         }
       }
     },
-    "Ohne Status": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Status"
+    "Öffne eine Geschichte, um hier weiterzulesen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open a story to continue reading here"
           }
         }
       }
     },
-    "Ohne Titel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Untitled"
+    "Ohne Status" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Status"
           }
         }
       }
     },
-    "Ohne: %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Without: %@"
+    "Ohne Titel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Untitled"
           }
         }
       }
     },
-    "OK": {},
-    "OPF nicht lesbar": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OPF couldn't be read"
+    "Ohne: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Without: %@"
           }
         }
       }
     },
-    "Palette für Dunkel": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Palette for Dark"
+    "OK" : {
+
+    },
+    "OPF nicht lesbar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OPF couldn't be read"
           }
         }
       }
     },
-    "Palette für Hell": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Palette for Light"
+    "Palette für Dunkel" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Palette for Dark"
           }
         }
       }
     },
-    "Paletten": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Palettes"
+    "Palette für Hell" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Palette for Light"
           }
         }
       }
     },
-    "Pausiert": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Paused"
+    "Paletten" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Palettes"
           }
         }
       }
     },
-    "Pergament": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Parchment"
+    "Pausiert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paused"
           }
         }
       }
     },
-    "Philosophie": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Philosophy"
+    "Pergament" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parchment"
           }
         }
       }
     },
-    "Project Gutenberg": {},
-    "Rating": {},
-    "Reviews": {},
-    "Romane": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fiction"
+    "Philosophie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Philosophy"
           }
         }
       }
+    },
+    "Project Gutenberg" : {
+
+    },
+    "Rating" : {
+
     },
-    "Rosé": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rosé"
+    "Reviews" : {
+
+    },
+    "Romane" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fiction"
           }
         }
       }
     },
-    "Rund 1.000 Klassiker, sorgfältig gesetzt und korrigiert – nur Englisch.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Around 1,000 classics, carefully typeset and proofread – English only."
+    "Rosé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rosé"
           }
         }
       }
     },
-    "Salbeigrün wie die Galerien der Bibliothek von Babel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sage green like the galleries of the Library of Babel"
+    "Rund 1.000 Klassiker, sorgfältig gesetzt und korrigiert – nur Englisch." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Around 1,000 classics, carefully typeset and proofread – English only."
           }
         }
       }
     },
-    "Sammlung": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Collection"
+    "Salbeigrün wie die Galerien der Bibliothek von Babel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sage green like the galleries of the Library of Babel"
           }
         }
       }
     },
-    "Sammlungen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Collections"
+    "Sammlung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collection"
           }
         }
       }
     },
-    "Sanftes Violett, leicht verträumt": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Soft violet, a little dreamy"
+    "Sammlungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collections"
           }
         }
       }
     },
-    "Schließen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Close"
+    "Sanftes Violett, leicht verträumt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soft violet, a little dreamy"
           }
         }
       }
     },
-    "Schnellstart": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quick Start"
+    "Schließen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
           }
         }
       }
     },
-    "Schrift": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Font"
+    "Schnellstart" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick Start"
           }
         }
       }
     },
-    "Schriftart": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Typeface"
+    "Schrift" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Font"
           }
         }
       }
     },
-    "Schwarz": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Black"
+    "Schriftart" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Typeface"
           }
         }
       }
     },
-    "Schwarz auf Weiß, ganz ohne Farbe": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Black on white, no color at all"
+    "Schwarz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Black"
           }
         }
       }
     },
-    "Science-Fiction": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Science fiction"
+    "Schwarz auf Weiß, ganz ohne Farbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Black on white, no color at all"
           }
         }
       }
     },
-    "Seitenrand %lld pt": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Margin %lld pt"
+    "Science-Fiction" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Science fiction"
           }
         }
       }
     },
-    "Sepia": {},
-    "Sofort suchen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search Now"
+    "Seitenrand %lld pt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Margin %lld pt"
           }
         }
       }
     },
-    "Sonstiges": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Misc"
+    "Sepia" : {
+
+    },
+    "Sofort suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Now"
           }
         }
       }
     },
-    "Sortieren": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sort"
+    "Sonstiges" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misc"
           }
         }
       }
     },
-    "Sortieren nach": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sort by"
+    "Sortieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sort"
           }
         }
       }
     },
-    "Sortierung": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sort Order"
+    "Sortieren nach" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sort by"
           }
         }
       }
     },
-    "Später lesen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Read Later"
+    "Sortierung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sort Order"
           }
         }
       }
     },
-    "Speichern": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save"
+    "Später lesen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read Later"
           }
         }
       }
     },
-    "Sprache": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Language"
+    "Speichern" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
           }
         }
       }
     },
-    "Standard": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Default"
+    "Sprache" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
           }
         }
       }
     },
-    "Standard Ebooks": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Standard Ebooks"
+    "Standard" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default"
           }
         }
       }
     },
-    "Standard: Iris & Grove": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Default: Iris & Grove"
+    "Standard Ebooks" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard Ebooks"
           }
         }
       }
     },
-    "Status": {},
-    "Stichwortsuche": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keyword Search"
+    "Standard: Iris & Grove" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default: Iris & Grove"
           }
         }
       }
+    },
+    "Status" : {
+
     },
-    "Such dir auf AO3 oder FanFiction.net etwas aus, importiere ein EPUB oder füge einen Link ein.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Find something on AO3 or FanFiction.net, import an EPUB or paste a link."
+    "Stichwortsuche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keyword Search"
           }
         }
       }
     },
-    "Suche": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search"
+    "Such dir auf AO3 oder FanFiction.net etwas aus, importiere ein EPUB oder füge einen Link ein." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find something on AO3 or FanFiction.net, import an EPUB or paste a link."
           }
         }
       }
     },
-    "Suche auf AO3 …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Searching AO3 …"
+    "Suche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
           }
         }
       }
     },
-    "Suche auf FanFiction.net …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Searching FanFiction.net …"
+    "Suche auf AO3 …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching AO3 …"
           }
         }
       }
     },
-    "Suche nach neuen Kapiteln": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Checking for new chapters"
+    "Suche auf FanFiction.net …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching FanFiction.net …"
           }
         }
       }
     },
-    "Suche nach Updates …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Checking for updates …"
+    "Suche nach neuen Kapiteln" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking for new chapters"
           }
         }
       }
     },
-    "Suchen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search"
+    "Suche nach Updates …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking for updates …"
           }
         }
       }
     },
-    "Suchen · %lld": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search · %lld"
+    "Suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
           }
         }
       }
     },
-    "System": {},
-    "T": {},
-    "Tags ausschließen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Exclude tags"
+    "Suchen · %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search · %lld"
           }
         }
       }
     },
-    "Theater/Musicals": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plays/Musicals"
+    "System" : {
+
+    },
+    "T" : {
+
+    },
+    "Tags ausschließen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exclude tags"
           }
         }
       }
     },
-    "Thema": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subject"
+    "Theater/Musicals" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plays/Musicals"
           }
         }
       }
     },
-    "Thema (z. B. poetry, history)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subject (e.g. poetry, history)"
+    "Thema" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subject"
           }
         }
       }
     },
-    "Tinte": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ink"
+    "Thema (z. B. poetry, history)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subject (e.g. poetry, history)"
           }
         }
       }
     },
-    "Tippe, um Vorschläge von AO3 zu bekommen. Mehrere Tags müssen alle zutreffen.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Type to get suggestions from AO3. All tags must match."
+    "Tinte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ink"
           }
         }
       }
     },
-    "Tippen lädt die Filter, nach rechts wischen sucht sofort.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tap to load the filters, swipe right to search right away."
+    "Tippe, um Vorschläge von AO3 zu bekommen. Mehrere Tags müssen alle zutreffen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type to get suggestions from AO3. All tags must match."
           }
         }
       }
     },
-    "Titel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Title"
+    "Tippen lädt die Filter, nach rechts wischen sucht sofort." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to load the filters, swipe right to search right away."
           }
         }
       }
     },
-    "Titel oder Stichwort": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Title or keyword"
+    "Titel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title"
           }
         }
       }
     },
-    "Titel, Autor:in, Fandom, Tag": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Title, author, fandom, tag"
+    "Titel oder Stichwort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title or keyword"
           }
         }
       }
     },
-    "TV-Serien": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TV Shows"
+    "Titel, Autor:in, Fandom, Tag" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title, author, fandom, tag"
           }
         }
       }
     },
-    "Über": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "About"
+    "TV-Serien" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TV Shows"
           }
         }
       }
     },
-    "Über 75.000 freie Bücher, viele auf Deutsch.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Over 75,000 free books, many in German."
+    "Über" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
           }
         }
       }
     },
-    "Übernommene Favoriten werden als Favorit markiert.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Imported favorites are marked as favorite."
+    "Über 75.000 freie Bücher, viele auf Deutsch." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Over 75,000 free books, many in German."
           }
         }
       }
     },
-    "Übernommene Follows bekommen den Status „Lese ich“.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Imported follows get the status \"Reading\"."
+    "Übernommene Favoriten werden als Favorit markiert." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported favorites are marked as favorite."
           }
         }
       }
     },
-    "Verlauf": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "History"
+    "Übernommene Follows bekommen den Status „Lese ich“." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported follows get the status \"Reading\"."
           }
         }
       }
     },
-    "Verlauf löschen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear History"
+    "Verlauf" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History"
           }
         }
       }
     },
-    "Verlauf löschen?": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear History?"
+    "Verlauf löschen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear History"
           }
         }
       }
     },
-    "Veröffentlicht": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Published"
+    "Verlauf löschen?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear History?"
           }
         }
       }
     },
-    "Version": {},
-    "Versuch es mit weniger Filtern.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Try fewer filters."
+    "Veröffentlicht" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Published"
           }
         }
       }
+    },
+    "Version" : {
+
     },
-    "Vollständig löschen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete Completely"
+    "Versuch es mit weniger Filtern." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try fewer filters."
           }
         }
       }
     },
-    "von": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "from"
+    "Vollständig löschen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Completely"
           }
         }
       }
     },
-    "Vorheriges Kapitel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Previous Chapter"
+    "von" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from"
           }
         }
       }
     },
-    "Warmes Papier und Sepia, wie alte Bücher": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Warm paper and sepia, like old books"
+    "Vorheriges Kapitel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous Chapter"
           }
         }
       }
     },
-    "Weitere Filter": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "More Filters"
+    "Warmes Papier und Sepia, wie alte Bücher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warm paper and sepia, like old books"
           }
         }
       }
     },
-    "Weitere Tags": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Additional tags"
+    "Weitere Filter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More Filters"
           }
         }
       }
     },
-    "Weiterlesen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Continue Reading"
+    "Weitere Tags" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Additional tags"
           }
         }
       }
     },
-    "Weitersuchen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search Elsewhere"
+    "Weiterlesen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue Reading"
           }
         }
       }
     },
-    "Weniger": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Less"
+    "Weitersuchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Elsewhere"
           }
         }
       }
     },
-    "Weniger anzeigen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Show Less"
+    "Weniger" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less"
           }
         }
       }
     },
-    "Werke": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Works"
+    "Weniger anzeigen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Less"
           }
         }
       }
     },
-    "Werke, Tags, Autor:innen …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Works, tags, authors …"
+    "Werke" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Works"
           }
         }
       }
     },
-    "Wird abgeglichen …": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Syncing …"
+    "Werke, Tags, Autor:innen …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Works, tags, authors …"
           }
         }
       }
     },
-    "Wortanzahl": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Word Count"
+    "Wird abgeglichen …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Syncing …"
           }
         }
       }
     },
-    "Wörter": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Words"
+    "Wortanzahl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Word Count"
           }
         }
       }
     },
-    "Zeilenabstand %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Line spacing %@"
+    "Wörter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Words"
           }
         }
       }
     },
-    "Zu viele Anfragen – die Seite bremst gerade. Versuch es in einer Minute nochmal.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Too many requests – the site is rate limiting. Try again in a minute."
+    "Zeilenabstand %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Line spacing %@"
           }
         }
       }
     },
-    "Zuletzt aktualisiert": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recently Updated"
+    "Zu viele Anfragen – die Seite bremst gerade. Versuch es in einer Minute nochmal." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Too many requests – the site is rate limiting. Try again in a minute."
           }
         }
       }
     },
-    "Zuletzt angesehen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recently Viewed"
+    "Zuletzt aktualisiert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recently Updated"
           }
         }
       }
     },
-    "Zuletzt gelesen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recently Read"
+    "Zuletzt angesehen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recently Viewed"
           }
         }
       }
     },
-    "Zuletzt geöffnet": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recently Opened"
+    "Zuletzt gelesen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recently Read"
           }
         }
       }
     },
-    "Zuletzt hinzugefügt": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recently Added"
+    "Zuletzt geöffnet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recently Opened"
           }
         }
       }
     },
-    "Zur Bibliothek hinzufügen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add to Library"
+    "Zuletzt hinzugefügt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recently Added"
           }
         }
       }
     },
-    "Zur Storyseite": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Go to Story Page"
+    "Zur Bibliothek hinzufügen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add to Library"
           }
         }
       }
     },
-    "Zurück zum Text": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Back to Text"
+    "Zur Storyseite" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to Story Page"
           }
         }
       }
     },
-    "Zurücksetzen": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset"
+    "Zurück zum Text" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to Text"
           }
         }
       }
     },
-    "Zusammenfassung": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Summary"
+    "Zurücksetzen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset"
           }
         }
       }
     },
-    "Kein Favorit": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unfavorite"
+    "Zusammenfassung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summary"
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

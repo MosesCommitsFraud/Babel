@@ -14,6 +14,11 @@ struct BabelApp: App {
         }
     }()
 
+    init() {
+        // Standard: alle Ratings zeigen (FFN selbst blendet M ohne Filter aus).
+        UserDefaults.standard.register(defaults: [FFNService.allRatingsKey: true])
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()

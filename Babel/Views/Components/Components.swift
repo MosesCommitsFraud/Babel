@@ -155,72 +155,80 @@ struct StoryRow: View {
     var showSource = false
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            CoverView(story: story, localCover: localCover, width: 50)
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(story.title).font(.headline).lineLimit(2)
-                    Spacer(minLength: 4)
-                    if newChapters > 0 {
-                        Text("+\(newChapters)")
-                            .font(.caption.weight(.bold))
-                            .padding(.horizontal, 7).padding(.vertical, 2)
-                            .foregroundStyle(theme.primaryForeground)
-                            .background(theme.primary, in: .capsule)
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .top, spacing: 12) {
+                CoverView(story: story, localCover: localCover, width: 48)
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(alignment: .firstTextBaseline) {
+                        Text(story.title).font(.subheadline.weight(.semibold)).lineLimit(2)
+                        Spacer(minLength: 4)
+                        if newChapters > 0 {
+                            Text("+\(newChapters)")
+                                .font(.caption2.weight(.bold))
+                                .padding(.horizontal, 6).padding(.vertical, 2)
+                                .foregroundStyle(theme.primaryForeground)
+                                .background(theme.primary, in: .capsule)
+                        }
                     }
-                }
-                Text(byline).font(.footnote).foregroundStyle(.secondary).lineLimit(1)
+                    Text(byline).font(.caption).foregroundStyle(.secondary).lineLimit(1)
 
-                // Eine Zeile Chips (das Wichtigste) und eine schlichte Textzeile mit Datum und Bewertungen.
-                HStack(spacing: 4) {
-                    if showSource { TagChip(text: story.source.shortLabel, symbol: story.source.symbol) }
-                    if !story.rating.isEmpty { TagChip(text: shortRating) }
-                    TagChip(text: statusText, symbol: story.isComplete ? "checkmark" : nil)
-                    if let w = story.words { TagChip(text: Self.wordsShort(w)).layoutPriority(-1) }
-                    if !story.language.isEmpty { TagChip(text: languageShort).layoutPriority(-2) }
-                }
-                .lineLimit(1)
-
-                metaLine
-                if showSummary, !story.summary.isEmpty {
-                    Text(story.summary).font(.footnote).foregroundStyle(.secondary).lineLimit(2)
-                }
-
-                if let progress, progress > 0 {
-                    HStack(spacing: 8) {
-                        ProgressView(value: progress).tint(theme.primary)
-                        Text("\(Int(progress * 100)) %").font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
+                    // Das Wichtigste als Chips: Rating, Status, Länge, Sprache.
+                    HStack(spacing: 4) {
+                        if showSource { TagChip(text: story.source.shortLabel, symbol: story.source.symbol) }
+                        if !story.rating.isEmpty { TagChip(text: shortRating) }
+                        TagChip(text: statusText, symbol: story.isComplete ? "checkmark" : nil)
+                        if let w = story.words { TagChip(text: Self.wordsShort(w)).layoutPriority(-1) }
+                        if !story.language.isEmpty { TagChip(text: languageShort).layoutPriority(-2) }
                     }
-                    .padding(.top, 2)
+                    .lineLimit(1)
+
+                    statsLine
+                }
+            }
+
+            // Unter dem Cover über die ganze Breite: Pairing/Genre und Zusammenfassung.
+            if let tags = tagLine {
+                Text(tags).font(.caption.weight(.medium)).foregroundStyle(theme.primaryText).lineLimit(1)
+            }
+            if showSummary, !story.summary.isEmpty {
+                Text(story.summary).font(.caption).foregroundStyle(.secondary).lineLimit(3)
+            }
+
+            if let progress, progress > 0 {
+                HStack(spacing: 8) {
+                    ProgressView(value: progress).tint(theme.primary)
+                    Text("\(Int(progress * 100)) %").font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
                 }
             }
         }
         .padding(.vertical, 2)
     }
 
-    /// „28. Okt. 26 · ♡ 5K · 🔔 3K · Naruto U./Sakura H.“ – klein und grau, eine Zeile.
-    private var metaLine: some View {
-        HStack(spacing: 9) {
-            if let d = story.updated {
-                Text(d.formatted(.dateTime.day().month(.abbreviated).year(.twoDigits)))
-            }
+    /// Bewertungen deutlich (♡ Favs, 🔔 Follows …), dahinter klein das Datum.
+    private var statsLine: some View {
+        HStack(spacing: 10) {
             ForEach(stats, id: \.symbol) { stat in
-                HStack(spacing: 2) {
-                    Image(systemName: stat.symbol).imageScale(.small)
-                    Text(stat.value)
+                HStack(spacing: 3) {
+                    Image(systemName: stat.symbol + ".fill").foregroundStyle(theme.primary)
+                    Text(stat.value).foregroundStyle(.primary)
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel("\(stat.value) \(stat.name)")
             }
-            if let pairing = story.relationships.first {
-                Text(pairing).layoutPriority(-1)
-            } else if !story.genres.isEmpty {
-                Text(story.genres.joined(separator: "/")).layoutPriority(-1)
+            if let d = story.updated {
+                Text(d.formatted(.dateTime.day().month(.abbreviated).year(.twoDigits)))
+                    .foregroundStyle(.secondary)
+                    .layoutPriority(-1)
             }
         }
-        .font(.caption2.monospacedDigit())
-        .foregroundStyle(.secondary)
+        .font(.caption.weight(.semibold).monospacedDigit())
         .lineLimit(1)
+    }
+
+    /// „Naruto U./Sakura H. · Romance/Adventure“ – Pairing zuerst, dann Genres.
+    private var tagLine: String? {
+        let parts = [story.relationships.first, story.genres.isEmpty ? nil : story.genres.joined(separator: "/")].compactMap { $0 }
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
     private var byline: String {
@@ -244,7 +252,6 @@ struct StoryRow: View {
             add("heart", story.kudos, String(localized: "Kudos"))
             add("eye", story.hits, String(localized: "Aufrufe"))
             add("bookmark", story.bookmarks, String(localized: "Lesezeichen"))
-            add("text.bubble", story.comments, String(localized: "Kommentare"))
         case .gutenberg, .standardEbooks, .archive:
             add("arrow.down.circle", story.hits, String(localized: "Downloads"))
         case .epub:

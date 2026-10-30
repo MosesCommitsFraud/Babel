@@ -125,7 +125,7 @@ enum FFNService {
     }
 
     static func list(url: URL, page: Int) async throws -> FFNListPage {
-        try await list(url: setPage(url, page: page))
+        try await list(url: setPage(withDefaultRating(url), page: page))
     }
 
     /// Worin die FFN-Suche sucht. FFN selbst nimmt sonst „any“: dann reicht ein einzelnes Wort,
@@ -151,44 +151,42 @@ enum FFNService {
         return result
     }
 
-    /// Filter anwenden: Werte in die Dropdowns der echten Seite setzen und "Apply" drücken.
-    /// Klappt das nicht, wird die Filter-URL selbst gebaut.
+    /// Filter anwenden: genau die URL bauen, die FFNs eigenes `process_filter()` bauen würde.
+    /// (Früher per JS-Klick auf „Apply“ – langsamer und wackliger.)
     static func applyFilters(on pageURL: URL, values: [String: String]) async throws -> FFNListPage {
-        let script = """
-        for (const [name, value] of Object.entries(vals)) {
-            document.querySelectorAll('select[name="' + name + '"]').forEach(s => {
-                s.value = value;
-                s.dispatchEvent(new Event('change', { bubbles: true }));
-            });
-        }
-        const btn = Array.from(document.querySelectorAll('button, span.btn, a.btn, input[type=button], input[type=submit]'))
-            .find(b => /^\\s*apply\\s*$/i.test(b.textContent || b.value || ''));
-        if (btn) { setTimeout(() => btn.click(), 50); return 'navigating'; }
-        return 'none';
-        """
-        let cleanURL = setPage(pageURL, page: 1)
-        if let result = try await WebFetcher.shared.runScript(on: cleanURL, body: script, arguments: ["vals": values]),
-           result.url.absoluteString != cleanURL.absoluteString {
-            if let desktop = desktopURL(result.url) { return try await list(url: desktop) }
-            return try await parseListOffMain(result.html, url: result.url)
-        }
-        return try await list(url: fallbackFilterURL(cleanURL, values: values))
+        try await list(url: filterURL(pageURL, values: values))
     }
 
+    /// Name des Formularfelds → URL-Parameter (aus FFNs `process_filter()`).
     private static let paramNames: [String: String] = [
-        "sortid": "srt", "timeid": "t", "genreid1": "g1", "genreid2": "g2", "censorid": "r",
-        "languageid": "lan", "length": "len", "statusid": "s", "characterid1": "c1",
-        "characterid2": "c2", "characterid3": "c3", "characterid4": "c4", "verseid1": "v1",
-        "_genreid1": "_g1", "_characterid1": "_c1", "_characterid2": "_c2", "_verseid1": "_v1",
+        "sortid": "srt", "timerange": "t", "timeid": "t", "genreid1": "g1", "genreid2": "g2", "_genreid1": "_g1",
+        "censorid": "r", "languageid": "lan", "length": "len", "statusid": "s",
+        "characterid1": "c1", "characterid2": "c2", "characterid3": "c3", "characterid4": "c4",
+        "_characterid1": "_c1", "_characterid2": "_c2", "verseid1": "v1", "_verseid1": "_v1",
+        "pm": "pm", "_pm": "_pm",
     ]
 
-    private static func fallbackFilterURL(_ url: URL, values: [String: String]) -> URL {
-        var comps = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-        var items = (comps.queryItems ?? []).filter { item in !values.keys.contains { paramNames[$0] == item.name || $0 == item.name } }
+    /// Wie FFN: nur Werte > 0 kommen in die URL.
+    static func filterURL(_ pageURL: URL, values: [String: String]) -> URL {
+        var comps = URLComponents(url: setPage(pageURL, page: 1), resolvingAgainstBaseURL: false)!
+        let known = Set(paramNames.values)
+        var items = (comps.queryItems ?? []).filter { !known.contains($0.name) }
         for (name, value) in values.sorted(by: { $0.key < $1.key }) {
-            items.append(URLQueryItem(name: paramNames[name] ?? name, value: value))
+            guard let param = paramNames[name], let n = Int(value), n > 0 else { continue }
+            items.append(URLQueryItem(name: param, value: value))
         }
-        comps.queryItems = items
+        comps.queryItems = items.isEmpty ? nil : items
+        return comps.url ?? pageURL
+    }
+
+    /// FFN zeigt ohne Rating-Filter nur K–T. Mit der Einstellung „Alle Ratings“ kommt M dazu (`r=10`).
+    static let allRatingsKey = "ffn.allRatings"
+    static func withDefaultRating(_ url: URL) -> URL {
+        guard UserDefaults.standard.bool(forKey: allRatingsKey),
+              var comps = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              !(comps.queryItems ?? []).contains(where: { $0.name == "r" }),
+              !comps.path.hasPrefix("/search") else { return url }
+        comps.queryItems = (comps.queryItems ?? []) + [URLQueryItem(name: "r", value: "10")]
         return comps.url ?? url
     }
 
@@ -265,6 +263,18 @@ enum FFNService {
             }
             if name.hasPrefix("_") { label = String(localized: "Ohne: \(label)") }
             result.append(FFNFilterSelect(name: name, label: label, options: options, selected: selected))
+        }
+        // „Pairing“-Häkchen: gewählte Charaktere müssen ein Paar sein (bzw. bei _pm: dürfen keins sein).
+        for box in try doc.select("input[type=checkbox][name=pm], input[type=checkbox][name=_pm]").array() {
+            let name = try box.attr("name")
+            guard !seen.contains(name) else { continue }
+            seen.insert(name)
+            let on = box.hasAttr("checked")
+            result.append(FFNFilterSelect(
+                name: name,
+                label: name == "pm" ? String(localized: "Pairing") : String(localized: "Ohne: Pairing"),
+                options: [FFNOption(value: "0", text: String(localized: "Aus")), FFNOption(value: "1", text: String(localized: "An"))],
+                selected: on ? "1" : "0"))
         }
         return result
     }
