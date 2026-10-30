@@ -161,7 +161,7 @@ struct AO3FilterView: View {
                         }
                         Button("Zurücksetzen", systemImage: "arrow.counterclockwise", role: .destructive) {
                             let query = draft.query
-                            draft = AO3Filters()
+                            draft = AO3Filters.withDefaults
                             draft.query = query
                         }
                     } label: {

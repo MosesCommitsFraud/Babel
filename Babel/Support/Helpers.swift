@@ -45,6 +45,8 @@ enum BabelError: LocalizedError {
     case rateLimited
     case loginRequired
     case ffnLoginRequired
+    /// Seite nicht erreichbar (Serverfehler, Cloudflare-Fehlerseite, Wartung).
+    case siteDown(site: String, reason: String)
     case notFound
     case cloudflare
     case timeout
@@ -58,6 +60,7 @@ enum BabelError: LocalizedError {
         case .http(let code): String(localized: "Der Server hat mit Fehler \(code) geantwortet.")
         case .rateLimited: String(localized: "Zu viele Anfragen – die Seite bremst gerade. Versuch es in einer Minute nochmal.")
         case .loginRequired: String(localized: "Dieses Werk ist nur für angemeldete AO3-Nutzer sichtbar. Melde dich in den Einstellungen bei AO3 an.")
+        case .siteDown(let site, let reason): String(localized: "\(site) \(reason). Das liegt an der Seite, nicht an Babel – versuch es später nochmal.")
         case .ffnLoginRequired: String(localized: "Dafür musst du bei FanFiction.net angemeldet sein. Melde dich in den Einstellungen an.")
         case .notFound: String(localized: "Nicht gefunden – vielleicht wurde die Geschichte gelöscht.")
         case .cloudflare: String(localized: "Die Sicherheitsprüfung von FanFiction.net wurde nicht abgeschlossen. Versuch es nochmal.")

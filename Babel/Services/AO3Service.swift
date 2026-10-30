@@ -166,9 +166,29 @@ enum AO3Service {
     // MARK: - Laden (mit Ausweichweg über den WebView, falls Cloudflare dazwischenfunkt)
 
     static func fetchHTML(_ url: URL) async throws -> (html: String, finalURL: URL, status: Int) {
+        let result = try await fetchHTMLRaw(url)
+        if SiteStatus.isOutage(status: result.status) {
+            throw BabelError.siteDown(site: "AO3", reason: SiteStatus.reason(status: result.status))
+        }
+        if let code = SiteStatus.errorPageCode(result.html) {
+            let reason = SiteStatus.reason(status: code)
+            await SiteStatus.shared.reportDown(host: base.host!, reason: reason)
+            throw BabelError.siteDown(site: "AO3", reason: reason)
+        }
+        // AO3s eigene Wartungs-/Überlastungsseite
+        if result.html.contains("archive is down for maintenance") || result.html.contains("Request temporarily denied") {
+            let reason = String(localized: "ist gerade in Wartung")
+            await SiteStatus.shared.reportDown(host: base.host!, reason: reason)
+            throw BabelError.siteDown(site: "AO3", reason: reason)
+        }
+        return result
+    }
+
+    private static func fetchHTMLRaw(_ url: URL) async throws -> (html: String, finalURL: URL, status: Int) {
         // AO3 braucht unter Last teils über eine Minute für eine Seite – lieber warten als abbrechen.
         let result = try await HTTPClient.shared.html(url, timeout: 150)
-        let blocked = result.status == 403 || result.status == 503 || result.html.contains("challenge-platform")
+        // Nur bei einer Cloudflare-Prüfung über den WebView – Serverfehler (5xx) sind echte Ausfälle.
+        let blocked = result.status == 403 || result.html.contains("challenge-platform")
         guard blocked else { return result }
         let page = try await WebFetcher.shared.load(url, minInterval: 0.8)
         return (page.html, page.url, 200)

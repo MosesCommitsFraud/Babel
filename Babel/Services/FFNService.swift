@@ -112,15 +112,20 @@ enum FFNService {
             var page = try await WebFetcher.shared.load(desktopURL(url) ?? url, minInterval: minInterval)
             if let desktop = desktopURL(page.url) { page = try await WebFetcher.shared.load(desktop, minInterval: minInterval) }
             // Cloudflare-Fehlerseiten (520–526) kommen als normale Seite an.
-            if let code = page.html.firstMatch(#"Error code (5\d\d)"#)?[1].digitsInt, page.html.contains("cloudflare") {
-                await SiteStatus.shared.reportDown(host: "fanfiction.net", reason: SiteStatus.reason(status: code))
+            if let code = SiteStatus.errorPageCode(page.html) {
+                let reason = SiteStatus.reason(status: code)
+                await SiteStatus.shared.reportDown(host: "fanfiction.net", reason: reason)
+                throw BabelError.siteDown(site: "FanFiction.net", reason: reason)
             } else {
                 await SiteStatus.shared.reportOK(host: "fanfiction.net")
             }
             return page
         } catch BabelError.timeout {
-            await SiteStatus.shared.reportDown(host: "fanfiction.net", reason: String(localized: "antwortet nicht (Zeitüberschreitung)"))
-            throw BabelError.timeout
+            let reason = String(localized: "antwortet nicht (Zeitüberschreitung)")
+            await SiteStatus.shared.reportDown(host: "fanfiction.net", reason: reason)
+            throw BabelError.siteDown(site: "FanFiction.net", reason: reason)
+        } catch let error as BabelError {
+            throw error
         } catch {
             if let reason = SiteStatus.reason(error: error) {
                 await SiteStatus.shared.reportDown(host: "fanfiction.net", reason: reason)
@@ -242,14 +247,19 @@ enum FFNService {
         return Int(n)
     }
 
-    /// FFN zeigt ohne Rating-Filter nur K–T. Mit der Einstellung „Alle Ratings“ kommt M dazu (`r=10`).
-    static let allRatingsKey = "ffn.allRatings"
+    /// Standard-Rating und -Sprache aus den Einstellungen, wenn die URL selbst keine hat.
+    /// (FFN zeigt ohne Rating-Filter nur K–T.)
     static func withDefaultRating(_ url: URL) -> URL {
-        guard UserDefaults.standard.bool(forKey: allRatingsKey),
-              var comps = URLComponents(url: url, resolvingAgainstBaseURL: false),
-              !(comps.queryItems ?? []).contains(where: { $0.name == "r" }),
+        guard var comps = URLComponents(url: url, resolvingAgainstBaseURL: false),
               !comps.path.hasPrefix("/search") else { return url }
-        comps.queryItems = (comps.queryItems ?? []) + [URLQueryItem(name: "r", value: "10")]
+        var items = comps.queryItems ?? []
+        if !items.contains(where: { $0.name == "r" }) {
+            items.append(URLQueryItem(name: "r", value: DefaultRating.current.ffnValue))
+        }
+        if !items.contains(where: { $0.name == "lan" }), let lan = StoryLanguage.current.ffnID {
+            items.append(URLQueryItem(name: "lan", value: lan))
+        }
+        comps.queryItems = items
         return comps.url ?? url
     }
 

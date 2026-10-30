@@ -62,7 +62,7 @@ struct AO3SearchRoute: Hashable {
 struct AO3FilterWallView: View {
     @AppStorage(AO3Presets.key) private var savedData: Data = Data()
     @AppStorage("ao3.lastFilters") private var lastData: Data = Data()
-    @State private var draft = AO3Filters()
+    @State private var draft = AO3Filters.withDefaults
     @State private var didLoad = false
     @Binding var path: NavigationPath
     @State private var showSave = false
@@ -168,7 +168,7 @@ struct AO3FilterWallView: View {
                         showSave = true
                     }
                     Button("Zurücksetzen", systemImage: "arrow.counterclockwise", role: .destructive) {
-                        withAnimation { draft = AO3Filters(); loadedPreset = nil }
+                        withAnimation { draft = AO3Filters.withDefaults; loadedPreset = nil }
                     }
                 } label: {
                     Label("Mehr", systemImage: "ellipsis")
@@ -281,6 +281,8 @@ struct AO3SearchView: View {
                 SlowLoadingView(text: String(localized: "Suche auf AO3 …"), slowHint: String(localized: "AO3 ist gerade langsam. Das kann bis zu einer Minute dauern."))
             } else if let error = model.error, model.results.isEmpty {
                 ErrorBanner(message: error) { Task { await model.search() } }
+            } else if model.hasSearched && model.results.isEmpty, let outage = SiteStatus.shared.outage(.ao3) {
+                OutageEmptyView(site: .ao3, outage: outage) { Task { await model.search() } }
             } else if model.hasSearched && model.results.isEmpty {
                 ContentUnavailableView("Keine Treffer", systemImage: "magnifyingglass",
                                        description: Text("Versuch es mit weniger Filtern."))

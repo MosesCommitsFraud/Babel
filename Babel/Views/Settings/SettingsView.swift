@@ -7,7 +7,8 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var context
     @Environment(LibraryManager.self) private var library
     @AppStorage("checkUpdatesOnLaunch") private var checkUpdatesOnLaunch = true
-    @AppStorage(FFNService.allRatingsKey) private var ffnAllRatings = true
+    @AppStorage(DefaultRating.key) private var defaultRating: DefaultRating = .all
+    @AppStorage(StoryLanguage.key) private var defaultLanguage = ""
 
     @AppStorage("ao3.username") private var ao3User = ""
     @State private var ffn = FFNAccount.shared
@@ -78,11 +79,18 @@ struct SettingsView: View {
                 .themedRows()
 
                 Section {
-                    Toggle("Alle Ratings zeigen", isOn: $ffnAllRatings)
+                    Picker("Standard-Rating", selection: $defaultRating) {
+                        ForEach(DefaultRating.allCases) { Text($0.label).tag($0) }
+                    }
+                    .pickerStyle(.navigationLink)
+                    Picker("Standard-Sprache", selection: $defaultLanguage) {
+                        ForEach(StoryLanguage.all) { Text($0.name).tag($0.code) }
+                    }
+                    .pickerStyle(.navigationLink)
                 } header: {
-                    Text("Inhalte")
+                    Text("Suche")
                 } footer: {
-                    Text("FanFiction.net zeigt ohne Filter nur K bis T. Eingeschaltet erscheinen auch Geschichten mit Rating M. Auf AO3 sind ohnehin alle Ratings sichtbar, solange du keine ausschließt.")
+                    Text("Gilt für neue Suchen auf AO3 und FanFiction.net – die Sprache der Geschichten, nicht die der App. In den Filtern lässt sich beides jederzeit ändern.")
                 }
                 .themedRows()
 

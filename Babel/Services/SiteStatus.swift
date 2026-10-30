@@ -44,11 +44,23 @@ final class SiteStatus {
         withAnimation(.snappy) { outages[site] = Outage(reason: reason, since: outages[site]?.since ?? Date()) }
     }
 
+    /// Cloudflare-/Server-Fehlerseite statt Inhalt? Gibt den Fehlercode zurück.
+    nonisolated static func errorPageCode(_ html: String) -> Int? {
+        let head = String(html.prefix(20_000))
+        guard head.localizedCaseInsensitiveContains("cloudflare") else { return nil }
+        if let code = head.firstMatch(#"Error code:?\s*(5\d\d)"#)?[1].digitsInt { return code }
+        if head.contains("cf-error-details") || head.contains("cf-wrapper"),
+           let code = head.firstMatch(#"(5\d\d)"#)?[1].digitsInt { return code }
+        return nil
+    }
+
     /// Ist eine Antwort ein Ausfall? 5xx und Cloudflares 52x ja – 403 (Cloudflare-Prüfung) und 429 (Bremse) nicht.
-    nonisolated static func isOutage(status: Int) -> Bool { status >= 500 }
+    /// AO3 antwortet während Wartungen mit 418 „Request temporarily denied“.
+    nonisolated static func isOutage(status: Int) -> Bool { status >= 500 || status == 418 }
 
     nonisolated static func reason(status: Int) -> String {
         switch status {
+        case 418: String(localized: "ist gerade in Wartung")
         case 502, 504, 522, 524: String(localized: "antwortet nicht (Fehler \(status))")
         case 503: String(localized: "ist überlastet oder in Wartung (Fehler 503)")
         case 520...530: String(localized: "ist hinter Cloudflare nicht erreichbar (Fehler \(status))")
@@ -136,5 +148,23 @@ extension View {
     /// Zeigt oben das Ausfall-Banner der Seite, falls sie gerade nicht erreichbar ist.
     func siteStatusBanner(_ site: SiteStatus.Site) -> some View {
         safeAreaInset(edge: .top, spacing: 0) { SiteStatusBanner(site: site) }
+    }
+}
+
+/// Statt „Keine Treffer“: Die Seite ist gerade nicht erreichbar.
+struct OutageEmptyView: View {
+    let site: SiteStatus.Site
+    let outage: SiteStatus.Outage
+    var retry: () -> Void
+
+    var body: some View {
+        ContentUnavailableView {
+            Label("\(site.name) ist nicht erreichbar", systemImage: "exclamationmark.icloud")
+        } description: {
+            Text("\(site.name) \(outage.reason). Deshalb gibt es gerade keine Treffer – das liegt an der Seite, nicht an deiner Suche.")
+        } actions: {
+            Button("Nochmal versuchen", systemImage: "arrow.clockwise", action: retry)
+                .buttonStyle(.glass)
+        }
     }
 }

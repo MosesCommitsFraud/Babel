@@ -499,6 +499,8 @@ struct FFNStoryListView: View {
                 }
             } else if let error = model.error, model.stories.isEmpty {
                 ErrorBanner(message: error) { Task { await model.load() } }
+            } else if !model.isLoading && model.stories.isEmpty, let outage = SiteStatus.shared.outage(.ffn) {
+                OutageEmptyView(site: .ffn, outage: outage) { Task { await model.load() } }
             } else if !model.isLoading && model.stories.isEmpty {
                 ContentUnavailableView("Keine Geschichten", systemImage: "text.book.closed",
                                        description: Text("Mit diesen Filtern gibt es nichts."))
@@ -607,6 +609,8 @@ struct FFNKeywordSearchView: View {
                 ProgressView("Suche auf FanFiction.net …")
             } else if let error, stories.isEmpty {
                 ErrorBanner(message: error) { Task { await search(page: 1) } }
+            } else if searched && stories.isEmpty, let outage = SiteStatus.shared.outage(.ffn) {
+                OutageEmptyView(site: .ffn, outage: outage) { Task { await search(page: 1) } }
             } else if searched && stories.isEmpty {
                 ContentUnavailableView.search(text: query)
             } else if !searched {
