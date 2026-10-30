@@ -34,7 +34,8 @@ struct LibraryView: View {
     @Query(filter: #Predicate<Story> { $0.viewedAt != nil || $0.lastOpenedAt != nil }) private var history: [Story]
     @Query(sort: \Shelf.createdAt) private var shelves: [Shelf]
 
-    @State private var filter: LibraryFilter = .all
+    /// Start mit dem Verlauf – dort liegt, was man gerade liest. Kein „Alle“-Chip mehr (Wunsch des Nutzers).
+    @State private var filter: LibraryFilter = .history
     @AppStorage("library.sort") private var sort: LibrarySort = .recent
     @State private var searchText = ""
     @State private var query = LibraryQuery()
@@ -79,28 +80,6 @@ struct LibraryView: View {
                 .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
             }
 
-            // Unter „Alle“: zuletzt angesehene Geschichten, die (noch) nicht in der Bibliothek liegen.
-            if filter == .all && searchText.trimmed.isEmpty && !recentlyViewed.isEmpty {
-                Section {
-                    ForEach(recentlyViewed.prefix(8)) { story in
-                        NavigationLink(value: story) {
-                            StoryRow(story: story.asRemote, localCover: ContentStore.coverFileURL(story),
-                                     progress: story.hasStarted ? story.overallProgress : nil, showSummary: false, showSource: true)
-                        }
-                        .navigationLinkIndicatorVisibility(.hidden)
-                        .librarySwipeActions(story)
-                    }
-                    .themedRows(grouped: false)
-                    if recentlyViewed.count > 8 {
-                        Button("Ganzen Verlauf anzeigen (\(history.count))") { withAnimation(.snappy) { filter = .history } }
-                            .themedRows(grouped: false)
-                    }
-                } header: {
-                    Label("Zuletzt angesehen", systemImage: "clock.arrow.circlepath")
-                        .font(.subheadline.weight(.semibold))
-                        .textCase(nil)
-                }
-            }
         }
         .listStyle(.plain)
         .themedBackground()
@@ -111,7 +90,7 @@ struct LibraryView: View {
                 emptyState
             } else if filtered.isEmpty && !searchText.trimmed.isEmpty {
                 ContentUnavailableView.search(text: searchText)
-            } else if filtered.isEmpty && !(filter == .all && !recentlyViewed.isEmpty) {
+            } else if filtered.isEmpty {
                 ContentUnavailableView("Hier ist noch nichts", systemImage: "tray",
                                        description: Text("In dieser Auswahl liegen keine Geschichten."))
             }
@@ -150,7 +129,7 @@ struct LibraryView: View {
         var id: String { title }
     }
 
-    /// Alle Filter-Chips mit Anzahl – „Alle“ vorn, der Rest nach Anzahl sortiert.
+    /// Alle Filter-Chips mit Anzahl – „Verlauf“ vorn, der Rest nach Anzahl sortiert.
     private var chipItems: [ChipItem] {
         func count(_ f: LibraryFilter) -> Int { stories.filter { matches($0, f) }.count }
         var items: [ChipItem] = []
@@ -172,9 +151,8 @@ struct LibraryView: View {
         let sorted = items.enumerated().sorted { a, b in
             a.element.count != b.element.count ? a.element.count > b.element.count : a.offset < b.offset
         }.map(\.element)
-        // „Alle“ und „Verlauf“ (alles je Angesehene/Gelesene) immer vorn, der Rest nach Anzahl.
-        return [ChipItem(title: String(localized: "Alle"), symbol: nil, value: .all, count: stories.count),
-                ChipItem(title: String(localized: "Verlauf"), symbol: "clock.arrow.circlepath", value: .history, count: history.count)] + sorted
+        // „Verlauf“ (alles je Angesehene/Gelesene) immer vorn, der Rest nach Anzahl.
+        return [ChipItem(title: String(localized: "Verlauf"), symbol: "clock.arrow.circlepath", value: .history, count: history.count)] + sorted
     }
 
     private var filterBar: some View {
@@ -182,7 +160,7 @@ struct LibraryView: View {
             GlassEffectContainer(spacing: 8) {
                 HStack(spacing: 8) {
                     ForEach(chipItems) { item in
-                        chip(item.count > 0 && item.value != .all ? "\(item.title) \(item.count)" : item.title, item.symbol, item.value)
+                        chip(item.count > 0 ? "\(item.title) \(item.count)" : item.title, item.symbol, item.value)
                     }
                 }
                 .padding(.horizontal)
@@ -268,10 +246,6 @@ struct LibraryView: View {
         case .progress: list.sort { $0.overallProgress > $1.overallProgress }
         }
         return list
-    }
-
-    private var recentlyViewed: [Story] {
-        history.filter { !$0.inLibrary }.sorted { Self.lastSeen($0) > Self.lastSeen($1) }
     }
 
     private static func lastSeen(_ s: Story) -> Date {
