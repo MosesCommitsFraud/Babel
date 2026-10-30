@@ -73,7 +73,7 @@ struct TagChip: View {
             if let symbol { Image(systemName: symbol).imageScale(.small) }
             Text(text).lineLimit(1)
         }
-        .font(.caption2.weight(.medium))
+        .font(.caption.weight(.medium))
         .padding(.horizontal, 7)
         .padding(.vertical, 3)
         .foregroundStyle(tint ?? .secondary)
@@ -155,22 +155,32 @@ struct StoryRow: View {
     var showSource = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 7) {
             HStack(alignment: .top, spacing: 12) {
-                CoverView(story: story, localCover: localCover, width: 48)
-                VStack(alignment: .leading, spacing: 3) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(story.title).font(.subheadline.weight(.semibold)).lineLimit(2)
+                CoverView(story: story, localCover: localCover, width: 54)
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text(story.title).font(.body.weight(.semibold)).lineLimit(2)
                         Spacer(minLength: 4)
+                        if isNew {
+                            Image(systemName: "leaf.fill")
+                                .font(.footnote)
+                                .foregroundStyle(Self.leafGreen)
+                                .accessibilityLabel("Neue Geschichte")
+                        }
                         if newChapters > 0 {
                             Text("+\(newChapters)")
-                                .font(.caption2.weight(.bold))
+                                .font(.caption.weight(.bold))
                                 .padding(.horizontal, 6).padding(.vertical, 2)
                                 .foregroundStyle(theme.primaryForeground)
                                 .background(theme.primary, in: .capsule)
                         }
                     }
-                    Text(byline).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text(byline).font(.footnote).foregroundStyle(.secondary).lineLimit(1)
+                        Spacer(minLength: 4)
+                        dateLabel
+                    }
 
                     // Das Wichtigste als Chips: Rating, Status, Länge, Sprache.
                     HStack(spacing: 4) {
@@ -188,41 +198,70 @@ struct StoryRow: View {
 
             // Unter dem Cover über die ganze Breite: Pairing/Genre und Zusammenfassung.
             if let tags = tagLine {
-                Text(tags).font(.caption.weight(.medium)).foregroundStyle(theme.primaryText).lineLimit(1)
+                Text(tags).font(.footnote.weight(.medium)).foregroundStyle(theme.primaryText).lineLimit(1)
             }
             if showSummary, !story.summary.isEmpty {
-                Text(story.summary).font(.caption).foregroundStyle(.secondary).lineLimit(3)
+                Text(story.summary).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
             }
 
             if let progress, progress > 0 {
                 HStack(spacing: 8) {
                     ProgressView(value: progress).tint(theme.primary)
-                    Text("\(Int(progress * 100)) %").font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
+                    Text("\(Int(progress * 100)) %").font(.caption.monospacedDigit()).foregroundStyle(.secondary)
                 }
             }
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 3)
     }
 
-    /// Bewertungen deutlich (♡ Favs, 🔔 Follows …), dahinter klein das Datum.
+    static let leafGreen = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0x7ED492) : UIColor(hex: 0x3E9A57) })
+    static let heartRed = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0xFF6B6B) : UIColor(hex: 0xE0393E) })
+    static let followYellow = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0xFFD25E) : UIColor(hex: 0xE3A000) })
+
+    /// Erst in den letzten 14 Tagen erschienen (bei AO3-Treffern ohne Veröffentlichungsdatum: ein Kapitel, frisch).
+    private var isNew: Bool {
+        let cutoff = Date().addingTimeInterval(-14 * 24 * 3600)
+        if let p = story.published { return p > cutoff }
+        return story.source == .ao3 && story.chapters == 1 && (story.updated ?? .distantPast) > cutoff
+    }
+
+    /// „akt. 28.10.26“ (aktualisiert) bzw. „veröff. 03.09.26“ (veröffentlicht, noch nie aktualisiert).
+    @ViewBuilder
+    private var dateLabel: some View {
+        if let updated = story.updated {
+            let isPublishOnly = story.published.map { abs($0.timeIntervalSince(updated)) < 60 } ?? false
+            let text = updated.formatted(.dateTime.day(.twoDigits).month(.twoDigits).year(.twoDigits))
+            Text(isPublishOnly ? "veröff. \(text)" : "akt. \(text)")
+                .font(.caption.monospacedDigit())
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .fixedSize()
+                .accessibilityLabel(isPublishOnly ? "Veröffentlicht \(text)" : "Aktualisiert \(text)")
+        }
+    }
+
+    /// Bewertungen deutlich: ♥ rot, 🔔 gelb, Rest in der Akzentfarbe.
     private var statsLine: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 12) {
             ForEach(stats, id: \.symbol) { stat in
                 HStack(spacing: 3) {
-                    Image(systemName: stat.symbol + ".fill").foregroundStyle(theme.primary)
+                    Image(systemName: stat.symbol + ".fill").foregroundStyle(statColor(stat.symbol))
                     Text(stat.value).foregroundStyle(.primary)
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel("\(stat.value) \(stat.name)")
             }
-            if let d = story.updated {
-                Text(d.formatted(.dateTime.day().month(.abbreviated).year(.twoDigits)))
-                    .foregroundStyle(.secondary)
-                    .layoutPriority(-1)
-            }
         }
-        .font(.caption.weight(.semibold).monospacedDigit())
+        .font(.footnote.weight(.semibold).monospacedDigit())
         .lineLimit(1)
+    }
+
+    private func statColor(_ symbol: String) -> Color {
+        switch symbol {
+        case "heart": Self.heartRed
+        case "bell": Self.followYellow
+        default: theme.primary
+        }
     }
 
     /// „Naruto U./Sakura H. · Romance/Adventure“ – Pairing zuerst, dann Genres.

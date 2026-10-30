@@ -204,7 +204,7 @@ struct FFNBrowseView: View {
             Section {
                 ForEach(group.fandoms) { f in fandomRow(f) }
             } header: {
-                Label(group.category.name, systemImage: group.category.symbol)
+                Text(group.category.name)
             }
             .themedRows()
         }
@@ -225,12 +225,7 @@ struct FFNBrowseView: View {
     private func fandomRow(_ f: FFNFandom) -> some View {
         NavigationLink(value: f) {
             HStack {
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(f.name).lineLimit(2)
-                    if isAll, let c = store.category(of: f) {
-                        Text(c.name).font(.caption2).foregroundStyle(.secondary)
-                    }
-                }
+                Text(f.name).lineLimit(2)
                 Spacer()
                 if !f.countText.isEmpty {
                     Text(f.countText).font(.caption.monospacedDigit()).foregroundStyle(.secondary)
@@ -308,11 +303,11 @@ struct FFNBrowseView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             GlassEffectContainer(spacing: 8) {
                 HStack(spacing: 8) {
-                    GlassChip(title: String(localized: "Alle"), symbol: "square.stack.3d.up", isSelected: isAll) {
+                    GlassChip(title: String(localized: "Alle"), isSelected: isAll) {
                         withAnimation(.snappy) { categoryID = Self.allID }
                     }
                     ForEach(FFNService.categories) { c in
-                        GlassChip(title: c.name, symbol: c.symbol, isSelected: c.id == categoryID) {
+                        GlassChip(title: c.name, isSelected: c.id == categoryID) {
                             withAnimation(.snappy) { categoryID = c.id }
                         }
                     }
@@ -350,6 +345,11 @@ final class FFNListModel {
     var currentURL: URL
     var stories: [RemoteStory] = []
     var filters: [FFNFilterSelect] = []
+    /// Paare, die als Pairing gelten sollen (Namen wie „Hinata H.“) – FFN kennt nur ein Häkchen für alle,
+    /// deshalb wird zusätzlich hier pro Paar gefiltert.
+    var requiredPairs: [[String]] = []
+    /// Welche Paare (1 = A+B, 2 = C+D) im Filter als Pairing markiert sind.
+    var pairToggles: [Bool] = [false, false]
     /// Was FFN ohne Filter vorauswählt (z. B. „Rated K → T“) – zählt nicht als aktiver Filter.
     var defaults: [String: String] = [:]
     var page = 1
@@ -387,7 +387,13 @@ final class FFNListModel {
         }
     }
 
-    func applyFilters(_ values: [String: String]) async {
+    func applyFilters(_ values: [String: String], pairs: [Bool] = [false, false]) async {
+        pairToggles = pairs
+        requiredPairs = zip([("characterid1", "characterid2"), ("characterid3", "characterid4")], pairs).compactMap { names, on in
+            guard on else { return nil }
+            let a = optionText(names.0, values[names.0]), b = optionText(names.1, values[names.1])
+            return [a, b].compactMap { $0 }.count == 2 ? [a!, b!] : nil
+        }
         isLoading = true
         error = nil
         stories = []
@@ -402,18 +408,36 @@ final class FFNListModel {
     }
 
     func resetFilters() async {
+        requiredPairs = []
+        pairToggles = [false, false]
         currentURL = baseURL
         stories = []
         await load()
     }
 
+    private func optionText(_ filter: String, _ value: String?) -> String? {
+        guard let value, value != "0" else { return nil }
+        return filters.first { $0.name == filter }?.options.first { $0.value == value }?.text
+    }
+
+    /// Geschichte enthält jedes geforderte Paar als Pairing ([A, B] auf FFN).
+    private func matchesPairs(_ story: RemoteStory) -> Bool {
+        requiredPairs.allSatisfy { pair in
+            story.relationships.contains { rel in
+                let parts = rel.components(separatedBy: "/").map(\.trimmed)
+                return pair.allSatisfy(parts.contains)
+            }
+        }
+    }
+
     private func apply(_ result: FFNListPage, replace: Bool) {
+        let incoming = requiredPairs.isEmpty ? result.stories : result.stories.filter(matchesPairs)
         if replace {
-            stories = result.stories
+            stories = incoming
             page = 1
         } else {
             let known = Set(stories.map(\.id))
-            stories += result.stories.filter { !known.contains($0.id) }
+            stories += incoming.filter { !known.contains($0.id) }
         }
         if !result.filters.isEmpty {
             filters = result.filters
@@ -513,8 +537,8 @@ struct FFNStoryListView: View {
             Text("Findest du im FanFiction-Tab unter „Gespeicherte Filter“ wieder.")
         }
         .sheet(isPresented: $showFilters) {
-            FFNFilterSheet(filters: model.filters) { values in
-                Task { await model.applyFilters(values) }
+            FFNFilterSheet(filters: model.filters, pageURL: model.baseURL, pairs: model.pairToggles) { values, pairs in
+                Task { await model.applyFilters(values, pairs: pairs) }
             } onReset: {
                 Task { await model.resetFilters() }
             }
@@ -538,86 +562,6 @@ struct FFNStoryListView: View {
         list.removeAll { $0.name.caseInsensitiveCompare(name) == .orderedSame }
         list.insert(FFNFandom(name: name, path: path, countText: description), at: 0)
         savedData = (try? JSONEncoder().encode(list)) ?? Data()
-    }
-}
-
-struct FFNFilterSheet: View {
-    let filters: [FFNFilterSelect]
-    var onApply: ([String: String]) -> Void
-    var onReset: () -> Void
-    @Environment(\.dismiss) private var dismiss
-    @State private var values: [String: String]
-
-    init(filters: [FFNFilterSelect], onApply: @escaping ([String: String]) -> Void, onReset: @escaping () -> Void) {
-        self.filters = filters
-        self.onApply = onApply
-        self.onReset = onReset
-        // Nicht in onAppear: das läuft nach jeder Auswahlseite erneut und würde die Auswahl zurücksetzen.
-        _values = State(initialValue: Dictionary(filters.map { ($0.name, $0.selected) }, uniquingKeysWith: { a, _ in a }))
-    }
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    ForEach(filters.filter { !$0.isExclusion }) { picker(for: $0) }
-                } footer: {
-                    Text("Das sind genau die Filter, die FanFiction.net für diesen Fandom anbietet – inklusive Charakteren.")
-                }
-                .themedRows()
-                let exclusions = filters.filter(\.isExclusion)
-                if !exclusions.isEmpty {
-                    Section("Ausschließen") {
-                        ForEach(exclusions) { picker(for: $0) }
-                    }
-                    .themedRows()
-                }
-            }
-            .themedBackground()
-            .navigationTitle("Filter")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Zurücksetzen", systemImage: "arrow.counterclockwise") {
-                        dismiss()
-                        onReset()
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Anwenden", systemImage: "checkmark") {
-                        let changed = values.filter { name, value in
-                            filters.first { $0.name == name }?.selected != value
-                        }
-                        dismiss()
-                        if !changed.isEmpty { onApply(values) }
-                    }
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func picker(for filter: FFNFilterSelect) -> some View {
-        let binding = Binding(
-            get: { values[filter.name] ?? filter.selected },
-            set: { values[filter.name] = $0 }
-        )
-        if filter.name.hasSuffix("pm") {
-            // Pairing ist bei FFN ein Häkchen: die gewählten Charaktere als Paar.
-            Toggle(isOn: Binding(get: { binding.wrappedValue == "1" }, set: { binding.wrappedValue = $0 ? "1" : "0" })) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(filter.label)
-                    Text(filter.name == "pm" ? "Die gewählten Charaktere sind ein Paar." : "Die gewählten Charaktere sind kein Paar.")
-                        .font(.caption).foregroundStyle(.secondary)
-                }
-            }
-        } else {
-            // Eigene Auswahlseite statt Menü – Menüs springen in langen Formularen weg.
-            Picker(filter.label, selection: binding) {
-                ForEach(filter.options) { Text($0.text).tag($0.value) }
-            }
-            .pickerStyle(.navigationLink)
-        }
     }
 }
 

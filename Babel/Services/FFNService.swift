@@ -195,6 +195,53 @@ enum FFNService {
         return comps.url ?? pageURL
     }
 
+    // MARK: - Anzahl Geschichten pro Filterwert
+
+    /// Formularfeld → Parameter von FFNs `/api/lcount/` (dieselbe Zählung, die FFNs Filterfenster live anzeigt).
+    static let countParams: [String: String] = ["languageid": "lan", "characterid1": "c1", "characterid2": "c1",
+                                                "characterid3": "c1", "characterid4": "c1", "_characterid1": "c1",
+                                                "_characterid2": "c1", "genreid1": "g1", "genreid2": "g1", "_genreid1": "g1"]
+
+    /// Zählt für jeden Wert, wie viele Geschichten der Fandom damit hat (alle Ratings, sonst ohne Filter).
+    /// Läuft in der offenen FFN-Seite, fünf Anfragen gleichzeitig (so wie FFNs eigenes Filterfenster live zählt).
+    static func storyCounts(pageURL: URL, param: String, values: [String]) async throws -> [String: Int] {
+        let script = """
+        const raw = process_ajax_data();
+        const base = Object.fromEntries(new URLSearchParams(typeof raw === 'string' ? raw : $.param(raw)));
+        for (const k of Object.keys(base)) if (k !== 'cid1') base[k] = '0';
+        base.r = '10'; base.srt = '1';
+        const out = {};
+        let i = 0;
+        async function worker() {
+            while (i < values.length) {
+                const v = values[i++];
+                const p = Object.assign({}, base); p[param] = v;
+                try {
+                    const r = await fetch('/api/lcount/?' + new URLSearchParams(p), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                    let d = JSON.parse(await r.text());
+                    if (typeof d === 'string') d = JSON.parse(d);
+                    if (!d.error) out[v] = String(d.payload_data);
+                } catch (e) {}
+            }
+        }
+        await Promise.all([worker(), worker(), worker(), worker(), worker()]);
+        return out;
+        """
+        let page = desktopURL(pageURL) ?? pageURL
+        let result = try await WebFetcher.shared.evaluate(on: page, body: script, arguments: ["param": param, "values": values])
+        let dict = result as? [String: Any] ?? [:]
+        return dict.compactMapValues { parseCount("\($0)") }
+    }
+
+    /// "434" → 434, "416K" → 416000, "1.2M" → 1200000
+    static func parseCount(_ text: String) -> Int? {
+        let t = text.uppercased().replacingOccurrences(of: ",", with: "")
+        guard let n = Double(t.filter { $0.isNumber || $0 == "." }) else { return nil }
+        if t.hasSuffix("K") { return Int(n * 1_000) }
+        if t.hasSuffix("M") { return Int(n * 1_000_000) }
+        return Int(n)
+    }
+
     /// FFN zeigt ohne Rating-Filter nur K–T. Mit der Einstellung „Alle Ratings“ kommt M dazu (`r=10`).
     static let allRatingsKey = "ffn.allRatings"
     static func withDefaultRating(_ url: URL) -> URL {
