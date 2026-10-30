@@ -165,21 +165,12 @@ struct StoryRow: View {
                         Text(story.title).font(.body.weight(.semibold)).lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
                         Spacer(minLength: 4)
-                        if isNew {
-                            Image(systemName: "leaf.fill")
-                                .font(.footnote)
-                                .foregroundStyle(Self.leafGreen)
-                                .accessibilityLabel("Neue Geschichte")
-                        }
-                        // Ersetzt den früheren „Fertig“-Chip: Symbol + Wort, an derselben Stelle wie das Blatt.
-                        if story.source.isWebFiction && story.isComplete {
-                            HStack(spacing: 3) {
-                                Image(systemName: "checkmark.seal.fill").font(.footnote)
-                                Text("Abgeschlossen").font(.caption2.weight(.semibold))
+                        // Neu/Abgeschlossen als Symbol + Wort rechts neben dem Titel, bei beiden untereinander.
+                        if isNew || isComplete {
+                            VStack(alignment: .leading, spacing: 3) {
+                                if isNew { badge(String(localized: "Neu"), symbol: "leaf.fill", color: Self.leafGreen) }
+                                if isComplete { badge(String(localized: "Abgeschlossen"), symbol: "checkmark.seal.fill", color: Self.completeBlue) }
                             }
-                            .foregroundStyle(Self.completeBlue)
-                            .fixedSize()
-                            .accessibilityElement(children: .combine)
                         }
                         if newChapters > 0 {
                             Text("+\(newChapters)")
@@ -232,6 +223,18 @@ struct StoryRow: View {
     static let completeBlue = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0x7FB2F0) : UIColor(hex: 0x3D7CC9) })
     static let heartRed = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0xFF6B6B) : UIColor(hex: 0xE0393E) })
     static let followYellow = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0xFFD25E) : UIColor(hex: 0xE3A000) })
+
+    private var isComplete: Bool { story.source.isWebFiction && story.isComplete }
+
+    private func badge(_ title: String, symbol: String, color: Color) -> some View {
+        HStack(spacing: 3) {
+            Image(systemName: symbol).font(.footnote)
+            Text(title).font(.caption2.weight(.semibold))
+        }
+        .foregroundStyle(color)
+        .fixedSize()
+        .accessibilityElement(children: .combine)
+    }
 
     /// Erst in den letzten 14 Tagen erschienen (bei AO3-Treffern ohne Veröffentlichungsdatum: ein Kapitel, frisch).
     private var isNew: Bool {

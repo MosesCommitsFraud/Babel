@@ -4548,6 +4548,16 @@
           }
         }
       }
+    },
+    "Neu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
