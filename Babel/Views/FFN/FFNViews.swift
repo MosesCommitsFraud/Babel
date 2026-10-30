@@ -525,6 +525,7 @@ struct FFNStoryListView: View {
         List {
             ForEach(model.stories) { story in
                 NavigationLink(value: story) { StoryRow(story: story) }
+                    .navigationLinkIndicatorVisibility(.hidden)
                     .remoteStoryActions(story)
             }
             .themedRows(grouped: false)
@@ -633,6 +634,7 @@ struct FFNKeywordSearchView: View {
         List {
             ForEach(stories) { story in
                 NavigationLink(value: story) { StoryRow(story: story) }
+                    .navigationLinkIndicatorVisibility(.hidden)
                     .remoteStoryActions(story)
             }
             .themedRows(grouped: false)

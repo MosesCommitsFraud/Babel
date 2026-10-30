@@ -171,11 +171,15 @@ struct StoryRow: View {
                                 .foregroundStyle(Self.leafGreen)
                                 .accessibilityLabel("Neue Geschichte")
                         }
+                        // Ersetzt den früheren „Fertig“-Chip: Symbol + Wort, an derselben Stelle wie das Blatt.
                         if story.source.isWebFiction && story.isComplete {
-                            Image(systemName: "checkmark.seal.fill")
-                                .font(.footnote)
-                                .foregroundStyle(Self.completeBlue)
-                                .accessibilityLabel("Abgeschlossen")
+                            HStack(spacing: 3) {
+                                Image(systemName: "checkmark.seal.fill").font(.footnote)
+                                Text("Abgeschlossen").font(.caption2.weight(.semibold))
+                            }
+                            .foregroundStyle(Self.completeBlue)
+                            .fixedSize()
+                            .accessibilityElement(children: .combine)
                         }
                         if newChapters > 0 {
                             Text("+\(newChapters)")
@@ -191,7 +195,7 @@ struct StoryRow: View {
                     HStack(spacing: 4) {
                         if showSource { TagChip(text: story.source.shortLabel, symbol: story.source.symbol) }
                         if !story.rating.isEmpty { TagChip(text: shortRating) }
-                        TagChip(text: statusText)
+                        TagChip(text: chapterText)
                         if let w = story.words { TagChip(text: Self.wordsShort(w)).layoutPriority(-1) }
                         if !story.language.isEmpty { TagChip(text: languageShort).layoutPriority(-2) }
                     }
@@ -366,12 +370,6 @@ struct StoryRow: View {
     }
 
     /// „Fertig · 12 Kap.“ bzw. „3/? Kap.“ – Status und Länge in einem Chip.
-    private var statusText: String {
-        if !story.source.isWebFiction { return String(localized: "Buch") }
-        if story.isComplete { return "Fertig · \(story.chapters) Kap." }
-        return chapterText
-    }
-
     private var languageShort: String {
         let map = ["English": "EN", "Deutsch": "DE", "German": "DE", "Español": "ES", "Spanish": "ES", "Français": "FR",
                    "French": "FR", "Italiano": "IT", "Italian": "IT", "Português": "PT", "Portuguese": "PT",

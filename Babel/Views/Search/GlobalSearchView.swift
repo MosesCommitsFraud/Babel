@@ -41,6 +41,7 @@ struct GlobalSearchView: View {
                                     StoryRow(story: s.asRemote, localCover: ContentStore.coverFileURL(s),
                                              progress: s.overallProgress, showSummary: false, showSource: true)
                                 }
+                                .navigationLinkIndicatorVisibility(.hidden)
                             }
                         }
                     }
@@ -64,6 +65,7 @@ struct GlobalSearchView: View {
                                     StoryRow(story: s.asRemote, localCover: ContentStore.coverFileURL(s),
                                              progress: s.hasStarted ? s.overallProgress : nil, showSummary: false, showSource: true)
                                 }
+                                .navigationLinkIndicatorVisibility(.hidden)
                             }
                         }
                     }

@@ -33,6 +33,7 @@ struct AuthorView: View {
                 } label: {
                     StoryRow(story: story)
                 }
+                .navigationLinkIndicatorVisibility(.hidden)
                 .remoteStoryActions(story)
             }
             .themedRows(grouped: false)

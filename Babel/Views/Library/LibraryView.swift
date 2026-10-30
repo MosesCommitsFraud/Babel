@@ -60,6 +60,8 @@ struct LibraryView: View {
                             showSource: true
                         )
                     }
+                    // Ohne Pfeil rechts – gleicher Rand links und rechts wie in allen Geschichtenlisten.
+                    .navigationLinkIndicatorVisibility(.hidden)
                     .swipeActions(edge: .leading) {
                         Button { reader.open(story) } label: { Label("Lesen", systemImage: "book.fill") }
                             .tint(theme.primary)
@@ -85,6 +87,7 @@ struct LibraryView: View {
                             StoryRow(story: story.asRemote, localCover: ContentStore.coverFileURL(story),
                                      progress: story.hasStarted ? story.overallProgress : nil, showSummary: false, showSource: true)
                         }
+                        .navigationLinkIndicatorVisibility(.hidden)
                         .librarySwipeActions(story)
                     }
                     .themedRows(grouped: false)

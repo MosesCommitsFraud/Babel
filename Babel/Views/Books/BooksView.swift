@@ -57,6 +57,7 @@ struct BooksView: View {
             Section {
                 ForEach(books) { book in
                     NavigationLink(value: book) { StoryRow(story: book) }
+                        .navigationLinkIndicatorVisibility(.hidden)
                         .remoteStoryActions(book)
                 }
                 if hasNext {
