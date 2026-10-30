@@ -192,12 +192,12 @@ struct StoryRow: View {
                     }
                     .lineLimit(1)
 
-                    // Ohne Bewertungen wandert das Datum in die Pairing/Genre-Zeile – keine fast leere Zeile.
+                    // Ohne Bewertungen wandert das Datum in die Tag-Zeile (Genre, Pairings, Charaktere) – keine fast leere Zeile.
                     if !stats.isEmpty { statsAndDates }
                 }
             }
 
-            // Unter dem Cover über die ganze Breite – Pairing/Genre bekommen die Zeile für sich.
+            // Unter dem Cover über die ganze Breite – Genre, Pairings und Charaktere bekommen die Zeile für sich.
             if stats.isEmpty && hasDates {
                 ViewThatFits(in: .horizontal) {
                     tagRow(latestOnly: false, truncating: false)
@@ -276,7 +276,7 @@ struct StoryRow: View {
         Text(tags).font(.footnote.weight(.medium)).foregroundStyle(theme.primaryText).lineLimit(1)
     }
 
-    /// Pairing/Genre links, Datum rechts – nur für Geschichten ohne Bewertungen.
+    /// Tag-Zeile links, Datum rechts – nur für Geschichten ohne Bewertungen.
     private func tagRow(latestOnly: Bool, truncating: Bool) -> some View {
         HStack(spacing: 8) {
             if let tags = tagLine {
@@ -353,14 +353,14 @@ struct StoryRow: View {
         story.summary.split(whereSeparator: \.isWhitespace).joined(separator: " ")
     }
 
-    /// „Naruto U./Sakura H. · Romance/Adventure · Kakashi H., Sai“ – Pairings, Genres, dann die übrigen Charaktere.
+    /// „Romance/Adventure · Naruto U./Sakura H. · Kakashi H., Sai“ – immer Genres, dann Pairings, dann die übrigen Charaktere.
     /// Fehlt etwas, rückt der Rest nach; was nicht passt, schneidet die Zeile hinten ab.
     private var tagLine: String? {
         let pairings = story.relationships.joined(separator: ", ")
         let genres = story.genres.joined(separator: "/")
         // Wer schon im Pairing steht, nicht noch einmal nennen.
         let others = story.characters.filter { c in !story.relationships.contains { $0.localizedCaseInsensitiveContains(c) } }
-        let parts = [pairings, genres, others.joined(separator: ", ")].filter { !$0.isEmpty }
+        let parts = [genres, pairings, others.joined(separator: ", ")].filter { !$0.isEmpty }
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
