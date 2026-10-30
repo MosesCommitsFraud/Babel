@@ -41,8 +41,6 @@ struct StoryDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbarContent }
         .task {
-            story.viewedAt = .now
-            try? context.save()
             await library.enrichGutenberg(story)
             await library.refreshMetadataIfSparse(story)
         }

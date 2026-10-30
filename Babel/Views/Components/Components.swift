@@ -353,9 +353,14 @@ struct StoryRow: View {
         story.summary.split(whereSeparator: \.isWhitespace).joined(separator: " ")
     }
 
-    /// „Naruto U./Sakura H. · Romance/Adventure“ – Pairing zuerst, dann Genres.
+    /// „Naruto U./Sakura H. · Romance/Adventure · Kakashi H., Sai“ – Pairings, Genres, dann die übrigen Charaktere.
+    /// Fehlt etwas, rückt der Rest nach; was nicht passt, schneidet die Zeile hinten ab.
     private var tagLine: String? {
-        let parts = [story.relationships.first, story.genres.isEmpty ? nil : story.genres.joined(separator: "/")].compactMap { $0 }
+        let pairings = story.relationships.joined(separator: ", ")
+        let genres = story.genres.joined(separator: "/")
+        // Wer schon im Pairing steht, nicht noch einmal nennen.
+        let others = story.characters.filter { c in !story.relationships.contains { $0.localizedCaseInsensitiveContains(c) } }
+        let parts = [pairings, genres, others.joined(separator: ", ")].filter { !$0.isEmpty }
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 

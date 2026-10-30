@@ -31,7 +31,8 @@ struct LibraryView: View {
     @Environment(\.theme) private var theme
 
     @Query(filter: #Predicate<Story> { $0.inLibrary }) private var stories: [Story]
-    @Query(filter: #Predicate<Story> { $0.viewedAt != nil || $0.lastOpenedAt != nil }) private var history: [Story]
+    /// Verlauf = im Reader geöffnet. Nur die Detailseite anzusehen zählt nicht.
+    @Query(filter: #Predicate<Story> { $0.lastOpenedAt != nil }) private var history: [Story]
     @Query(sort: \Shelf.createdAt) private var shelves: [Shelf]
 
     /// Start mit dem Verlauf – dort liegt, was man gerade liest. Kein „Alle“-Chip mehr (Wunsch des Nutzers).
@@ -262,7 +263,7 @@ struct LibraryView: View {
     }
 
     private static func lastSeen(_ s: Story) -> Date {
-        max(s.viewedAt ?? .distantPast, s.lastOpenedAt ?? .distantPast)
+        s.lastOpenedAt ?? .distantPast
     }
 
     private static func recency(_ s: Story) -> Date {
