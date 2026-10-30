@@ -41,8 +41,21 @@ final class HTTPClient: @unchecked Sendable {
             var request = URLRequest(url: url)
             if let timeout { request.timeoutInterval = timeout }
             for (k, v) in headers { request.setValue(v, forHTTPHeaderField: k) }
-            let (data, response) = try await session.data(for: request)
+            let data: Data, response: URLResponse
+            do {
+                (data, response) = try await session.data(for: request)
+            } catch {
+                if let reason = SiteStatus.reason(error: error) {
+                    await SiteStatus.shared.reportDown(host: host, reason: reason)
+                }
+                throw error
+            }
             guard let http = response as? HTTPURLResponse else { throw BabelError.http(-1) }
+            if SiteStatus.isOutage(status: http.statusCode) {
+                await SiteStatus.shared.reportDown(host: host, reason: SiteStatus.reason(status: http.statusCode))
+            } else if http.statusCode < 400 {
+                await SiteStatus.shared.reportOK(host: host)
+            }
 
             if http.statusCode == 429 || http.statusCode == 503 || http.statusCode == 525 {
                 let retry = Double(http.value(forHTTPHeaderField: "Retry-After") ?? "") ?? Double(8 * (attempt + 1))

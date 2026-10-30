@@ -108,9 +108,25 @@ enum FFNService {
 
     /// Lädt über den WebView und landet garantiert auf der Desktop-Seite.
     static func load(_ url: URL, minInterval: Double = 1.2) async throws -> (html: String, url: URL) {
-        let page = try await WebFetcher.shared.load(desktopURL(url) ?? url, minInterval: minInterval)
-        if let desktop = desktopURL(page.url) { return try await WebFetcher.shared.load(desktop, minInterval: minInterval) }
-        return page
+        do {
+            var page = try await WebFetcher.shared.load(desktopURL(url) ?? url, minInterval: minInterval)
+            if let desktop = desktopURL(page.url) { page = try await WebFetcher.shared.load(desktop, minInterval: minInterval) }
+            // Cloudflare-Fehlerseiten (520–526) kommen als normale Seite an.
+            if let code = page.html.firstMatch(#"Error code (5\d\d)"#)?[1].digitsInt, page.html.contains("cloudflare") {
+                await SiteStatus.shared.reportDown(host: "fanfiction.net", reason: SiteStatus.reason(status: code))
+            } else {
+                await SiteStatus.shared.reportOK(host: "fanfiction.net")
+            }
+            return page
+        } catch BabelError.timeout {
+            await SiteStatus.shared.reportDown(host: "fanfiction.net", reason: String(localized: "antwortet nicht (Zeitüberschreitung)"))
+            throw BabelError.timeout
+        } catch {
+            if let reason = SiteStatus.reason(error: error) {
+                await SiteStatus.shared.reportDown(host: "fanfiction.net", reason: reason)
+            }
+            throw error
+        }
     }
 
     static func list(url: URL) async throws -> FFNListPage {

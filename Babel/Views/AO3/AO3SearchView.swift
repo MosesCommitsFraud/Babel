@@ -131,6 +131,7 @@ struct AO3FilterWallView: View {
             AO3FilterSections(draft: $draft)
         }
         .themedBackground()
+        .siteStatusBanner(.ao3)
         .scrollDismissesKeyboard(.interactively)
         .navigationTitle("AO3")
         .safeAreaInset(edge: .bottom) {
@@ -266,6 +267,7 @@ struct AO3SearchView: View {
         }
         .listStyle(.plain)
         .themedBackground()
+        .siteStatusBanner(.ao3)
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, prompt: scope.prompt)

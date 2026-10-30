@@ -150,6 +150,7 @@ struct FFNBrowseView: View {
             }
         }
         .themedBackground()
+        .siteStatusBanner(.ffn)
         .navigationTitle("FanFiction.net")
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Fandom suchen, z. B. Harry Potter")
         .overlay {
@@ -463,6 +464,7 @@ struct FFNStoryListView: View {
         }
         .listStyle(.plain)
         .themedBackground()
+        .siteStatusBanner(.ffn)
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .overlay {
@@ -648,6 +650,7 @@ struct FFNKeywordSearchView: View {
         }
         .listStyle(.plain)
         .themedBackground()
+        .siteStatusBanner(.ffn)
         .navigationTitle("FFN-Suche")
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: match == .title ? String(localized: "Titel") : String(localized: "Titel oder Stichwort"))
         .searchScopes($match, activation: .onSearchPresentation) {

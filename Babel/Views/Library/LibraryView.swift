@@ -37,6 +37,8 @@ struct LibraryView: View {
     @State private var filter: LibraryFilter = .all
     @AppStorage("library.sort") private var sort: LibrarySort = .recent
     @State private var searchText = ""
+    @State private var query = LibraryQuery()
+    @State private var showQuery = false
     @State private var showImporter = false
     @State private var showLinkSheet = false
     @State private var showSettings = false
@@ -54,7 +56,7 @@ struct LibraryView: View {
                             localCover: ContentStore.coverFileURL(story),
                             progress: story.hasStarted ? story.overallProgress : nil,
                             newChapters: story.newChapters,
-                            showSummary: false,
+                            showSummary: true,
                             showSource: true
                         )
                     }
@@ -67,9 +69,12 @@ struct LibraryView: View {
                 }
                 .themedRows(grouped: false)
             } header: {
-                filterBar
-                    .textCase(nil)
-                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
+                VStack(alignment: .leading, spacing: 4) {
+                    filterBar
+                    if query.activeCount > 0 { activeQueryBar }
+                }
+                .textCase(nil)
+                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
             }
 
             // Unter „Alle“: zuletzt angesehene Geschichten, die (noch) nicht in der Bibliothek liegen.
@@ -97,7 +102,7 @@ struct LibraryView: View {
         .listStyle(.plain)
         .themedBackground()
         .navigationTitle("Bibliothek")
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Titel, Autor:in, Fandom, Tag")
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Titel, Autor:in, Fandom, Pairing, Tag")
         .overlay {
             if stories.isEmpty && history.isEmpty {
                 emptyState
@@ -115,6 +120,10 @@ struct LibraryView: View {
         }
         .sheet(isPresented: $showLinkSheet) { LinkImportSheet() }
         .sheet(isPresented: $showSettings) { SettingsView() }
+        .sheet(isPresented: $showQuery) {
+            LibraryFilterSheet(query: $query, stories: stories)
+                .presentationDetents([.medium, .large])
+        }
         .alert("Neue Sammlung", isPresented: $showNewShelf) {
             TextField("Name", text: $newShelfName)
             Button("Abbrechen", role: .cancel) { newShelfName = "" }
@@ -179,6 +188,38 @@ struct LibraryView: View {
         }
     }
 
+    /// Aktive Filter als Chips zum Wegtippen, dazu die Trefferzahl.
+    private var activeQueryBar: some View {
+        var items: [(String, () -> Void)] = []
+        for f in query.fandoms.sorted() { items.append((f, { query.fandoms.remove(f) })) }
+        for r in query.ratings.sorted() { items.append((String(localized: "Rating \(r)"), { query.ratings.remove(r) })) }
+        if query.completion != .any { items.append((query.completion.label, { query.completion = .any })) }
+        if query.length != .any { items.append((query.length.label, { query.length = .any })) }
+        for l in query.languages.sorted() { items.append((l, { query.languages.remove(l) })) }
+        for s in query.sources.sorted(by: { $0.rawValue < $1.rawValue }) { items.append((s.shortLabel, { query.sources.remove(s) })) }
+        return ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                Text("\(filtered.count) Treffer").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                ForEach(Array(items.enumerated()), id: \.offset) { _, item in
+                    Button {
+                        withAnimation(.snappy) { item.1() }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(item.0).lineLimit(1)
+                            Image(systemName: "xmark").font(.caption2.weight(.bold))
+                        }
+                        .font(.caption.weight(.medium))
+                        .padding(.horizontal, 10).padding(.vertical, 6)
+                    }
+                    .buttonStyle(.plain)
+                    .glassEffect(.regular.tint(theme.primary.opacity(0.2)).interactive(), in: .capsule)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 2)
+        }
+    }
+
     private func chip(_ title: String, _ symbol: String?, _ value: LibraryFilter) -> some View {
         GlassChip(title: title, symbol: symbol, isSelected: filter == value) {
             withAnimation(.snappy) { filter = value }
@@ -200,11 +241,14 @@ struct LibraryView: View {
     private var filtered: [Story] {
         // Verlauf: alles, was angesehen oder gelesen wurde – auch ohne „in die Bibliothek“.
         var list = filter == .history ? history : stories.filter { matches($0, filter) }
-        let q = searchText.trimmed.lowercased()
-        if !q.isEmpty {
+        if query.activeCount > 0 { list = list.filter(query.matches) }
+        // Jedes Wort muss irgendwo vorkommen: Titel, Autor:in, Fandom, Pairing, Charaktere, Tags, Genres, Zusammenfassung.
+        let words = searchText.trimmed.lowercased().split(separator: " ")
+        if !words.isEmpty {
             list = list.filter { s in
-                [[s.title, s.author], s.fandoms, s.relationships, s.characters, s.tags].joined()
-                    .contains { $0.lowercased().contains(q) }
+                let haystack = ([s.title, s.author, s.summary] + s.fandoms + s.relationships + s.characters + s.tags + s.genres)
+                    .joined(separator: " ").lowercased()
+                return words.allSatisfy { haystack.contains($0) }
             }
         }
         if filter == .history {
@@ -252,6 +296,13 @@ struct LibraryView: View {
             }
         }
         ToolbarItemGroup(placement: .topBarTrailing) {
+            Button {
+                showQuery = true
+            } label: {
+                Label("Filter", systemImage: query.activeCount > 0
+                      ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+            }
+            .badge(query.activeCount)
             Menu {
                 Picker("Sortieren", selection: $sort) {
                     ForEach(LibrarySort.allCases) { Text($0.label).tag($0) }

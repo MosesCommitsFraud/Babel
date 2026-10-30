@@ -28,7 +28,10 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 
 - App-Icon: Icon-Composer-Datei `Babel/AppIcon.icon` (Variante F): drei grüne Glas-Buchrücken auf einem Regalbrett, ohne Rahmen, auf fast weißem Grund; jedes Buch eine eigene Glas-Gruppe für Tiefe im iOS-27-Look. Weitere Entwürfe A–G in `Design/Icon/`. Vorschau: `ictool <datei>.icon --export-image … --design-generation 27` (in `Icon Composer.app/Contents/Executables`).
 - Autorenseiten (`Views/Author/AuthorView.swift`): FFN `/u/<id>/` (eigene Geschichten + Favoriten), AO3 `/users/<name>/profile`, `/works`, `/bookmarks` (seitenweise).
-- Listenzeilen kompakt: eine Chip-Zeile (Quelle nur mit `showSource` – Bibliothek/Suche –, Rating, Status, Wörter, Sprache) und eine graue Textzeile (Datum, Bewertungen, Pairing/Genre), Zusammenfassung 2 Zeilen. Tags neutral, nicht farbig.
+- Listenzeilen (`StoryRow`): kleiner Titel, Chips (Quelle nur mit `showSource`, Rating, Status, Wörter, Sprache), deutliche Bewertungszeile (gefüllte Symbole in Akzentfarbe) + Datum; darunter über die volle Breite Pairing/Genre (Akzentfarbe) und 3 Zeilen Zusammenfassung – auch in der Bibliothek.
+- FFN: Chip „Alle“ (alle Kategorien, `FFNFandomStore.allFandoms`), Pairing-Filter (`pm`/`_pm`-Häkchen), Filter werden direkt als URL gebaut (Parameter aus FFNs `process_filter()`), Einstellung „Alle Ratings zeigen“ (`ffn.allRatings`, Standard an → `r=10`).
+- `Services/SiteStatus.swift`: AO3/FFN-Ausfälle (5xx, Cloudflare 52x, Timeouts) → Glas-Banner `.siteStatusBanner(.ao3/.ffn)` in den Suchansichten.
+- Bibliothek: Suchfeld immer sichtbar (alle Wörter in Titel/Autor/Fandom/Pairing/Charakteren/Tags/Zusammenfassung), Filter-Sheet `LibraryFilterSheet` (Quelle, Rating AO3+FFN vereinheitlicht, Status, Länge, Sprache, Fandoms) mit wegtippbaren Chips.
 - FFN-„Verlauf“ der offiziellen FFN-App (bei Nutzer ~2500) liegt nur lokal in der App – auf der Website gibt es nur Favoriten (80) und Follows (70).
 - Innerhalb von Seiten, die per Closure-`NavigationLink` geöffnet werden (Konto, Autor:in, Tags), ebenfalls Closure-Links verwenden – wertbasierte Links griffen dort nicht.
 
