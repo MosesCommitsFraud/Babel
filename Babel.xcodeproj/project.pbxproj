@@ -19,6 +19,7 @@
 		2900ED97597FA1FBD49B94AB /* LibraryFilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE1920E2DA36461228B1574 /* LibraryFilterSheet.swift */; };
 		2BFFF1A0761C571B3ECD848A /* CookieSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3038A35919D0B5A3CFE1089F /* CookieSync.swift */; };
 		34889CAFC00706C77448119E /* ReaderStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6DCF18AABE1204DB9E937FE /* ReaderStyle.swift */; };
+		398C609997FF3B87A9B36885 /* CommentsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9220F5639846657A95CE62C /* CommentsService.swift */; };
 		44246123EC4903606C72DDEE /* FFNViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E73558FBBF43221AE5B9C59 /* FFNViews.swift */; };
 		49614C063D30DC055FD5F427 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E39C63374D0B12562899003E /* Assets.xcassets */; };
 		4C2415B2DA2ECF9CFD87D82A /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEF52AE5C74AD34E79BD26C /* HTTPClient.swift */; };
@@ -46,6 +47,7 @@
 		CB1845BB630B66E8F608A630 /* EPUBBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CC39F8CD101E8E82A7E445 /* EPUBBuilder.swift */; };
 		EE67FAF4A655B5D920F1FE8B /* AO3SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62CC4316CAB5285483CFA67B /* AO3SearchView.swift */; };
 		EE7F56FDC878B9CC290A926A /* FFNService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C1CA0E3746B6AB01586CB5 /* FFNService.swift */; };
+		F04E16CE3492518D3D064ED1 /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1483FA078C5FCBA890090576 /* CommentsView.swift */; };
 		F6B4F60BAD44FA308223CA7B /* WebFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A8A1ACDD3F52FC62380971 /* WebFetcher.swift */; };
 		FE16246F98F8573D759F40EB /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = A8FBDABA1C03871BFC4E4EFF /* SwiftSoup */; };
 		FE4CDFA22E24AD632B518C01 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7B1EB0D39B83A1E7B0DA4B /* RootView.swift */; };
@@ -53,6 +55,7 @@
 
 /* Begin PBXFileReference section */
 		06D5EC56C7C09627597A997A /* GutenbergService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutenbergService.swift; sourceTree = "<group>"; };
+		1483FA078C5FCBA890090576 /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
 		1C90CCF74C3909B300CD6ADA /* ZipArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipArchive.swift; sourceTree = "<group>"; };
 		1E1811B210919E19E1A46579 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		2C7B1EB0D39B83A1E7B0DA4B /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -79,6 +82,7 @@
 		A08665C99E1FA1B78B3A47B4 /* Babel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Babel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5E4B292B7D3EF9704ECECBB /* AccountViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViews.swift; sourceTree = "<group>"; };
 		A63E22E5889EBD4EC8319283 /* AO3Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AO3Service.swift; sourceTree = "<group>"; };
+		B9220F5639846657A95CE62C /* CommentsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsService.swift; sourceTree = "<group>"; };
 		BFE1920E2DA36461228B1574 /* LibraryFilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilterSheet.swift; sourceTree = "<group>"; };
 		D2F05AE361B51E309D21F7BA /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
 		D7290049C61D3E515B8CFAFD /* SearchDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDefaults.swift; sourceTree = "<group>"; };
@@ -198,6 +202,7 @@
 			children = (
 				A63E22E5889EBD4EC8319283 /* AO3Service.swift */,
 				50DFFB30CE2C2C950703DA46 /* BookSources.swift */,
+				B9220F5639846657A95CE62C /* CommentsService.swift */,
 				9986DF66E3ABEC855199BF5B /* ContentStore.swift */,
 				3038A35919D0B5A3CFE1089F /* CookieSync.swift */,
 				E6CC39F8CD101E8E82A7E445 /* EPUBBuilder.swift */,
@@ -250,6 +255,7 @@
 		C35AE1A040B1B19672D87300 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				1483FA078C5FCBA890090576 /* CommentsView.swift */,
 				BFE1920E2DA36461228B1574 /* LibraryFilterSheet.swift */,
 				8439E07395F7898D26952241 /* LibraryView.swift */,
 				D91F803FF91C284A7A81A387 /* StoryDetailView.swift */,
@@ -379,6 +385,8 @@
 				12161EB20D743F3E8016D0E7 /* BabelApp.swift in Sources */,
 				0890284DBBA41DA4531B79E9 /* BookSources.swift in Sources */,
 				630FB6C74F3E633D6B3BFA26 /* BooksView.swift in Sources */,
+				398C609997FF3B87A9B36885 /* CommentsService.swift in Sources */,
+				F04E16CE3492518D3D064ED1 /* CommentsView.swift in Sources */,
 				B6312220DFB957280DBA02E7 /* Components.swift in Sources */,
 				908E56D44AC630ADD86597DE /* ContentStore.swift in Sources */,
 				2BFFF1A0761C571B3ECD848A /* CookieSync.swift in Sources */,

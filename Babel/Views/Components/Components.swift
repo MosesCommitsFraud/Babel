@@ -176,7 +176,7 @@ struct StoryRow: View {
                                 .background(theme.primary, in: .capsule)
                         }
                     }
-                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    HStack(spacing: 6) {
                         Text(byline).font(.footnote).foregroundStyle(.secondary).lineLimit(1)
                         Spacer(minLength: 4)
                         dateLabel
@@ -225,24 +225,40 @@ struct StoryRow: View {
         return story.source == .ao3 && story.chapters == 1 && (story.updated ?? .distantPast) > cutoff
     }
 
-    /// „akt. 28.10.26“ (aktualisiert) bzw. „veröff. 03.09.26“ (veröffentlicht, noch nie aktualisiert).
+    /// Veröffentlicht und (falls später) aktualisiert – als kleine Pills mit Icon.
     @ViewBuilder
     private var dateLabel: some View {
-        if let updated = story.updated {
-            let isPublishOnly = story.published.map { abs($0.timeIntervalSince(updated)) < 60 } ?? false
-            let text = updated.formatted(.dateTime.day(.twoDigits).month(.twoDigits).year(.twoDigits))
-            Text(isPublishOnly ? "veröff. \(text)" : "akt. \(text)")
-                .font(.caption.monospacedDigit())
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .fixedSize()
-                .accessibilityLabel(isPublishOnly ? "Veröffentlicht \(text)" : "Aktualisiert \(text)")
+        let published = story.published
+        let updated = story.updated
+        let wasUpdated = updated.map { u in published.map { abs($0.timeIntervalSince(u)) > 60 } ?? true } ?? false
+        HStack(spacing: 4) {
+            if let published {
+                datePill(published, symbol: "calendar", label: String(localized: "Veröffentlicht"))
+            }
+            if wasUpdated, let updated {
+                datePill(updated, symbol: "arrow.clockwise", label: String(localized: "Aktualisiert"))
+            }
         }
+        .fixedSize()
+    }
+
+    private func datePill(_ date: Date, symbol: String, label: String) -> some View {
+        let text = date.formatted(.dateTime.day(.twoDigits).month(.twoDigits).year(.twoDigits))
+        return HStack(spacing: 3) {
+            Image(systemName: symbol).imageScale(.small)
+            Text(text)
+        }
+        .font(.caption2.weight(.medium).monospacedDigit())
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 6).padding(.vertical, 3)
+        .background(.secondary.opacity(0.12), in: .capsule)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label) \(text)")
     }
 
     /// Bewertungen deutlich: ♥ rot, 🔔 gelb, Rest in der Akzentfarbe.
     private var statsLine: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
             ForEach(stats, id: \.symbol) { stat in
                 HStack(spacing: 3) {
                     Image(systemName: stat.symbol + ".fill").foregroundStyle(statColor(stat.symbol))

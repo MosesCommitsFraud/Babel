@@ -79,7 +79,7 @@ final class FFNFandomStore {
 // MARK: - Fandom-Übersicht
 
 struct FFNBrowseView: View {
-    @AppStorage("ffn.category") private var categoryID = "anime"
+    @AppStorage("ffn.category.v2") private var categoryID = "all"
     @AppStorage("ffn.pinned") private var pinnedData: Data = Data()
     @AppStorage("ffn.savedFilters") private var savedData: Data = Data()
     @State private var store = FFNFandomStore.shared

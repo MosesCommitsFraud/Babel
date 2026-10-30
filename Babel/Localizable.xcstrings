@@ -1250,7 +1250,16 @@
         }
       }
     },
-    "Favs": {},
+    "Favs": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favs"
+          }
+        }
+      }
+    },
     "Fehler": {
       "localizations": {
         "en": {
@@ -4141,6 +4150,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Length"
+          }
+        }
+      }
+    },
+    "Gast": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guest"
+          }
+        }
+      }
+    },
+    "Kap. %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ch. %lld"
+          }
+        }
+      }
+    },
+    "Noch keine %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No %@ yet"
           }
         }
       }

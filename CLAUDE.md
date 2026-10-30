@@ -39,6 +39,9 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 
 - Sprachen: Deutsch (Quellsprache) und Englisch über `Babel/Localizable.xcstrings`. Literale in `Text/Label/Button/…` werden automatisch übersetzt; Texte, die als `String` weitergereicht werden (Enum-`label`, Fehlermeldungen, `updateMessage`, eigene Parameter wie `GlassChip(title:)`), brauchen `String(localized:)`. Neue Texte: `xcodebuild -exportLocalizations -project Babel.xcodeproj -localizationPath <dir> -exportLanguage en` → fehlende Schlüssel ins Katalog-JSON eintragen. Nie Meldungstexte vergleichen (`hasPrefix`) – dafür gibt es `LibraryManager.messageIsProgress`.
 
+- Detailansicht: Bewertungsleiste direkt unter dem Kopf (FFN Favs/Follows/Reviews, AO3 Kudos/Lesezeichen/Kommentare/Aufrufe), alle Kapitel ohne „Mehr anzeigen“, Reviews/Kommentare als eigene Seite (`Services/CommentsService.swift`, `Views/Library/CommentsView.swift`: FFN `/r/<id>/0/<seite>/` – geprüft; AO3 `/works/<id>?show_comments=true&page=` – ungeprüft, AO3 war in Wartung).
+- Listenzeilen: Datum als Pills (📅 veröffentlicht, ↻ aktualisiert) in der Autorzeile. FFN-Tab startet mit „Alle“.
+
 ## Architektur
 - `Services/AO3Service.swift` – Such-URL (`/works/search?work_search[...]`), Blurb-/Werk-/Kapitel-Parser, Autocomplete (`/autocomplete/{fandom,relationship,character,freeform,tag}?term=`). Tag-IDs: Ratings 9–13, Warnungen 14,16–20, Kategorien 21–24,116,2246. Mehrere „muss“-Ratings/Kategorien werden als Ausschluss der übrigen umgesetzt (AO3 verknüpft mit UND).
 - `Services/FFNService.swift` – FFN liegt hinter Cloudflare → alles über `WebFetcher` (unsichtbarer WKWebView, Challenge-Sheet bei Bedarf). Filter werden live aus den `<select>` der Seite gelesen und per JS angewendet; Fallback-URL-Parameter (srt, g1, r, lan, len, s, c1…).

@@ -14,7 +14,6 @@ struct StoryDetailView: View {
 
     @State private var errorMessage: String?
     @State private var isWorking = false
-    @State private var showAllChapters = false
     @State private var downloadedCount = 0
     @State private var exportedFile: URL?
     @State private var isExporting = false
@@ -23,11 +22,13 @@ struct StoryDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 header
+                if !ratingItems.isEmpty { ratingBar }
                 actions
                 if story.inLibrary { organize }
                 stats
                 if !story.summary.isEmpty { summary }
                 tagSections
+                if story.source.isWebFiction { commentsLink }
                 chapters
             }
             .padding(.horizontal)
@@ -206,17 +207,96 @@ struct StoryDetailView: View {
         }
         add(String(localized: "Wörter"), story.words?.grouped, "textformat.size")
         add(String(localized: "Kapitel"), chapterLabel, "list.number")
-        add(String(localized: "Kudos"), story.kudos?.compact, "heart")
-        add(story.source.isOnlineBook ? "Downloads" : "Aufrufe", story.hits?.compact, "eye")
-        add(String(localized: "Reviews"), story.reviews?.compact, "text.bubble")
-        add(String(localized: "Favs"), story.favs?.compact, "star")
-        add(String(localized: "Follows"), story.follows?.compact, "bell")
-        add(String(localized: "Lesezeichen"), story.bookmarks?.compact, "bookmark")
+        if story.source.isOnlineBook { add(String(localized: "Downloads"), story.hits?.compact, "arrow.down.circle") }
         add(String(localized: "Aktualisiert"), story.lastUpdated?.formatted(date: .abbreviated, time: .omitted), "clock")
         add(String(localized: "Veröffentlicht"), story.published?.formatted(date: .abbreviated, time: .omitted), "calendar")
         add(String(localized: "Sprache"), story.language, "globe")
         add(String(localized: "Rating"), story.rating, "exclamationmark.shield")
         return items
+    }
+
+    // MARK: - Bewertungen (gut sichtbar direkt unter dem Kopf)
+
+    private struct RatingItem: Identifiable {
+        let label: String
+        let value: Int
+        let symbol: String
+        let color: Color
+        var opensComments = false
+        var id: String { label }
+    }
+
+    private var commentCount: Int? { story.source == .ffn ? story.reviews : story.comments }
+    private var commentsTitle: String { story.source == .ffn ? String(localized: "Reviews") : String(localized: "Kommentare") }
+
+    private var ratingItems: [RatingItem] {
+        var items: [RatingItem] = []
+        func add(_ label: String, _ value: Int?, _ symbol: String, _ color: Color, comments: Bool = false) {
+            if let value, value > 0 { items.append(RatingItem(label: label, value: value, symbol: symbol, color: color, opensComments: comments)) }
+        }
+        switch story.source {
+        case .ffn:
+            add(String(localized: "Favs"), story.favs, "heart.fill", StoryRow.heartRed)
+            add(String(localized: "Follows"), story.follows, "bell.fill", StoryRow.followYellow)
+            add(String(localized: "Reviews"), story.reviews, "text.bubble.fill", theme.primary, comments: true)
+        case .ao3:
+            add(String(localized: "Kudos"), story.kudos, "heart.fill", StoryRow.heartRed)
+            add(String(localized: "Lesezeichen"), story.bookmarks, "bookmark.fill", StoryRow.followYellow)
+            add(String(localized: "Kommentare"), story.comments, "text.bubble.fill", theme.primary, comments: true)
+            add(String(localized: "Aufrufe"), story.hits, "eye.fill", .secondary)
+        default:
+            break
+        }
+        return items
+    }
+
+    private var ratingBar: some View {
+        HStack(spacing: 8) {
+            ForEach(ratingItems) { item in
+                let tile = VStack(spacing: 2) {
+                    HStack(spacing: 4) {
+                        Image(systemName: item.symbol).foregroundStyle(item.color)
+                        Text(item.value.formatted(.number.notation(.compactName)))
+                            .font(.title3.weight(.bold).monospacedDigit())
+                            .foregroundStyle(.primary)
+                    }
+                    HStack(spacing: 2) {
+                        Text(item.label)
+                        if item.opensComments { Image(systemName: "chevron.right").font(.caption2.weight(.bold)) }
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(theme.card, in: .rect(cornerRadius: 16))
+
+                if item.opensComments {
+                    NavigationLink { CommentsView(story: story) } label: { tile }
+                        .buttonStyle(.plain)
+                } else {
+                    tile
+                }
+            }
+        }
+    }
+
+    private var commentsLink: some View {
+        NavigationLink {
+            CommentsView(story: story)
+        } label: {
+            HStack {
+                Label(commentsTitle, systemImage: "text.bubble")
+                    .font(.headline)
+                Spacer()
+                if let n = commentCount { Text(n.grouped).foregroundStyle(.secondary) }
+                Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary)
+            }
+            .padding(14)
+            .background(theme.card, in: .rect(cornerRadius: 16))
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
     }
 
     private var stats: some View {
@@ -290,29 +370,29 @@ struct StoryDetailView: View {
                 HStack {
                     Text("Kapitel").font(.headline)
                     Spacer()
-                    if count > 12 {
-                        Button(showAllChapters ? String(localized: "Weniger") : String(localized: "Alle \(count)")) { withAnimation { showAllChapters.toggle() } }
-                            .font(.subheadline)
-                    }
+                    Text("\(count)").font(.subheadline.monospacedDigit()).foregroundStyle(.secondary)
                 }
                 .padding(.bottom, 8)
-                ForEach(0..<(showAllChapters ? count : min(count, 12)), id: \.self) { i in
-                    Button { open(at: i) } label: {
-                        HStack(spacing: 12) {
-                            Text("\(i + 1)").font(.footnote.monospacedDigit()).foregroundStyle(.secondary).frame(width: 30, alignment: .trailing)
-                            Text(story.title(ofChapter: i)).lineLimit(1)
-                            Spacer()
-                            if i == story.currentChapter && story.hasStarted {
-                                Image(systemName: "bookmark.fill").foregroundStyle(theme.primary)
-                            } else if story.source.isWebFiction && !ContentStore.hasChapter(story, i) {
-                                Image(systemName: "icloud").foregroundStyle(.tertiary)
+                // Alle Kapitel direkt zeigen – kein „Mehr anzeigen“.
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(0..<count, id: \.self) { i in
+                        Button { open(at: i) } label: {
+                            HStack(spacing: 12) {
+                                Text("\(i + 1)").font(.footnote.monospacedDigit()).foregroundStyle(.secondary).frame(width: 30, alignment: .trailing)
+                                Text(story.title(ofChapter: i)).lineLimit(1)
+                                Spacer()
+                                if i == story.currentChapter && story.hasStarted {
+                                    Image(systemName: "bookmark.fill").foregroundStyle(theme.primary)
+                                } else if story.source.isWebFiction && !ContentStore.hasChapter(story, i) {
+                                    Image(systemName: "icloud").foregroundStyle(.tertiary)
+                                }
                             }
+                            .padding(.vertical, 10)
+                            .contentShape(.rect)
                         }
-                        .padding(.vertical, 10)
-                        .contentShape(.rect)
+                        .buttonStyle(.plain)
+                        Divider()
                     }
-                    .buttonStyle(.plain)
-                    Divider()
                 }
             }
         }
