@@ -176,11 +176,7 @@ struct StoryRow: View {
                                 .background(theme.primary, in: .capsule)
                         }
                     }
-                    HStack(spacing: 6) {
-                        Text(byline).font(.footnote).foregroundStyle(.secondary).lineLimit(1)
-                        Spacer(minLength: 4)
-                        dateLabel
-                    }
+                    Text(byline).font(.footnote).foregroundStyle(.secondary).lineLimit(1)
 
                     // Das Wichtigste als Chips: Rating, Status, Länge, Sprache.
                     HStack(spacing: 4) {
@@ -196,9 +192,16 @@ struct StoryRow: View {
                 }
             }
 
-            // Unter dem Cover über die ganze Breite: Pairing/Genre und Zusammenfassung.
-            if let tags = tagLine {
-                Text(tags).font(.footnote.weight(.medium)).foregroundStyle(theme.primaryText).lineLimit(1)
+            // Unter dem Cover über die ganze Breite: Pairing/Genre links, Daten rechts – dort ist Platz.
+            if tagLine != nil || story.updated != nil || story.published != nil {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    if let tags = tagLine {
+                        Text(tags).font(.footnote.weight(.medium)).foregroundStyle(theme.primaryText).lineLimit(1)
+                            .layoutPriority(1)
+                    }
+                    Spacer(minLength: 0)
+                    dateLabel
+                }
             }
             if showSummary, !story.summary.isEmpty {
                 Text(story.summary).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
@@ -225,13 +228,13 @@ struct StoryRow: View {
         return story.source == .ao3 && story.chapters == 1 && (story.updated ?? .distantPast) > cutoff
     }
 
-    /// Veröffentlicht und (falls später) aktualisiert – als kleine Pills mit Icon.
+    /// Veröffentlicht und (falls später) aktualisiert – Icon + Datum, ohne Kapsel.
     @ViewBuilder
     private var dateLabel: some View {
         let published = story.published
         let updated = story.updated
         let wasUpdated = updated.map { u in published.map { abs($0.timeIntervalSince(u)) > 60 } ?? true } ?? false
-        HStack(spacing: 4) {
+        HStack(spacing: 8) {
             if let published {
                 datePill(published, symbol: "calendar", label: String(localized: "Veröffentlicht"))
             }
@@ -243,17 +246,18 @@ struct StoryRow: View {
     }
 
     private func datePill(_ date: Date, symbol: String, label: String) -> some View {
-        let text = date.formatted(.dateTime.day(.twoDigits).month(.twoDigits).year(.twoDigits))
-        return HStack(spacing: 3) {
-            Image(systemName: symbol).imageScale(.small)
-            Text(text)
-        }
-        .font(.caption2.weight(.medium).monospacedDigit())
-        .foregroundStyle(.secondary)
-        .padding(.horizontal, 6).padding(.vertical, 3)
-        .background(.secondary.opacity(0.12), in: .capsule)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(label) \(text)")
+        // Im laufenden Jahr ohne Jahreszahl – spart Platz.
+        let sameYear = Calendar.current.isDate(date, equalTo: .now, toGranularity: .year)
+        let text = sameYear
+            ? date.formatted(.dateTime.day().month(.abbreviated))
+            : date.formatted(.dateTime.day(.twoDigits).month(.twoDigits).year(.twoDigits))
+        return Label(text, systemImage: symbol)
+            .labelStyle(.titleAndIcon)
+            .font(.caption.monospacedDigit())
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(label) \(text)")
     }
 
     /// Bewertungen deutlich: ♥ rot, 🔔 gelb, Rest in der Akzentfarbe.

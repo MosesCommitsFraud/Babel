@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Eine Hälfte (hell oder dunkel) einer Palette.
-struct PaletteHalf: Sendable {
+struct PaletteHalf: Sendable, Codable, Equatable {
     let screen: UInt32
     let card: UInt32
     let groupedCard: UInt32
@@ -15,7 +15,7 @@ struct PaletteHalf: Sendable {
 
     /// Kurzform: Karte = gruppierte Karte, Akzenttext = Akzent.
     init(screen: UInt32, card: UInt32, foreground: UInt32, secondaryText: UInt32, border: UInt32,
-         primary: UInt32, primaryForeground: UInt32) {
+         primary: UInt32, primaryForeground: UInt32, primaryText: UInt32? = nil) {
         self.screen = screen
         self.card = card
         self.groupedCard = card
@@ -24,8 +24,142 @@ struct PaletteHalf: Sendable {
         self.border = border
         self.primary = primary
         self.primaryForeground = primaryForeground
-        self.primaryText = primary
+        self.primaryText = primaryText ?? primary
         self.secondary = card
+    }
+}
+
+// MARK: - Eigene Farbschemata
+
+/// Die vier Farben, die man in einem eigenen Schema wählt – der Rest wird daraus abgeleitet.
+struct CustomHalf: Codable, Equatable, Sendable {
+    var screen: UInt32
+    var card: UInt32
+    var foreground: UInt32
+    var primary: UInt32
+
+    init(screen: UInt32, card: UInt32, foreground: UInt32, primary: UInt32) {
+        self.screen = screen
+        self.card = card
+        self.foreground = foreground
+        self.primary = primary
+    }
+
+    init(_ half: PaletteHalf) {
+        self.init(screen: half.screen, card: half.groupedCard, foreground: half.foreground, primary: half.primary)
+    }
+
+    /// Volle Palette: Nebentext, Linien und Text auf dem Akzent werden passend berechnet.
+    var half: PaletteHalf {
+        let onPrimary: UInt32 = HexColor.luminance(primary) > 0.45 ? HexColor.mix(primary, 0x000000, 0.82) : 0xFFFFFF
+        // Akzent als Textfarbe muss auf dem Hintergrund lesbar bleiben – sonst Richtung Text verschieben.
+        var accentText = primary
+        var t = 0.0
+        while HexColor.contrast(accentText, screen) < 3, t < 1 {
+            t += 0.1
+            accentText = HexColor.mix(primary, foreground, t)
+        }
+        return PaletteHalf(screen: screen, card: card, foreground: foreground,
+                           secondaryText: HexColor.mix(foreground, screen, 0.42),
+                           border: HexColor.mix(card, foreground, 0.1),
+                           primary: primary, primaryForeground: onPrimary, primaryText: accentText)
+    }
+
+    /// Ein dunkles Gegenstück zu einer hellen Hälfte (getönt mit dem Akzent).
+    var derivedDark: CustomHalf {
+        CustomHalf(screen: HexColor.mix(primary, 0x0F0F10, 0.9),
+                   card: HexColor.mix(primary, 0x1C1C1E, 0.86),
+                   foreground: HexColor.mix(screen, 0xFFFFFF, 0.2),
+                   primary: HexColor.luminance(primary) < 0.35 ? HexColor.mix(primary, 0xFFFFFF, 0.35) : primary)
+    }
+}
+
+/// Ein selbst erstelltes Farbschema mit Namen, hell und dunkel.
+struct CustomPalette: Codable, Identifiable, Equatable, Sendable {
+    var id = UUID()
+    var name: String
+    var light: CustomHalf
+    var dark: CustomHalf
+
+    var key: String { "custom.\(id.uuidString)" }
+
+    init(name: String, from palette: PaletteID) {
+        self.name = name
+        self.light = CustomHalf(palette.light)
+        self.dark = CustomHalf(palette.dark)
+    }
+}
+
+/// Rechnen mit 0xRRGGBB-Farben.
+enum HexColor {
+    static func components(_ hex: UInt32) -> (Double, Double, Double) {
+        (Double((hex >> 16) & 0xff) / 255, Double((hex >> 8) & 0xff) / 255, Double(hex & 0xff) / 255)
+    }
+
+    static func make(_ r: Double, _ g: Double, _ b: Double) -> UInt32 {
+        func c(_ v: Double) -> UInt32 { UInt32((min(max(v, 0), 1) * 255).rounded()) }
+        return c(r) << 16 | c(g) << 8 | c(b)
+    }
+
+    /// `t` = 0 → a, 1 → b.
+    static func mix(_ a: UInt32, _ b: UInt32, _ t: Double) -> UInt32 {
+        let x = components(a), y = components(b)
+        return make(x.0 + (y.0 - x.0) * t, x.1 + (y.1 - x.1) * t, x.2 + (y.2 - x.2) * t)
+    }
+
+    /// Relative Helligkeit nach WCAG.
+    static func luminance(_ hex: UInt32) -> Double {
+        func lin(_ v: Double) -> Double { v <= 0.03928 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4) }
+        let (r, g, b) = components(hex)
+        return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+    }
+
+    static func contrast(_ a: UInt32, _ b: UInt32) -> Double {
+        let la = luminance(a), lb = luminance(b)
+        return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+    }
+}
+
+/// Eintrag in der Theme-Auswahl: eingebaut oder selbst erstellt.
+struct ThemeOption: Identifiable {
+    let id: String
+    let label: String
+    let tagline: String
+    let light: PaletteHalf
+    let dark: PaletteHalf
+    var custom: CustomPalette?
+}
+
+/// Alle wählbaren Themes; eigene liegen als JSON in den UserDefaults.
+enum ThemeCatalog {
+    static let customKey = "theme.custom"
+
+    static func customs(_ json: String) -> [CustomPalette] {
+        (try? JSONDecoder().decode([CustomPalette].self, from: Data(json.utf8))) ?? []
+    }
+
+    static func encode(_ palettes: [CustomPalette]) -> String {
+        (try? JSONEncoder().encode(palettes)).flatMap { String(data: $0, encoding: .utf8) } ?? "[]"
+    }
+
+    static func builtIn(_ p: PaletteID) -> ThemeOption {
+        ThemeOption(id: p.rawValue, label: p.label, tagline: p.tagline, light: p.light, dark: p.dark)
+    }
+
+    static func custom(_ c: CustomPalette) -> ThemeOption {
+        ThemeOption(id: c.key, label: c.name, tagline: String(localized: "Eigenes Farbschema"),
+                    light: c.light.half, dark: c.dark.half, custom: c)
+    }
+
+    static func options(customs: [CustomPalette]) -> [ThemeOption] {
+        PaletteID.allCases.map(builtIn) + customs.map(custom)
+    }
+
+    /// Unbekannte oder gelöschte Schlüssel fallen auf das Standard-Theme zurück.
+    static func option(_ key: String, customs: [CustomPalette]) -> ThemeOption {
+        if let p = PaletteID(rawValue: key) { return builtIn(p) }
+        if let c = customs.first(where: { $0.key == key }) { return custom(c) }
+        return builtIn(AppTheme.defaultLight)
     }
 }
 
@@ -81,8 +215,8 @@ enum PaletteID: String, CaseIterable, Identifiable, Sendable {
 
 /// Die aktive App-Palette: Farben passen sich automatisch an hell/dunkel an.
 struct AppTheme {
-    var light: PaletteID
-    var dark: PaletteID
+    var light: PaletteHalf
+    var dark: PaletteHalf
 
     static let lightKey = "theme.light"
     static let darkKey = "theme.dark"
@@ -91,7 +225,7 @@ struct AppTheme {
     static let defaultDark = PaletteID.hexagon
 
     private func color(_ pick: (PaletteHalf) -> UInt32) -> Color {
-        let l = pick(light.light), d = pick(dark.dark)
+        let l = pick(light), d = pick(dark)
         return Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: d) : UIColor(hex: l) })
     }
 
@@ -111,7 +245,7 @@ struct AppTheme {
 }
 
 private struct AppThemeKey: EnvironmentKey {
-    static let defaultValue = AppTheme(light: AppTheme.defaultLight, dark: AppTheme.defaultDark)
+    static let defaultValue = AppTheme(light: AppTheme.defaultLight.light, dark: AppTheme.defaultDark.dark)
 }
 
 extension EnvironmentValues {
@@ -150,10 +284,12 @@ struct ThemeRoot: ViewModifier {
     @AppStorage(AppTheme.lightKey) private var light = AppTheme.defaultLight.rawValue
     @AppStorage(AppTheme.darkKey) private var dark = AppTheme.defaultDark.rawValue
     @AppStorage(AppearanceMode.key) private var mode = AppearanceMode.system.rawValue
+    @AppStorage(ThemeCatalog.customKey) private var customJSON = "[]"
 
     func body(content: Content) -> some View {
-        let theme = AppTheme(light: PaletteID(rawValue: light) ?? AppTheme.defaultLight,
-                             dark: PaletteID(rawValue: dark) ?? AppTheme.defaultDark)
+        let customs = ThemeCatalog.customs(customJSON)
+        let theme = AppTheme(light: ThemeCatalog.option(light, customs: customs).light,
+                             dark: ThemeCatalog.option(dark, customs: customs).dark)
         content
             .environment(\.theme, theme)
             .tint(theme.primary)

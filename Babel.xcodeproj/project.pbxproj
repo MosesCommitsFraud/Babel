@@ -11,6 +11,7 @@
 		0890284DBBA41DA4531B79E9 /* BookSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DFFB30CE2C2C950703DA46 /* BookSources.swift */; };
 		0C46A0D6B6BC9385CC9C4B34 /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D657FB996B8337736AC567 /* ReaderView.swift */; };
 		0DA714B684DBD559E3892E67 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1811B210919E19E1A46579 /* Helpers.swift */; };
+		0E890B2942383E6CF818C0D1 /* CustomThemeEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD8775395A2F517D1783152 /* CustomThemeEditor.swift */; };
 		12161EB20D743F3E8016D0E7 /* BabelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39075793117956CC5038008F /* BabelApp.swift */; };
 		14D9AFB2ACE37CC2FFBB1AAA /* StoryTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954176E78BCE69663DA9A0B1 /* StoryTypes.swift */; };
 		18A8DA2CC3EBAF6436617339 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F05AE361B51E309D21F7BA /* ImageLoader.swift */; };
@@ -65,6 +66,7 @@
 		39075793117956CC5038008F /* BabelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabelApp.swift; sourceTree = "<group>"; };
 		42D657FB996B8337736AC567 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
 		43258D30B4D0134B7E85AF1E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		4AD8775395A2F517D1783152 /* CustomThemeEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomThemeEditor.swift; sourceTree = "<group>"; };
 		50DFFB30CE2C2C950703DA46 /* BookSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookSources.swift; sourceTree = "<group>"; };
 		53EA69B1B09A7733617C8235 /* AuthorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorView.swift; sourceTree = "<group>"; };
 		5DD73D35F0F5B3196BF1AABF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 		1D5CCF828629D34D7ED277A7 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				4AD8775395A2F517D1783152 /* CustomThemeEditor.swift */,
 				5DD73D35F0F5B3196BF1AABF /* SettingsView.swift */,
 				E3222CDECAFA3DC2D9B46024 /* ThemeSettingsView.swift */,
 			);
@@ -390,6 +393,7 @@
 				B6312220DFB957280DBA02E7 /* Components.swift in Sources */,
 				908E56D44AC630ADD86597DE /* ContentStore.swift in Sources */,
 				2BFFF1A0761C571B3ECD848A /* CookieSync.swift in Sources */,
+				0E890B2942383E6CF818C0D1 /* CustomThemeEditor.swift in Sources */,
 				CB1845BB630B66E8F608A630 /* EPUBBuilder.swift in Sources */,
 				964B3DED70E71B09C6EF4A27 /* EPUBParser.swift in Sources */,
 				BAC1CCED4B5E9B3F578FC3D1 /* FFNFilterSheet.swift in Sources */,

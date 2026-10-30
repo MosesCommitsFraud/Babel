@@ -77,18 +77,22 @@ private struct WireframePane: View {
 }
 
 /// Einstellungsseite „Farben“: Modus wählen und ein Theme (hell + dunkel) mit einem Tipp übernehmen.
-/// Wer mag, mischt unten unter „Hell und Dunkel einzeln“ zwei Themes.
+/// Darunter eigene Farbschemata; wer mag, mischt unter „Hell und Dunkel einzeln“ zwei Themes.
 struct ThemeSettingsView: View {
     @AppStorage(AppTheme.lightKey) private var light = AppTheme.defaultLight.rawValue
     @AppStorage(AppTheme.darkKey) private var dark = AppTheme.defaultDark.rawValue
     @AppStorage(AppearanceMode.key) private var mode = AppearanceMode.system.rawValue
+    @AppStorage(ThemeCatalog.customKey) private var customJSON = "[]"
     @Environment(\.theme) private var theme
     @State private var showMixer = false
+    @State private var editing: CustomPalette?
     @Namespace private var glass
 
-    private var lightID: PaletteID { PaletteID(rawValue: light) ?? AppTheme.defaultLight }
-    private var darkID: PaletteID { PaletteID(rawValue: dark) ?? AppTheme.defaultDark }
-    private var isMixed: Bool { lightID != darkID }
+    private var customs: [CustomPalette] { ThemeCatalog.customs(customJSON) }
+    private var options: [ThemeOption] { ThemeCatalog.options(customs: customs) }
+    private var lightOption: ThemeOption { ThemeCatalog.option(light, customs: customs) }
+    private var darkOption: ThemeOption { ThemeCatalog.option(dark, customs: customs) }
+    private var isMixed: Bool { lightOption.id != darkOption.id }
 
     var body: some View {
         ScrollView {
@@ -100,17 +104,36 @@ struct ThemeSettingsView: View {
                 }
 
                 VStack(spacing: 12) {
-                    ForEach(PaletteID.allCases) { p in themeCard(p) }
+                    ForEach(PaletteID.allCases) { p in themeCard(ThemeCatalog.builtIn(p)) }
+                }
+
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Eigene Farbschemata").font(.headline)
+                    ForEach(customs) { c in themeCard(ThemeCatalog.custom(c)) }
+                    Button {
+                        editing = CustomPalette(name: String(localized: "Mein Theme"),
+                                                from: PaletteID(rawValue: light) ?? AppTheme.defaultLight)
+                    } label: {
+                        Label("Farbschema erstellen", systemImage: "paintpalette")
+                            .font(.subheadline.weight(.semibold))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 6)
+                    }
+                    .buttonStyle(.glass)
+                    if customs.isEmpty {
+                        Text("Akzent, Hintergrund, Karten und Text selbst wählen – für hell und dunkel. Halte ein Theme gedrückt, um es als Vorlage zu nehmen.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    }
                 }
 
                 DisclosureGroup(isExpanded: $showMixer) {
                     VStack(alignment: .leading, spacing: 14) {
-                        mixRow(String(localized: "Hell"), "sun.max.fill", selection: $light, half: \.light)
-                        mixRow(String(localized: "Dunkel"), "moon.fill", selection: $dark, half: \.dark)
+                        mixRow(String(localized: "Hell"), "sun.max.fill", selection: $light, dark: false)
+                        mixRow(String(localized: "Dunkel"), "moon.fill", selection: $dark, dark: true)
                     }
                     .padding(.top, 10)
                 } label: {
-                    Label(isMixed ? "Gemischt: \(lightID.label) & \(darkID.label)" : "Hell und Dunkel einzeln wählen",
+                    Label(isMixed ? "Gemischt: \(lightOption.label) & \(darkOption.label)" : "Hell und Dunkel einzeln wählen",
                           systemImage: "circle.lefthalf.filled")
                         .font(.subheadline.weight(.semibold))
                 }
@@ -123,6 +146,32 @@ struct ThemeSettingsView: View {
         .navigationTitle("Farben")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { if isMixed { showMixer = true } }
+        .sheet(item: $editing) { palette in
+            CustomThemeEditor(palette: palette,
+                              isNew: !customs.contains { $0.id == palette.id },
+                              onSave: save,
+                              onDelete: { delete(palette) })
+        }
+    }
+
+    // MARK: Eigene speichern / löschen
+
+    private func save(_ palette: CustomPalette) {
+        var list = customs
+        if let i = list.firstIndex(where: { $0.id == palette.id }) { list[i] = palette } else { list.append(palette) }
+        withAnimation(.bouncy(duration: 0.35)) {
+            customJSON = ThemeCatalog.encode(list)
+            light = palette.key
+            dark = palette.key
+        }
+    }
+
+    private func delete(_ palette: CustomPalette) {
+        withAnimation(.snappy) {
+            customJSON = ThemeCatalog.encode(customs.filter { $0.id != palette.id })
+            if light == palette.key { light = AppTheme.defaultLight.rawValue }
+            if dark == palette.key { dark = AppTheme.defaultDark.rawValue }
+        }
     }
 
     // MARK: Modus
@@ -146,36 +195,36 @@ struct ThemeSettingsView: View {
 
     // MARK: Themes
 
-    private func themeCard(_ p: PaletteID) -> some View {
-        let selected = !isMixed && lightID == p
+    private func themeCard(_ option: ThemeOption) -> some View {
+        let selected = !isMixed && lightOption.id == option.id
         return Button {
             withAnimation(.bouncy(duration: 0.35)) {
-                light = p.rawValue
-                dark = p.rawValue
+                light = option.id
+                dark = option.id
             }
             UISelectionFeedbackGenerator().selectionChanged()
         } label: {
             HStack(spacing: 14) {
                 HStack(spacing: -14) {
-                    AppWireframe(light: p.light)
+                    AppWireframe(light: option.light)
                         .frame(width: 58, height: 84)
                         .rotationEffect(.degrees(-4))
-                    AppWireframe(light: p.dark)
+                    AppWireframe(light: option.dark)
                         .frame(width: 58, height: 84)
                         .rotationEffect(.degrees(4))
                         .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                 }
                 .padding(.leading, 4)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(p.label).font(.headline)
-                    Text(p.tagline).font(.footnote).foregroundStyle(.secondary)
+                    Text(option.label).font(.headline).lineLimit(1)
+                    Text(option.tagline).font(.footnote).foregroundStyle(.secondary)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                     HStack(spacing: 5) {
-                        swatch(p.light.primary)
-                        swatch(p.light.card)
-                        swatch(p.dark.primary)
-                        swatch(p.dark.screen)
+                        swatch(option.light.primary)
+                        swatch(option.light.card)
+                        swatch(option.dark.primary)
+                        swatch(option.dark.screen)
                     }
                     .padding(.top, 2)
                 }
@@ -191,6 +240,34 @@ struct ThemeSettingsView: View {
         .buttonStyle(.plain)
         .glassEffect(selected ? .regular.tint(theme.primary.opacity(0.18)).interactive() : .regular.interactive(),
                      in: .rect(cornerRadius: 22))
+        .overlay(alignment: .topTrailing) {
+            if let custom = option.custom {
+                Button("Bearbeiten", systemImage: "pencil") { editing = custom }
+                    .labelStyle(.iconOnly)
+                    .font(.footnote.weight(.semibold))
+                    .buttonStyle(.glass)
+                    .buttonBorderShape(.circle)
+                    .controlSize(.small)
+                    .padding(8)
+            }
+        }
+        .contextMenu {
+            if let custom = option.custom {
+                Button("Bearbeiten", systemImage: "pencil") { editing = custom }
+                Button("Duplizieren", systemImage: "plus.square.on.square") {
+                    var copy = custom
+                    copy.id = UUID()
+                    copy.name = String(localized: "\(custom.name) Kopie")
+                    editing = copy
+                }
+                Button("Löschen", systemImage: "trash", role: .destructive) { delete(custom) }
+            } else {
+                Button("Als Vorlage für eigenes Schema", systemImage: "paintpalette") {
+                    editing = CustomPalette(name: String(localized: "\(option.label) eigen"),
+                                            from: PaletteID(rawValue: option.id) ?? AppTheme.defaultLight)
+                }
+            }
+        }
     }
 
     private func swatch(_ hex: UInt32) -> some View {
@@ -200,24 +277,26 @@ struct ThemeSettingsView: View {
             .overlay(Circle().strokeBorder(.black.opacity(0.08), lineWidth: 0.5))
     }
 
-    private func mixRow(_ title: String, _ symbol: String, selection: Binding<String>, half: KeyPath<PaletteID, PaletteHalf>) -> some View {
+    private func mixRow(_ title: String, _ symbol: String, selection: Binding<String>, dark: Bool) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label(title, systemImage: symbol).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
-                    ForEach(PaletteID.allCases) { p in
-                        let isOn = selection.wrappedValue == p.rawValue
+                    ForEach(options) { option in
+                        let isOn = selection.wrappedValue == option.id
                         Button {
-                            withAnimation(.bouncy(duration: 0.3)) { selection.wrappedValue = p.rawValue }
+                            withAnimation(.bouncy(duration: 0.3)) { selection.wrappedValue = option.id }
                         } label: {
                             VStack(spacing: 5) {
-                                AppWireframe(light: p[keyPath: half])
+                                AppWireframe(light: dark ? option.dark : option.light)
                                     .frame(width: 46, height: 64)
                                     .overlay {
                                         RoundedRectangle(cornerRadius: 12)
                                             .strokeBorder(isOn ? theme.primary : .clear, lineWidth: 2.5)
                                     }
-                                Text(p.label).font(.caption2.weight(isOn ? .semibold : .regular))
+                                Text(option.label).font(.caption2.weight(isOn ? .semibold : .regular))
+                                    .lineLimit(1)
+                                    .frame(maxWidth: 64)
                             }
                         }
                         .buttonStyle(.plain)
@@ -234,10 +313,12 @@ struct ThemeSettingsRow: View {
     @AppStorage(AppTheme.lightKey) private var light = AppTheme.defaultLight.rawValue
     @AppStorage(AppTheme.darkKey) private var dark = AppTheme.defaultDark.rawValue
     @AppStorage(AppearanceMode.key) private var mode = AppearanceMode.system.rawValue
+    @AppStorage(ThemeCatalog.customKey) private var customJSON = "[]"
 
     var body: some View {
-        let l = PaletteID(rawValue: light) ?? AppTheme.defaultLight
-        let d = PaletteID(rawValue: dark) ?? AppTheme.defaultDark
+        let customs = ThemeCatalog.customs(customJSON)
+        let l = ThemeCatalog.option(light, customs: customs)
+        let d = ThemeCatalog.option(dark, customs: customs)
         NavigationLink {
             ThemeSettingsView()
         } label: {
@@ -246,7 +327,7 @@ struct ThemeSettingsRow: View {
                     .frame(width: 54, height: 72)
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Farben").font(.headline)
-                    Text(l == d ? l.label : "\(l.label) & \(d.label)").font(.subheadline).foregroundStyle(.secondary)
+                    Text(l.id == d.id ? l.label : "\(l.label) & \(d.label)").font(.subheadline).foregroundStyle(.secondary)
                     Text("Modus: \(AppearanceMode(rawValue: mode)?.label ?? "System")").font(.caption).foregroundStyle(.secondary)
                 }
             }
