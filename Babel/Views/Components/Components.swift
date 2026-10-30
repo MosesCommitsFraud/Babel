@@ -249,27 +249,30 @@ struct StoryRow: View {
         story.updated.map { u in story.published.map { abs($0.timeIntervalSince(u)) > 60 } ?? true } ?? false
     }
 
-    /// Ein einziger kurzer Text: Symbole direkt vor dem Datum, statt zwei Labels mit Abstand.
+    /// Kurz und dicht: Symbol direkt vor dem Datum (2 pt Abstand statt Label-Abstand).
     private func dateLabel(latestOnly: Bool) -> some View {
         let published = (latestOnly && wasUpdated) ? nil : story.published
-        let updated = story.updated
-        var text = Text(verbatim: "")
+        let updated = wasUpdated ? story.updated : nil
         var spoken: [String] = []
-        if let published {
-            text = text + Text(Image(systemName: "calendar")).font(.caption2) + Text(verbatim: "\u{2009}\(Self.shortDate(published))")
-            spoken.append(String(localized: "Veröffentlicht \(Self.shortDate(published))"))
+        if let published { spoken.append(String(localized: "Veröffentlicht \(Self.shortDate(published))")) }
+        if let updated { spoken.append(String(localized: "Aktualisiert \(Self.shortDate(updated))")) }
+        return HStack(spacing: 8) {
+            if let published { dateItem(published, symbol: "calendar") }
+            if let updated { dateItem(updated, symbol: "arrow.clockwise") }
         }
-        if wasUpdated, let updated {
-            if published != nil { text = text + Text(verbatim: "  ") }
-            text = text + Text(Image(systemName: "arrow.clockwise")).font(.caption2) + Text(verbatim: "\u{2009}\(Self.shortDate(updated))")
-            spoken.append(String(localized: "Aktualisiert \(Self.shortDate(updated))"))
+        .font(.caption.monospacedDigit())
+        .foregroundStyle(.secondary)
+        .lineLimit(1)
+        .fixedSize()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(spoken.joined(separator: ", "))
+    }
+
+    private func dateItem(_ date: Date, symbol: String) -> some View {
+        HStack(spacing: 2) {
+            Image(systemName: symbol).font(.caption2)
+            Text(verbatim: Self.shortDate(date))
         }
-        return text
-            .font(.caption.monospacedDigit())
-            .foregroundStyle(.secondary)
-            .lineLimit(1)
-            .fixedSize()
-            .accessibilityLabel(spoken.joined(separator: ", "))
     }
 
     /// Im laufenden Jahr „14. Okt.“, sonst „16.04.09“.

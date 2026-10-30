@@ -22,7 +22,7 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 - Kein Sideloading-Store mehr (SideStore-Quelle/Release-Skript entfernt), Version 0.1.0; Installation über Xcode.
 - Git: `main`, Remote `origin` = https://github.com/MosesCommitsFraud/Babel.git. Regelmäßig committen und pushen, **ohne** Claude als Co-Autor, Commit-Nachrichten **auf Englisch**.
 - FFN-Stichwortsuche: standardmäßig `match=title` (FFN-Standard `any` vergräbt exakte Titel), dazu Titel-Ranking im Client.
-- Reader: Titel oben öffnet die Storyseite als Sheet (`readerJump` springt im offenen Reader), Wischen links/rechts wechselt Kapitel, keine Prozentanzeige.
+- Reader: Titel oben öffnet die Storyseite als Sheet (`readerJump` springt im offenen Reader), Kapitel als Seiten in einem `UIPageViewController` (`Views/Reader/ReaderPager.swift`, je Kapitel ein eigener WKWebView): Wischen zieht das Nachbarkapitel mit dem Finger herein, Nachbarn (±1) werden nach dem aktuellen Kapitel vorgeladen, ±2 bleiben im Speicher (Position bleibt beim Zurückwischen). Ladesymbol nur, wenn ein Kapitel erst aus dem Netz kommt. Keine Prozentanzeige.
 - Bibliothek: Verlauf (`Story.viewedAt` + `lastOpenedAt`), unter „Alle“ „Zuletzt angesehen“, Chips nach Anzahl sortiert.
 - AO3-Tab startet mit der Filterwand (eigener `NavigationPath` – nicht `navigationDestination(item:)`, das baute die Ergebnisliste beim Öffnen einer Story neu); Filter lassen sich als Presets speichern (AO3 und FFN).
 - Login (AO3 + FFN) optional, um Lesezeichen/Favoriten/Follows zu importieren.
@@ -55,7 +55,7 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 - `Services/LibraryManager.swift` – Kapitel laden/speichern (`ContentStore`, Application Support), Updates prüfen, EPUB-/Link-Import.
 - `Services/ZipArchive.swift` + `EPUBParser.swift` – eigener ZIP-Entpacker (Compression), OPF/NCX/nav.
 - `Models/Story.swift` – SwiftData `Story`, `Shelf`. Achtung: kein Attribut `updated` nennen (kollidiert mit Core Datas `isUpdated`) → heißt `lastUpdated`.
-- `Views/Reader/` – WKWebView-Reader mit injiziertem CSS, Fortschritt per JS-Message, Glas-Leisten.
+- `Views/Reader/` – `ReaderModel` + `ReaderPager` (Kapitelseiten mit WKWebView, injiziertes CSS, Fortschritt per JS-Message), Glas-Leisten.
 
 ## Geprüft (Simulator)
 AO3-Suche/Blurbs, FFN-Fandoms/Listen/Filter-Apply/Cover, Gutenberg-Suche + Details, Themes hell/dunkel.
