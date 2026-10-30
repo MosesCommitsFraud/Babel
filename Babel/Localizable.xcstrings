@@ -4558,6 +4558,16 @@
           }
         }
       }
+    },
+    "%@ (Build %@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ (build %2$@)"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

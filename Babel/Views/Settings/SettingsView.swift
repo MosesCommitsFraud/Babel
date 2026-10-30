@@ -18,6 +18,14 @@ struct SettingsView: View {
     @State private var storage: Int64 = 0
     @State private var confirmClearHistory = false
 
+    /// „0.23.6 (Build 47)“ – Version und Build aus `project.yml`.
+    static var versionText: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = info?["CFBundleVersion"] as? String ?? "?"
+        return String(localized: "\(version) (Build \(build))")
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -113,7 +121,7 @@ struct SettingsView: View {
                 .themedRows()
 
                 Section("Über") {
-                    LabeledContent("Version", value: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0")
+                    LabeledContent("Version", value: Self.versionText)
                     Text("Babel lädt Seiten wie ein normaler Browser, mit Pausen zwischen den Anfragen, um AO3 und FanFiction.net nicht zu belasten. Bremst eine Seite (HTTP 429), wartet die App automatisch so lange, wie die Seite verlangt. Unterstütze die Autor:innen mit Kudos und Reviews auf der Originalseite.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
