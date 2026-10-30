@@ -88,8 +88,6 @@ final class ReaderModel {
         switch message["type"] as? String {
         case "tap":
             withAnimation(.smooth(duration: 0.25)) { showChrome.toggle() }
-        case "next":
-            if index == chapterIndex { next() }
         default:
             break
         }
@@ -152,12 +150,6 @@ final class ReaderModel {
             if ((window.getSelection() + '').length > 0) return;
             post({ type: 'tap' });
           });
-          if (\(hasNext ? "true" : "false") && document.body) {
-            var end = document.createElement('div'); end.id = 'babel-end';
-            var b = document.createElement('button'); b.id = 'babel-next'; b.textContent = \(Self.jsString(String(localized: "Nächstes Kapitel →")));
-            b.addEventListener('click', function(ev){ ev.stopPropagation(); post({ type: 'next' }); });
-            end.appendChild(b); document.body.appendChild(end);
-          }
         })();
         """
         return [WKUserScript(source: startScript, injectionTime: .atDocumentStart, forMainFrameOnly: true),
@@ -196,12 +188,12 @@ struct ReaderView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     @AppStorage("reader.theme") private var theme: ReaderTheme = .system
-    @AppStorage("reader.font") private var fontID = "newyork"
-    @AppStorage("reader.fontSize") private var fontSize = 19.0
-    @AppStorage("reader.lineHeight") private var lineHeight = 1.6
-    @AppStorage("reader.margin") private var margin = 22.0
-    @AppStorage("reader.justify") private var justify = false
-    @AppStorage("reader.paragraphSpacing") private var paragraphSpacing = 0.9
+    @AppStorage("reader.font") private var fontID = ReaderDefaults.font
+    @AppStorage("reader.fontSize") private var fontSize = ReaderDefaults.fontSize
+    @AppStorage("reader.lineHeight") private var lineHeight = ReaderDefaults.lineHeight
+    @AppStorage("reader.margin") private var margin = ReaderDefaults.margin
+    @AppStorage("reader.justify") private var justify = ReaderDefaults.justify
+    @AppStorage("reader.paragraphSpacing") private var paragraphSpacing = ReaderDefaults.paragraphSpacing
     @AppStorage(VolumeKeyScroller.settingKey) private var volumeScroll = false
     @State private var volumeKeys = VolumeKeyScroller()
 

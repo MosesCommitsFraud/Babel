@@ -6,6 +6,10 @@ struct BabelApp: App {
     @State private var reader = ReaderPresenter()
     @State private var library = LibraryManager.shared
 
+    init() {
+        ReaderDefaults.migrate()
+    }
+
     private let container: ModelContainer = {
         do {
             return try ModelContainer(for: Story.self, Shelf.self)

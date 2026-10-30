@@ -103,26 +103,41 @@ struct ReaderStyle {
         .babel-notes { font-size: .88em !important; opacity: .82; border-left: 3px solid \(theme.link) !important; padding: .2em 0 .2em .9em !important; margin: 1.2em 0 2em 0 !important; }
         .babel-notes.end { margin-top: 3em !important; }
         .babel-notes-label { font-weight: 700 !important; text-transform: uppercase; letter-spacing: .06em; font-size: .78em !important; opacity: .7; margin-bottom: .5em !important; }
-        #babel-end { text-align: center !important; margin: 3.5em 0 1em 0 !important; }
-        #babel-next {
-            font: inherit !important; font-size: .95em !important; font-weight: 600 !important;
-            padding: .85em 1.8em !important; border-radius: 999px !important;
-            border: 1px solid rgba(127,127,127,.35) !important;
-            background: rgba(127,127,127,.14) !important; color: \(theme.foreground) !important;
-        }
         """
+    }
+}
+
+/// Standard-Leseeinstellungen: Iowan Old Style, Zeilenabstand 1,2, Absatz 0,9, Rand 14 pt, Blocksatz.
+enum ReaderDefaults {
+    static let font = "iowan"
+    static let fontSize = 19.0
+    static let lineHeight = 1.2
+    static let margin = 14.0
+    static let justify = true
+    static let paragraphSpacing = 0.9
+
+    /// Einmal auf die neuen Standards umstellen – vorher gespeicherte Werte (alte Standards) würden sonst bleiben.
+    static func migrate() {
+        let defaults = UserDefaults.standard
+        guard !defaults.bool(forKey: "reader.defaults.v2") else { return }
+        defaults.set(font, forKey: "reader.font")
+        defaults.set(lineHeight, forKey: "reader.lineHeight")
+        defaults.set(margin, forKey: "reader.margin")
+        defaults.set(justify, forKey: "reader.justify")
+        defaults.set(paragraphSpacing, forKey: "reader.paragraphSpacing")
+        defaults.set(true, forKey: "reader.defaults.v2")
     }
 }
 
 /// Gemeinsame Einstellungs-Steuerelemente (im Reader-Sheet und in den Einstellungen).
 struct ReaderSettingsControls: View {
     @AppStorage("reader.theme") private var theme: ReaderTheme = .system
-    @AppStorage("reader.font") private var fontID = "newyork"
-    @AppStorage("reader.fontSize") private var fontSize = 19.0
-    @AppStorage("reader.lineHeight") private var lineHeight = 1.6
-    @AppStorage("reader.margin") private var margin = 22.0
-    @AppStorage("reader.justify") private var justify = false
-    @AppStorage("reader.paragraphSpacing") private var paragraphSpacing = 0.9
+    @AppStorage("reader.font") private var fontID = ReaderDefaults.font
+    @AppStorage("reader.fontSize") private var fontSize = ReaderDefaults.fontSize
+    @AppStorage("reader.lineHeight") private var lineHeight = ReaderDefaults.lineHeight
+    @AppStorage("reader.margin") private var margin = ReaderDefaults.margin
+    @AppStorage("reader.justify") private var justify = ReaderDefaults.justify
+    @AppStorage("reader.paragraphSpacing") private var paragraphSpacing = ReaderDefaults.paragraphSpacing
     @AppStorage(VolumeKeyScroller.settingKey) private var volumeScroll = false
 
     var body: some View {
@@ -173,6 +188,14 @@ struct ReaderSettingsControls: View {
                 Slider(value: $margin, in: 8...48, step: 2)
             }
             Toggle("Blocksatz", isOn: $justify)
+            Button("Auf Standard zurücksetzen", systemImage: "arrow.counterclockwise") {
+                fontID = ReaderDefaults.font
+                fontSize = ReaderDefaults.fontSize
+                lineHeight = ReaderDefaults.lineHeight
+                margin = ReaderDefaults.margin
+                justify = ReaderDefaults.justify
+                paragraphSpacing = ReaderDefaults.paragraphSpacing
+            }
         }
 
         Section {
