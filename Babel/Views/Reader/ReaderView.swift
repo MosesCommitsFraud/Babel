@@ -97,7 +97,6 @@ final class ReaderModel {
 
     func scripts(for index: Int) -> [WKUserScript] {
         let cssLiteral = Self.jsString(css)
-        let hasNext = index + 1 < chapterCount
         let startScript = """
         (function(){
           var s = document.createElement('style'); s.id = 'babel-style'; s.textContent = \(cssLiteral);
