@@ -2854,7 +2854,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sort Order"
+            "value": "Sort"
           }
         }
       }
@@ -3811,6 +3811,336 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@  %lld"
+          }
+        }
+      }
+    },
+    "Neue Geschichte": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New story"
+          }
+        }
+      }
+    },
+    "veröff. %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pub. %@"
+          }
+        }
+      }
+    },
+    "akt. %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "upd. %@"
+          }
+        }
+      }
+    },
+    "Veröffentlicht %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Published %@"
+          }
+        }
+      }
+    },
+    "Aktualisiert %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updated %@"
+          }
+        }
+      }
+    },
+    "Inhalt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Content"
+          }
+        }
+      }
+    },
+    "Charaktere %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Characters %@"
+          }
+        }
+      }
+    },
+    "Als Paar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As a Pair"
+          }
+        }
+      }
+    },
+    "„Als Paar“ zeigt nur Geschichten, in denen die beiden ein Pairing sind. Jedes Paar lässt sich einzeln einschalten.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\"As a Pair\" only shows stories where the two are a pairing. Each pair can be switched on separately."
+          }
+        }
+      }
+    },
+    "Kein Paar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not a Pair"
+          }
+        }
+      }
+    },
+    "Zähle Geschichten … %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Counting stories … %@"
+          }
+        }
+      }
+    },
+    "Charakter %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Character %@"
+          }
+        }
+      }
+    },
+    "Ohne: Charakter %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Without: Character %@"
+          }
+        }
+      }
+    },
+    "Genre A": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Genre A"
+          }
+        }
+      }
+    },
+    "Genre B": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Genre B"
+          }
+        }
+      }
+    },
+    "Ohne: Genre": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Without: Genre"
+          }
+        }
+      }
+    },
+    "Alle Ratings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All Ratings"
+          }
+        }
+      }
+    },
+    "Bis T (K, K+, T)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Up to T (K, K+, T)"
+          }
+        }
+      }
+    },
+    "Bis K+ (jugendfrei)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Up to K+ (all ages)"
+          }
+        }
+      }
+    },
+    "Nur T": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "T only"
+          }
+        }
+      }
+    },
+    "Nur M und Explicit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "M and Explicit only"
+          }
+        }
+      }
+    },
+    "Standard-Rating": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default Rating"
+          }
+        }
+      }
+    },
+    "Standard-Sprache": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default Language"
+          }
+        }
+      }
+    },
+    "Gilt für neue Suchen auf AO3 und FanFiction.net – die Sprache der Geschichten, nicht die der App. In den Filtern lässt sich beides jederzeit ändern.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Applies to new searches on AO3 and FanFiction.net – the language of the stories, not of the app. You can change both in the filters at any time."
+          }
+        }
+      }
+    },
+    "%@ %@. Das liegt an der Seite, nicht an Babel – versuch es später nochmal.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@. That's the site, not Babel – try again later."
+          }
+        }
+      }
+    },
+    "ist gerade in Wartung": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "is down for maintenance"
+          }
+        }
+      }
+    },
+    "%@ ist nicht erreichbar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is unreachable"
+          }
+        }
+      }
+    },
+    "%@ %@. Deshalb gibt es gerade keine Treffer – das liegt an der Seite, nicht an deiner Suche.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@. That's why there are no results right now – it's the site, not your search."
+          }
+        }
+      }
+    },
+    "Gilt für AO3, FanFiction.net und Bücher gemeinsam.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Applies to AO3, FanFiction.net and books together."
+          }
+        }
+      }
+    },
+    "Pairings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pairings"
+          }
+        }
+      }
+    },
+    "Bei mehreren Einträgen reicht einer davon.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "With several entries, one of them is enough."
+          }
+        }
+      }
+    },
+    "%lld gewählt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld selected"
+          }
+        }
+      }
+    },
+    "Länge": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Length"
           }
         }
       }

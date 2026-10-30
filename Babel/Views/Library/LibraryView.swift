@@ -122,7 +122,6 @@ struct LibraryView: View {
         .sheet(isPresented: $showSettings) { SettingsView() }
         .sheet(isPresented: $showQuery) {
             LibraryFilterSheet(query: $query, stories: stories)
-                .presentationDetents([.medium, .large])
         }
         .alert("Neue Sammlung", isPresented: $showNewShelf) {
             TextField("Name", text: $newShelfName)
@@ -192,6 +191,8 @@ struct LibraryView: View {
     private var activeQueryBar: some View {
         var items: [(String, () -> Void)] = []
         for f in query.fandoms.sorted() { items.append((f, { query.fandoms.remove(f) })) }
+        for p in query.pairings.sorted() { items.append((p, { query.pairings.remove(p) })) }
+        for c in query.characters.sorted() { items.append((c, { query.characters.remove(c) })) }
         for r in query.ratings.sorted() { items.append((String(localized: "Rating \(r)"), { query.ratings.remove(r) })) }
         if query.completion != .any { items.append((query.completion.label, { query.completion = .any })) }
         if query.length != .any { items.append((query.length.label, { query.length = .any })) }

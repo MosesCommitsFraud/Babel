@@ -3,6 +3,8 @@ import SwiftUI
 /// Filter für die ganze Bibliothek – über AO3, FFN und Bücher hinweg.
 struct LibraryQuery: Equatable, Codable {
     var fandoms: Set<String> = []
+    var pairings: Set<String> = []
+    var characters: Set<String> = []
     var ratings: Set<String> = []
     var completion: Completion = .any
     var length: Length = .any
@@ -44,7 +46,7 @@ struct LibraryQuery: Equatable, Codable {
     }
 
     var activeCount: Int {
-        [!fandoms.isEmpty, !ratings.isEmpty, completion != .any, length != .any, !languages.isEmpty, !sources.isEmpty]
+        [!fandoms.isEmpty, !pairings.isEmpty, !characters.isEmpty, !ratings.isEmpty, completion != .any, length != .any, !languages.isEmpty, !sources.isEmpty]
             .filter { $0 }.count
     }
 
@@ -65,6 +67,8 @@ struct LibraryQuery: Equatable, Codable {
 
     func matches(_ s: Story) -> Bool {
         if !fandoms.isEmpty && !s.fandoms.contains(where: fandoms.contains) { return false }
+        if !pairings.isEmpty && !s.relationships.contains(where: pairings.contains) { return false }
+        if !characters.isEmpty && !s.characters.contains(where: characters.contains) { return false }
         if !ratings.isEmpty {
             let groups = s.rating.components(separatedBy: ", ").compactMap(Self.ratingGroup)
             if !groups.contains(where: ratings.contains) { return false }
@@ -85,9 +89,6 @@ struct LibraryFilterSheet: View {
     @Binding var query: LibraryQuery
     let stories: [Story]
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.theme) private var theme
-    @State private var fandomSearch = ""
-    @State private var showAllFandoms = false
 
     /// Werte mit Anzahl, häufigste zuerst.
     private func counted(_ values: (Story) -> [String]) -> [(value: String, count: Int)] {
@@ -96,75 +97,44 @@ struct LibraryFilterSheet: View {
         return counts.map { ($0.key, $0.value) }.sorted { $0.count != $1.count ? $0.count > $1.count : $0.value < $1.value }
     }
 
-    private var fandoms: [(value: String, count: Int)] {
-        let all = counted(\.fandoms)
-        let q = fandomSearch.trimmed.lowercased()
-        return q.isEmpty ? all : all.filter { $0.value.lowercased().contains(q) }
-    }
-
     private var ratings: [(value: String, count: Int)] {
         let found = counted { $0.rating.components(separatedBy: ", ").compactMap(LibraryQuery.ratingGroup) }
         return LibraryQuery.ratingOrder.compactMap { r in found.first { $0.value == r } }
     }
 
+    private var sources: [(value: String, count: Int)] {
+        counted { [$0.source.rawValue] }
+    }
+
     var body: some View {
         NavigationStack {
             Form {
-                Section("Quelle") {
-                    chipFlow(StorySource.allCases.filter { src in stories.contains { $0.source == src } }.map { ($0.shortLabel, $0) },
-                             selection: $query.sources)
-                }
-                .themedRows()
-
-                Section("Rating") {
-                    chipFlow(ratings.map { ("\($0.value)  \($0.count)", $0.value) }, selection: $query.ratings)
-                }
-                .themedRows()
-
-                Section("Status") {
-                    GlassSegmented(options: LibraryQuery.Completion.allCases.map { ($0, $0.label) }, selection: $query.completion)
-                        .padding(.vertical, 4)
-                }
-                .themedRows()
-
-                Section("Länge (Wörter)") {
-                    GlassSegmented(options: LibraryQuery.Length.allCases.map { ($0, $0.label) }, selection: $query.length)
-                        .padding(.vertical, 4)
-                }
-                .themedRows()
-
-                let languages = counted { [$0.language] }
-                if languages.count > 1 {
-                    Section("Sprache") {
-                        chipFlow(languages.prefix(12).map { ("\($0.value)  \($0.count)", $0.value) }, selection: $query.languages)
+                // Kompakt wie die FFN-Filter: eine Zeile pro Filter, Auswahl auf eigener Seite.
+                Section {
+                    multiRow("Quelle", items: sources, label: { StorySource(rawValue: $0)?.shortLabel ?? $0 },
+                             selection: Binding(get: { Set(query.sources.map(\.rawValue)) },
+                                                set: { query.sources = Set($0.compactMap(StorySource.init(rawValue:))) }))
+                    multiRow("Rating", items: ratings, selection: $query.ratings, sorted: false)
+                    Picker("Status", selection: $query.completion) {
+                        ForEach(LibraryQuery.Completion.allCases, id: \.self) { Text($0.label).tag($0) }
                     }
-                    .themedRows()
+                    .pickerStyle(.navigationLink)
+                    Picker("Länge", selection: $query.length) {
+                        ForEach(LibraryQuery.Length.allCases, id: \.self) { Text($0.label).tag($0) }
+                    }
+                    .pickerStyle(.navigationLink)
+                    multiRow("Sprache", items: counted { [$0.language] }, selection: $query.languages)
+                } footer: {
+                    Text("Gilt für AO3, FanFiction.net und Bücher gemeinsam.")
                 }
+                .themedRows()
 
                 Section {
-                    TextField("Fandom suchen", text: $fandomSearch)
-                        .textInputAutocapitalization(.never)
-                    let list = fandoms
-                    ForEach(list.prefix(showAllFandoms || !fandomSearch.isEmpty ? list.count : 12), id: \.value) { f in
-                        Button {
-                            if query.fandoms.contains(f.value) { query.fandoms.remove(f.value) } else { query.fandoms.insert(f.value) }
-                        } label: {
-                            HStack {
-                                Text(f.value).foregroundStyle(.primary).lineLimit(2)
-                                Spacer()
-                                Text("\(f.count)").font(.caption.monospacedDigit()).foregroundStyle(.secondary)
-                                Image(systemName: query.fandoms.contains(f.value) ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(query.fandoms.contains(f.value) ? theme.primary : .secondary)
-                            }
-                        }
-                    }
-                    if list.count > 12 && !showAllFandoms && fandomSearch.isEmpty {
-                        Button("Alle \(list.count) Fandoms zeigen") { withAnimation { showAllFandoms = true } }
-                    }
-                } header: {
-                    Text("Fandoms")
+                    multiRow("Fandoms", items: counted(\.fandoms), selection: $query.fandoms)
+                    multiRow("Pairings", items: counted(\.relationships), selection: $query.pairings)
+                    multiRow("Charaktere", items: counted(\.characters), selection: $query.characters)
                 } footer: {
-                    Text("Mehrere Fandoms: Es reicht, wenn eine Geschichte zu einem davon gehört.")
+                    Text("Bei mehreren Einträgen reicht einer davon.")
                 }
                 .themedRows()
             }
@@ -183,20 +153,72 @@ struct LibraryFilterSheet: View {
         }
     }
 
-    /// Mehrfachauswahl als Glas-Chips.
-    private func chipFlow<Value: Hashable>(_ options: [(String, Value)], selection: Binding<Set<Value>>) -> some View {
-        GlassEffectContainer(spacing: 6) {
-            FlowLayout(spacing: 6) {
-                ForEach(options, id: \.1) { title, value in
-                    GlassChip(title: title, isSelected: selection.wrappedValue.contains(value)) {
-                        withAnimation(.snappy) {
-                            if selection.wrappedValue.contains(value) { selection.wrappedValue.remove(value) }
-                            else { selection.wrappedValue.insert(value) }
-                        }
-                    }
-                }
+    private func multiRow(_ title: LocalizedStringKey, items: [(value: String, count: Int)], label: @escaping (String) -> String = { $0 },
+                          selection: Binding<Set<String>>, sorted: Bool = true) -> some View {
+        NavigationLink {
+            MultiSelectList(title: title, items: items, label: label, selection: selection)
+        } label: {
+            LabeledContent(title) {
+                Text(summary(selection.wrappedValue, label: label)).lineLimit(1)
             }
         }
-        .padding(.vertical, 4)
+        .disabled(items.isEmpty)
+    }
+
+    private func summary(_ set: Set<String>, label: (String) -> String) -> String {
+        switch set.count {
+        case 0: String(localized: "Alle")
+        case 1: label(set.first!)
+        default: String(localized: "\(set.count) gewählt")
+        }
+    }
+}
+
+/// Mehrfachauswahl mit Anzahl, meiste zuerst, durchsuchbar.
+struct MultiSelectList: View {
+    let title: LocalizedStringKey
+    let items: [(value: String, count: Int)]
+    let label: (String) -> String
+    @Binding var selection: Set<String>
+    @Environment(\.theme) private var theme
+    @State private var search = ""
+
+    private var visible: [(value: String, count: Int)] {
+        let q = search.trimmed.lowercased()
+        return q.isEmpty ? items : items.filter { label($0.value).lowercased().contains(q) }
+    }
+
+    var body: some View {
+        List {
+            Button {
+                selection = []
+            } label: {
+                HStack {
+                    Text("Alle").foregroundStyle(.primary)
+                    Spacer()
+                    if selection.isEmpty { Image(systemName: "checkmark").foregroundStyle(theme.primary) }
+                }
+            }
+            .themedRows()
+            ForEach(visible, id: \.value) { item in
+                Button {
+                    if selection.contains(item.value) { selection.remove(item.value) } else { selection.insert(item.value) }
+                } label: {
+                    HStack {
+                        Text(label(item.value)).foregroundStyle(.primary).lineLimit(2)
+                        Spacer()
+                        Text("\(item.count)").font(.footnote.monospacedDigit()).foregroundStyle(.secondary)
+                        Image(systemName: selection.contains(item.value) ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(selection.contains(item.value) ? theme.primary : .secondary)
+                    }
+                    .contentShape(.rect)
+                }
+                .themedRows()
+            }
+        }
+        .themedBackground()
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $search, placement: .navigationBarDrawer(displayMode: items.count > 12 ? .always : .automatic))
     }
 }
