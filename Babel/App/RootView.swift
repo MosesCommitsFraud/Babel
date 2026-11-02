@@ -85,9 +85,42 @@ struct ContinueReadingAccessory: View {
     @Environment(ReaderPresenter.self) private var reader
     @Query(filter: #Predicate<Story> { $0.lastOpenedAt != nil }, sort: [SortDescriptor(\Story.lastOpenedAt, order: .reverse)])
     private var recent: [Story]
+    @State private var speech = ReadAloudPlayer.shared
 
     var body: some View {
-        if let story = recent.first {
+        if let story = speech.story {
+            // Beim Vorlesen wird die Leiste zum Mini-Player.
+            HStack(spacing: 12) {
+                Button { reader.open(story) } label: {
+                    HStack(spacing: 12) {
+                        CoverView(story: story.asRemote, localCover: ContentStore.coverFileURL(story), width: 30, aspect: 1)
+                            .padding(.vertical, 8)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(story.title).font(.subheadline.weight(.semibold)).lineLimit(1)
+                            Label(speech.chapterTitle, systemImage: "speaker.wave.2.fill")
+                                .labelStyle(.titleAndIcon)
+                                .font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                        }
+                        Spacer(minLength: 0)
+                    }
+                    .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+
+                Button { speech.toggle() } label: {
+                    Group {
+                        if speech.isLoading { ProgressView() }
+                        else { Image(systemName: speech.isPlaying ? "pause.fill" : "play.fill").font(.title3) }
+                    }
+                    .frame(width: 36, height: 36)
+                    .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(speech.isPlaying ? "Pause" : "Abspielen")
+            }
+            .padding(.leading, 16)
+            .padding(.trailing, 14)
+        } else if let story = recent.first {
             Button { reader.open(story) } label: {
                 HStack(spacing: 12) {
                     // Quadratisch wie die Mini-Player-Cover in Apple Music, mit Abstand zur runden Kante.

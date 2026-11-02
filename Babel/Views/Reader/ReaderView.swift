@@ -19,6 +19,10 @@ final class ReaderModel {
     @ObservationIgnored var css = ""
     @ObservationIgnored let initialRestore: Double
     @ObservationIgnored private var lastSave = Date.distantPast
+    /// Vorlesen: wo gerade gesprochen wird (nur für diese Geschichte) und ob Tippen einen Absatz startet.
+    @ObservationIgnored var speech: ReadAloudPlayer.Cursor?
+    @ObservationIgnored var speechActive = false
+    @ObservationIgnored var onSpeakFrom: ((_ chapter: Int, _ paragraph: Int) -> Void)?
 
     init(story: Story) {
         self.story = story
@@ -88,6 +92,8 @@ final class ReaderModel {
         switch message["type"] as? String {
         case "tap":
             withAnimation(.smooth(duration: 0.25)) { showChrome.toggle() }
+        case "speakFrom":
+            if let paragraph = message["paragraph"] as? Int { onSpeakFrom?(index, paragraph) }
         default:
             break
         }
@@ -144,9 +150,63 @@ final class ReaderModel {
               post({ type: 'progress', value: h > 0 ? window.scrollY / h : 1 });
             }, 120);
           }, { passive: true });
+          // Vorlesen: dieselbe Absatz-Zählung wie ReadAloudPlayer.blocks(from:).
+          var blockSel = \(Self.jsString(ReadAloudPlayer.blockSelector));
+          window.babelBlocks = function(){
+            var list = Array.prototype.filter.call(document.body.querySelectorAll(blockSel), function(e){
+              return !e.querySelector(blockSel) && e.textContent.trim().length > 0;
+            });
+            if (!list.length && document.body.textContent.trim().length) list = [document.body];
+            return list;
+          };
+          window.babelFirstVisible = function(){
+            var list = window.babelBlocks(), top = 110;
+            for (var i = 0; i < list.length; i++) { if (list[i].getBoundingClientRect().bottom > top) return i; }
+            return 0;
+          };
+          // Satz im Absatz finden – ohne Leerzeichen verglichen, damit <br> und Zeilenumbrüche nicht stören.
+          var findRange = function(el, sentence, from){
+            var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), compact = '', map = [];
+            while (walker.nextNode()) {
+              var n = walker.currentNode, t = n.nodeValue;
+              for (var k = 0; k < t.length; k++) { if (!/\\s/.test(t[k])) { compact += t[k]; map.push([n, k]); } }
+            }
+            var target = sentence.replace(/\\s+/g, '');
+            if (!target.length) return null;
+            var start = compact.indexOf(target, from);
+            if (start < 0) start = compact.indexOf(target);
+            if (start < 0) return null;
+            window.babelSpeechFrom = start + target.length;
+            var a = map[start], b = map[start + target.length - 1], r = document.createRange();
+            r.setStart(a[0], a[1]); r.setEnd(b[0], b[1] + 1);
+            return r;
+          };
+          window.babelSpeak = function(i, sentence, follow){
+            var old = document.querySelector('.babel-speaking-fallback');
+            if (old) old.classList.remove('babel-speaking-fallback');
+            if (window.CSS && CSS.highlights) CSS.highlights.delete('babel-speech');
+            var list = window.babelBlocks();
+            if (i < 0 || i >= list.length) { window.babelSpeechIndex = -1; return; }
+            if (window.babelSpeechIndex !== i) { window.babelSpeechIndex = i; window.babelSpeechFrom = 0; }
+            var el = list[i], range = sentence ? findRange(el, sentence, window.babelSpeechFrom || 0) : null;
+            if (range && window.CSS && CSS.highlights) { CSS.highlights.set('babel-speech', new Highlight(range)); }
+            else { el.classList.add('babel-speaking-fallback'); }
+            if (!follow) return;
+            var r = (range || el).getBoundingClientRect(), top = 110, bottom = window.innerHeight - 150;
+            if (r.top < top || r.bottom > bottom) {
+              window.scrollTo({ top: Math.max(0, window.scrollY + r.top - window.innerHeight * 0.3), behavior: 'smooth' });
+            }
+          };
           document.addEventListener('click', function(e){
             if (e.target.closest('a, button, input, select, textarea')) return;
             if ((window.getSelection() + '').length > 0) return;
+            // Beim Vorlesen springt ein Tipp auf einen Absatz dorthin.
+            if (window.babelReadAloud) {
+              var list = window.babelBlocks();
+              for (var i = 0; i < list.length; i++) {
+                if (list[i].contains(e.target)) { post({ type: 'speakFrom', paragraph: i }); return; }
+              }
+            }
             post({ type: 'tap' });
           });
         })();
@@ -201,6 +261,8 @@ struct ReaderView: View {
     @State private var showSettings = false
     @State private var showChapters = false
     @State private var showDetail = false
+    @State private var speech = ReadAloudPlayer.shared
+    @State private var showSpeech = false
 
     init(story: Story) {
         _model = State(initialValue: ReaderModel(story: story))
@@ -268,6 +330,11 @@ struct ReaderView: View {
         .sheet(isPresented: $fetcher.needsUserInteraction) {
             ChallengeSheet()
         }
+        .sheet(isPresented: $showSpeech) {
+            ReadAloudSheet()
+                .presentationDetents([.medium, .large])
+                .presentationBackgroundInteraction(.enabled(upThrough: .medium))
+        }
         .sheet(isPresented: $showChapters) {
             ChapterListSheet(model: model)
                 .presentationDetents([.medium, .large])
@@ -294,10 +361,17 @@ struct ReaderView: View {
             updateVolumeKeys()
         }
         .onChange(of: volumeScroll) { _, _ in updateVolumeKeys() }
+        .onChange(of: speech.cursor) { _, _ in syncSpeech() }
+        .onChange(of: speech.isActive) { _, _ in
+            syncSpeech()
+            updateVolumeKeys()
+        }
         .task {
             model.start()
             volumeKeys.onPress = { [model] direction in model.pager?.scrollPage(direction) }
+            model.onSpeakFrom = { [model, speech] chapter, paragraph in speech.play(model.story, chapter: chapter, paragraph: paragraph) }
             updateVolumeKeys()
+            syncSpeech()
         }
         .onDisappear {
             model.save()
@@ -305,9 +379,36 @@ struct ReaderView: View {
         }
     }
 
-    /// Lautstärketasten nur abfangen, solange der Reader vorne ist und die Option an ist.
+    /// Lautstärketasten nur abfangen, solange der Reader vorne ist und die Option an ist – beim Vorlesen regeln sie die Lautstärke.
     private func updateVolumeKeys() {
-        if volumeScroll && scenePhase == .active { volumeKeys.start() } else { volumeKeys.stop() }
+        if volumeScroll && scenePhase == .active && !speech.isActive { volumeKeys.start() } else { volumeKeys.stop() }
+    }
+
+    private var speaksThisStory: Bool { speech.story?.key == model.story.key }
+
+    /// Vorlese-Stelle in den Reader übertragen; beim Kapitelwechsel des Vorlesens mitblättern.
+    private func syncSpeech() {
+        let mine = speaksThisStory
+        model.speechActive = mine
+        model.speech = mine ? speech.cursor : nil
+        if mine, let cursor = speech.cursor, speech.isPlaying, cursor.chapter != model.chapterIndex {
+            model.jump(to: cursor.chapter)
+        }
+        model.pager?.applySpeech()
+    }
+
+    /// Lautsprecher-Knopf: startet beim ersten sichtbaren Absatz, läuft es schon, öffnet er die Steuerung.
+    private func speechButtonTapped() {
+        if speaksThisStory {
+            showSpeech = true
+            return
+        }
+        let chapter = model.chapterIndex
+        if let pager = model.pager {
+            pager.firstVisibleParagraph { paragraph in speech.play(model.story, chapter: chapter, paragraph: paragraph) }
+        } else {
+            speech.play(model.story, chapter: chapter)
+        }
     }
 
     // MARK: - Leisten (Liquid Glass)
@@ -341,6 +442,17 @@ struct ReaderView: View {
                 .buttonStyle(.plain)
                 .glassEffect(.regular.interactive(), in: .capsule)
                 .accessibilityLabel("Zur Storyseite")
+
+                Button {
+                    speechButtonTapped()
+                } label: {
+                    Image(systemName: speaksThisStory ? "speaker.wave.2.fill" : "speaker.wave.2")
+                        .font(.body.weight(.semibold)).frame(width: 24, height: 24)
+                        .symbolEffect(.variableColor.iterative, options: .repeating, isActive: speaksThisStory && speech.isPlaying)
+                }
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+                .accessibilityLabel(speaksThisStory ? "Vorlesen steuern" : "Vorlesen")
 
                 Button {
                     showSettings = true

@@ -82,6 +82,8 @@ final class VolumeKeyScroller {
             view?.removeFromSuperview()
         }
         Self.audioQueue.asyncAfter(deadline: .now() + 0.5) {
+            // Läuft gerade das Vorlesen, gehört die Sitzung ihm.
+            guard !ReadAloudPlayer.sessionInUse else { return }
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         }
     }

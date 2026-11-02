@@ -96,6 +96,8 @@ struct ReaderStyle {
         p { margin: 0 0 \(paragraphSpacing)em 0 !important; }
         img, svg, video { max-width: 100% !important; height: auto !important; }
         a { color: \(theme.link) !important; }
+        ::highlight(babel-speech) { background-color: \(theme.link)38; }
+        body .babel-speaking-fallback { background-color: \(theme.link)22 !important; border-radius: 4px; }
         h1, h2, h3, h4 { line-height: 1.25 !important; text-align: start !important; }
         hr { border: none !important; border-top: 1px solid currentColor !important; opacity: .25; margin: 2em 0 !important; }
         blockquote { margin-left: 1em !important; padding-left: .8em !important; border-left: 2px solid currentColor; opacity: .92; }

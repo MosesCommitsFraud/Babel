@@ -208,6 +208,16 @@
         }
       }
     },
+    "%@×" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@×"
+          }
+        }
+      }
+    },
     "%lld" : {},
     "%lld %%" : {},
     "%lld %% gelesen" : {
@@ -250,6 +260,16 @@
         }
       }
     },
+    "%lld Minuten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld minutes"
+          }
+        }
+      }
+    },
     "%lld neue Kapitel" : {
       "localizations" : {
         "en" : {
@@ -261,6 +281,7 @@
       }
     },
     "%lld Treffer" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -444,12 +465,32 @@
         }
       }
     },
+    "Absatz %lld von %lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Absatz %1$lld von %2$lld"
+          }
+        }
+      }
+    },
     "Absatzabstand %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paragraph spacing %@"
+          }
+        }
+      }
+    },
+    "Abspielen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play"
           }
         }
       }
@@ -718,6 +759,16 @@
         }
       }
     },
+    "Anhalten nach" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop after"
+          }
+        }
+      }
+    },
     "Anime/Manga" : {},
     "Anlegen" : {
       "localizations" : {
@@ -826,6 +877,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In German"
+          }
+        }
+      }
+    },
+    "Auf Standard zurücksetzen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset to defaults"
           }
         }
       }
@@ -1612,6 +1673,16 @@
         }
       }
     },
+    "Ende des Kapitels" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End of chapter"
+          }
+        }
+      }
+    },
     "English" : {},
     "Entfernen" : {
       "extractionState" : "stale",
@@ -1671,6 +1742,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Appearance"
+          }
+        }
+      }
+    },
+    "Erweitert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enhanced"
           }
         }
       }
@@ -2244,6 +2325,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gutenberg: %@"
+          }
+        }
+      }
+    },
+    "Hält um %@ an" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stops at %@"
           }
         }
       }
@@ -3215,6 +3306,16 @@
         }
       }
     },
+    "Nächster Absatz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next paragraph"
+          }
+        }
+      }
+    },
     "Nächstes Kapitel" : {
       "localizations" : {
         "en" : {
@@ -3231,6 +3332,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Name"
+          }
+        }
+      }
+    },
+    "Natürlicher klingen die Stimmen „Erweitert“ und „Premium“. Laden kannst du sie in den iOS-Einstellungen unter Bedienungshilfen → Gesprochene Inhalte → Stimmen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Enhanced” and “Premium” voices sound more natural. Download them in iOS Settings under Accessibility → Spoken Content → Voices."
           }
         }
       }
@@ -3457,6 +3568,16 @@
         }
       }
     },
+    "Offiziell: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Official: %@"
+          }
+        }
+      }
+    },
     "Offline" : {
       "localizations" : {
         "en" : {
@@ -3641,6 +3762,16 @@
         }
       }
     },
+    "Pause" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause"
+          }
+        }
+      }
+    },
     "Pausiert" : {
       "localizations" : {
         "en" : {
@@ -3671,6 +3802,16 @@
         }
       }
     },
+    "Premium" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium"
+          }
+        }
+      }
+    },
     "Project Gutenberg" : {},
     "Quelle" : {
       "localizations" : {
@@ -3684,6 +3825,7 @@
     },
     "Rating" : {},
     "Rating %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3834,6 +3976,16 @@
         }
       }
     },
+    "Seit %@ · zuletzt geprüft %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Since %1$@ · last checked %2$@"
+          }
+        }
+      }
+    },
     "Seitenrand %lld pt" : {
       "localizations" : {
         "en" : {
@@ -3851,6 +4003,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save"
+          }
+        }
+      }
+    },
+    "Sleep-Timer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sleep timer"
           }
         }
       }
@@ -3936,7 +4098,6 @@
       }
     },
     "Standard" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3994,6 +4155,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Keyword Search"
+          }
+        }
+      }
+    },
+    "Stimme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voice"
           }
         }
       }
@@ -4096,6 +4267,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exclude tags"
+          }
+        }
+      }
+    },
+    "Tempo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speed"
           }
         }
       }
@@ -4373,6 +4554,16 @@
         }
       }
     },
+    "Vorheriger Absatz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous paragraph"
+          }
+        }
+      }
+    },
     "Vorheriges Kapitel" : {
       "localizations" : {
         "en" : {
@@ -4389,6 +4580,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Template"
+          }
+        }
+      }
+    },
+    "Vorlesen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read aloud"
+          }
+        }
+      }
+    },
+    "Vorlesen beenden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop reading aloud"
+          }
+        }
+      }
+    },
+    "Vorlesen steuern" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read-aloud controls"
           }
         }
       }
@@ -4643,36 +4864,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Summary"
-          }
-        }
-      }
-    },
-    "Auf Standard zurücksetzen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reset to defaults"
-          }
-        }
-      }
-    },
-    "Offiziell: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Official: %@"
-          }
-        }
-      }
-    },
-    "Seit %@ · zuletzt geprüft %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Since %1$@ · last checked %2$@"
           }
         }
       }

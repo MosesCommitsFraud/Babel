@@ -97,6 +97,17 @@ final class ReaderPagerCoordinator: NSObject, UIPageViewControllerDataSource, UI
         pages[model.chapterIndex]?.load()
     }
 
+    /// Vorlese-Markierung auf alle geladenen Kapitelseiten übertragen.
+    func applySpeech() {
+        for page in pages.values { page.applySpeech() }
+    }
+
+    /// Erster sichtbarer Absatz des aktuellen Kapitels (Start fürs Vorlesen).
+    func firstVisibleParagraph(_ completion: @escaping (Int) -> Void) {
+        guard let page = pages[model.chapterIndex], page.isReady else { completion(0); return }
+        page.firstVisibleParagraph(completion)
+    }
+
     /// Eine Bildschirmseite weiter (+1) oder zurück (-1); am Kapitelende weiter zum nächsten Kapitel.
     func scrollPage(_ direction: Int) {
         guard let page = pages[model.chapterIndex], page.isReady else { return }
@@ -236,6 +247,24 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         }
     }
 
+    func applySpeech() {
+        guard isReady else { return }
+        let active = model.speechActive ? "true" : "false"
+        let js: String
+        if let s = model.speech, s.chapter == index {
+            js = "window.babelReadAloud = \(active); window.babelSpeak && window.babelSpeak(\(s.paragraph), \(ReaderModel.jsString(s.sentence ?? "")), true); true"
+        } else {
+            js = "window.babelReadAloud = \(active); window.babelSpeak && window.babelSpeak(-1, '', false); true"
+        }
+        webView.evaluateJavaScript(js, completionHandler: nil)
+    }
+
+    func firstVisibleParagraph(_ completion: @escaping (Int) -> Void) {
+        webView.evaluateJavaScript("window.babelFirstVisible ? window.babelFirstVisible() : 0") { result, _ in
+            completion((result as? NSNumber)?.intValue ?? 0)
+        }
+    }
+
     private func scroll(to fraction: Double) {
         webView.evaluateJavaScript("window.babelRestore && window.babelRestore(\(fraction)); true", completionHandler: nil)
     }
@@ -253,6 +282,7 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
             self.isReady = true
             self.isWaiting = false
             self.model.pageState(self.index, loading: false, error: nil)
+            self.applySpeech()
             self.onReady?()
         }
     }
