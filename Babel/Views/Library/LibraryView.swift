@@ -73,17 +73,15 @@ struct LibraryView: View {
                 }
                 .themedRows(grouped: false)
             } header: {
-                VStack(alignment: .leading, spacing: 4) {
-                    filterBar
-                    if query.activeCount > 0 { activeQueryBar }
-                }
+                // Aktive Filter nur als Zahl am Filter-Knopf, keine eigene Chip-Zeile (Wunsch des Nutzers).
+                filterBar
                 .textCase(nil)
                 .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
             }
 
         }
         .listStyle(.plain)
-        // Eine Animation für jeden Filterwechsel – Chip, Filter-Sheet, aktive Filter, Sortierung, Suche.
+        // Eine Animation für jeden Filterwechsel – Chip, Filter-Sheet, Sortierung, Suche.
         .animation(.snappy, value: filterState)
         .themedBackground()
         .navigationTitle("Bibliothek")
@@ -169,40 +167,6 @@ struct LibraryView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 6)
             }
-        }
-    }
-
-    /// Aktive Filter als Chips zum Wegtippen, dazu die Trefferzahl.
-    private var activeQueryBar: some View {
-        var items: [(String, () -> Void)] = []
-        for f in query.fandoms.sorted() { items.append((f, { query.fandoms.remove(f) })) }
-        for p in query.pairings.sorted() { items.append((p, { query.pairings.remove(p) })) }
-        for c in query.characters.sorted() { items.append((c, { query.characters.remove(c) })) }
-        for r in query.ratings.sorted() { items.append((String(localized: "Rating \(r)"), { query.ratings.remove(r) })) }
-        if query.completion != .any { items.append((query.completion.label, { query.completion = .any })) }
-        if query.length != .any { items.append((query.length.label, { query.length = .any })) }
-        for l in query.languages.sorted() { items.append((l, { query.languages.remove(l) })) }
-        for s in query.sources.sorted(by: { $0.rawValue < $1.rawValue }) { items.append((s.shortLabel, { query.sources.remove(s) })) }
-        return ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 6) {
-                Text("\(filtered.count) Treffer").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
-                ForEach(Array(items.enumerated()), id: \.offset) { _, item in
-                    Button {
-                        item.1()
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text(item.0).lineLimit(1)
-                            Image(systemName: "xmark").font(.caption2.weight(.bold))
-                        }
-                        .font(.caption.weight(.medium))
-                        .padding(.horizontal, 10).padding(.vertical, 6)
-                    }
-                    .buttonStyle(.plain)
-                    .glassEffect(.regular.tint(theme.primary.opacity(0.2)).interactive(), in: .capsule)
-                }
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 2)
         }
     }
 
