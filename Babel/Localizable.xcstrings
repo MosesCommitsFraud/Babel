@@ -3834,16 +3834,6 @@
         }
       }
     },
-    "Seit %@ – Suchen und Laden klappen gerade evtl. nicht." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Since %@ – searching and loading may not work right now."
-          }
-        }
-      }
-    },
     "Seitenrand %lld pt" : {
       "localizations" : {
         "en" : {
@@ -4663,6 +4653,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reset to defaults"
+          }
+        }
+      }
+    },
+    "Offiziell: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Official: %@"
+          }
+        }
+      }
+    },
+    "Seit %@ · zuletzt geprüft %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Since %1$@ · last checked %2$@"
           }
         }
       }

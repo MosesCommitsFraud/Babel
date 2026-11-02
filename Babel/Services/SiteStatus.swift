@@ -26,6 +26,10 @@ final class SiteStatus {
     struct Outage: Equatable {
         var reason: String
         var since: Date
+        /// Letzte Prüfung, die den Ausfall bestätigt hat.
+        var checked: Date = Date()
+        /// Offizielle Meldung (AO3: otwstatus.org), z. B. „AO3 Down for Maintenance“.
+        var official: String?
     }
 
     private(set) var outages: [Site: Outage] = [:]
@@ -41,7 +45,36 @@ final class SiteStatus {
 
     func reportDown(host: String, reason: String) {
         guard let site = Site(host: host) else { return }
-        withAnimation(.snappy) { outages[site] = Outage(reason: reason, since: outages[site]?.since ?? Date()) }
+        let old = outages[site]
+        withAnimation(.snappy) {
+            outages[site] = Outage(reason: reason, since: old?.since ?? Date(), checked: Date(), official: old?.official)
+        }
+        if site == .ao3, old == nil { Task { await fetchOfficialStatus() } }
+    }
+
+    /// AO3 meldet Wartungen und Störungen auf otwstatus.org (Statuspage). Von dort kommt der echte Beginn.
+    func fetchOfficialStatus() async {
+        struct Summary: Decodable {
+            struct Item: Decodable { let name: String; let status: String; let created_at: Date?; let scheduled_for: Date? }
+            let incidents: [Item]
+            let scheduled_maintenances: [Item]
+        }
+        guard let url = URL(string: "https://www.otwstatus.org/api/v2/summary.json"),
+              let (data, _) = try? await HTTPClient.shared.session.data(from: url) else { return }
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .custom { d in
+            let s = try d.singleValueContainer().decode(String.self)
+            let f = ISO8601DateFormatter()
+            f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            return f.date(from: s) ?? ISO8601DateFormatter().date(from: s) ?? Date()
+        }
+        guard let summary = try? decoder.decode(Summary.self, from: data) else { return }
+        let open = (summary.incidents + summary.scheduled_maintenances).filter { $0.status != "resolved" && $0.status != "completed" && $0.status != "scheduled" }
+        guard let item = open.first(where: { $0.name.localizedCaseInsensitiveContains("AO3") || $0.name.localizedCaseInsensitiveContains("Archive") }) ?? open.first,
+              var outage = outages[.ao3] else { return }
+        outage.official = item.name
+        if let start = item.created_at ?? item.scheduled_for, start < outage.since { outage.since = start }
+        outages[.ao3] = outage
     }
 
     /// Cloudflare-/Server-Fehlerseite statt Inhalt? Gibt den Fehlercode zurück.
@@ -86,6 +119,7 @@ final class SiteStatus {
         checking.insert(site)
         lastCheck[site] = Date()
         defer { checking.remove(site) }
+        if site == .ao3, outages[.ao3] != nil { await fetchOfficialStatus() }
         var request = URLRequest(url: site.homepage)
         request.httpMethod = "HEAD"
         request.timeoutInterval = 20
@@ -116,8 +150,12 @@ struct SiteStatusBanner: View {
                         Text("\(site.name) \(outage.reason)")
                             .font(.footnote.weight(.semibold))
                             .fixedSize(horizontal: false, vertical: true)
-                        Text("Seit \(outage.since.formatted(date: .omitted, time: .shortened)) – Suchen und Laden klappen gerade evtl. nicht.")
+                        if let official = outage.official {
+                            Text("Offiziell: \(official)").font(.caption2).foregroundStyle(.secondary)
+                        }
+                        Text("Seit \(Self.time(outage.since)) · zuletzt geprüft \(outage.checked.formatted(date: .omitted, time: .shortened))")
                             .font(.caption2).foregroundStyle(.secondary)
+                            .contentTransition(.numericText())
                     }
                     Spacer(minLength: 4)
                     Button {
@@ -141,6 +179,21 @@ struct SiteStatusBanner: View {
             }
         }
         .task { await status.check(site) }
+        // Solange die Seite weg ist: alle 2 Minuten von selbst nachsehen.
+        .task(id: status.outage(site) != nil) {
+            while status.outage(site) != nil {
+                try? await Task.sleep(for: .seconds(120))
+                guard !Task.isCancelled else { return }
+                await status.check(site, force: true)
+            }
+        }
+    }
+
+    /// Heute nur die Uhrzeit, sonst Datum + Uhrzeit.
+    private static func time(_ date: Date) -> String {
+        Calendar.current.isDateInToday(date)
+            ? date.formatted(date: .omitted, time: .shortened)
+            : date.formatted(.dateTime.day().month(.abbreviated).hour().minute())
     }
 }
 
