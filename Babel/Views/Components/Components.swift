@@ -168,9 +168,9 @@ struct StoryRow: View {
                         Text(story.title).font(.body.weight(.semibold)).lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
                         Spacer(minLength: 4)
-                        // Neu/Abgeschlossen als Symbol + Wort rechts neben dem Titel, bei beiden untereinander.
+                        // Neu/Abgeschlossen als Symbol + Wort rechts neben dem Titel, bei beiden untereinander, rechtsbündig.
                         if isNew || isComplete {
-                            VStack(alignment: .leading, spacing: 3) {
+                            VStack(alignment: .trailing, spacing: 3) {
                                 if isNew { badge(String(localized: "Neu"), symbol: "leaf.fill", color: Self.leafGreen) }
                                 if isComplete { badge(String(localized: "Abgeschlossen"), symbol: "checkmark.seal.fill", color: Self.completeBlue) }
                             }

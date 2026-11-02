@@ -16,14 +16,15 @@ final class AO3SearchModel {
         self.filters = filters
     }
 
-    func search() async {
+    /// `force`: am Zwischenspeicher vorbei (Ziehen zum Aktualisieren).
+    func search(force: Bool = false) async {
         page = 1
         hasNext = false
         error = nil
         isLoading = true
         defer { isLoading = false; hasSearched = true }
         do {
-            let result = try await AO3Service.search(filters, page: 1)
+            let result = try await AO3Service.search(filters, page: 1, fresh: force ? 0 : 300)
             let text = filters.title.trimmed.isEmpty ? filters.query : filters.title
             results = filters.sort == .bestMatch ? TitleRanking.rank(result.works, query: text) : result.works
             total = result.total
@@ -290,7 +291,7 @@ struct AO3SearchView: View {
                                        description: Text("Versuch es mit weniger Filtern."))
             }
         }
-        .refreshable { await model.search() }
+        .refreshable { await model.search(force: true) }
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 Menu {

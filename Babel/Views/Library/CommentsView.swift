@@ -40,7 +40,7 @@ struct CommentsView: View {
                 ContentUnavailableView("Noch keine \(title)", systemImage: "text.bubble")
             }
         }
-        .refreshable { await load(page: 1) }
+        .refreshable { await load(page: 1, force: true) }
         .task { if !didLoad { await load(page: 1) } }
     }
 
@@ -70,13 +70,13 @@ struct CommentsView: View {
         .padding(.vertical, 2)
     }
 
-    private func load(page: Int) async {
+    private func load(page: Int, force: Bool = false) async {
         guard !isLoading else { return }
         isLoading = true
         error = nil
         defer { isLoading = false; didLoad = true }
         do {
-            let result = try await CommentsService.load(source: story.source, storyID: story.sourceID, page: page)
+            let result = try await CommentsService.load(source: story.source, storyID: story.sourceID, page: page, force: force)
             if page == 1 { comments = result.comments } else { comments += result.comments }
             self.page = page
             hasNext = result.hasNext && !result.comments.isEmpty

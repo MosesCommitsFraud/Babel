@@ -18,10 +18,10 @@ struct CommentsPage: Sendable {
 }
 
 enum CommentsService {
-    static func load(source: StorySource, storyID: String, page: Int) async throws -> CommentsPage {
+    static func load(source: StorySource, storyID: String, page: Int, force: Bool = false) async throws -> CommentsPage {
         switch source {
         case .ffn: try await ffnReviews(storyID: storyID, page: page)
-        case .ao3: try await ao3Comments(workID: storyID, page: page)
+        case .ao3: try await ao3Comments(workID: storyID, page: page, force: force)
         default: CommentsPage(comments: [], hasNext: false)
         }
     }
@@ -59,11 +59,11 @@ enum CommentsService {
 
     // MARK: AO3 – /works/<id>?show_comments=true&page=<seite>
 
-    static func ao3Comments(workID: String, page: Int) async throws -> CommentsPage {
+    static func ao3Comments(workID: String, page: Int, force: Bool = false) async throws -> CommentsPage {
         var comps = URLComponents(url: AO3Service.base.appendingPathComponent("works/\(workID)"), resolvingAgainstBaseURL: false)!
         comps.queryItems = [URLQueryItem(name: "show_comments", value: "true"), URLQueryItem(name: "view_adult", value: "true")]
         if page > 1 { comps.queryItems?.append(URLQueryItem(name: "page", value: String(page))) }
-        let (html, _, status) = try await AO3Service.fetchCachedHTML(comps.url!, fresh: 600)
+        let (html, _, status) = try await AO3Service.fetchCachedHTML(comps.url!, fresh: force ? 0 : 300)
         guard status == 200 else { throw BabelError.http(status) }
         return try await Task.detached(priority: .userInitiated) {
             let doc = try SwiftSoup.parse(html, AO3Service.base.absoluteString)

@@ -287,15 +287,16 @@ enum AO3Service {
         var hasNext: Bool
     }
 
-    static func search(_ filters: AO3Filters, page: Int) async throws -> ListPage {
-        let (html, _, status) = try await fetchCachedHTML(searchURL(filters, page: page), fresh: 600)
+    /// `fresh`: wie alt ein gespeichertes Ergebnis sein darf (0 = immer neu laden, z. B. beim Ziehen zum Aktualisieren).
+    static func search(_ filters: AO3Filters, page: Int, fresh: TimeInterval = 300) async throws -> ListPage {
+        let (html, _, status) = try await fetchCachedHTML(searchURL(filters, page: page), fresh: fresh)
         guard status == 200 else { throw BabelError.http(status) }
         return try await Task.detached(priority: .userInitiated) { try parseWorkList(html) }.value
     }
 
     /// Beliebige AO3-Listen-URL (Tag-Seite, Autor:in, Serie …).
-    static func list(url: URL) async throws -> ListPage {
-        let (html, _, status) = try await fetchCachedHTML(url, fresh: 600)
+    static func list(url: URL, fresh: TimeInterval = 300) async throws -> ListPage {
+        let (html, _, status) = try await fetchCachedHTML(url, fresh: fresh)
         guard status == 200 else { throw BabelError.http(status) }
         return try await Task.detached(priority: .userInitiated) { try parseWorkList(html) }.value
     }
