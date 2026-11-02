@@ -9,7 +9,7 @@ import SwiftUI
 /// Der Reader markiert den gerade gesprochenen Satz (`cursor`).
 @MainActor
 @Observable
-final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
+final class ReadAloudPlayer: NSObject {
     static let shared = ReadAloudPlayer()
     static let rateKey = "readAloud.rate"
 
@@ -52,21 +52,36 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
     var chapterTitle: String { story?.title(ofChapter: chapter) ?? "" }
 
     /// Tempo als Faktor zur normalen Sprechgeschwindigkeit (0,6 … 1,6).
+    /// Beim Schieben nur kurz entprellt übernommen – nicht bei jedem Zwischenwert neu starten.
     var rate: Double = UserDefaults.standard.object(forKey: rateKey) as? Double ?? 1.0 {
         didSet {
+            guard rate != oldValue else { return }
             UserDefaults.standard.set(rate, forKey: Self.rateKey)
-            restartAtSentence()
+            scheduleRestart(after: .milliseconds(180))
         }
     }
+
+    /// Stimmen der aktuellen Sprache, beste zuerst – einmal je Sprache geladen (die iOS-Abfrage ist langsam).
+    private(set) var voices: [AVSpeechSynthesisVoice] = []
+    private(set) var voiceID: String?
 
     /// Wird vom Ton-Teil gelesen (anderer Thread): Lautstärketasten-Blättern lässt die Audiositzung dann in Ruhe.
     nonisolated(unsafe) static var sessionInUse = false
     private static let audioQueue = DispatchQueue(label: "babel.read-aloud", qos: .userInitiated)
 
-    private let synth = AVSpeechSynthesizer()
-    private var utterance: AVSpeechUtterance?
+    private let engine = SpeechEngine()
+    /// Nummer der laufenden Äußerung – Rückmeldungen älterer (abgebrochener) Äußerungen werden ignoriert.
+    private var token = 0
+    private var speaking = false
+    /// Pausiert mitten in einer Äußerung → beim Fortsetzen dort weiter. Nach Tempo-/Stimmenwechsel neu ansetzen.
+    private var pausedInUtterance = false
+    private var sessionActive = false
     /// Ab welcher Stelle des Absatzes die aktuelle Äußerung beginnt (nach Tempo-/Stimmenwechsel mitten im Absatz).
     private var utteranceOffset = 0
+    /// Beginn des gerade gesprochenen Worts im Absatz – dort setzt ein Neustart wieder an.
+    private var wordLocation = 0
+    private var restartTask: Task<Void, Never>?
+    private var voicesTask: Task<Void, Never>?
     private var sentences: [(range: NSRange, text: String)] = []
     private var sentenceIndex = 0
     private var loadTask: Task<Void, Never>?
@@ -76,7 +91,13 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
 
     override init() {
         super.init()
-        synth.delegate = self
+        engine.onWord = { [weak self] token, range in
+            DispatchQueue.main.async { MainActor.assumeIsolated { self?.willSpeak(token, range: range) } }
+        }
+        engine.onFinish = { [weak self] token in
+            DispatchQueue.main.async { MainActor.assumeIsolated { self?.didFinish(token) } }
+        }
+        loadVoices(for: language)
         setUpRemoteCommands()
         let center = NotificationCenter.default
         center.addObserver(forName: AVAudioSession.interruptionNotification, object: nil, queue: .main) { [weak self] note in
@@ -111,7 +132,10 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
     func pause() {
         guard isPlaying else { return }
         isPlaying = false
-        if synth.isSpeaking { synth.pauseSpeaking(at: .word) }
+        if speaking {
+            engine.pause()
+            pausedInUtterance = true
+        }
         updateNowPlaying()
     }
 
@@ -119,8 +143,12 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
         guard let story else { return }
         if paragraphs.isEmpty { load(chapter: chapter, startAt: paragraph); return }
         isPlaying = true
-        activateSession {
-            if self.synth.isPaused { self.synth.continueSpeaking() } else { self.speakCurrent(from: self.sentenceStart) }
+        activateSession()
+        if pausedInUtterance {
+            pausedInUtterance = false
+            engine.resume()
+        } else {
+            speakCurrent(from: wordLocation)
         }
         story.lastOpenedAt = .now
         updateNowPlaying()
@@ -132,8 +160,11 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
         sleepTask?.cancel()
         sleepTimer = .off
         sleepEnds = nil
-        utterance = nil
-        synth.stopSpeaking(at: .immediate)
+        restartTask?.cancel()
+        token += 1
+        speaking = false
+        pausedInUtterance = false
+        engine.stop()
         isPlaying = false
         isLoading = false
         story = nil
@@ -142,6 +173,7 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
         MPNowPlayingInfoCenter.default().playbackState = .stopped
         Self.sessionInUse = false
+        sessionActive = false
         Self.audioQueue.async {
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         }
@@ -186,22 +218,33 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
 
     // MARK: - Stimmen
 
-    /// Alle passenden Stimmen für die Sprache des Kapitels, beste zuerst.
-    var voices: [AVSpeechSynthesisVoice] { Self.voices(for: language) }
-
-    var voice: AVSpeechSynthesisVoice? {
-        if let id = UserDefaults.standard.string(forKey: voiceKey), let v = AVSpeechSynthesisVoice(identifier: id) { return v }
-        return voices.first
-    }
-
-    func setVoice(_ voice: AVSpeechSynthesisVoice?) {
-        UserDefaults.standard.set(voice?.identifier, forKey: voiceKey)
-        restartAtSentence()
+    func setVoice(_ id: String) {
+        guard id != voiceID else { return }
+        voiceID = id
+        UserDefaults.standard.set(id, forKey: voiceKey)
+        engine.prepare(voice: id)
+        scheduleRestart(after: .zero)
     }
 
     private var voiceKey: String { "readAloud.voice.\(language)" }
 
-    static func voices(for language: String) -> [AVSpeechSynthesisVoice] {
+    /// Stimmenliste im Hintergrund holen; gewählte (oder beste) Stimme gleich vorladen.
+    private func loadVoices(for language: String) {
+        voicesTask?.cancel()
+        let saved = UserDefaults.standard.string(forKey: "readAloud.voice.\(language)")
+        voicesTask = Task { [weak self] in
+            let list = await Task.detached(priority: .userInitiated) { Self.voices(for: language) }.value
+            guard let self, !Task.isCancelled, self.language == language else { return }
+            self.voices = list
+            let id = list.first(where: { $0.identifier == saved })?.identifier ?? list.first?.identifier
+            if id != self.voiceID {
+                self.voiceID = id
+                if let id { self.engine.prepare(voice: id) }
+            }
+        }
+    }
+
+    nonisolated static func voices(for language: String) -> [AVSpeechSynthesisVoice] {
         let region = Locale.current.region?.identifier ?? ""
         return AVSpeechSynthesisVoice.speechVoices()
             .filter { $0.language.hasPrefix(language) && !$0.voiceTraits.contains(.isNoveltyVoice) }
@@ -218,8 +261,10 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
     private func load(chapter index: Int, startAt start: Int) {
         guard let story else { return }
         loadTask?.cancel()
-        synth.stopSpeaking(at: .immediate)
-        utterance = nil
+        token += 1
+        speaking = false
+        pausedInUtterance = false
+        engine.stop()
         chapter = index
         paragraph = start
         isLoading = true
@@ -238,7 +283,12 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
                 self.loadTask = nil
                 self.isLoading = false
                 self.paragraphs = blocks
-                self.language = Self.detectLanguage(blocks)
+                let language = Self.detectLanguage(blocks)
+                if language != self.language || self.voices.isEmpty {
+                    self.language = language
+                    self.voiceID = nil
+                    self.loadVoices(for: language)
+                }
                 guard !blocks.isEmpty else {
                     // Leeres Kapitel (z. B. nur Bilder) – gleich weiter.
                     if index + 1 < story.knownChapterCount { self.load(chapter: index + 1, startAt: 0) } else { self.finish() }
@@ -288,13 +338,20 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
         guard let story, paragraphs.indices.contains(index) else { return }
         paragraph = index
         isPlaying = speak
+        pausedInUtterance = false
+        wordLocation = 0
         prepareSentences()
         savePosition(story)
-        if speak { activateSession { self.speakCurrent(from: 0) } } else { utterance = nil; synth.stopSpeaking(at: .immediate) }
+        if speak {
+            activateSession()
+            speakCurrent(from: 0)
+        } else {
+            token += 1
+            speaking = false
+            engine.stop()
+        }
         updateNowPlaying()
     }
-
-    private var sentenceStart: Int { sentences.indices.contains(sentenceIndex) ? sentences[sentenceIndex].range.location : 0 }
 
     private func prepareSentences() {
         let text = paragraphs[paragraph]
@@ -309,28 +366,40 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
     }
 
     /// Spricht den aktuellen Absatz ab `offset` (UTF-16) – nach Tempo- oder Stimmenwechsel mitten im Absatz.
-    private func speakCurrent(from offset: Int) {
+    /// `restart`: laufende Äußerung sofort ersetzen (neue Synthese-Instanz, sonst verschluckt iOS die neue teils).
+    private func speakCurrent(from offset: Int, restart: Bool = false) {
         guard isPlaying, paragraphs.indices.contains(paragraph) else { return }
         let text = paragraphs[paragraph] as NSString
         let start = min(max(0, offset), text.length)
-        let next = AVSpeechUtterance(string: text.substring(from: start))
-        next.voice = voice
-        next.rate = Float(min(Double(AVSpeechUtteranceMaximumSpeechRate), Double(AVSpeechUtteranceDefaultSpeechRate) * rate))
-        next.postUtteranceDelay = 0.15
         utteranceOffset = start
-        utterance = next
-        synth.stopSpeaking(at: .immediate)
-        synth.speak(next)
+        wordLocation = start
+        token += 1
+        speaking = true
+        let rate = Float(min(Double(AVSpeechUtteranceMaximumSpeechRate), Double(AVSpeechUtteranceDefaultSpeechRate) * self.rate))
+        engine.speak(text.substring(from: start), voice: voiceID, rate: rate, token: token, restart: restart)
     }
 
-    private func restartAtSentence() {
-        guard isPlaying, !paragraphs.isEmpty, utterance != nil else { return }
-        speakCurrent(from: sentenceStart)
+    /// Tempo/Stimme geändert: am gerade gesprochenen Wort mit den neuen Werten weiter.
+    private func scheduleRestart(after delay: Duration) {
+        restartTask?.cancel()
+        restartTask = Task { [weak self] in
+            if delay > .zero { try? await Task.sleep(for: delay) }
+            guard let self, !Task.isCancelled, !self.paragraphs.isEmpty else { return }
+            if self.isPlaying {
+                if self.speaking { self.speakCurrent(from: self.wordLocation, restart: true) }
+            } else if self.pausedInUtterance {
+                // Pausiert: beim Fortsetzen mit den neuen Werten neu ansetzen statt alt weiterzusprechen.
+                self.pausedInUtterance = false
+                self.token += 1
+                self.speaking = false
+                self.engine.stop()
+            }
+        }
     }
 
-    private func didFinish(_ id: ObjectIdentifier) {
-        guard let utterance, ObjectIdentifier(utterance) == id, isPlaying else { return }
-        self.utterance = nil
+    private func didFinish(_ finished: Int) {
+        guard finished == token, isPlaying else { return }
+        speaking = false
         if paragraph + 1 < paragraphs.count {
             start(at: paragraph + 1)
         } else if sleepTimer == .chapterEnd {
@@ -344,9 +413,10 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
         }
     }
 
-    private func willSpeak(_ id: ObjectIdentifier, range: NSRange) {
-        guard let utterance, ObjectIdentifier(utterance) == id else { return }
+    private func willSpeak(_ spoken: Int, range: NSRange) {
+        guard spoken == token else { return }
         let location = utteranceOffset + range.location
+        wordLocation = location
         guard let index = sentences.lastIndex(where: { $0.range.location <= location }), index != sentenceIndex else { return }
         sentenceIndex = index
         updateCursor()
@@ -354,7 +424,7 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
 
     private func finish() {
         isPlaying = false
-        utterance = nil
+        speaking = false
         updateNowPlaying()
     }
 
@@ -374,19 +444,22 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
 
     // MARK: - Audiositzung
 
-    private func activateSession(_ then: @escaping @MainActor () -> Void) {
+    /// Einmal pro Vorlese-Sitzung, im Hintergrund – nicht vor jedem Absatz (das gab Pausen dazwischen).
+    private func activateSession() {
         Self.sessionInUse = true
+        guard !sessionActive else { return }
+        sessionActive = true
         Self.audioQueue.async {
             let session = AVAudioSession.sharedInstance()
             try? session.setCategory(.playback, mode: .spokenAudio, options: [])
             try? session.setActive(true)
-            DispatchQueue.main.async { MainActor.assumeIsolated { then() } }
         }
     }
 
     private func interruption(_ type: AVAudioSession.InterruptionType?, shouldResume: Bool) {
         switch type {
         case .began:
+            sessionActive = false
             resumeAfterInterruption = isPlaying
             pause()
         case .ended:
@@ -444,17 +517,80 @@ final class ReadAloudPlayer: NSObject, AVSpeechSynthesizerDelegate {
     nonisolated private static func artwork(_ image: UIImage) -> MPMediaItemArtwork {
         MPMediaItemArtwork(boundsSize: image.size) { _ in image }
     }
+}
 
-    // MARK: - AVSpeechSynthesizerDelegate
-
-    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        let id = ObjectIdentifier(utterance)
-        DispatchQueue.main.async { MainActor.assumeIsolated { self.didFinish(id) } }
+/// Die eigentliche Sprachausgabe auf einer eigenen Warteschlange: Stimmen laden, Starten und Abbrechen
+/// blockieren so nie die Oberfläche. Für einen Neustart mitten im Satz gibt es eine frische Synthese-Instanz –
+/// direkt nach `stopSpeaking` verwirft iOS sonst teils auch die neue Äußerung.
+final class SpeechEngine: NSObject, AVSpeechSynthesizerDelegate, @unchecked Sendable {
+    /// Merkt sich, zu welcher Äußerung (Nummer) die Rückmeldungen gehören.
+    private final class Synth: AVSpeechSynthesizer, @unchecked Sendable {
+        var token = 0
     }
 
-    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange,
-                                       utterance: AVSpeechUtterance) {
-        let id = ObjectIdentifier(utterance)
-        DispatchQueue.main.async { MainActor.assumeIsolated { self.willSpeak(id, range: characterRange) } }
+    var onWord: (@Sendable (Int, NSRange) -> Void)?
+    var onFinish: (@Sendable (Int) -> Void)?
+
+    private let queue = DispatchQueue(label: "babel.speech", qos: .userInitiated)
+    private var synth: Synth?
+    private var warmed: Set<String> = []
+    /// Muss leben, bis die stumme Vorlade-Äußerung durch ist.
+    private var warmer: AVSpeechSynthesizer?
+
+    func speak(_ text: String, voice: String?, rate: Float, token: Int, restart: Bool) {
+        queue.async {
+            let synth: Synth
+            if restart || self.synth == nil || self.synth?.isSpeaking == true || self.synth?.isPaused == true {
+                self.discard()
+                synth = Synth()
+                synth.delegate = self
+                self.synth = synth
+            } else {
+                synth = self.synth!
+            }
+            synth.token = token
+            let utterance = AVSpeechUtterance(string: text)
+            utterance.voice = voice.flatMap(AVSpeechSynthesisVoice.init(identifier:))
+            utterance.rate = rate
+            utterance.postUtteranceDelay = 0.1
+            synth.speak(utterance)
+        }
+    }
+
+    func pause() { queue.async { self.synth?.pauseSpeaking(at: .word) } }
+    func resume() { queue.async { self.synth?.continueSpeaking() } }
+    func stop() { queue.async { self.discard() } }
+
+    /// Stimme einmal stumm laden, damit der Wechsel später ohne Wartezeit klappt.
+    func prepare(voice id: String) {
+        queue.async {
+            guard !self.warmed.contains(id), let voice = AVSpeechSynthesisVoice(identifier: id) else { return }
+            self.warmed.insert(id)
+            let warm = AVSpeechSynthesizer()
+            self.warmer = warm
+            let utterance = AVSpeechUtterance(string: "a")
+            utterance.voice = voice
+            utterance.volume = 0
+            // Nur rendern, nichts abspielen – lädt die Stimme in den Speicher.
+            warm.write(utterance) { _ in }
+        }
+    }
+
+    private func discard() {
+        guard let old = synth else { return }
+        old.delegate = nil
+        old.stopSpeaking(at: .immediate)
+        synth = nil
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, willSpeakRangeOfSpeechString characterRange: NSRange,
+                           utterance: AVSpeechUtterance) {
+        guard let synth = synthesizer as? Synth else { return }
+        onWord?(synth.token, characterRange)
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        guard let synth = synthesizer as? Synth else { return }
+        onFinish?(synth.token)
     }
 }

@@ -41,8 +41,8 @@ struct ReadAloudSheet: View {
 
                 Section {
                     Picker("Stimme", selection: Binding(
-                        get: { player.voice?.identifier ?? "" },
-                        set: { id in player.setVoice(AVSpeechSynthesisVoice(identifier: id)) }
+                        get: { player.voiceID ?? "" },
+                        set: { player.setVoice($0) }
                     )) {
                         ForEach(player.voices, id: \.identifier) { voice in
                             Text(Self.label(voice)).tag(voice.identifier)
