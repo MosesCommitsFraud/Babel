@@ -101,7 +101,7 @@ struct StoryDetailView: View {
                 }
                 TagChip(text: story.source.label, symbol: story.source.symbol)
                 if story.newChapters > 0 {
-                    Label(story.newChapters == 1 ? String(localized: "1 neues Kapitel") : String(localized: "\(story.newChapters) neue Kapitel"), systemImage: "sparkles")
+                    Label(story.newChapters == 1 ? String(localized: "1 neues Kapitel") : String(localized: "\(story.newChapters) neue Kapitel"), systemImage: "text.badge.plus")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.red)
                 }

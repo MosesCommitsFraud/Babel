@@ -90,19 +90,18 @@ struct ContinueReadingAccessory: View {
         if let story = recent.first {
             Button { reader.open(story) } label: {
                 HStack(spacing: 12) {
-                    // Klein und mit Abstand, damit das Cover nicht an die runde Kante der Leiste stößt.
-                    CoverView(story: story.asRemote, localCover: ContentStore.coverFileURL(story), width: 22)
-                        .padding(.vertical, 6)
+                    // Quadratisch wie die Mini-Player-Cover in Apple Music, mit Abstand zur runden Kante.
+                    CoverView(story: story.asRemote, localCover: ContentStore.coverFileURL(story), width: 30, aspect: 1)
+                        .padding(.vertical, 8)
                     VStack(alignment: .leading, spacing: 1) {
                         Text(story.title).font(.subheadline.weight(.semibold)).lineLimit(1)
                         Text("\(story.title(ofChapter: story.currentChapter)) · \(Int(story.overallProgress * 100)) %")
                             .font(.caption).foregroundStyle(.secondary).lineLimit(1)
                     }
-                    Spacer(minLength: 8)
-                    Image(systemName: "play.fill").font(.body)
+                    Spacer(minLength: 0)
                 }
-                .padding(.leading, 20)
-                .padding(.trailing, 16)
+                .padding(.leading, 16)
+                .padding(.trailing, 20)
                 .contentShape(.rect)
             }
             .buttonStyle(.plain)

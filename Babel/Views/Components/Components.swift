@@ -5,8 +5,10 @@ struct CoverView: View {
     let story: RemoteStory
     var localCover: URL? = nil
     var width: CGFloat = 56
+    /// Standard 2:3 wie ein Buch; `1` gibt ein quadratisches Vorschaubild (Weiterlesen-Leiste).
+    var aspect: CGFloat = 1.5
 
-    private var height: CGFloat { width * 1.5 }
+    private var height: CGFloat { width * aspect }
 
     var body: some View {
         Group {

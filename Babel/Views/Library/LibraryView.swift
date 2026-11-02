@@ -139,7 +139,7 @@ struct LibraryView: View {
             if hideEmpty && n == 0 { return }
             items.append(ChipItem(title: title, symbol: symbol, value: value, count: n))
         }
-        add(String(localized: "Neue Kapitel"), "sparkles", .updates, hideEmpty: true)
+        add(String(localized: "Neue Kapitel"), "text.badge.plus", .updates, hideEmpty: true)
         for status in [ReadingStatus.reading, .planned, .finished, .paused, .dropped] {
             add(status.label, status.symbol, .status(status))
         }
