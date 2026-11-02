@@ -106,6 +106,19 @@ final class FFNAccount {
     private(set) var isSyncing = false
     var isLoggedIn: Bool { !username.isEmpty }
     private static let lastSyncKey = "ffn.lastSync"
+    /// Welche Geschichten auf FFN gefolgt/favorisiert sind (Stand des letzten Abgleichs, danach per App-Aktion gepflegt).
+    private(set) var followIDs = Set(UserDefaults.standard.stringArray(forKey: "ffn.followIDs") ?? [])
+    private(set) var favoriteIDs = Set(UserDefaults.standard.stringArray(forKey: "ffn.favoriteIDs") ?? [])
+
+    func setMembership(_ list: FFNService.AccountList, storyID: String, _ on: Bool) {
+        if list == .follows {
+            if on { followIDs.insert(storyID) } else { followIDs.remove(storyID) }
+            UserDefaults.standard.set(Array(followIDs), forKey: "ffn.followIDs")
+        } else {
+            if on { favoriteIDs.insert(storyID) } else { favoriteIDs.remove(storyID) }
+            UserDefaults.standard.set(Array(favoriteIDs), forKey: "ffn.favoriteIDs")
+        }
+    }
     /// Einmal neu abgleichen: Früher haben Follows (nur Titel) die Kapitelzahl aus den Favoriten mit 1 überschrieben.
     private static let repairKey = "ffn.metaRepair.1"
 
@@ -152,6 +165,9 @@ final class FFNAccount {
         for list in FFNService.AccountList.allCases {
             do {
                 let stories = try await FFNService.accountList(list, username: username)
+                let ids = stories.map(\.sourceID)
+                if list == .follows { followIDs = Set(ids) } else { favoriteIDs = Set(ids) }
+                UserDefaults.standard.set(ids, forKey: list == .follows ? "ffn.followIDs" : "ffn.favoriteIDs")
                 added += library.importAll(stories, context: context, skipRemoved: true) { Self.configure($0, for: list) }
                 linkOnly += stories.filter(\.isLinkOnly)
                 counts.append("\(list.label): \(stories.count)")

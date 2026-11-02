@@ -24,9 +24,12 @@ struct StoryDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 header
-                actions
+                VStack(spacing: 10) {
+                    actions
+                    // Direkt unter den Lesen-Knöpfen: was du auf AO3/FFN gesetzt hast.
+                    SiteActionsBar(story: story)
+                }
                 if !ratingItems.isEmpty { ratingBar }
-                SiteActionsBar(story: story)
                 if story.inLibrary { organize }
                 stats
                 if !story.summary.isEmpty { summary }

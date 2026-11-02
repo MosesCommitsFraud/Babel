@@ -14,7 +14,7 @@ enum SiteActions {
         var subscribed = false
     }
 
-    enum AO3Action: Sendable { case kudos, bookmark, subscribe }
+    enum AO3Action: Sendable { case kudos, bookmark, removeBookmark, subscribe }
 
     static func ao3State(workID: String) async throws -> AO3State {
         let page = try await ao3WorkPage(workID)
@@ -28,10 +28,14 @@ enum SiteActions {
         let state = try parseState(page.html)
         guard state.loggedIn else { throw BabelError.loginRequired }
         let doc = try SwiftSoup.parse(page.html, page.url.absoluteString)
+        if action == .removeBookmark {
+            try await removeBookmark(doc, base: page.url)
+            return try await ao3State(workID: workID)
+        }
         let selector: String = switch action {
         case .kudos: "form#new_kudo"
         case .bookmark: "form#bookmark-form, form.new_bookmark, form[action$=\"/bookmarks\"]"
-        case .subscribe: "li.subscribe form, form.ajax-create-destroy[action*=\"subscriptions\"]"
+        case .subscribe, .removeBookmark: "li.subscribe form, form.ajax-create-destroy[action*=\"subscriptions\"]"
         }
         guard let form = try doc.select(selector).first() else {
             // Kein Lesezeichen-Formular, aber schon gesetzt → nichts zu tun.
@@ -43,6 +47,15 @@ enum SiteActions {
         var fresh = try await ao3State(workID: workID)
         if action == .kudos { fresh.kudosGiven = true }
         return fresh
+    }
+
+    /// Lesezeichen löschen: ID aus dem „Edit Bookmark“-Link, dann wie AO3s Löschen-Knopf (`_method=delete`).
+    private static func removeBookmark(_ doc: Document, base: URL) async throws {
+        guard let edit = try doc.select("a").array().first(where: { (try? $0.text().trimmed) == "Edit Bookmark" }),
+              let id = try edit.attr("href").firstMatch(#"/bookmarks/(\d+)"#)?[1] else { return }
+        let token = try doc.select("meta[name=csrf-token]").first()?.attr("content") ?? ""
+        try await post(AO3Service.base.appendingPathComponent("bookmarks/\(id)"),
+                       fields: [("_method", "delete"), ("authenticity_token", token)], referer: base)
     }
 
     private static func ao3WorkPage(_ workID: String) async throws -> (html: String, url: URL) {
@@ -83,6 +96,10 @@ enum SiteActions {
             else { value = try input.attr("value") }
             fields.append((try input.attr("name"), value))
         }
+        try await post(url, fields: fields, referer: base)
+    }
+
+    private static func post(_ url: URL, fields: [(String, String)], referer base: URL) async throws {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -101,8 +118,27 @@ enum SiteActions {
 
     // MARK: - FanFiction.net
 
-    /// FFN kennt nur „hinzufügen“ – Entfernen geht auf der Website unter Favoriten/Follows.
-    /// Gibt FFNs Bestätigungstext zurück.
+    /// Aus FFNs Follows bzw. Favoriten entfernen – wie der „Delete“-Knopf auf der Konto-Seite
+    /// (`POST /alert/story.php` bzw. `/favorites/story.php`, `action=remove-multi`, `rids[]`).
+    static func ffnRemove(storyID: String, from list: FFNService.AccountList) async throws {
+        let script = """
+        const body = new URLSearchParams();
+        body.append('action', 'remove-multi');
+        body.append('rids[]', id);
+        const r = await fetch(path, { method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+        const text = await r.text();
+        if (/Login Required/i.test(text)) return 'login';
+        return r.ok ? 'ok' : 'error';
+        """
+        let path = list == .follows ? "/alert/story.php" : "/favorites/story.php"
+        let result = try await WebFetcher.shared.evaluate(onSite: FFNService.base, body: script,
+                                                          arguments: ["id": storyID, "path": path]) as? String
+        if result == "login" { throw BabelError.ffnLoginRequired }
+        guard result == "ok" else { throw BabelError.http(500) }
+    }
+
+    /// Zu Follows/Favoriten hinzufügen. Gibt FFNs Bestätigungstext zurück.
     static func ffnFollowFav(storyID: String, follow: Bool, favorite: Bool) async throws -> String {
         let script = """
         if (typeof XUNAME === 'undefined' || !XUNAME) return JSON.stringify({ login: false });
