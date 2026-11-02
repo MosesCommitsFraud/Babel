@@ -280,6 +280,16 @@
         }
       }
     },
+    "%lld neue Kapitel – zuletzt: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld new chapters – latest: %2$@"
+          }
+        }
+      }
+    },
     "%lld Treffer" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -467,10 +477,10 @@
     },
     "Absatz %lld von %lld" : {
       "localizations" : {
-        "de" : {
+        "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Absatz %1$lld von %2$lld"
+            "state" : "translated",
+            "value" : "Paragraph %1$lld of %2$lld"
           }
         }
       }
@@ -1003,6 +1013,16 @@
         }
       }
     },
+    "Babel schaut im Hintergrund nach neuen Kapiteln bei Geschichten in deiner Bibliothek, die du angefangen hast. Wann genau, entscheidet iOS – meist einige Male am Tag, öfter, wenn du Babel oft nutzt." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Babel checks for new chapters in the background for stories in your library you have started. iOS decides when – usually a few times a day, more often if you use Babel a lot."
+          }
+        }
+      }
+    },
     "Bearbeiten" : {
       "localizations" : {
         "en" : {
@@ -1069,6 +1089,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "With several entries, one of them is enough."
+          }
+        }
+      }
+    },
+    "Bei neuen Kapiteln benachrichtigen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify about new chapters"
           }
         }
       }
@@ -3256,6 +3286,36 @@
         }
       }
     },
+    "Mitteilungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        }
+      }
+    },
+    "Mitteilungen in iOS erlauben" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow notifications in iOS"
+          }
+        }
+      }
+    },
+    "Mitteilungen sind für Babel in iOS ausgeschaltet – ohne Erlaubnis kommt nichts an." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications for Babel are turned off in iOS – nothing will arrive without permission."
+          }
+        }
+      }
+    },
     "Modus: %@" : {
       "localizations" : {
         "en" : {
@@ -3443,6 +3503,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "New color scheme"
+          }
+        }
+      }
+    },
+    "Neues Kapitel: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New chapter: %@"
           }
         }
       }
@@ -4814,6 +4884,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recently Added"
+          }
+        }
+      }
+    },
+    "Zuletzt im Hintergrund geprüft" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last checked in background"
           }
         }
       }

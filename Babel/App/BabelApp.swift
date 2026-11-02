@@ -5,6 +5,8 @@ import SwiftData
 struct BabelApp: App {
     @State private var reader = ReaderPresenter()
     @State private var library = LibraryManager.shared
+    @State private var notifier = UpdateNotifier.shared
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         ReaderDefaults.migrate()
@@ -24,9 +26,17 @@ struct BabelApp: App {
                 .themeRoot()
                 .environment(reader)
                 .environment(library)
+                .environment(notifier)
                 .task { await CookieSync.syncFromWebKit() }
         }
         .modelContainer(container)
+        // Beim Verlassen der App die nächste Hintergrundprüfung anmelden.
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background { UpdateNotifier.schedule() }
+        }
+        .backgroundTask(.appRefresh(UpdateNotifier.taskID)) { [container] in
+            await UpdateNotifier.shared.runBackgroundCheck(container: container)
+        }
     }
 }
 

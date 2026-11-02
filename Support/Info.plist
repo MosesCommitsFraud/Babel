@@ -22,9 +22,14 @@
 		<string>de</string>
 		<string>en</string>
 	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>de.babelreader.app.refresh</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
+		<string>fetch</string>
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>

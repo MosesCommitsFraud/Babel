@@ -36,6 +36,7 @@
 		95CB4B7D63C5E17F931D5A68 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD73D35F0F5B3196BF1AABF /* SettingsView.swift */; };
 		964B3DED70E71B09C6EF4A27 /* EPUBParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B5E984C8A0B7C0D77620F7 /* EPUBParser.swift */; };
 		9B1F5B8FD70683DBBC905887 /* StoryActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E202982CEC37159A37C774C0 /* StoryActions.swift */; };
+		9C15E2875ABAA4E74A731526 /* UpdateNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2AADD6B677DDA1151EAA3 /* UpdateNotifier.swift */; };
 		9C2904BBE87CC8E11CD4EA90 /* AuthorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EA69B1B09A7733617C8235 /* AuthorView.swift */; };
 		9FF4F789DCC989C692245A1E /* ZipArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C90CCF74C3909B300CD6ADA /* ZipArchive.swift */; };
 		A5268CAFFA9B82692662DA5A /* AO3Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63E22E5889EBD4EC8319283 /* AO3Service.swift */; };
@@ -60,6 +61,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		02E2AADD6B677DDA1151EAA3 /* UpdateNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateNotifier.swift; sourceTree = "<group>"; };
 		06D5EC56C7C09627597A997A /* GutenbergService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutenbergService.swift; sourceTree = "<group>"; };
 		1483FA078C5FCBA890090576 /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
 		1C90CCF74C3909B300CD6ADA /* ZipArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipArchive.swift; sourceTree = "<group>"; };
@@ -231,6 +233,7 @@
 				FC332CE618A30C5EBBAF5ECE /* PageCache.swift */,
 				CBBC815BF1AF17E43E24B9C1 /* ReadAloudPlayer.swift */,
 				6D5F267654EB4E8058B29DB5 /* SiteStatus.swift */,
+				02E2AADD6B677DDA1151EAA3 /* UpdateNotifier.swift */,
 				E7A8A1ACDD3F52FC62380971 /* WebFetcher.swift */,
 				1C90CCF74C3909B300CD6ADA /* ZipArchive.swift */,
 			);
@@ -438,6 +441,7 @@
 				14D9AFB2ACE37CC2FFBB1AAA /* StoryTypes.swift in Sources */,
 				1BE376BE330A3D1BEAE0498E /* Theme.swift in Sources */,
 				B2465E95D0DF6B5B30AC2D2B /* ThemeSettingsView.swift in Sources */,
+				9C15E2875ABAA4E74A731526 /* UpdateNotifier.swift in Sources */,
 				AAB21C33EEE1D5A559BDF51F /* VolumeKeyScroller.swift in Sources */,
 				F6B4F60BAD44FA308223CA7B /* WebFetcher.swift in Sources */,
 				9FF4F789DCC989C692245A1E /* ZipArchive.swift in Sources */,
@@ -454,7 +458,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 65;
+				CURRENT_PROJECT_VERSION = 66;
 				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Support/Info.plist;
@@ -468,7 +472,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 0.27.1;
+				MARKETING_VERSION = 0.28.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app;
 				PRODUCT_NAME = Babel;
 				SDKROOT = iphoneos;
@@ -548,7 +552,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 65;
+				CURRENT_PROJECT_VERSION = 66;
 				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Support/Info.plist;
@@ -562,7 +566,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 0.27.1;
+				MARKETING_VERSION = 0.28.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app;
 				PRODUCT_NAME = Babel;
 				SDKROOT = iphoneos;

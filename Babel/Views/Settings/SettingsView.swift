@@ -17,6 +17,9 @@ struct SettingsView: View {
     @State private var showFFNCheck = false
     @State private var storage: Int64 = 0
     @State private var confirmClearHistory = false
+    @AppStorage(UpdateNotifier.enabledKey) private var notifyNewChapters = false
+    @AppStorage(UpdateNotifier.lastRunKey) private var lastNotifyRun: Double = 0
+    @State private var notifier = UpdateNotifier.shared
 
     /// „0.23.6 (Build 47)“ – Version und Build aus `project.yml`.
     static var versionText: String {
@@ -24,6 +27,19 @@ struct SettingsView: View {
         let version = info?["CFBundleShortVersionString"] as? String ?? "?"
         let build = info?["CFBundleVersion"] as? String ?? "?"
         return String(localized: "\(version) (Build \(build))")
+    }
+
+    private func toggleNotifications(_ on: Bool) {
+        guard on else {
+            notifyNewChapters = false
+            UpdateNotifier.schedule()
+            return
+        }
+        // Sofort umschalten, die iOS-Abfrage kommt danach.
+        notifyNewChapters = true
+        Task {
+            if await notifier.requestPermission() { UpdateNotifier.schedule() }
+        }
     }
 
     var body: some View {
@@ -102,6 +118,36 @@ struct SettingsView: View {
                 }
                 .themedRows()
 
+                Section {
+                    Toggle(isOn: Binding(get: { notifyNewChapters }, set: { on in toggleNotifications(on) })) {
+                        Label("Bei neuen Kapiteln benachrichtigen", systemImage: "bell.badge")
+                    }
+                    if notifyNewChapters && notifier.permission == .denied {
+                        Button("Mitteilungen in iOS erlauben", systemImage: "gear") {
+                            if let url = URL(string: UIApplication.openNotificationSettingsURLString) { UIApplication.shared.open(url) }
+                        }
+                    }
+                    #if DEBUG
+                    // Hintergrundaufgaben laufen im Simulator nicht – hier denselben Ablauf von Hand anstoßen.
+                    if notifyNewChapters {
+                        Button("Hintergrundprüfung jetzt ausführen (Debug)", systemImage: "ladybug") {
+                            Task { await notifier.runBackgroundCheck(container: context.container) }
+                        }
+                    }
+                    #endif
+                    if notifyNewChapters && lastNotifyRun > 0 {
+                        LabeledContent("Zuletzt im Hintergrund geprüft",
+                                       value: Date(timeIntervalSince1970: lastNotifyRun).formatted(date: .abbreviated, time: .shortened))
+                    }
+                } header: {
+                    Text("Mitteilungen")
+                } footer: {
+                    Text(notifyNewChapters && notifier.permission == .denied
+                         ? String(localized: "Mitteilungen sind für Babel in iOS ausgeschaltet – ohne Erlaubnis kommt nichts an.")
+                         : String(localized: "Babel schaut im Hintergrund nach neuen Kapiteln bei Geschichten in deiner Bibliothek, die du angefangen hast. Wann genau, entscheidet iOS – meist einige Male am Tag, öfter, wenn du Babel oft nutzt."))
+                }
+                .themedRows()
+
                 Section("Lesen") {
                     NavigationLink("Darstellung im Reader") {
                         Form { ReaderSettingsControls() }.navigationTitle("Darstellung")
@@ -137,6 +183,7 @@ struct SettingsView: View {
             }
             .task {
                 storage = ContentStore.totalSize()
+                await notifier.refreshPermission()
                 await ffn.check()
             }
             .sheet(isPresented: $showAO3Login, onDismiss: {

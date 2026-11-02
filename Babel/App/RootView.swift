@@ -10,6 +10,7 @@ struct RootView: View {
     @Environment(ReaderPresenter.self) private var reader
     @Environment(LibraryManager.self) private var library
     @Environment(\.modelContext) private var context
+    @Environment(UpdateNotifier.self) private var notifier
     @ObservedObject private var fetcher = WebFetcher.shared
     @AppStorage("checkUpdatesOnLaunch") private var checkUpdatesOnLaunch = true
 
@@ -73,6 +74,16 @@ struct RootView: View {
         .alert("Import fehlgeschlagen", isPresented: .constant(importError != nil), presenting: importError) { _ in
             Button("OK") { importError = nil }
         } message: { Text($0) }
+        // Tippen auf „Neues Kapitel“-Mitteilung: Geschichte im Reader öffnen.
+        .onChange(of: notifier.pendingStoryKey, initial: true) { _, key in
+            guard let key else { return }
+            notifier.pendingStoryKey = nil
+            let descriptor = FetchDescriptor<Story>(predicate: #Predicate { $0.key == key })
+            if let story = try? context.fetch(descriptor).first {
+                tab = .library
+                self.reader.open(story)
+            }
+        }
         .task {
             if checkUpdatesOnLaunch { await library.checkAllUpdates(context: context) }
             await FFNAccount.shared.syncIfDue(library: library, context: context)
