@@ -26,6 +26,7 @@ struct StoryDetailView: View {
                 header
                 actions
                 if !ratingItems.isEmpty { ratingBar }
+                SiteActionsBar(story: story)
                 if story.inLibrary { organize }
                 stats
                 if !story.summary.isEmpty { summary }

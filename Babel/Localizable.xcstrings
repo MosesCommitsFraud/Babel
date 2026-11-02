@@ -465,12 +465,42 @@
         }
       }
     },
+    "Abo beendet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unsubscribed"
+          }
+        }
+      }
+    },
     "Abonnements" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Subscriptions"
+          }
+        }
+      }
+    },
+    "Abonnieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscribe"
+          }
+        }
+      }
+    },
+    "Abonniert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscribed"
           }
         }
       }
@@ -841,6 +871,16 @@
         }
       }
     },
+    "AO3-Formular" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AO3 form"
+          }
+        }
+      }
+    },
     "AO3-Konto" : {
       "localizations" : {
         "en" : {
@@ -881,12 +921,72 @@
         }
       }
     },
+    "Auf AO3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On AO3"
+          }
+        }
+      }
+    },
+    "Auf AO3 abonniert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscribed on AO3"
+          }
+        }
+      }
+    },
+    "Auf AO3 gemerkt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bookmarked on AO3"
+          }
+        }
+      }
+    },
     "Auf Deutsch" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "In German"
+          }
+        }
+      }
+    },
+    "Auf FanFiction.net" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On FanFiction.net"
+          }
+        }
+      }
+    },
+    "Auf FanFiction.net favorisiert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorited on FanFiction.net"
+          }
+        }
+      }
+    },
+    "Auf FanFiction.net gefolgt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Following on FanFiction.net"
           }
         }
       }
@@ -2094,6 +2194,16 @@
         }
       }
     },
+    "Follow" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow"
+          }
+        }
+      }
+    },
     "Follows" : {},
     "Fortschritt" : {
       "localizations" : {
@@ -2884,6 +2994,16 @@
       }
     },
     "Kudos" : {},
+    "Kudos gegeben" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kudos left"
+          }
+        }
+      }
+    },
     "Kühles Graublau für lange Nächte" : {
       "localizations" : {
         "en" : {
@@ -4066,6 +4186,16 @@
         }
       }
     },
+    "Seitenweise blättern" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn pages"
+          }
+        }
+      }
+    },
     "Sepia" : {},
     "Sichern" : {
       "localizations" : {
@@ -4786,6 +4916,16 @@
         }
       }
     },
+    "Wischen oder an den Rand tippen blättert eine Seite weiter; auf der letzten Seite geht es ins nächste Kapitel. Die Mitte blendet die Leisten ein. Leiser/lauter blättert vor und zurück." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipe or tap the edge to turn a page; on the last page you move to the next chapter. Tapping the middle shows the controls. Volume down/up turns pages forward and back."
+          }
+        }
+      }
+    },
     "Wortanzahl" : {
       "localizations" : {
         "en" : {
@@ -4944,26 +5084,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Summary"
-          }
-        }
-      }
-    },
-    "Seitenweise blättern" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turn pages"
-          }
-        }
-      }
-    },
-    "Wischen oder an den Rand tippen blättert eine Seite weiter; auf der letzten Seite geht es ins nächste Kapitel. Die Mitte blendet die Leisten ein. Leiser/lauter blättert vor und zurück." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Swipe or tap the edge to turn a page; on the last page you move to the next chapter. Tapping the middle shows the controls. Volume down/up turns pages forward and back."
           }
         }
       }
