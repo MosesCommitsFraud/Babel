@@ -4947,6 +4947,26 @@
           }
         }
       }
+    },
+    "Seitenweise blättern" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn pages"
+          }
+        }
+      }
+    },
+    "Wischen oder an den Rand tippen blättert eine Seite weiter; auf der letzten Seite geht es ins nächste Kapitel. Die Mitte blendet die Leisten ein. Leiser/lauter blättert vor und zurück." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipe or tap the edge to turn a page; on the last page you move to the next chapter. Tapping the middle shows the controls. Volume down/up turns pages forward and back."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

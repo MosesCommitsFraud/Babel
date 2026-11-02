@@ -14,7 +14,8 @@ struct ReaderPager: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIPageViewController {
         let pager = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal,
                                          options: [.interPageSpacing: 20])
-        pager.dataSource = context.coordinator
+        // Seitenweise wischt der Finger durch die Seiten des Kapitels – Kapitelwechsel dann am Rand (siehe ChapterPageController).
+        pager.dataSource = model.paged ? nil : context.coordinator
         pager.delegate = context.coordinator
         model.css = css
         model.pager = context.coordinator
@@ -75,11 +76,13 @@ final class ReaderPagerCoordinator: NSObject, UIPageViewControllerDataSource, UI
 
     // MARK: Navigation
 
-    /// Zu einem Kapitel blättern (Knöpfe, Kapitelliste, „Nächstes Kapitel“ am Ende).
-    func show(_ index: Int) {
+    /// Zu einem Kapitel blättern (Knöpfe, Kapitelliste, Rand beim seitenweisen Blättern).
+    /// `restore`: Stelle im Zielkapitel (0…1), z. B. 1 = letzte Seite beim Zurückblättern.
+    func show(_ index: Int, restore: Double? = nil) {
         guard let pager, !isJumping else { return }
         let direction: UIPageViewController.NavigationDirection = index > model.chapterIndex ? .forward : .reverse
-        let target = page(index)
+        let target = page(index, restore: restore ?? 0)
+        if let restore { target.jump(to: restore) }
         // Weit entfernte Sprünge ohne Animation durch fremde Kapitel – nur Nachbarn gleiten herein.
         let animated = abs(index - model.chapterIndex) == 1
         isJumping = true
@@ -91,6 +94,16 @@ final class ReaderPagerCoordinator: NSObject, UIPageViewControllerDataSource, UI
                 self?.becameCurrent(target)
             }
         }
+    }
+
+    /// Alle Kapitelseiten neu aufbauen (Wechsel Scrollen ↔ Blättern), an derselben Stelle.
+    func rebuild(restore: Double) {
+        guard let pager else { return }
+        pages = [:]
+        pager.dataSource = model.paged ? nil : self
+        let current = page(model.chapterIndex, restore: restore)
+        pager.setViewControllers([current], direction: .forward, animated: false)
+        becameCurrent(current)
     }
 
     func reloadCurrent() {
@@ -194,6 +207,13 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         view.scrollView.alwaysBounceHorizontal = false
         view.scrollView.isDirectionalLockEnabled = true
         view.allowsLinkPreview = false
+        if model.paged {
+            view.scrollView.isPagingEnabled = true
+            view.scrollView.alwaysBounceVertical = false
+            view.scrollView.showsVerticalScrollIndicator = false
+            view.scrollView.alwaysBounceHorizontal = true
+            view.scrollView.panGestureRecognizer.addTarget(self, action: #selector(edgePan(_:)))
+        }
         webView = view
         self.view = view
     }
@@ -265,8 +285,33 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         }
     }
 
+    /// Stelle setzen – sofort, falls schon geladen, sonst beim Laden.
+    func jump(to fraction: Double) {
+        restore = fraction
+        progress = fraction
+        if isReady { scroll(to: fraction) }
+    }
+
     private func scroll(to fraction: Double) {
         webView.evaluateJavaScript("window.babelRestore && window.babelRestore(\(fraction)); true", completionHandler: nil)
+    }
+
+    /// Seitenweise: Wischen über die erste/letzte Seite hinaus wechselt das Kapitel.
+    private var panStart: CGFloat = 0
+
+    @objc private func edgePan(_ pan: UIPanGestureRecognizer) {
+        let scroll = webView.scrollView
+        let maxX = max(0, scroll.contentSize.width - scroll.bounds.width)
+        switch pan.state {
+        case .began:
+            panStart = scroll.contentOffset.x
+        case .ended:
+            let dx = pan.translation(in: scroll).x
+            if panStart >= maxX - 2 && dx < -50 { model.next() }
+            else if panStart <= 2 && dx > 50 { model.previous(toEnd: true) }
+        default:
+            break
+        }
     }
 
     // MARK: WKNavigationDelegate

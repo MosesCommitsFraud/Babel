@@ -66,8 +66,26 @@ struct ReaderStyle {
     var margin: Double
     var justify: Bool
     var paragraphSpacing: Double
+    /// Seitenweise blättern: Text in Spalten von Bildschirmbreite statt einer langen Seite.
+    var paged = false
 
-    var css: String {
+    var css: String { baseCSS + (paged ? pagedCSS : "") }
+
+    /// Spalten so breit wie der Bildschirm (Rand als Spaltenabstand) – eine Spalte = eine Seite.
+    private var pagedCSS: String {
+        let m = Int(margin)
+        return """
+        html { height: 100vh !important; overflow-y: hidden !important; overflow-x: auto !important; }
+        body {
+            height: 100vh !important; box-sizing: border-box !important; overflow: visible !important;
+            padding: calc(env(safe-area-inset-top) + 64px) \(m)px calc(env(safe-area-inset-bottom) + 72px) \(m)px !important;
+            column-width: calc(100vw - \(2 * m)px) !important; column-gap: \(2 * m)px !important; column-fill: auto !important;
+        }
+        img, svg, video { max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 160px) !important; object-fit: contain; }
+        """
+    }
+
+    private var baseCSS: String {
         """
         :root { color-scheme: \(theme.colorScheme == .dark ? "dark" : "light"); }
         html { -webkit-text-size-adjust: 100%; background: \(theme.background) !important; overflow-x: hidden !important; }
@@ -117,6 +135,7 @@ enum ReaderDefaults {
     static let margin = 14.0
     static let justify = true
     static let paragraphSpacing = 0.9
+    static let pagedKey = "reader.paged"
 
     /// Einmal auf die neuen Standards umstellen – vorher gespeicherte Werte (alte Standards) würden sonst bleiben.
     static func migrate() {
@@ -141,6 +160,7 @@ struct ReaderSettingsControls: View {
     @AppStorage("reader.justify") private var justify = ReaderDefaults.justify
     @AppStorage("reader.paragraphSpacing") private var paragraphSpacing = ReaderDefaults.paragraphSpacing
     @AppStorage(VolumeKeyScroller.settingKey) private var volumeScroll = false
+    @AppStorage(ReaderDefaults.pagedKey) private var paged = false
 
     var body: some View {
         Section("Farbe") {
@@ -201,11 +221,14 @@ struct ReaderSettingsControls: View {
         }
 
         Section {
+            Toggle("Seitenweise blättern", isOn: $paged)
             Toggle("Mit Lautstärketasten blättern", isOn: $volumeScroll)
         } header: {
             Text("Bedienung")
         } footer: {
-            Text("Leiser scrollt eine Bildschirmseite weiter, lauter zurück. Am Kapitelende geht es mit „leiser“ zum nächsten Kapitel. Die Lautstärke bleibt dabei unverändert.")
+            Text(paged
+                 ? String(localized: "Wischen oder an den Rand tippen blättert eine Seite weiter; auf der letzten Seite geht es ins nächste Kapitel. Die Mitte blendet die Leisten ein. Leiser/lauter blättert vor und zurück.")
+                 : String(localized: "Leiser scrollt eine Bildschirmseite weiter, lauter zurück. Am Kapitelende geht es mit „leiser“ zum nächsten Kapitel. Die Lautstärke bleibt dabei unverändert."))
         }
     }
 }

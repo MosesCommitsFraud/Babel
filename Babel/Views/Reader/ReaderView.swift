@@ -17,7 +17,9 @@ final class ReaderModel {
 
     @ObservationIgnored weak var pager: ReaderPagerCoordinator?
     @ObservationIgnored var css = ""
-    @ObservationIgnored let initialRestore: Double
+    @ObservationIgnored var initialRestore: Double
+    /// Seitenweise blättern (Spalten) statt scrollen.
+    @ObservationIgnored var paged = UserDefaults.standard.bool(forKey: ReaderDefaults.pagedKey)
     @ObservationIgnored private var lastSave = Date.distantPast
     /// Vorlesen: wo gerade gesprochen wird (nur für diese Geschichte) und ob Tippen einen Absatz startet.
     @ObservationIgnored var speech: ReadAloudPlayer.Cursor?
@@ -48,7 +50,8 @@ final class ReaderModel {
     // MARK: - Navigation
 
     func next() { guard hasNext else { return }; pager?.show(chapterIndex + 1) }
-    func previous() { guard hasPrevious else { return }; pager?.show(chapterIndex - 1) }
+    /// `toEnd`: beim Zurückblättern über den Kapitelanfang auf der letzten Seite des vorigen Kapitels landen.
+    func previous(toEnd: Bool = false) { guard hasPrevious else { return }; pager?.show(chapterIndex - 1, restore: toEnd ? 1 : nil) }
 
     func jump(to index: Int) {
         guard index >= 0, index < max(chapterCount, 1), index != chapterIndex else { return }
@@ -92,6 +95,10 @@ final class ReaderModel {
         switch message["type"] as? String {
         case "tap":
             withAnimation(.smooth(duration: 0.25)) { showChrome.toggle() }
+        case "next":
+            if index == chapterIndex { next() }
+        case "previous":
+            if index == chapterIndex { previous(toEnd: true) }
         case "speakFrom":
             if let paragraph = message["paragraph"] as? Int { onSpeakFrom?(index, paragraph) }
         default:
@@ -107,6 +114,7 @@ final class ReaderModel {
         (function(){
           var s = document.createElement('style'); s.id = 'babel-style'; s.textContent = \(cssLiteral);
           (document.head || document.documentElement).appendChild(s);
+          window.babelPaged = \(paged ? "true" : "false");
         })();
         """
         let endScript = """
@@ -118,14 +126,73 @@ final class ReaderModel {
             var m = document.createElement('meta'); m.name = 'viewport';
             m.content = 'width=device-width, initial-scale=1, viewport-fit=cover'; head.appendChild(m);
           }
-          window.babelSetCSS = function(c){ var s = document.getElementById('babel-style'); if (s) s.textContent = c; };
+          // Seitenweise: Breite auf ganze Seiten auffüllen – der letzten Spalte fehlt sonst der Rand rechts
+          // und sie rastet nicht sauber ein.
+          window.babelPaginate = function(){
+            if (!window.babelPaged) return;
+            var pad = document.getElementById('babel-pagepad');
+            if (!pad) {
+              pad = document.createElement('div'); pad.id = 'babel-pagepad';
+              pad.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:1px;pointer-events:none;';
+              document.documentElement.appendChild(pad);
+            }
+            pad.style.left = '0px';
+            var w = window.innerWidth;
+            var pages = Math.max(1, Math.ceil((document.documentElement.scrollWidth - 1) / w));
+            pad.style.left = (pages * w - 1) + 'px';
+          };
+          window.babelFraction = function(){
+            if (window.babelPaged) {
+              var mw = document.documentElement.scrollWidth - window.innerWidth;
+              return mw > 0 ? window.scrollX / mw : 1;
+            }
+            var h = document.documentElement.scrollHeight - window.innerHeight;
+            return h > 0 ? window.scrollY / h : 1;
+          };
+          window.babelSetCSS = function(c){
+            var f = window.babelFraction();
+            var s = document.getElementById('babel-style'); if (s) s.textContent = c;
+            if (window.babelPaged) { window.babelPaginate(); window.babelRestore(f); }
+          };
           window.babelRestore = function(f){
+            if (window.babelPaged) {
+              window.babelPaginate();
+              var w = window.innerWidth, mw = document.documentElement.scrollWidth - w;
+              window.scrollTo(Math.max(0, Math.round(mw * f / w) * w), 0);
+              return;
+            }
             var h = document.documentElement.scrollHeight - window.innerHeight;
             window.scrollTo(0, Math.max(0, h * f));
           };
+          // Eine Seite vor/zurück (Tippen an den Rand, Lautstärketasten). 'end'/'start' am Kapitelrand.
+          window.babelTurn = function(dir){
+            var w = window.innerWidth, max = document.documentElement.scrollWidth - w;
+            var base = (window.babelTurnTarget != null) ? window.babelTurnTarget : window.scrollX;
+            var target = Math.round(base / w) * w + dir * w;
+            if (target > max + 2) return 'end';
+            if (target < -2) return 'start';
+            target = Math.max(0, Math.min(max, target));
+            window.babelTurnTarget = target;
+            var from = window.scrollX, t0 = performance.now(), dur = 240;
+            cancelAnimationFrame(window.babelTurnAnim);
+            var step = function(t){
+              var p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+              window.scrollTo(from + (target - from) * e, 0);
+              if (p < 1) { window.babelTurnAnim = requestAnimationFrame(step); } else { window.babelTurnTarget = null; }
+            };
+            window.babelTurnAnim = requestAnimationFrame(step);
+            return 'ok';
+          };
+          if (window.babelPaged) {
+            window.addEventListener('resize', function(){ var f = window.babelFraction(); window.babelPaginate(); window.babelRestore(f); });
+            window.addEventListener('load', function(){ window.babelPaginate(); });
+            Array.prototype.forEach.call(document.images, function(img){ img.addEventListener('load', function(){ window.babelPaginate(); }); });
+            window.babelPaginate();
+          }
           // Seitenweise blättern (Lautstärketasten): kurze eigene Animation, schnelle Drücke addieren sich.
           // Gibt 'end' zurück, wenn es schon am Kapitelende stand.
           window.babelPage = function(dir){
+            if (window.babelPaged) { var r = window.babelTurn(dir); return r === 'start' ? 'ok' : r; }
             var max = document.documentElement.scrollHeight - window.innerHeight;
             var base = (window.babelTarget != null) ? window.babelTarget : window.scrollY;
             if (dir > 0 && base >= max - 2) return 'end';
@@ -146,8 +213,9 @@ final class ReaderModel {
           window.addEventListener('scroll', function(){
             clearTimeout(timer);
             timer = setTimeout(function(){
-              var h = document.documentElement.scrollHeight - window.innerHeight;
-              post({ type: 'progress', value: h > 0 ? window.scrollY / h : 1 });
+              // Solange die Spalten noch nicht stehen, gäbe es „100 %“ – dann nichts melden.
+              if (window.babelPaged && document.documentElement.scrollWidth <= window.innerWidth + 1) return;
+              post({ type: 'progress', value: window.babelFraction() });
             }, 120);
           }, { passive: true });
           // Vorlesen: dieselbe Absatz-Zählung wie ReadAloudPlayer.blocks(from:).
@@ -160,8 +228,11 @@ final class ReaderModel {
             return list;
           };
           window.babelFirstVisible = function(){
-            var list = window.babelBlocks(), top = 110;
-            for (var i = 0; i < list.length; i++) { if (list[i].getBoundingClientRect().bottom > top) return i; }
+            var list = window.babelBlocks(), top = 110, w = window.innerWidth;
+            for (var i = 0; i < list.length; i++) {
+              var r = list[i].getBoundingClientRect();
+              if (window.babelPaged ? (r.right > 0 && r.left < w) : r.bottom > top) return i;
+            }
             return 0;
           };
           // Satz im Absatz finden – ohne Leerzeichen verglichen, damit <br> und Zeilenumbrüche nicht stören.
@@ -192,6 +263,13 @@ final class ReaderModel {
             if (range && window.CSS && CSS.highlights) { CSS.highlights.set('babel-speech', new Highlight(range)); }
             else { el.classList.add('babel-speaking-fallback'); }
             if (!follow) return;
+            if (window.babelPaged) {
+              var pr = (range || el).getBoundingClientRect(), pw = window.innerWidth;
+              if (pr.left < 0 || pr.left >= pw) {
+                window.scrollTo({ left: Math.floor((window.scrollX + pr.left) / pw) * pw, top: 0, behavior: 'smooth' });
+              }
+              return;
+            }
             var r = (range || el).getBoundingClientRect(), top = 110, bottom = window.innerHeight - 150;
             if (r.top < top || r.bottom > bottom) {
               window.scrollTo({ top: Math.max(0, window.scrollY + r.top - window.innerHeight * 0.3), behavior: 'smooth' });
@@ -206,6 +284,12 @@ final class ReaderModel {
               for (var i = 0; i < list.length; i++) {
                 if (list[i].contains(e.target)) { post({ type: 'speakFrom', paragraph: i }); return; }
               }
+            }
+            // Seitenweise: linker/rechter Rand blättert, die Mitte blendet die Leisten ein.
+            if (window.babelPaged) {
+              var x = e.clientX, w = window.innerWidth;
+              if (x < w * 0.28) { if (window.babelTurn(-1) === 'start') post({ type: 'previous' }); return; }
+              if (x > w * 0.72) { if (window.babelTurn(1) === 'end') post({ type: 'next' }); return; }
             }
             post({ type: 'tap' });
           });
@@ -254,6 +338,7 @@ struct ReaderView: View {
     @AppStorage("reader.justify") private var justify = ReaderDefaults.justify
     @AppStorage("reader.paragraphSpacing") private var paragraphSpacing = ReaderDefaults.paragraphSpacing
     @AppStorage(VolumeKeyScroller.settingKey) private var volumeScroll = false
+    @AppStorage(ReaderDefaults.pagedKey) private var paged = false
     @State private var volumeKeys = VolumeKeyScroller()
 
     @State private var model: ReaderModel
@@ -272,7 +357,7 @@ struct ReaderView: View {
 
     private var style: ReaderStyle {
         ReaderStyle(theme: resolvedTheme, font: ReaderFont.find(fontID), fontSize: fontSize,
-                    lineHeight: lineHeight, margin: margin, justify: justify, paragraphSpacing: paragraphSpacing)
+                    lineHeight: lineHeight, margin: margin, justify: justify, paragraphSpacing: paragraphSpacing, paged: paged)
     }
 
     var body: some View {
@@ -356,6 +441,12 @@ struct ReaderView: View {
             })
         }
         .onChange(of: style.css) { _, css in model.applyCSS(css) }
+        // Umschalten Scrollen ↔ Blättern: Kapitelseiten an derselben Stelle neu aufbauen.
+        .onChange(of: paged) { _, on in
+            model.paged = on
+            model.css = style.css
+            model.pager?.rebuild(restore: model.progress)
+        }
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { model.save() }
             updateVolumeKeys()
