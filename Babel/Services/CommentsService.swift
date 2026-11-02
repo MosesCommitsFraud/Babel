@@ -63,7 +63,7 @@ enum CommentsService {
         var comps = URLComponents(url: AO3Service.base.appendingPathComponent("works/\(workID)"), resolvingAgainstBaseURL: false)!
         comps.queryItems = [URLQueryItem(name: "show_comments", value: "true"), URLQueryItem(name: "view_adult", value: "true")]
         if page > 1 { comps.queryItems?.append(URLQueryItem(name: "page", value: String(page))) }
-        let (html, _, status) = try await AO3Service.fetchHTML(comps.url!)
+        let (html, _, status) = try await AO3Service.fetchCachedHTML(comps.url!, fresh: 600)
         guard status == 200 else { throw BabelError.http(status) }
         return try await Task.detached(priority: .userInitiated) {
             let doc = try SwiftSoup.parse(html, AO3Service.base.absoluteString)

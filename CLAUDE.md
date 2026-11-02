@@ -54,7 +54,10 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 - `Services/FFNService.swift` – FFN liegt hinter Cloudflare → alles über `WebFetcher` (unsichtbarer WKWebView, Challenge-Sheet bei Bedarf). Filter werden live aus den `<select>` der Seite gelesen und per JS angewendet; Fallback-URL-Parameter (srt, g1, r, lan, len, s, c1…).
 - `Services/WebFetcher.swift` – serielle Warteschlange, Cloudflare-Erkennung, `needsUserInteraction` → Sheet in RootView/ReaderView. Wartet auf `didCommit` der neuen Seite (sonst wurde manchmal die alte Seite gelesen). Läuft im **Desktop-Modus** mit Mac-Safari-UA: mit iPhone-UA leitet FFN teils auf m.fanfiction.net um (anderes HTML → leere Listen).
 - `Services/HTTPClient.swift` – gleicher UA wie der WebView, Takt pro Host/Bucket, nach 429 wartet der ganze Host (`Retry-After`), Banner über `RateLimitStatus`.
-- `Services/ImageLoader.swift` – Cover mit Cache; FFN-Cover per URLSession mit WebView-Cookies, sonst `fetch()` in der offenen FFN-Seite.
+- `Services/ImageLoader.swift` – Cover mit Cache; FFN-Cover per URLSession mit WebView-Cookies, sonst `fetch()` in der offenen FFN-Seite. Alle Cover werden per ImageIO verkleinert und vorab dekodiert (`Thumbnail`, max. 540 px); lokale Cover über `LocalThumbnail` im Hintergrund – nie `UIImage(contentsOfFile:)` im `body`.
+- `Services/PageCache.swift` – AO3-Seiten zwischengespeichert (Speicher + Caches/Pages-ao3): `AO3Service.fetchCachedHTML(url, fresh:)` – Suche/Listen/Kommentare 10 min frisch, Autorenprofil 30 min, Werkangaben immer neu; antwortet AO3 nicht, gibt es den letzten Stand (bis 7 Tage).
+- Listen laden die nächste Seite vor, sobald eine der letzten 8 Zeilen erscheint (`.loadsMore(near:in:)`; Ladefunktion muss Doppelaufrufe abfangen).
+- Bibliothek: Liste einmal pro `body` berechnen (`let list = filtered`), Chip-Zahlen in einem Durchgang.
 - `Services/GutenbergService.swift` – direkt gutenberg.org (HTML-Suche mit Präfixen a./t./s./l.), **nicht Gutendex** (dort teils >60 s).
 - `Services/EPUBBuilder.swift` – EPUB-Export aus gespeicherten Kapiteln (eigener ZIP-Schreiber, XHTML via SwiftSoup).
 - `Views/Account/` – AO3-/FFN-Konto: Listen anzeigen, „Alle übernehmen“.
@@ -74,4 +77,4 @@ AO3-Suche/Blurbs, FFN-Fandoms/Listen/Filter-Apply/Cover, Gutenberg-Suche + Detai
 - AO3 ist zeitweise extrem langsam (60–100 s pro Seite) bzw. liefert 525 – dann helfen nur Cache/Timeouts.
 
 ## Offene Ideen
-Performance: Cover-Thumbnails im Speicher, gefilterte Bibliothek cachen, AO3-Antworten cachen, nächste Listenseite vorladen. Hintergrund-Updates mit Mitteilung, Kudos/Bookmarks auf AO3, Blättern statt Scrollen, Markierungen, iCloud-Sync, neues Icon für „Babel“.
+Hintergrund-Updates mit Mitteilung, Kudos/Bookmarks auf AO3, Blättern statt Scrollen, Markierungen, iCloud-Sync, neues Icon für „Babel“.

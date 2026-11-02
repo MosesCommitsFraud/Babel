@@ -1,6 +1,77 @@
 import SwiftUI
 import UIKit
 import CryptoKit
+import ImageIO
+
+/// Verkleinerte, schon dekodierte Bilder. Ein EPUB-Cover hat oft 1600 px – angezeigt werden höchstens ~300.
+enum Thumbnail {
+    private static let memory: NSCache<NSString, UIImage> = {
+        let cache = NSCache<NSString, UIImage>()
+        cache.countLimit = 400
+        return cache
+    }()
+
+    /// Längste Kante in Pixeln für eine Anzeigegröße in Punkten (Retina ×3, auf Stufen gerundet, damit sich Größen den Cache teilen).
+    static func pixels(for points: CGFloat) -> Int {
+        let raw = Int(points * 3)
+        return [120, 240, 360, 540].first { $0 >= raw } ?? 540
+    }
+
+    static func cached(_ url: URL, pixels: Int) -> UIImage? {
+        memory.object(forKey: "\(url.path)#\(pixels)" as NSString)
+    }
+
+    /// Lädt und verkleinert im Hintergrund.
+    static func load(_ url: URL, pixels: Int) async -> UIImage? {
+        if let hit = cached(url, pixels: pixels) { return hit }
+        let image = await Task.detached(priority: .userInitiated) { () -> UIImage? in
+            guard let source = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
+            return downsample(source, pixels: pixels)
+        }.value
+        if let image { memory.setObject(image, forKey: "\(url.path)#\(pixels)" as NSString) }
+        return image
+    }
+
+    /// Aus Daten (Netz/Festplatte) verkleinern – ebenfalls schon dekodiert, damit das Scrollen nicht stockt.
+    nonisolated static func downsample(_ data: Data, pixels: Int) -> UIImage? {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil) else { return nil }
+        return downsample(source, pixels: pixels)
+    }
+
+    nonisolated private static func downsample(_ source: CGImageSource, pixels: Int) -> UIImage? {
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceThumbnailMaxPixelSize: pixels,
+        ]
+        guard let cg = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else { return nil }
+        return UIImage(cgImage: cg)
+    }
+}
+
+/// Lokales Cover (EPUB, gespeicherte Geschichte) als Vorschaubild.
+struct LocalThumbnail<Placeholder: View>: View {
+    let url: URL
+    let maxPoints: CGFloat
+    @ViewBuilder var placeholder: () -> Placeholder
+    @State private var image: UIImage?
+
+    private var pixels: Int { Thumbnail.pixels(for: maxPoints) }
+
+    var body: some View {
+        Group {
+            if let image = image ?? Thumbnail.cached(url, pixels: pixels) {
+                Image(uiImage: image).resizable().scaledToFill()
+            } else {
+                placeholder()
+            }
+        }
+        .task(id: url) {
+            if image == nil { image = await Thumbnail.load(url, pixels: pixels) }
+        }
+    }
+}
 
 /// Lädt Cover (FFN, Gutenberg) mit Speicher- und Festplatten-Cache.
 /// FFN liegt hinter Cloudflare: erst normal mit den Cookies des WebViews, sonst per `fetch()` in der offenen FFN-Seite.
@@ -41,7 +112,8 @@ actor ImageLoader {
 
     private static func load(_ url: URL) async -> UIImage? {
         let disk = file(for: url)
-        if let data = try? Data(contentsOf: disk), let img = UIImage(data: data) { return img }
+        // Cover werden höchstens ~104 pt breit gezeigt – verkleinert und vorab dekodiert spart Speicher und Ruckler.
+        if let data = try? Data(contentsOf: disk), let img = Thumbnail.downsample(data, pixels: 540) { return img }
 
         var data: Data?
         let isFFN = url.host?.contains("fanfiction.net") == true
@@ -61,7 +133,7 @@ actor ImageLoader {
         if data == nil, isFFN {
             data = await WebFetcher.shared.fetchDataViaPage(url)
         }
-        guard let data, let img = UIImage(data: data) else { return nil }
+        guard let data, let img = Thumbnail.downsample(data, pixels: 540) else { return nil }
         try? data.write(to: disk, options: .atomic)
         return img
     }

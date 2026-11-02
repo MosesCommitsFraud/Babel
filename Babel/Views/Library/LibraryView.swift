@@ -49,9 +49,11 @@ struct LibraryView: View {
     @State private var errorMessage: String?
 
     var body: some View {
+        // Einmal pro Neuzeichnen filtern und sortieren – nicht für Liste und Hinweise je einzeln.
+        let list = filtered
         List {
             Section {
-                ForEach(filtered) { story in
+                ForEach(list) { story in
                     NavigationLink(value: story) {
                         StoryRow(
                             story: story.asRemote,
@@ -89,9 +91,9 @@ struct LibraryView: View {
         .overlay {
             if stories.isEmpty && history.isEmpty {
                 emptyState
-            } else if filtered.isEmpty && !searchText.trimmed.isEmpty {
+            } else if list.isEmpty && !searchText.trimmed.isEmpty {
                 ContentUnavailableView.search(text: searchText)
-            } else if filtered.isEmpty {
+            } else if list.isEmpty {
                 ContentUnavailableView("Hier ist noch nichts", systemImage: "tray",
                                        description: Text("In dieser Auswahl liegen keine Geschichten."))
             }
@@ -132,7 +134,17 @@ struct LibraryView: View {
 
     /// Alle Filter-Chips mit Anzahl – „Verlauf“ vorn, der Rest nach Anzahl sortiert.
     private var chipItems: [ChipItem] {
-        func count(_ f: LibraryFilter) -> Int { stories.filter { matches($0, f) }.count }
+        // Ein Durchgang über die Bibliothek statt eines pro Chip.
+        var counts: [LibraryFilter: Int] = [:]
+        for story in stories {
+            var hits: [LibraryFilter] = [.status(story.status), .source(story.source)]
+            if story.newChapters > 0 { hits.append(.updates) }
+            if story.isFavorite { hits.append(.favorites) }
+            if matches(story, .offline) { hits.append(.offline) }
+            for name in Set(story.shelves.map(\.name)) { hits.append(.shelf(name)) }
+            for hit in hits { counts[hit, default: 0] += 1 }
+        }
+        func count(_ f: LibraryFilter) -> Int { counts[f] ?? 0 }
         var items: [ChipItem] = []
         func add(_ title: String, _ symbol: String?, _ value: LibraryFilter, hideEmpty: Bool = false) {
             let n = value == .history ? history.count : count(value)

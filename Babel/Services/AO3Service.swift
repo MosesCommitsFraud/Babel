@@ -184,6 +184,20 @@ enum AO3Service {
         return result
     }
 
+    /// Wie `fetchHTML`, aber mit Zwischenspeicher: höchstens `fresh` Sekunden alte Seiten kommen sofort ohne Netz.
+    /// Antwortet AO3 nicht (Wartung, 5xx, Zeitüberschreitung), gibt es die letzte gespeicherte Fassung.
+    static func fetchCachedHTML(_ url: URL, fresh: TimeInterval) async throws -> (html: String, finalURL: URL, status: Int) {
+        if fresh > 0, let html = await PageCache.ao3.html(for: url, maxAge: fresh) { return (html, url, 200) }
+        do {
+            let result = try await fetchHTML(url)
+            if result.status == 200 { await PageCache.ao3.store(result.html, for: url) }
+            return result
+        } catch {
+            if let stale = await PageCache.ao3.html(for: url, maxAge: PageCache.staleLimit) { return (stale, url, 200) }
+            throw error
+        }
+    }
+
     private static func fetchHTMLRaw(_ url: URL) async throws -> (html: String, finalURL: URL, status: Int) {
         // AO3 braucht unter Last teils über eine Minute für eine Seite – lieber warten als abbrechen.
         let result = try await HTTPClient.shared.html(url, timeout: 150)
@@ -274,14 +288,14 @@ enum AO3Service {
     }
 
     static func search(_ filters: AO3Filters, page: Int) async throws -> ListPage {
-        let (html, _, status) = try await fetchHTML(searchURL(filters, page: page))
+        let (html, _, status) = try await fetchCachedHTML(searchURL(filters, page: page), fresh: 600)
         guard status == 200 else { throw BabelError.http(status) }
         return try await Task.detached(priority: .userInitiated) { try parseWorkList(html) }.value
     }
 
     /// Beliebige AO3-Listen-URL (Tag-Seite, Autor:in, Serie …).
     static func list(url: URL) async throws -> ListPage {
-        let (html, _, status) = try await fetchHTML(url)
+        let (html, _, status) = try await fetchCachedHTML(url, fresh: 600)
         guard status == 200 else { throw BabelError.http(status) }
         return try await Task.detached(priority: .userInitiated) { try parseWorkList(html) }.value
     }
@@ -350,15 +364,17 @@ enum AO3Service {
         }.value
     }
 
+    /// Werkangaben. Ohne Zwischenspeicher für frische Daten (Update-Suche), aber mit Ersatz, wenn AO3 weg ist.
     static func fetchWorkMeta(id: String) async throws -> RemoteStory {
-        let html = try await fetchWorkPage(id: id, full: false)
+        let html = try await fetchWorkPage(id: id, full: false, cached: true)
         return try await Task.detached(priority: .userInitiated) {
             try parseWorkMeta(SwiftSoup.parse(html, base.absoluteString), id: id)
         }.value
     }
 
-    private static func fetchWorkPage(id: String, full: Bool) async throws -> String {
-        let (html, finalURL, status) = try await fetchHTML(workURL(id, full: full))
+    private static func fetchWorkPage(id: String, full: Bool, cached: Bool = false) async throws -> String {
+        let url = workURL(id, full: full)
+        let (html, finalURL, status) = try await (cached ? fetchCachedHTML(url, fresh: 0) : fetchHTML(url))
         if status == 404 { throw BabelError.notFound }
         if finalURL.path.contains("/users/login") || html.contains("only available to registered users") {
             throw BabelError.loginRequired
@@ -460,7 +476,7 @@ enum AO3Service {
 
     static func authorProfile(user: String) async throws -> AuthorProfile {
         let url = base.appendingPathComponent("users/\(user)/profile")
-        let (html, _, status) = try await fetchHTML(url)
+        let (html, _, status) = try await fetchCachedHTML(url, fresh: 1800)
         if status == 404 { throw BabelError.notFound }
         return try await Task.detached(priority: .userInitiated) {
             let doc = try SwiftSoup.parse(html, base.absoluteString)

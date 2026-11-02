@@ -59,11 +59,12 @@ struct BooksView: View {
                     NavigationLink(value: book) { StoryRow(story: book) }
                         .navigationLinkIndicatorVisibility(.hidden)
                         .remoteStoryActions(book)
+                        .loadsMore(near: book, in: books) { if hasNext && !isLoading { await load(page: page + 1) } }
                 }
                 if hasNext {
                     HStack { Spacer(); ProgressView(); Spacer() }
                         .listRowSeparator(.hidden)
-                        .task { await load(page: page + 1) }
+                        .task { if !isLoading { await load(page: page + 1) } }
                 }
             }
             .themedRows(grouped: false)

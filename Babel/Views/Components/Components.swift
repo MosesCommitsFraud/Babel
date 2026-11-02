@@ -12,8 +12,9 @@ struct CoverView: View {
 
     var body: some View {
         Group {
-            if let localCover, let image = UIImage(contentsOfFile: localCover.path) {
-                Image(uiImage: image).resizable().scaledToFill()
+            if let localCover {
+                // Verkleinert und vorab dekodiert aus dem Speicher – nicht bei jedem Neuzeichnen von der Platte.
+                LocalThumbnail(url: localCover, maxPoints: max(width, height)) { generated }
             } else if let url = coverURL {
                 RemoteImage(url: url) { generated }
             } else {

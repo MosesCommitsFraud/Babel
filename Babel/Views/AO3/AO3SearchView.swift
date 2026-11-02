@@ -256,6 +256,7 @@ struct AO3SearchView: View {
                 NavigationLink(value: work) { StoryRow(story: work) }
                     .navigationLinkIndicatorVisibility(.hidden)
                     .remoteStoryActions(work)
+                    .loadsMore(near: work, in: model.results) { await model.loadMore() }
             }
             .themedRows(grouped: false)
 

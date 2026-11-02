@@ -527,6 +527,7 @@ struct FFNStoryListView: View {
                 NavigationLink(value: story) { StoryRow(story: story) }
                     .navigationLinkIndicatorVisibility(.hidden)
                     .remoteStoryActions(story)
+                    .loadsMore(near: story, in: model.stories) { await model.loadMore() }
             }
             .themedRows(grouped: false)
             if model.hasNext {
@@ -636,6 +637,7 @@ struct FFNKeywordSearchView: View {
                 NavigationLink(value: story) { StoryRow(story: story) }
                     .navigationLinkIndicatorVisibility(.hidden)
                     .remoteStoryActions(story)
+                    .loadsMore(near: story, in: stories) { if hasNext { await search(page: page + 1) } }
             }
             .themedRows(grouped: false)
             if hasNext {

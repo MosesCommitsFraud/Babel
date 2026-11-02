@@ -52,6 +52,18 @@ extension View {
     func remoteStoryActions(_ remote: RemoteStory) -> some View { modifier(RemoteStoryActions(remote: remote)) }
 }
 
+extension View {
+    /// Lädt die nächste Seite schon, wenn eine der letzten Zeilen erscheint – nicht erst, wenn das Listenende sichtbar ist.
+    /// Die Ladefunktion muss selbst doppelte Aufrufe abfangen (läuft schon / keine weitere Seite).
+    func loadsMore<Item: Identifiable>(near item: Item, in items: [Item], threshold: Int = 8,
+                                       _ action: @escaping @MainActor () async -> Void) -> some View {
+        onAppear {
+            guard let index = items.lastIndex(where: { $0.id == item.id }), index >= items.count - threshold else { return }
+            Task { await action() }
+        }
+    }
+}
+
 /// Kurze Meldung unten (Downloads, Updates, Rate-Limit) – für alle Tabs.
 struct StatusToast: View {
     @Environment(LibraryManager.self) private var library
