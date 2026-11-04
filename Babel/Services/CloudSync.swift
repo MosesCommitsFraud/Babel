@@ -19,7 +19,10 @@ final class CloudSync {
         let time = UserDefaults.standard.double(forKey: lastSyncKey)
         return time > 0 ? Date(timeIntervalSince1970: time) : nil
     }()
-    private(set) var errorText: String?
+    /// Je Vorgang getrennt: Ein geglückter Import sagt nichts über einen gescheiterten Export
+    /// (fehlt das Schema in Production, läuft der Import leer durch und nur der Export scheitert).
+    private var errors: [NSPersistentCloudKitContainer.EventType: String] = [:]
+    var errorText: String? { errors[.setup] ?? errors[.export] ?? errors[.import] }
     /// Die Bibliothek wurde mit iCloud geöffnet (sonst nur lokal, siehe `LibraryStore`).
     private(set) var isEnabled = false
 
@@ -71,10 +74,10 @@ final class CloudSync {
         }
         isSyncing = false
         guard succeeded else {
-            errorText = error.map(Self.describe)
+            errors[type] = error.map(Self.describe) ?? String(localized: "Der Abgleich ist fehlgeschlagen.")
             return
         }
-        errorText = nil
+        errors[type] = nil
         guard type != .setup else { return }
         lastSync = finished
         UserDefaults.standard.set(finished.timeIntervalSince1970, forKey: Self.lastSyncKey)
@@ -85,11 +88,18 @@ final class CloudSync {
     }
 
     private static func describe(_ error: Error) -> String {
+        // Exporte scheitern meist als Sammelfehler: Der eigentliche Grund steckt in den Einzelfehlern.
+        var error = error
+        if let partial = error as? CKError, partial.code == .partialFailure,
+           let items = partial.partialErrorsByItemID?.values,
+           let cause = items.first(where: { ($0 as? CKError)?.code != .batchRequestFailed }) ?? items.first {
+            error = cause
+        }
         switch (error as? CKError)?.code {
-        case .quotaExceeded: String(localized: "Dein iCloud-Speicher ist voll.")
-        case .networkUnavailable, .networkFailure: String(localized: "Keine Verbindung zu iCloud.")
-        case .notAuthenticated: String(localized: "Nicht bei iCloud angemeldet.")
-        default: error.localizedDescription
+        case .quotaExceeded: return String(localized: "Dein iCloud-Speicher ist voll.")
+        case .networkUnavailable, .networkFailure: return String(localized: "Keine Verbindung zu iCloud.")
+        case .notAuthenticated: return String(localized: "Nicht bei iCloud angemeldet.")
+        default: return error.localizedDescription
         }
     }
 
@@ -271,7 +281,10 @@ struct CloudSyncSection: View {
         case .noAccount: return String(localized: "Nicht angemeldet")
         case .restricted: return String(localized: "Eingeschränkt")
         case .unavailable: return String(localized: "Nicht erreichbar")
-        case .available: return sync.isSyncing ? String(localized: "Wird abgeglichen …") : String(localized: "Aktiv")
+        case .available:
+            if sync.isSyncing { return String(localized: "Wird abgeglichen …") }
+            if sync.errorText != nil { return String(localized: "Fehler") }
+            return sync.lastSync == nil ? String(localized: "Noch nicht abgeglichen") : String(localized: "Aktiv")
         }
     }
 
@@ -285,7 +298,8 @@ struct CloudSyncSection: View {
             if let lastSync = sync.lastSync {
                 LabeledContent("Zuletzt abgeglichen", value: lastSync.formatted(date: .abbreviated, time: .shortened))
             }
-            if let error = sync.errorText {
+            // Ohne Konto meldet CloudKit nur einen Cocoa-Fehler, „Nicht angemeldet“ sagt schon alles.
+            if sync.account == .available, let error = sync.errorText {
                 Text(error).font(.footnote).foregroundStyle(.secondary)
             }
             #if DEBUG
@@ -294,7 +308,7 @@ struct CloudSyncSection: View {
         } header: {
             Text("iCloud")
         } footer: {
-            Text("Bibliothek, Lesestellen, Sammlungen und Einstellungen gleichen sich über dein iCloud-Konto ab. Kapitel lädt jedes Gerät selbst, importierte EPUB-Dateien bleiben auf dem Gerät, die Anmeldung bei AO3 und FanFiction.net gilt pro Gerät.")
+            Text("Kapitel, eigene EPUB-Dateien und Anmeldungen bleiben auf dem jeweiligen Gerät.")
         }
         .themedRows()
     }

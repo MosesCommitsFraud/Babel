@@ -83,7 +83,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Konten")
                 } footer: {
-                    Text("Eine Anmeldung ist freiwillig. Damit holst du Lesezeichen, „Später lesen“ und Abos von AO3 bzw. Favoriten und Follows von FanFiction.net in die App (AO3- und FanFiction-Tab → Konto). Babel speichert keine Passwörter.")
+                    Text("Optional, um Lesezeichen, Favoriten und Follows zu übernehmen. Babel speichert keine Passwörter.")
                 }
                 .themedRows()
 
@@ -97,8 +97,6 @@ struct SettingsView: View {
                             Label("Sprache", systemImage: "globe")
                         }
                     }
-                } footer: {
-                    Text("Babel gibt es auf Deutsch und Englisch. Die Sprache stellst du in den iOS-Einstellungen der App um.")
                 }
                 .themedRows()
 
@@ -113,8 +111,6 @@ struct SettingsView: View {
                     .pickerStyle(.navigationLink)
                 } header: {
                     Text("Suche")
-                } footer: {
-                    Text("Gilt für neue Suchen auf AO3 und FanFiction.net – die Sprache der Geschichten, nicht die der App. In den Filtern lässt sich beides jederzeit ändern.")
                 }
                 .themedRows()
 
@@ -142,9 +138,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Mitteilungen")
                 } footer: {
-                    Text(notifyNewChapters && notifier.permission == .denied
-                         ? String(localized: "Mitteilungen sind für Babel in iOS ausgeschaltet – ohne Erlaubnis kommt nichts an.")
-                         : String(localized: "Babel schaut im Hintergrund nach neuen Kapiteln bei Geschichten in deiner Bibliothek, die du angefangen hast. Wann genau, entscheidet iOS – meist einige Male am Tag, öfter, wenn du Babel oft nutzt."))
+                    Text("Gilt für angefangene Geschichten. Wann geprüft wird, entscheidet iOS.")
                 }
                 .themedRows()
 
@@ -163,15 +157,11 @@ struct SettingsView: View {
                     Button("Verlauf löschen", role: .destructive) { confirmClearHistory = true }
                 } header: {
                     Text("Bibliothek")
-                } footer: {
-                    Text("„Verlauf löschen“ entfernt Geschichten, die du nur angesehen, aber nicht in die Bibliothek gelegt hast.")
                 }
                 .themedRows()
 
                 Section("Über") {
                     LabeledContent("Version", value: Self.versionText)
-                    Text("Babel lädt Seiten wie ein normaler Browser, mit Pausen zwischen den Anfragen, um AO3 und FanFiction.net nicht zu belasten. Bremst eine Seite (HTTP 429), wartet die App automatisch so lange, wie die Seite verlangt. Unterstütze die Autor:innen mit Kudos und Reviews auf der Originalseite.")
-                        .font(.footnote).foregroundStyle(.secondary)
                 }
                 .themedRows()
             }
@@ -207,6 +197,8 @@ struct SettingsView: View {
                     library.clearHistory(context: context)
                     storage = ContentStore.totalSize()
                 }
+            } message: {
+                Text("Entfernt Geschichten, die du nur angesehen, aber nicht in die Bibliothek gelegt hast.")
             }
         }
     }

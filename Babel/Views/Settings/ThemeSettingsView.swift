@@ -121,7 +121,7 @@ struct ThemeSettingsView: View {
                     }
                     .buttonStyle(.glass)
                     if customs.isEmpty {
-                        Text("Akzent, Hintergrund, Karten und Text selbst wählen – für hell und dunkel. Halte ein Theme gedrückt, um es als Vorlage zu nehmen.")
+                        Text("Halte ein Theme gedrückt, um es als Vorlage zu nehmen.")
                             .font(.footnote).foregroundStyle(.secondary)
                     }
                 }

@@ -226,9 +226,9 @@ struct ReaderSettingsControls: View {
         } header: {
             Text("Bedienung")
         } footer: {
-            Text(paged
-                 ? String(localized: "Wischen oder an den Rand tippen blättert eine Seite weiter; auf der letzten Seite geht es ins nächste Kapitel. Die Mitte blendet die Leisten ein. Leiser/lauter blättert vor und zurück.")
-                 : String(localized: "Leiser scrollt eine Bildschirmseite weiter, lauter zurück. Am Kapitelende geht es mit „leiser“ zum nächsten Kapitel. Die Lautstärke bleibt dabei unverändert."))
+            if paged {
+                Text("Tippen am Rand blättert, Tippen in die Mitte blendet die Leisten ein.")
+            }
         }
     }
 }
