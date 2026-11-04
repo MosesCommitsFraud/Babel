@@ -5201,6 +5201,26 @@
           }
         }
       }
+    },
+    "Die importierte Datei und deine Lesestelle werden gelöscht." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The imported file and your reading position will be deleted."
+          }
+        }
+      }
+    },
+    "Die Geschichte verschwindet aus Bibliothek und Verlauf, Lesestelle und Offline-Kapitel gehen verloren." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The story will be removed from your library and history; your reading position and offline chapters will be lost."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

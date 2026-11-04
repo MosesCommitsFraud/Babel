@@ -392,6 +392,7 @@ struct LibrarySwipeActions: ViewModifier {
     @Environment(\.modelContext) private var context
     @Environment(LibraryManager.self) private var library
     @Environment(\.theme) private var theme
+    @State private var confirmRemove = false
 
     private var isDownloaded: Bool {
         story.source.isWebFiction
@@ -401,8 +402,9 @@ struct LibrarySwipeActions: ViewModifier {
 
     func body(content: Content) -> some View {
         content.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-            Button(role: .destructive) {
-                withAnimation { remove() }
+            // Ohne `role: .destructive`: Sonst schiebt die Liste die Zeile schon vor der Rückfrage hinaus.
+            Button {
+                confirmRemove = true
             } label: {
                 Label("Löschen", systemImage: "trash")
             }
@@ -425,6 +427,17 @@ struct LibrarySwipeActions: ViewModifier {
                 .tint(theme.primary)
                 .disabled(isDownloaded || library.downloads[story.key] != nil)
             }
+        }
+        // Löschen nimmt Lesestelle und Offline-Kapitel mit – auch ein langes Wischen fragt deshalb erst nach.
+        .confirmationDialog(Text("„\(story.title)“ löschen?"), isPresented: $confirmRemove, titleVisibility: .visible) {
+            Button("Löschen", role: .destructive) {
+                withAnimation { remove() }
+            }
+            Button("Abbrechen", role: .cancel) {}
+        } message: {
+            Text(story.source == .epub
+                 ? String(localized: "Die importierte Datei und deine Lesestelle werden gelöscht.")
+                 : String(localized: "Die Geschichte verschwindet aus Bibliothek und Verlauf, Lesestelle und Offline-Kapitel gehen verloren."))
         }
     }
 
