@@ -1,6 +1,7 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
+    "" : {},
     "\n" : {},
     "–" : {},
     "„%@“ auf AO3 suchen" : {
@@ -546,6 +547,16 @@
         }
       }
     },
+    "Aktiv" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        }
+      }
+    },
     "Aktualisiert" : {
       "localizations" : {
         "en" : {
@@ -891,6 +902,16 @@
         }
       }
     },
+    "AO3-Lesezeichen entfernt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AO3 bookmark removed"
+          }
+        }
+      }
+    },
     "AO3, FanFiction.net und Project Gutenberg gleichzeitig." : {
       "localizations" : {
         "en" : {
@@ -922,6 +943,7 @@
       }
     },
     "Auf AO3" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -962,11 +984,22 @@
       }
     },
     "Auf FanFiction.net" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "On FanFiction.net"
+          }
+        }
+      }
+    },
+    "Auf FanFiction.net entfolgt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unfollowed on FanFiction.net"
           }
         }
       }
@@ -1037,6 +1070,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Remove from Library"
+          }
+        }
+      }
+    },
+    "Aus FFN-Favoriten entfernt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removed from FFN favorites"
           }
         }
       }
@@ -2014,6 +2057,26 @@
         }
       }
     },
+    "Favorisieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorite"
+          }
+        }
+      }
+    },
+    "Favorisiert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorited"
+          }
+        }
+      }
+    },
     "Favorit" : {
       "localizations" : {
         "en" : {
@@ -2194,7 +2257,18 @@
         }
       }
     },
+    "Folgen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow"
+          }
+        }
+      }
+    },
     "Follow" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2309,12 +2383,32 @@
         }
       }
     },
+    "Gefolgt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Following"
+          }
+        }
+      }
+    },
     "Gelesen" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Finished"
+          }
+        }
+      }
+    },
+    "Gemerkt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bookmarked"
           }
         }
       }
@@ -5088,92 +5182,22 @@
         }
       }
     },
-    "Gefolgt" : {
+    "Keine Treffer für „%@“" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Following"
+            "value" : "No results for “%@”"
           }
         }
       }
     },
-    "Folgen" : {
+    "Prüfe die Schreibweise oder versuche es mit anderen Wörtern." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Follow"
-          }
-        }
-      }
-    },
-    "Favorisiert" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Favorited"
-          }
-        }
-      }
-    },
-    "Favorisieren" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Favorite"
-          }
-        }
-      }
-    },
-    "Auf FanFiction.net entfolgt" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unfollowed on FanFiction.net"
-          }
-        }
-      }
-    },
-    "Aus FFN-Favoriten entfernt" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Removed from FFN favorites"
-          }
-        }
-      }
-    },
-    "Gemerkt" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bookmarked"
-          }
-        }
-      }
-    },
-    "AO3-Lesezeichen entfernt" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AO3 bookmark removed"
-          }
-        }
-      }
-    },
-    "Aktiv" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Active"
+            "value" : "Check the spelling or try different words."
           }
         }
       }

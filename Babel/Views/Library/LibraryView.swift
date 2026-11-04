@@ -74,6 +74,16 @@ struct LibraryView: View {
                     .contextMenu { StoryContextMenu(story: story) }
                 }
                 .themedRows(grouped: false)
+
+                // Als Zeile, nicht als Overlay: So scrollt der Hinweis mit und schiebt sich nicht über Suchfeld und Chips.
+                if list.isEmpty {
+                    emptyHint
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 70)
+                        .padding(.bottom, 40)
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                }
             } header: {
                 // Aktive Filter nur als Zahl am Filter-Knopf, keine eigene Chip-Zeile (Wunsch des Nutzers).
                 filterBar
@@ -88,16 +98,6 @@ struct LibraryView: View {
         .themedBackground()
         .navigationTitle("Bibliothek")
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Titel, Autor:in, Fandom, Pairing, Tag")
-        .overlay {
-            if stories.isEmpty && history.isEmpty {
-                emptyState
-            } else if list.isEmpty && !searchText.trimmed.isEmpty {
-                ContentUnavailableView.search(text: searchText)
-            } else if list.isEmpty {
-                ContentUnavailableView("Hier ist noch nichts", systemImage: "tray",
-                                       description: Text("In dieser Auswahl liegen keine Geschichten."))
-            }
-        }
         .refreshable { await library.checkAllUpdates(context: context) }
         .toolbar { toolbarContent }
         .fileImporter(isPresented: $showImporter, allowedContentTypes: [.epub], allowsMultipleSelection: true) { result in
@@ -297,12 +297,36 @@ struct LibraryView: View {
         }
     }
 
+    /// In einer Listenzeile lässt `ContentUnavailableView` Symbol und Text weg – deshalb selbst gebaut.
+    @ViewBuilder
+    private var emptyHint: some View {
+        if stories.isEmpty && history.isEmpty {
+            emptyState
+        } else if !searchText.trimmed.isEmpty {
+            hint(symbol: "magnifyingglass", title: Text("Keine Treffer für „\(searchText.trimmed)“"),
+                 description: Text("Prüfe die Schreibweise oder versuche es mit anderen Wörtern."))
+        } else {
+            hint(symbol: "tray", title: Text("Hier ist noch nichts"),
+                 description: Text("In dieser Auswahl liegen keine Geschichten."))
+        }
+    }
+
+    private func hint(symbol: String, title: Text, description: Text) -> some View {
+        VStack(spacing: 10) {
+            Image(systemName: symbol)
+                .font(.system(size: 44))
+                .foregroundStyle(.secondary)
+                .padding(.bottom, 4)
+            title.font(.title3.weight(.bold)).multilineTextAlignment(.center)
+            description.font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
+        }
+        .padding(.horizontal, 24)
+    }
+
     private var emptyState: some View {
-        ContentUnavailableView {
-            Label("Deine Bibliothek ist leer", systemImage: "books.vertical")
-        } description: {
-            Text("Such dir auf AO3 oder FanFiction.net etwas aus, importiere ein EPUB oder füge einen Link ein.")
-        } actions: {
+        VStack(spacing: 18) {
+            hint(symbol: "books.vertical", title: Text("Deine Bibliothek ist leer"),
+                 description: Text("Such dir auf AO3 oder FanFiction.net etwas aus, importiere ein EPUB oder füge einen Link ein."))
             GlassEffectContainer(spacing: 10) {
                 VStack(spacing: 10) {
                     Button { showImporter = true } label: {
