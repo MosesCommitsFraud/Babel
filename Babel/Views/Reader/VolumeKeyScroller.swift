@@ -7,7 +7,7 @@ import UIKit
 /// Ein unsichtbarer `MPVolumeView` blendet dabei die System-Lautstärkeanzeige aus.
 @MainActor
 final class VolumeKeyScroller {
-    static let settingKey = "reader.volumeScroll"
+    nonisolated static let settingKey = "reader.volumeScroll"
 
     /// -1 = lauter (zurück), +1 = leiser (weiter).
     var onPress: ((Int) -> Void)?

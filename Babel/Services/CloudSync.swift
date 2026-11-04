@@ -49,9 +49,7 @@ final class CloudSync {
             MainActor.assumeIsolated { self?.handle(type: type, finished: finished, succeeded: succeeded, error: error) }
         })
         observers.append(NotificationCenter.default.addObserver(forName: .CKAccountChanged, object: nil, queue: .main) { [weak self] _ in
-            MainActor.assumeIsolated {
-                Task { await self?.refreshAccount() }
-            }
+            Task { @MainActor in await self?.refreshAccount() }
         })
     }
 
