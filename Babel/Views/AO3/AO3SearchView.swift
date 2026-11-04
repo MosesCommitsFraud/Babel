@@ -120,7 +120,7 @@ struct AO3FilterWallView: View {
 
             Section("Schnellstart") {
                 FlowLayout(spacing: 8) {
-                    quick(String(localized: "Neu aktualisiert"), sort: .updated)
+                    quick(String(localized: "Kürzlich aktualisiert"), sort: .updated)
                     quick(String(localized: "Meiste Kudos"), sort: .kudos)
                     quick(String(localized: "Abgeschlossen & beliebt"), sort: .kudos, complete: true)
                     quick(String(localized: "Auf Deutsch"), sort: .updated, language: "de")

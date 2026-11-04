@@ -74,7 +74,7 @@ final class CloudSync {
         }
         isSyncing = false
         guard succeeded else {
-            errors[type] = error.map(Self.describe) ?? String(localized: "Der Abgleich ist fehlgeschlagen.")
+            errors[type] = error.map(Self.describe) ?? String(localized: "Synchronisierung fehlgeschlagen.")
             return
         }
         errors[type] = nil
@@ -282,9 +282,9 @@ struct CloudSyncSection: View {
         case .restricted: return String(localized: "Eingeschränkt")
         case .unavailable: return String(localized: "Nicht erreichbar")
         case .available:
-            if sync.isSyncing { return String(localized: "Wird abgeglichen …") }
+            if sync.isSyncing { return String(localized: "Wird synchronisiert …") }
             if sync.errorText != nil { return String(localized: "Fehler") }
-            return sync.lastSync == nil ? String(localized: "Noch nicht abgeglichen") : String(localized: "Aktiv")
+            return sync.lastSync == nil ? String(localized: "Noch nicht synchronisiert") : String(localized: "Aktiv")
         }
     }
 
@@ -293,10 +293,10 @@ struct CloudSyncSection: View {
             LabeledContent {
                 Text(statusText)
             } label: {
-                Label("iCloud-Abgleich", systemImage: "icloud")
+                Label("iCloud-Sync", systemImage: "icloud")
             }
             if let lastSync = sync.lastSync {
-                LabeledContent("Zuletzt abgeglichen", value: lastSync.formatted(date: .abbreviated, time: .shortened))
+                LabeledContent("Zuletzt synchronisiert", value: lastSync.formatted(date: .abbreviated, time: .shortened))
             }
             // Ohne Konto meldet CloudKit nur einen Cocoa-Fehler, „Nicht angemeldet“ sagt schon alles.
             if sync.account == .available, let error = sync.errorText {

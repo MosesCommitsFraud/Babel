@@ -67,7 +67,7 @@ enum BabelError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .http(let code): String(localized: "Der Server hat mit Fehler \(code) geantwortet.")
-        case .rateLimited: String(localized: "Zu viele Anfragen – die Seite bremst gerade. Versuch es in einer Minute nochmal.")
+        case .rateLimited: String(localized: "Zu viele Anfragen. Versuch es in einer Minute nochmal.")
         case .loginRequired: String(localized: "Dieses Werk ist nur für angemeldete AO3-Nutzer sichtbar. Melde dich in den Einstellungen bei AO3 an.")
         case .siteDown(let site, let reason): String(localized: "\(site) \(reason). Das liegt an der Seite, nicht an Babel – versuch es später nochmal.")
         case .ffnLoginRequired: String(localized: "Dafür musst du bei FanFiction.net angemeldet sein. Melde dich in den Einstellungen an.")

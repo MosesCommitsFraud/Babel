@@ -178,7 +178,7 @@ final class FFNAccount {
         UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: Self.lastSyncKey)
         UserDefaults.standard.set(true, forKey: Self.repairKey)
         let summary = counts.joined(separator: " · ")
-        library.updateMessage = added > 0 ? String(localized: "FFN: \(added) neu übernommen (\(summary))") : String(localized: "FFN abgeglichen (\(summary))")
+        library.updateMessage = added > 0 ? String(localized: "FFN: \(added) neu übernommen (\(summary))") : String(localized: "FFN synchronisiert (\(summary))")
         // Follows, die nur als Link kamen und auch nicht unter den Favoriten stehen: Angaben einzeln nachladen.
         await library.completeMetadata(of: linkOnly, context: context)
     }
@@ -214,7 +214,7 @@ struct FFNAccountView: View {
                     Button {
                         Task { await account.sync(library: library, context: context) }
                     } label: {
-                        Label(account.isSyncing ? String(localized: "Wird abgeglichen …") : String(localized: "Favoriten & Follows in die Bibliothek"), systemImage: "arrow.triangle.2.circlepath")
+                        Label(account.isSyncing ? String(localized: "Wird synchronisiert …") : String(localized: "Favoriten & Follows übernehmen"), systemImage: "arrow.triangle.2.circlepath")
                     }
                     .disabled(account.isSyncing)
                 } else {

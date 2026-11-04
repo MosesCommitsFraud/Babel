@@ -529,7 +529,7 @@ struct RateLimitBanner: View {
         if let until = status.until, status.host != nil {
             TimelineView(.periodic(from: .now, by: 1)) { context in
                 let seconds = max(0, Int(until.timeIntervalSince(context.date).rounded(.up)))
-                Label("\(status.siteName) bremst gerade – weiter in \(seconds) s", systemImage: "tortoise.fill")
+                Label("\(status.siteName) begrenzt gerade die Anfragen – weiter in \(seconds) s", systemImage: "tortoise.fill")
                     .font(.footnote.weight(.medium))
                     .padding(.horizontal, 16).padding(.vertical, 10)
                     .glassEffect(.regular, in: .capsule)

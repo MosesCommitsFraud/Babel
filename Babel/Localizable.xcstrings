@@ -65,6 +65,16 @@
         }
       }
     },
+    "%@ (angepasst)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ custom"
+          }
+        }
+      }
+    },
     "%@ Kopie" : {
       "localizations" : {
         "en" : {
@@ -85,22 +95,12 @@
         }
       }
     },
-    "%@ bremst gerade – weiter in %lld s" : {
+    "%@ begrenzt gerade die Anfragen – weiter in %lld s" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ is rate limiting – continuing in %lld s"
-          }
-        }
-      }
-    },
-    "%@ eigen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ custom"
           }
         }
       }
@@ -1407,16 +1407,6 @@
         }
       }
     },
-    "Der Abgleich ist fehlgeschlagen." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sync failed."
-          }
-        }
-      }
-    },
     "Der Eintrag verschwindet ganz aus Babel, mit Lesestelle, Favorit, Sammlungen und Offline-Kapiteln." : {
       "localizations" : {
         "en" : {
@@ -1829,7 +1819,7 @@
     "Español" : {},
     "F" : {},
     "FFN" : {},
-    "FFN abgeglichen (%@)" : {
+    "FFN synchronisiert (%@)" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1887,16 +1877,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Without a filter, FanFiction.net only shows K to T. When on, stories rated M appear too. On AO3 all ratings are visible anyway unless you exclude some."
-          }
-        }
-      }
-    },
-    "FanFiction.net-Prüfung manuell öffnen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open FanFiction.net Check Manually"
           }
         }
       }
@@ -2034,7 +2014,7 @@
         }
       }
     },
-    "Favoriten & Follows in die Bibliothek" : {
+    "Favoriten & Follows übernehmen" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2140,16 +2120,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You'll find it in the FanFiction tab under \"Saved Filters\"."
-          }
-        }
-      }
-    },
-    "Fläche hinter allem" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Area behind everything"
           }
         }
       }
@@ -2537,6 +2507,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Background"
+          }
+        }
+      }
+    },
+    "Hintergrund der App" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Area behind everything"
           }
         }
       }
@@ -3000,6 +2980,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cool blue-grey for long nights"
+          }
+        }
+      }
+    },
+    "Kürzlich aktualisiert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recently updated"
           }
         }
       }
@@ -3486,16 +3476,6 @@
         }
       }
     },
-    "Neu aktualisiert" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recently updated"
-          }
-        }
-      }
-    },
     "Neu bei Gutenberg" : {
       "localizations" : {
         "en" : {
@@ -3648,7 +3628,7 @@
         }
       }
     },
-    "Noch nicht abgeglichen" : {
+    "Noch nicht synchronisiert" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4197,6 +4177,16 @@
       }
     },
     "Sepia" : {},
+    "Sicherheitsprüfung von FanFiction.net öffnen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open FanFiction.net Security Check"
+          }
+        }
+      }
+    },
     "Sichern" : {
       "localizations" : {
         "en" : {
@@ -4456,6 +4446,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search · %lld"
+          }
+        }
+      }
+    },
+    "Synchronisierung fehlgeschlagen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync failed."
           }
         }
       }
@@ -4856,7 +4856,7 @@
         }
       }
     },
-    "Wird abgeglichen …" : {
+    "Wird synchronisiert …" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4896,22 +4896,12 @@
         }
       }
     },
-    "Zu viele Anfragen – die Seite bremst gerade. Versuch es in einer Minute nochmal." : {
+    "Zu viele Anfragen. Versuch es in einer Minute nochmal." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Too many requests – the site is rate limiting. Try again in a minute."
-          }
-        }
-      }
-    },
-    "Zuletzt abgeglichen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Last Synced"
+            "value" : "Too many requests. Try again in a minute."
           }
         }
       }
@@ -4974,6 +4964,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Last checked in background"
+          }
+        }
+      }
+    },
+    "Zuletzt synchronisiert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last Synced"
           }
         }
       }
@@ -5120,7 +5120,7 @@
         }
       }
     },
-    "iCloud-Abgleich" : {
+    "iCloud-Sync" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {

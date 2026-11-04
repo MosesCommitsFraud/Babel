@@ -45,7 +45,7 @@ struct CustomThemeEditor: View {
                     }
                     .pickerStyle(.segmented)
                     colorRow("Akzent", "Knöpfe, Auswahl, Links", \.primary)
-                    colorRow("Hintergrund", "Fläche hinter allem", \.screen)
+                    colorRow("Hintergrund", "Hintergrund der App", \.screen)
                     colorRow("Karten & Felder", "Listenzeilen, Suchfeld, Chips", \.card)
                     colorRow("Text", "Titel und Fließtext", \.foreground)
                 } header: {

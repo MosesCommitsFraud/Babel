@@ -79,7 +79,7 @@ struct SettingsView: View {
                     } else {
                         Button("Bei FanFiction.net anmelden", systemImage: "person.crop.circle.badge.plus") { showFFNLogin = true }
                     }
-                    Button("FanFiction.net-Prüfung manuell öffnen", systemImage: "checkmark.shield") { showFFNCheck = true }
+                    Button("Sicherheitsprüfung von FanFiction.net öffnen", systemImage: "checkmark.shield") { showFFNCheck = true }
                 } header: {
                     Text("Konten")
                 } footer: {

@@ -263,7 +263,7 @@ struct ThemeSettingsView: View {
                 Button("Löschen", systemImage: "trash", role: .destructive) { delete(custom) }
             } else {
                 Button("Als Vorlage für eigenes Schema", systemImage: "paintpalette") {
-                    editing = CustomPalette(name: String(localized: "\(option.label) eigen"),
+                    editing = CustomPalette(name: String(localized: "\(option.label) (angepasst)"),
                                             from: PaletteID(rawValue: option.id) ?? AppTheme.defaultLight)
                 }
             }
