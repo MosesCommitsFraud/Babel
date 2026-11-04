@@ -39,11 +39,13 @@
 		9B1F5B8FD70683DBBC905887 /* StoryActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E202982CEC37159A37C774C0 /* StoryActions.swift */; };
 		9C15E2875ABAA4E74A731526 /* UpdateNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2AADD6B677DDA1151EAA3 /* UpdateNotifier.swift */; };
 		9C2904BBE87CC8E11CD4EA90 /* AuthorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EA69B1B09A7733617C8235 /* AuthorView.swift */; };
+		9CCC0BE3E1A3096BE1CA1D2A /* SettingsSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F19A35474E4037E0FA89C11 /* SettingsSync.swift */; };
 		9FF4F789DCC989C692245A1E /* ZipArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C90CCF74C3909B300CD6ADA /* ZipArchive.swift */; };
 		A5268CAFFA9B82692662DA5A /* AO3Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63E22E5889EBD4EC8319283 /* AO3Service.swift */; };
 		A6A4CC3337ADB6898736C49C /* GutenbergService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D5EC56C7C09627597A997A /* GutenbergService.swift */; };
 		AAB21C33EEE1D5A559BDF51F /* VolumeKeyScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40635D758914BA1C4099AA11 /* VolumeKeyScroller.swift */; };
 		AD3B3AF4B87BD630A207278D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 6B874D8A91BFF9BC9BAA2B7A /* Localizable.xcstrings */; };
+		ADF92A28A89D3BF705C510B7 /* CloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B09C04014D94380C8944049 /* CloudSync.swift */; };
 		B2465E95D0DF6B5B30AC2D2B /* ThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3222CDECAFA3DC2D9B46024 /* ThemeSettingsView.swift */; };
 		B6312220DFB957280DBA02E7 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA69A74409A6C2344B1584F /* Components.swift */; };
 		BAC1CCED4B5E9B3F578FC3D1 /* FFNFilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746D72C6FAD6B685831695A0 /* FFNFilterSheet.swift */; };
@@ -54,6 +56,7 @@
 		C4E5B9C4F702F1D0DAA9D6F4 /* PageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC332CE618A30C5EBBAF5ECE /* PageCache.swift */; };
 		CB1845BB630B66E8F608A630 /* EPUBBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CC39F8CD101E8E82A7E445 /* EPUBBuilder.swift */; };
 		D963173EFEDCDE9071C4B638 /* ReadAloudPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBBC815BF1AF17E43E24B9C1 /* ReadAloudPlayer.swift */; };
+		DC60691FA72438A692247923 /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB92BE6E37EEC3F7C16169F1 /* LibraryStore.swift */; };
 		EE67FAF4A655B5D920F1FE8B /* AO3SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62CC4316CAB5285483CFA67B /* AO3SearchView.swift */; };
 		EE7F56FDC878B9CC290A926A /* FFNService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C1CA0E3746B6AB01586CB5 /* FFNService.swift */; };
 		F04E16CE3492518D3D064ED1 /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1483FA078C5FCBA890090576 /* CommentsView.swift */; };
@@ -85,9 +88,12 @@
 		6B874D8A91BFF9BC9BAA2B7A /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		6CF4A2B483A4EA551516477A /* SiteActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteActions.swift; sourceTree = "<group>"; };
 		6D5F267654EB4E8058B29DB5 /* SiteStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteStatus.swift; sourceTree = "<group>"; };
+		706743866D2A1D98D68A6936 /* Babel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Babel.entitlements; sourceTree = "<group>"; };
 		746D72C6FAD6B685831695A0 /* FFNFilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNFilterSheet.swift; sourceTree = "<group>"; };
 		7E7FD3E3D4C03C8DF90E3BEF /* AO3FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AO3FilterView.swift; sourceTree = "<group>"; };
+		7F19A35474E4037E0FA89C11 /* SettingsSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSync.swift; sourceTree = "<group>"; };
 		8439E07395F7898D26952241 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		8B09C04014D94380C8944049 /* CloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSync.swift; sourceTree = "<group>"; };
 		8C8624FEFB62B767110C007A /* LibraryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryManager.swift; sourceTree = "<group>"; };
 		954176E78BCE69663DA9A0B1 /* StoryTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryTypes.swift; sourceTree = "<group>"; };
 		96F1FC8C973626D38718C981 /* ReaderPager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderPager.swift; sourceTree = "<group>"; };
@@ -98,6 +104,7 @@
 		A5E4B292B7D3EF9704ECECBB /* AccountViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViews.swift; sourceTree = "<group>"; };
 		A63E22E5889EBD4EC8319283 /* AO3Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AO3Service.swift; sourceTree = "<group>"; };
 		B9220F5639846657A95CE62C /* CommentsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsService.swift; sourceTree = "<group>"; };
+		BB92BE6E37EEC3F7C16169F1 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
 		BFE1920E2DA36461228B1574 /* LibraryFilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilterSheet.swift; sourceTree = "<group>"; };
 		CBBC815BF1AF17E43E24B9C1 /* ReadAloudPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadAloudPlayer.swift; sourceTree = "<group>"; };
 		D2F05AE361B51E309D21F7BA /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
@@ -135,6 +142,7 @@
 			children = (
 				370D9AD0B044F7C14B9EFC45 /* AppIcon.icon */,
 				E39C63374D0B12562899003E /* Assets.xcassets */,
+				706743866D2A1D98D68A6936 /* Babel.entitlements */,
 				6B874D8A91BFF9BC9BAA2B7A /* Localizable.xcstrings */,
 				F539A490541B31CFBEEBE7E3 /* App */,
 				3AEC951CF261492DEEE60A5A /* Models */,
@@ -224,6 +232,7 @@
 			children = (
 				A63E22E5889EBD4EC8319283 /* AO3Service.swift */,
 				50DFFB30CE2C2C950703DA46 /* BookSources.swift */,
+				8B09C04014D94380C8944049 /* CloudSync.swift */,
 				B9220F5639846657A95CE62C /* CommentsService.swift */,
 				9986DF66E3ABEC855199BF5B /* ContentStore.swift */,
 				3038A35919D0B5A3CFE1089F /* CookieSync.swift */,
@@ -234,8 +243,10 @@
 				EDEF52AE5C74AD34E79BD26C /* HTTPClient.swift */,
 				D2F05AE361B51E309D21F7BA /* ImageLoader.swift */,
 				8C8624FEFB62B767110C007A /* LibraryManager.swift */,
+				BB92BE6E37EEC3F7C16169F1 /* LibraryStore.swift */,
 				FC332CE618A30C5EBBAF5ECE /* PageCache.swift */,
 				CBBC815BF1AF17E43E24B9C1 /* ReadAloudPlayer.swift */,
+				7F19A35474E4037E0FA89C11 /* SettingsSync.swift */,
 				6CF4A2B483A4EA551516477A /* SiteActions.swift */,
 				6D5F267654EB4E8058B29DB5 /* SiteStatus.swift */,
 				02E2AADD6B677DDA1151EAA3 /* UpdateNotifier.swift */,
@@ -412,6 +423,7 @@
 				12161EB20D743F3E8016D0E7 /* BabelApp.swift in Sources */,
 				0890284DBBA41DA4531B79E9 /* BookSources.swift in Sources */,
 				630FB6C74F3E633D6B3BFA26 /* BooksView.swift in Sources */,
+				ADF92A28A89D3BF705C510B7 /* CloudSync.swift in Sources */,
 				398C609997FF3B87A9B36885 /* CommentsService.swift in Sources */,
 				F04E16CE3492518D3D064ED1 /* CommentsView.swift in Sources */,
 				B6312220DFB957280DBA02E7 /* Components.swift in Sources */,
@@ -430,6 +442,7 @@
 				18A8DA2CC3EBAF6436617339 /* ImageLoader.swift in Sources */,
 				2900ED97597FA1FBD49B94AB /* LibraryFilterSheet.swift in Sources */,
 				90795445F63020781C17DD8E /* LibraryManager.swift in Sources */,
+				DC60691FA72438A692247923 /* LibraryStore.swift in Sources */,
 				51A0F929958845C113623A5C /* LibraryView.swift in Sources */,
 				C4E5B9C4F702F1D0DAA9D6F4 /* PageCache.swift in Sources */,
 				831F1AF8D3CED6348240A3F1 /* ReadAloudControls.swift in Sources */,
@@ -439,6 +452,7 @@
 				0C46A0D6B6BC9385CC9C4B34 /* ReaderView.swift in Sources */,
 				FE4CDFA22E24AD632B518C01 /* RootView.swift in Sources */,
 				87D3C9681D591E2A5554E972 /* SearchDefaults.swift in Sources */,
+				9CCC0BE3E1A3096BE1CA1D2A /* SettingsSync.swift in Sources */,
 				95CB4B7D63C5E17F931D5A68 /* SettingsView.swift in Sources */,
 				BE4678BF2F067DB105FA24D9 /* SiteActions.swift in Sources */,
 				504B46D6883EEE25172828B5 /* SiteActionsBar.swift in Sources */,
@@ -464,9 +478,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Babel/Babel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 76;
+				CURRENT_PROJECT_VERSION = 77;
 				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Support/Info.plist;
@@ -480,7 +495,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 0.31.5;
+				MARKETING_VERSION = 0.32.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app;
 				PRODUCT_NAME = Babel;
 				SDKROOT = iphoneos;
@@ -558,9 +573,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Babel/Babel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 76;
+				CURRENT_PROJECT_VERSION = 77;
 				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Support/Info.plist;
@@ -574,7 +590,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 0.31.5;
+				MARKETING_VERSION = 0.32.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app;
 				PRODUCT_NAME = Babel;
 				SDKROOT = iphoneos;

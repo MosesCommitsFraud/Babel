@@ -20,6 +20,17 @@ targets:
       - path: Babel
     dependencies:
       - package: SwiftSoup
+    # iCloud: Bibliothek über CloudKit (SwiftData), Einstellungen über den Schlüsselspeicher.
+    # aps-environment für die stillen Pushes von CloudKit (Hintergrundmodus remote-notification in Support/Info.plist).
+    entitlements:
+      path: Babel/Babel.entitlements
+      properties:
+        aps-environment: development
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.de.babelreader.app
+        com.apple.developer.icloud-services:
+          - CloudKit
+        com.apple.developer.ubiquity-kvstore-identifier: $(TeamIdentifierPrefix)$(CFBundleIdentifier)
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: de.babelreader.app
@@ -40,5 +51,5 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
-        MARKETING_VERSION: "0.31.5"
-        CURRENT_PROJECT_VERSION: "76"
+        MARKETING_VERSION: "0.32.0"
+        CURRENT_PROJECT_VERSION: "77"

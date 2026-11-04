@@ -28,7 +28,8 @@ final class LibraryManager {
     func story(for remote: RemoteStory, context: ModelContext) -> Story {
         let key = remote.key
         let descriptor = FetchDescriptor<Story>(predicate: #Predicate { $0.key == key })
-        if let existing = try? context.fetch(descriptor).first {
+        // Gibt es vor dem Abgleich kurz zwei Zeilen, immer die, die am Ende bleibt.
+        if let existing = (try? context.fetch(descriptor))?.min(by: { $0.syncID < $1.syncID }) {
             existing.apply(remote: remote)
             return existing
         }
@@ -61,7 +62,6 @@ final class LibraryManager {
     func deleteOfflineContent(_ story: Story, context: ModelContext) {
         guard story.source.isWebFiction else { return }
         ContentStore.deleteContent(of: story)
-        story.downloadedCount = 0
         try? context.save()
     }
 
@@ -81,7 +81,7 @@ final class LibraryManager {
     func ensureChapter(_ story: Story, index: Int) async throws -> URL {
         switch story.source {
         case .epub, .gutenberg, .standardEbooks, .archive:
-            if story.spinePaths.isEmpty { try await prepareBook(story) }
+            if !ContentStore.isBookInstalled(story) { try await prepareBook(story) }
             guard index < story.spinePaths.count else { throw BabelError.notFound }
             return ContentStore.bookFolder(for: story).appendingPathComponent(story.spinePaths[index])
 
@@ -109,7 +109,6 @@ final class LibraryManager {
         story.apply(remote: result.meta)
         story.chapterTitles = result.chapters.map(\.title)
         story.chapterCount = result.chapters.count
-        story.downloadedCount = result.chapters.count
         try? story.modelContext?.save()
     }
 
@@ -123,7 +122,6 @@ final class LibraryManager {
         } else if story.chapterTitles.isEmpty {
             story.chapterTitles = [result.content.title]
         }
-        story.downloadedCount = ContentStore.countDownloaded(story)
         try? story.modelContext?.save()
     }
 
@@ -145,7 +143,7 @@ final class LibraryManager {
                 downloads[key] = Double(i) / Double(max(story.chapterCount, 1))
             }
         case .epub, .gutenberg, .standardEbooks, .archive:
-            if story.spinePaths.isEmpty { try await prepareBook(story) }
+            if !ContentStore.isBookInstalled(story) { try await prepareBook(story) }
         }
     }
 
@@ -283,8 +281,9 @@ final class LibraryManager {
 
     /// Lädt bei Gutenberg-Büchern das EPUB herunter und entpackt es.
     func prepareBook(_ story: Story) async throws {
-        guard story.spinePaths.isEmpty else { return }
-        guard story.source.isOnlineBook else { throw BabelError.epub(String(localized: "Buchdatei fehlt")) }
+        guard !ContentStore.isBookInstalled(story) else { return }
+        // Die Datei eines eigenen EPUBs gibt es nur auf dem Gerät, das sie importiert hat.
+        guard story.source.isOnlineBook else { throw BabelError.epub(String(localized: "Diese EPUB-Datei liegt nur auf dem Gerät, auf dem du sie importiert hast.")) }
         var url = story.downloadURLString.flatMap(URL.init(string:))
         // Internet Archive: Dateiname des EPUB steht erst in den Metadaten.
         if url == nil, story.source == .archive { url = try await ArchiveService.epubURL(id: story.sourceID) }
@@ -303,6 +302,7 @@ final class LibraryManager {
         let bookDir = ContentStore.bookFolder(for: story)
         try? FileManager.default.removeItem(at: bookDir)
         try ZipArchive.extract(file, to: bookDir)
+        ContentStore.refreshOfflineState(folderName: story.folderName)
         let book = try EPUBParser.parse(folder: bookDir)
         if let t = book.title, !t.isEmpty { story.title = t }
         if let a = book.author, !a.isEmpty, story.author.isEmpty { story.author = a }
@@ -313,7 +313,6 @@ final class LibraryManager {
         story.chapterCount = book.spine.count
         story.coverPath = book.coverPath
         story.isComplete = true
-        story.downloadedCount = book.spine.count
         try? story.modelContext?.save()
     }
 
@@ -359,7 +358,6 @@ final class LibraryManager {
             let story = self.story(for: result.meta, context: context)
             try ContentStore.writeChapter(result.content, story: story, index: 0)
             if !result.titles.isEmpty { story.chapterTitles = result.titles; story.chapterCount = result.titles.count }
-            story.downloadedCount = ContentStore.countDownloaded(story)
             addToLibrary(story, context: context)
             return story
         }

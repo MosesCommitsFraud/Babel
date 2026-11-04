@@ -141,7 +141,7 @@ struct LibraryView: View {
             if story.newChapters > 0 { hits.append(.updates) }
             if story.isFavorite { hits.append(.favorites) }
             if matches(story, .offline) { hits.append(.offline) }
-            for name in Set(story.shelves.map(\.name)) { hits.append(.shelf(name)) }
+            for name in Set(story.shelfList.map(\.name)) { hits.append(.shelf(name)) }
             for hit in hits { counts[hit, default: 0] += 1 }
         }
         func count(_ f: LibraryFilter) -> Int { counts[f] ?? 0 }
@@ -193,10 +193,10 @@ struct LibraryView: View {
         case .all, .history: true
         case .updates: story.newChapters > 0
         case .favorites: story.isFavorite
-        case .offline: story.source.isWebFiction ? story.downloadedCount >= story.knownChapterCount : !story.spinePaths.isEmpty
+        case .offline: story.source.isWebFiction ? story.downloadedCount >= story.knownChapterCount : ContentStore.isBookInstalled(story)
         case .status(let s): story.status == s
         case .source(let s): story.source == s
-        case .shelf(let name): story.shelves.contains { $0.name == name }
+        case .shelf(let name): story.shelfList.contains { $0.name == name }
         }
     }
 
@@ -374,10 +374,10 @@ struct StoryContextMenu: View {
             Menu("Sammlungen", systemImage: "folder") {
                 ForEach(shelves) { shelf in
                     Toggle(shelf.name, isOn: Binding(
-                        get: { story.shelves.contains { $0.persistentModelID == shelf.persistentModelID } },
+                        get: { story.shelfList.contains { $0.persistentModelID == shelf.persistentModelID } },
                         set: { on in
-                            if on { story.shelves.append(shelf) }
-                            else { story.shelves.removeAll { $0.persistentModelID == shelf.persistentModelID } }
+                            if on { story.shelfList.append(shelf) }
+                            else { story.shelfList.removeAll { $0.persistentModelID == shelf.persistentModelID } }
                             try? context.save()
                         }
                     ))
@@ -399,7 +399,7 @@ struct LibrarySwipeActions: ViewModifier {
     private var isDownloaded: Bool {
         story.source.isWebFiction
             ? story.downloadedCount > 0 && story.downloadedCount >= story.knownChapterCount
-            : !story.spinePaths.isEmpty
+            : ContentStore.isBookInstalled(story)
     }
 
     func body(content: Content) -> some View {

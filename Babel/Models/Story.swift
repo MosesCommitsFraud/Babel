@@ -3,7 +3,12 @@ import SwiftData
 
 @Model
 final class Story {
-    @Attribute(.unique) var key: String = ""
+    #Index<Story>([\.key])
+
+    /// Eindeutig nur auf einem Gerät gesichert: CloudKit kennt kein `.unique`. Doppelte Zeilen führt `CloudSync` zusammen.
+    var key: String = ""
+    /// Zufällig und für immer gleich. Entscheidet auf allen Geräten gleich, welche von zwei doppelten Zeilen bleibt.
+    var syncID: String = UUID().uuidString
     var sourceRaw: String = StorySource.epub.rawValue
     var sourceID: String = ""
 
@@ -56,12 +61,12 @@ final class Story {
     var spinePaths: [String] = []
     var coverPath: String? = nil
     var newChapters: Int = 0
-    var downloadedCount: Int = 0
     var lastCheckedAt: Date? = nil
     var personalNote: String = ""
 
+    /// Optional, weil CloudKit optionale Beziehungen verlangt. Im Code `shelfList` benutzen.
     @Relationship(deleteRule: .nullify, inverse: \Shelf.stories)
-    var shelves: [Shelf] = []
+    var shelves: [Shelf]? = []
 
     init(remote: RemoteStory) {
         self.key = remote.key
@@ -74,6 +79,14 @@ final class Story {
     }
 
     var source: StorySource { StorySource(rawValue: sourceRaw) ?? .epub }
+
+    var shelfList: [Shelf] {
+        get { shelves ?? [] }
+        set { shelves = newValue }
+    }
+
+    /// Wie viele Kapitel auf diesem Gerät liegen. Steht nicht im Modell, sonst käme die Zahl eines anderen Geräts per iCloud herein.
+    var downloadedCount: Int { ContentStore.countDownloaded(self) }
 
     var status: ReadingStatus {
         get { ReadingStatus(rawValue: statusRaw) ?? .none }
@@ -158,10 +171,11 @@ final class Story {
 
 @Model
 final class Shelf {
+    var syncID: String = UUID().uuidString
     var name: String = ""
     var symbol: String = "folder.fill"
     var createdAt: Date = Date()
-    var stories: [Story] = []
+    var stories: [Story]? = []
 
     init(name: String, symbol: String = "folder.fill") {
         self.name = name

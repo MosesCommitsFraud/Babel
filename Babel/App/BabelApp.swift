@@ -10,15 +10,10 @@ struct BabelApp: App {
 
     init() {
         ReaderDefaults.migrate()
+        SettingsSync.shared.start()
     }
 
-    private let container: ModelContainer = {
-        do {
-            return try ModelContainer(for: Story.self, Shelf.self)
-        } catch {
-            fatalError("Bibliothek konnte nicht geöffnet werden: \(error)")
-        }
-    }()
+    private let container = LibraryStore.open()
 
     var body: some Scene {
         WindowGroup {
@@ -28,11 +23,13 @@ struct BabelApp: App {
                 .environment(library)
                 .environment(notifier)
                 .task { await CookieSync.syncFromWebKit() }
+                .task { CloudSync.shared.start(container: container) }
         }
         .modelContainer(container)
         // Beim Verlassen der App die nächste Hintergrundprüfung anmelden.
         .onChange(of: scenePhase) { _, phase in
             if phase == .background { UpdateNotifier.schedule() }
+            if phase == .active { CloudSync.shared.scheduleCleanup() }
         }
         .backgroundTask(.appRefresh(UpdateNotifier.taskID)) { [container] in
             await UpdateNotifier.shared.runBackgroundCheck(container: container)
@@ -44,6 +41,9 @@ struct BabelApp: App {
 @MainActor
 @Observable
 final class ReaderPresenter {
-    var story: Story?
+    var story: Story? {
+        didSet { hold = story.map { StoryHold(key: $0.key) } }
+    }
+    @ObservationIgnored private var hold: StoryHold?
     func open(_ story: Story) { self.story = story }
 }

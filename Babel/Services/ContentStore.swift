@@ -1,8 +1,18 @@
 import Foundation
+import Observation
+
+/// Was von einer Geschichte auf diesem Gerät liegt. Pro Geschichte beobachtbar:
+/// Ein geladenes Kapitel zeichnet nur die Ansichten dieser Geschichte neu.
+@Observable
+final class OfflineState {
+    var chapterFiles = 0
+    var hasBook = false
+}
 
 /// Kapitel und Bücher liegen als Dateien unter Application Support/Babel/Stories/<Ordner>/.
+/// Sie werden nicht per iCloud abgeglichen: Jedes Gerät lädt sie selbst nach, was es zum Lesen braucht.
 enum ContentStore {
-    static var root: URL {
+    static let root: URL = {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         let url = base.appendingPathComponent("Babel/Stories", isDirectory: true)
         // Aus der Zeit, als die App noch „Folio“ hieß.
@@ -13,6 +23,39 @@ enum ContentStore {
         }
         try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
+    }()
+
+    private static let lock = NSLock()
+    private static var offlineStates: [String: OfflineState] = [:]
+
+    /// Einmal von der Platte gelesen, danach aus dem Speicher – geht auch in Filtern über die ganze Bibliothek.
+    static func offlineState(folderName: String) -> OfflineState {
+        lock.lock()
+        defer { lock.unlock() }
+        if let state = offlineStates[folderName] { return state }
+        let state = OfflineState()
+        read(folderName, into: state)
+        offlineStates[folderName] = state
+        return state
+    }
+
+    private static func read(_ folderName: String, into state: OfflineState) {
+        let folder = root.appendingPathComponent(folderName, isDirectory: true)
+        let files = (try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? []
+        let chapterFiles = files.filter { $0.hasPrefix("ch_") }.count
+        let hasBook = files.contains("book")
+        if state.chapterFiles != chapterFiles { state.chapterFiles = chapterFiles }
+        if state.hasBook != hasBook { state.hasBook = hasBook }
+    }
+
+    /// Nach jeder Änderung an den Dateien einer Geschichte aufrufen.
+    static func refreshOfflineState(folderName: String) {
+        read(folderName, into: offlineState(folderName: folderName))
+    }
+
+    /// Das Buch liegt auf diesem Gerät. `spinePaths` allein sagt das nicht: Es kommt per iCloud auch von anderen Geräten.
+    static func isBookInstalled(_ story: Story) -> Bool {
+        !story.spinePaths.isEmpty && offlineState(folderName: story.folderName).hasBook
     }
 
     static func folder(for story: Story) -> URL {
@@ -31,15 +74,14 @@ enum ContentStore {
 
     static func hasChapter(_ story: Story, _ index: Int) -> Bool {
         if !story.source.isWebFiction {
-            return index < story.spinePaths.count
+            return isBookInstalled(story) && index < story.spinePaths.count
         }
         return FileManager.default.fileExists(atPath: chapterURL(story, index).path)
     }
 
     static func countDownloaded(_ story: Story) -> Int {
-        if !story.source.isWebFiction { return story.spinePaths.count }
-        let files = (try? FileManager.default.contentsOfDirectory(atPath: folder(for: story).path)) ?? []
-        return files.filter { $0.hasPrefix("ch_") }.count
+        if !story.source.isWebFiction { return isBookInstalled(story) ? story.spinePaths.count : 0 }
+        return offlineState(folderName: story.folderName).chapterFiles
     }
 
     static func writeChapter(_ chapter: ChapterContent, story: Story, index: Int) throws {
@@ -53,14 +95,30 @@ enum ContentStore {
         </body></html>
         """
         try Data(html.utf8).write(to: chapterURL(story, index), options: .atomic)
+        refreshOfflineState(folderName: story.folderName)
     }
 
     static func deleteContent(of story: Story) {
-        try? FileManager.default.removeItem(at: root.appendingPathComponent(story.folderName, isDirectory: true))
+        deleteContent(folderName: story.folderName)
+    }
+
+    private static func deleteContent(folderName: String) {
+        try? FileManager.default.removeItem(at: root.appendingPathComponent(folderName, isDirectory: true))
+        refreshOfflineState(folderName: folderName)
+    }
+
+    /// Räumt Kapitel von Geschichten weg, die auf einem anderen Gerät gelöscht wurden.
+    /// Eigene EPUBs bleiben: Ihre Dateien lassen sich nicht neu laden.
+    static func pruneFolders(keeping folderNames: Set<String>) {
+        let folders = (try? FileManager.default.contentsOfDirectory(atPath: root.path)) ?? []
+        let ownBooks = StorySource.epub.rawValue + "_"
+        for folder in folders where !folderNames.contains(folder) && !folder.hasPrefix(ownBooks) && !folder.hasPrefix(".") {
+            deleteContent(folderName: folder)
+        }
     }
 
     static func coverFileURL(_ story: Story) -> URL? {
-        guard let p = story.coverPath else { return nil }
+        guard let p = story.coverPath, offlineState(folderName: story.folderName).hasBook else { return nil }
         return bookFolder(for: story).appendingPathComponent(p)
     }
 

@@ -228,7 +228,7 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         isReady = false
         errorText = nil
         let story = model.story
-        isWaiting = story.source.isWebFiction ? !ContentStore.hasChapter(story, index) : story.spinePaths.isEmpty
+        isWaiting = story.source.isWebFiction ? !ContentStore.hasChapter(story, index) : !ContentStore.isBookInstalled(story)
         loadTask = Task { [weak self] in
             guard let self else { return }
             self.model.pageState(self.index, loading: self.isWaiting, error: nil)

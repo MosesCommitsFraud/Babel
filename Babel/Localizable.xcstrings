@@ -3,6 +3,126 @@
   "strings" : {
     "" : {},
     "\n" : {},
+    "Bibliothek, Lesestellen, Sammlungen und Einstellungen gleichen sich über dein iCloud-Konto ab. Kapitel lädt jedes Gerät selbst, importierte EPUB-Dateien bleiben auf dem Gerät, die Anmeldung bei AO3 und FanFiction.net gilt pro Gerät." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your library, reading positions, collections and settings sync through your iCloud account. Each device downloads chapters itself, imported EPUB files stay on their device, and AO3 and FanFiction.net sign-ins apply per device."
+          }
+        }
+      }
+    },
+    "Dein iCloud-Speicher ist voll." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your iCloud storage is full."
+          }
+        }
+      }
+    },
+    "Diese EPUB-Datei liegt nur auf dem Gerät, auf dem du sie importiert hast." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This EPUB file is only on the device you imported it on."
+          }
+        }
+      }
+    },
+    "Doppelte Zeilen anlegen (Debug)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create Duplicate Rows (Debug)"
+          }
+        }
+      }
+    },
+    "Eingeschränkt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restricted"
+          }
+        }
+      }
+    },
+    "iCloud" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud"
+          }
+        }
+      }
+    },
+    "iCloud-Abgleich" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Sync"
+          }
+        }
+      }
+    },
+    "Keine Verbindung zu iCloud." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No connection to iCloud."
+          }
+        }
+      }
+    },
+    "Nicht bei iCloud angemeldet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not signed in to iCloud."
+          }
+        }
+      }
+    },
+    "Nicht erreichbar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unreachable"
+          }
+        }
+      }
+    },
+    "Nicht verfügbar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Available"
+          }
+        }
+      }
+    },
+    "Zuletzt abgeglichen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last Synced"
+          }
+        }
+      }
+    },
     "–" : {},
     "„%@“ auf AO3 suchen" : {
       "extractionState" : "stale",

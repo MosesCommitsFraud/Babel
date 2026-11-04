@@ -20,6 +20,8 @@ struct StoryDetailView: View {
     @State private var showNewShelf = false
     @State private var newShelfName = ""
     @State private var confirmDelete = false
+    /// Bleibt, solange die Seite im Navigationsstapel liegt – auch unter einer Autorenseite.
+    @State private var hold: StoryHold?
 
     var body: some View {
         ScrollView {
@@ -56,6 +58,7 @@ struct StoryDetailView: View {
             Button("OK") { errorMessage = nil }
         } message: { Text($0) }
         .task(id: story.downloadedCount) { downloadedCount = ContentStore.countDownloaded(story) }
+        .onAppear { if hold == nil { hold = StoryHold(key: story.key) } }
         .confirmationDialog(Text("„\(story.title)“ vollständig löschen?"), isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Vollständig löschen", role: .destructive) {
                 let target = story
@@ -88,8 +91,8 @@ struct StoryDetailView: View {
             context.insert(shelf)
             return shelf
         }()
-        if !story.shelves.contains(where: { $0.persistentModelID == shelf.persistentModelID }) {
-            story.shelves.append(shelf)
+        if !story.shelfList.contains(where: { $0.persistentModelID == shelf.persistentModelID }) {
+            story.shelfList.append(shelf)
         }
         try? context.save()
     }
@@ -160,7 +163,7 @@ struct StoryDetailView: View {
                 .buttonStyle(.glass)
                 .accessibilityLabel(story.inLibrary ? String(localized: "Aus Bibliothek entfernen") : String(localized: "Zur Bibliothek hinzufügen"))
 
-                if story.source.isWebFiction || story.spinePaths.isEmpty {
+                if story.source.isWebFiction || !ContentStore.isBookInstalled(story) {
                     Button {
                         Task { await downloadAll() }
                     } label: {
@@ -213,16 +216,16 @@ struct StoryDetailView: View {
                 if !shelves.isEmpty { Divider() }
                 ForEach(shelves) { shelf in
                     Toggle(shelf.name, isOn: Binding(
-                        get: { story.shelves.contains { $0.persistentModelID == shelf.persistentModelID } },
+                        get: { story.shelfList.contains { $0.persistentModelID == shelf.persistentModelID } },
                         set: { on in
-                            if on { story.shelves.append(shelf) }
-                            else { story.shelves.removeAll { $0.persistentModelID == shelf.persistentModelID } }
+                            if on { story.shelfList.append(shelf) }
+                            else { story.shelfList.removeAll { $0.persistentModelID == shelf.persistentModelID } }
                             try? context.save()
                         }
                     ))
                 }
             } label: {
-                Label(story.shelves.isEmpty ? String(localized: "Sammlung") : story.shelves.map(\.name).joined(separator: ", "),
+                Label(story.shelfList.isEmpty ? String(localized: "Sammlung") : story.shelfList.map(\.name).joined(separator: ", "),
                       systemImage: "folder")
                     .font(.subheadline.weight(.medium))
                     .lineLimit(1)

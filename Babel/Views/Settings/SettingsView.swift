@@ -148,6 +148,8 @@ struct SettingsView: View {
                 }
                 .themedRows()
 
+                CloudSyncSection()
+
                 Section("Lesen") {
                     NavigationLink("Darstellung im Reader") {
                         Form { ReaderSettingsControls() }.navigationTitle("Darstellung")
