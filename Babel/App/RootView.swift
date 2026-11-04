@@ -32,7 +32,7 @@ struct RootView: View {
                     AO3FilterWallView(path: $ao3Path).babelDestinations()
                 }
             }
-            Tab("FanFiction", systemImage: "text.book.closed.fill", value: AppTab.ffn) {
+            Tab("FFN", systemImage: "text.book.closed.fill", value: AppTab.ffn) {
                 NavigationStack { FFNBrowseView().babelDestinations() }
             }
             Tab("Bücher", systemImage: "building.columns.fill", value: AppTab.books) {

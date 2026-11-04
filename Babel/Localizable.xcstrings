@@ -1963,7 +1963,6 @@
       }
     },
     "Fandoms" : {},
-    "FanFiction" : {},
     "FanFiction.net" : {},
     "FanFiction.net möchte prüfen, dass du kein Bot bist. Tippe auf das Kästchen – danach geht's automatisch weiter." : {
       "localizations" : {
@@ -2147,6 +2146,7 @@
         }
       }
     },
+    "FFN" : {},
     "FFN abgeglichen (%@)" : {
       "localizations" : {
         "en" : {
