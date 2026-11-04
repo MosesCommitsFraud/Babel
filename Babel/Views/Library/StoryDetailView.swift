@@ -19,6 +19,7 @@ struct StoryDetailView: View {
     @State private var isExporting = false
     @State private var showNewShelf = false
     @State private var newShelfName = ""
+    @State private var confirmDelete = false
 
     var body: some View {
         ScrollView {
@@ -55,6 +56,19 @@ struct StoryDetailView: View {
             Button("OK") { errorMessage = nil }
         } message: { Text($0) }
         .task(id: story.downloadedCount) { downloadedCount = ContentStore.countDownloaded(story) }
+        .confirmationDialog(Text("„\(story.title)“ vollständig löschen?"), isPresented: $confirmDelete, titleVisibility: .visible) {
+            Button("Vollständig löschen", role: .destructive) {
+                let target = story
+                dismiss()
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(400))
+                    library.delete(target, context: context)
+                }
+            }
+            Button("Abbrechen", role: .cancel) {}
+        } message: {
+            Text("Der Eintrag verschwindet ganz aus Babel, mit Lesestelle, Favorit, Sammlungen und Offline-Kapiteln.")
+        }
         .alert("Neue Sammlung", isPresented: $showNewShelf) {
             TextField("Name", text: $newShelfName)
             Button("Abbrechen", role: .cancel) { newShelfName = "" }
@@ -474,12 +488,7 @@ struct StoryDetailView: View {
                 }
                 Divider()
                 Button("Vollständig löschen", systemImage: "trash", role: .destructive) {
-                    let target = story
-                    dismiss()
-                    Task { @MainActor in
-                        try? await Task.sleep(for: .milliseconds(400))
-                        library.delete(target, context: context)
-                    }
+                    confirmDelete = true
                 }
             } label: {
                 Label("Mehr", systemImage: "ellipsis")

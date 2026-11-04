@@ -5221,6 +5221,26 @@
           }
         }
       }
+    },
+    "„%@“ vollständig löschen?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete “%@” completely?"
+          }
+        }
+      }
+    },
+    "Der Eintrag verschwindet ganz aus Babel, mit Lesestelle, Favorit, Sammlungen und Offline-Kapiteln." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The entry will be removed from Babel entirely, including your reading position, favorite, collections and offline chapters."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
