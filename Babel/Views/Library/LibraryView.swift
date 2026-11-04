@@ -255,15 +255,6 @@ struct LibraryView: View {
         ToolbarItem(placement: .topBarLeading) {
             Button("Einstellungen", systemImage: "gearshape") { showSettings = true }
         }
-        if library.isCheckingUpdates {
-            ToolbarItem(placement: .principal) {
-                Label("Suche nach neuen Kapiteln", systemImage: "arrow.triangle.2.circlepath")
-                    .labelStyle(.iconOnly)
-                    .symbolEffect(.rotate, options: .repeating)
-                    .foregroundStyle(.secondary)
-                    .accessibilityLabel("Suche nach neuen Kapiteln")
-            }
-        }
         ToolbarItemGroup(placement: .topBarTrailing) {
             Button {
                 showQuery = true
@@ -284,13 +275,7 @@ struct LibraryView: View {
                 Button("Link hinzufügen", systemImage: "link.badge.plus") { showLinkSheet = true }
                 Divider()
                 Button("Neue Sammlung", systemImage: "folder.badge.plus") { showNewShelf = true }
-                if library.isCheckingUpdates {
-                    Label("Suche nach Updates …", systemImage: "hourglass")
-                } else {
-                    Button("Nach neuen Kapiteln suchen", systemImage: "arrow.clockwise") {
-                        Task { await library.checkAllUpdates(context: context) }
-                    }
-                }
+                UpdateCheckMenuItem()
             } label: {
                 Label("Hinzufügen", systemImage: "plus")
             }
@@ -356,6 +341,23 @@ struct LibraryView: View {
 }
 
 /// Kontextmenü für eine Geschichte (Status, Favorit, Sammlungen).
+/// Eigene Ansicht: Nur sie hängt an `isCheckingUpdates`. Läse `LibraryView` den Wert selbst, baute sich beim Start
+/// der Prüfung die ganze Bibliothek neu auf – beim Herunterziehen sprang die Liste dadurch sichtbar nach unten.
+private struct UpdateCheckMenuItem: View {
+    @Environment(\.modelContext) private var context
+    @Environment(LibraryManager.self) private var library
+
+    var body: some View {
+        if library.isCheckingUpdates {
+            Label("Suche nach Updates …", systemImage: "hourglass")
+        } else {
+            Button("Nach neuen Kapiteln suchen", systemImage: "arrow.clockwise") {
+                Task { await library.checkAllUpdates(context: context) }
+            }
+        }
+    }
+}
+
 struct StoryContextMenu: View {
     @Bindable var story: Story
     @Environment(\.modelContext) private var context

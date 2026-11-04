@@ -71,7 +71,6 @@ struct StatusToast: View {
     var body: some View {
         VStack(spacing: 8) {
             RateLimitBanner()
-            // Die Update-Suche zeigt die Bibliothek selbst (kleiner Kreisel), damit sie nicht über allen Tabs hängt.
             if let message = library.updateMessage {
                 toast(message, library.messageIsProgress ? "arrow.down.circle" : "checkmark.circle.fill")
                     .id(message)
