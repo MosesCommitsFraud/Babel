@@ -1,6 +1,6 @@
 # Projekt-Kontext für Claude Code
 
-Native iPhone-E-Reader (SwiftUI, **iOS 26**, Liquid Glass) für **AO3**, **FanFiction.net**, Project Gutenberg und eigene EPUBs. Name: **Babel** (vorher Arbeitstitel „Folio“; Target/Scheme/Ordner `Babel`, Bundle-ID `de.babelreader.app`).
+Native iPhone-E-Reader (SwiftUI, **iOS 26**, Liquid Glass) für **AO3**, **FanFiction.net**, Project Gutenberg und eigene EPUBs. Name: **Babel** (vorher Arbeitstitel „Folio“; Target/Scheme/Ordner `Babel`, Bundle-ID `de.babelreader.app`). Name im App Store / App Store Connect: **Library of Babel** („Babel“ allein war vergeben), auf dem Home-Bildschirm bleibt es `CFBundleDisplayName` „Babel“.
 
 Baut und läuft im Simulator (iPhone 18 Pro, iOS 27). Auf echtem Gerät noch nicht getestet.
 
