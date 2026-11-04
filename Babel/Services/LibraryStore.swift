@@ -1,5 +1,8 @@
 import Foundation
 import SwiftData
+#if DEBUG
+import CoreData
+#endif
 
 /// Öffnet die Bibliothek: dieselbe Datei wie immer (`default.store`), abgeglichen über die private iCloud-Datenbank.
 /// Ohne iCloud-Konto bleibt alles lokal; meldet sich jemand später an, lädt iOS die Bibliothek nach oben.
@@ -13,6 +16,9 @@ enum LibraryStore {
     private(set) static var isCloudEnabled = false
 
     static func open() -> ModelContainer {
+        #if DEBUG
+        if CommandLine.arguments.contains("-initCloudKitSchema") { initializeCloudKitSchemaAndExit() }
+        #endif
         if prepareExistingLibrary() {
             do {
                 let container = try ModelContainer(for: schema, configurations: ModelConfiguration(schema: schema, cloudKitDatabase: .private(containerID)))
@@ -63,4 +69,32 @@ enum LibraryStore {
             try? FileManager.default.copyItem(at: source, to: backups.appendingPathComponent(source.lastPathComponent))
         }
     }
+
+    #if DEBUG
+    /// Legt das vollständige Schema in der Development-Umgebung an. Der normale Abgleich erzeugt nur Felder,
+    /// die schon einmal einen Wert hatten, und keine Typen ohne Zeilen (`CD_Shelf`). Danach in der CloudKit Console
+    /// nach Production deployen. Läuft mit eigener Datei und beendet die App, die Bibliothek bleibt unberührt.
+    private static func initializeCloudKitSchemaAndExit() -> Never {
+        let store = FileManager.default.temporaryDirectory.appendingPathComponent("schema-\(UUID().uuidString).store")
+        do {
+            guard let model = NSManagedObjectModel.makeManagedObjectModel(for: [Story.self, Shelf.self]) else {
+                throw CocoaError(.coreData)
+            }
+            let description = NSPersistentStoreDescription(url: store)
+            description.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: containerID)
+            description.shouldAddStoreAsynchronously = false
+            let container = NSPersistentCloudKitContainer(name: "Babel", managedObjectModel: model)
+            container.persistentStoreDescriptions = [description]
+            var loadError: Error?
+            container.loadPersistentStores { _, error in loadError = error }
+            if let loadError { throw loadError }
+            try container.initializeCloudKitSchema()
+            print("CloudKit-Schema angelegt.")
+            exit(0)
+        } catch {
+            print("CloudKit-Schema fehlgeschlagen: \(error)")
+            exit(1)
+        }
+    }
+    #endif
 }
