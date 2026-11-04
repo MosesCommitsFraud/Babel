@@ -481,7 +481,7 @@
 				CODE_SIGN_ENTITLEMENTS = Babel/Babel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 82;
+				CURRENT_PROJECT_VERSION = 83;
 				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Support/Info.plist;
@@ -495,7 +495,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 0.32.5;
+				MARKETING_VERSION = 0.32.6;
 				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app;
 				PRODUCT_NAME = Babel;
 				SDKROOT = iphoneos;
@@ -576,7 +576,7 @@
 				CODE_SIGN_ENTITLEMENTS = Babel/Babel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 82;
+				CURRENT_PROJECT_VERSION = 83;
 				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Support/Info.plist;
@@ -590,7 +590,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 0.32.5;
+				MARKETING_VERSION = 0.32.6;
 				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app;
 				PRODUCT_NAME = Babel;
 				SDKROOT = iphoneos;
