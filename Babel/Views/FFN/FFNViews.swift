@@ -5,15 +5,17 @@ import SwiftUI
 /// Fertig sortierte Fandom-Liste samt A–Z-Sprungzielen. Wird im Hintergrund gebaut –
 /// über 13.000 Fandoms bei jedem Neuzeichnen zu sortieren ließ die Liste ruckeln.
 struct FFNFandomIndex: Sendable {
-    struct Anchor: Sendable, Hashable {
+    struct LetterSection: Sendable, Identifiable {
         let letter: String
-        let id: String
+        let fandoms: [FFNFandom]
+        var id: String { letter }
     }
 
     var popular: [FFNFandom] = []
-    var alphabetical: [FFNFandom] = []
-    /// Erster Fandom je Buchstabe (alphabetisch).
-    var anchors: [Anchor] = []
+    /// Alphabetisch, je Buchstabe eine eigene Section: `List` läuft für jede Zelle Zeile für Zeile
+    /// bis zu ihrer Position in der Section – in einer einzigen Section dauerte das beim Sprung
+    /// über die A–Z-Leiste pro Buchstabe spürbar lange, so liegt das Sprungziel immer vorn.
+    var sections: [LetterSection] = []
 
     static let empty = FFNFandomIndex()
 
@@ -23,12 +25,9 @@ struct FFNFandomIndex: Sendable {
         // Schlüssel einmal berechnen statt bei jedem Vergleich.
         let keyed = fandoms.map { (fandom: $0, count: $0.countValue) }
         popular = keyed.sorted { $0.count > $1.count }.map(\.fandom)
-        alphabetical = fandoms.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-        var seen = Set<String>()
-        anchors = alphabetical.compactMap { f in
-            let l = Self.letter(f.name)
-            return seen.insert(l).inserted ? Anchor(letter: l, id: f.id) : nil
-        }
+        let alphabetical = fandoms.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+        let groups = Dictionary(grouping: alphabetical) { Self.letter($0.name) }
+        sections = groups.keys.sorted().map { LetterSection(letter: $0, fandoms: groups[$0] ?? []) }
     }
 
     static func letter(_ name: String) -> String {
@@ -155,6 +154,7 @@ struct FFNBrowseView: View {
     @State private var error: String?
     @State private var searchText = ""
     @State private var sortByPopularity = true
+    @State private var pendingJump: String?
 
     private static let allID = FFNFandomStore.allID
     private var isAll: Bool { categoryID == Self.allID }
@@ -170,8 +170,6 @@ struct FFNBrowseView: View {
         (try? JSONDecoder().decode([FFNFandom].self, from: savedData)) ?? []
     }
 
-    private var visibleFandoms: [FFNFandom] { sortByPopularity ? index.popular : index.alphabetical }
-
     var body: some View {
         ScrollViewReader { proxy in
             List {
@@ -183,19 +181,24 @@ struct FFNBrowseView: View {
             }
             .overlay(alignment: .trailing) {
                 if !isSearching && fandomCount > 30 {
-                    let anchors = index.anchors
-                    AlphabetIndexBar(letters: anchors.map(\.letter)) { letter in
-                        guard let target = anchors.first(where: { $0.letter == letter })?.id else { return }
+                    let sections = index.sections
+                    AlphabetIndexBar(letters: sections.map(\.letter)) { letter in
+                        guard let target = sections.first(where: { $0.letter == letter })?.fandoms.first?.id else { return }
                         if sortByPopularity {
+                            pendingJump = target
                             sortByPopularity = false
-                            // Erst neu sortieren lassen, dann springen.
-                            Task { @MainActor in proxy.scrollTo(target, anchor: .top) }
                         } else {
                             proxy.scrollTo(target, anchor: .top)
                         }
                     }
                     .padding(.trailing, 4)
                 }
+            }
+            // Erst springen, wenn die Liste umgebaut ist – vorher gibt es das Ziel noch nicht.
+            .task(id: pendingJump) {
+                guard let pendingJump else { return }
+                proxy.scrollTo(pendingJump, anchor: .top)
+                self.pendingJump = nil
             }
         }
         .themedBackground()
@@ -333,19 +336,36 @@ struct FFNBrowseView: View {
         }
         .themedRows()
 
-        Section {
-            ForEach(visibleFandoms) { f in fandomRow(f) }
-        } header: {
-            HStack {
-                Text(isAll ? String(localized: "Alle Kategorien") : FFNService.categories.first { $0.id == categoryID }?.name ?? "Fandoms")
-                if isAll && store.isLoadingAll {
-                    Spacer()
-                    ProgressView().controlSize(.small)
-                    Text("\(store.lists.count)/\(FFNService.categories.count)").font(.caption.monospacedDigit())
+        if sortByPopularity {
+            Section {
+                ForEach(index.popular) { f in fandomRow(f) }
+            } header: {
+                fandomsHeader
+            }
+            .themedRows()
+        } else {
+            Section {
+            } header: {
+                fandomsHeader
+            }
+            ForEach(index.sections) { section in
+                Section(section.letter) {
+                    ForEach(section.fandoms) { f in fandomRow(f) }
                 }
+                .themedRows()
             }
         }
-        .themedRows()
+    }
+
+    private var fandomsHeader: some View {
+        HStack {
+            Text(isAll ? String(localized: "Alle Kategorien") : FFNService.categories.first { $0.id == categoryID }?.name ?? "Fandoms")
+            if isAll && store.isLoadingAll {
+                Spacer()
+                ProgressView().controlSize(.small)
+                Text("\(store.lists.count)/\(FFNService.categories.count)").font(.caption.monospacedDigit())
+            }
+        }
     }
 
     private var categoryBar: some View {
