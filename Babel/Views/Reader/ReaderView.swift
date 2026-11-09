@@ -85,7 +85,9 @@ final class ReaderModel {
         guard index == chapterIndex else { return }
         progress = min(1, max(0, value))
         story.chapterProgress = progress
-        if Date().timeIntervalSince(lastSave) > 3 {
+        // Selten sichern: Jedes Speichern schickt die ganze Zeile an iCloud und weckt die Listen dahinter.
+        // Kapitelwechsel, Schließen und der Wechsel in den Hintergrund sichern ohnehin.
+        if Date().timeIntervalSince(lastSave) > 30 {
             lastSave = .now
             try? story.modelContext?.save()
         }

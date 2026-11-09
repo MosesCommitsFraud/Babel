@@ -134,13 +134,15 @@ struct BooksView: View {
         .refreshable { await load(page: 1) }
         .fileImporter(isPresented: $showImporter, allowedContentTypes: [.epub], allowsMultipleSelection: true) { result in
             guard case .success(let urls) = result else { return }
-            var ok = 0
-            var failures: [String] = []
-            for url in urls {
-                do { _ = try library.importEPUB(at: url, context: context); ok += 1 }
-                catch { failures.append(error.localizedDescription) }
+            Task {
+                var ok = 0
+                var failures: [String] = []
+                for url in urls {
+                    do { _ = try await library.importEPUB(at: url, context: context); ok += 1 }
+                    catch { failures.append(error.localizedDescription) }
+                }
+                importMessage = failures.isEmpty ? String(localized: "\(ok) Buch/Bücher in deine Bibliothek gelegt.") : failures.joined(separator: String(localized: "\n"))
             }
-            importMessage = failures.isEmpty ? String(localized: "\(ok) Buch/Bücher in deine Bibliothek gelegt.") : failures.joined(separator: String(localized: "\n"))
         }
         .alert("Import", isPresented: .constant(importMessage != nil), presenting: importMessage) { _ in
             Button("OK") { importMessage = nil }

@@ -58,9 +58,17 @@ enum ContentStore {
         !story.spinePaths.isEmpty && offlineState(folderName: story.folderName).hasBook
     }
 
-    static func folder(for story: Story) -> URL {
-        let url = root.appendingPathComponent(story.folderName, isDirectory: true)
-        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+    /// Ordner, die in diesem Lauf schon angelegt wurden – `folder(for:)` läuft pro Listenzeile.
+    private static var createdFolders: Set<String> = []
+
+    static func folder(for story: Story) -> URL { folder(named: story.folderName) }
+
+    static func folder(named folderName: String) -> URL {
+        let url = root.appendingPathComponent(folderName, isDirectory: true)
+        lock.lock()
+        let isNew = createdFolders.insert(folderName).inserted
+        lock.unlock()
+        if isNew { try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true) }
         return url
     }
 
@@ -69,7 +77,7 @@ enum ContentStore {
     }
 
     static func chapterURL(_ story: Story, _ index: Int) -> URL {
-        folder(for: story).appendingPathComponent(String(format: "ch_%04d.html", index))
+        folder(for: story).appendingPathComponent(chapterFileName(index))
     }
 
     static func hasChapter(_ story: Story, _ index: Int) -> Bool {
@@ -85,6 +93,27 @@ enum ContentStore {
     }
 
     static func writeChapter(_ chapter: ChapterContent, story: Story, index: Int) throws {
+        try write(chapter, to: chapterURL(story, index))
+        refreshOfflineState(folderName: story.folderName)
+    }
+
+    /// Ein ganzes Werk auf einmal (AO3 liefert alle Kapitel in einem Abruf): im Hintergrund schreiben,
+    /// den Zustand danach einmal auffrischen – nicht pro Kapitel den Ordner neu lesen.
+    @MainActor
+    static func writeChapters(_ chapters: [ChapterContent], story: Story) async throws {
+        let folderName = story.folderName
+        let folder = folder(named: folderName)
+        defer { refreshOfflineState(folderName: folderName) }
+        try await Task.detached(priority: .userInitiated) {
+            for (i, chapter) in chapters.enumerated() {
+                try write(chapter, to: folder.appendingPathComponent(chapterFileName(i)))
+            }
+        }.value
+    }
+
+    private static func chapterFileName(_ index: Int) -> String { String(format: "ch_%04d.html", index) }
+
+    private static func write(_ chapter: ChapterContent, to url: URL) throws {
         let html = """
         <!DOCTYPE html>
         <html><head><meta charset="utf-8">
@@ -94,8 +123,7 @@ enum ContentStore {
         \(chapter.html)
         </body></html>
         """
-        try Data(html.utf8).write(to: chapterURL(story, index), options: .atomic)
-        refreshOfflineState(folderName: story.folderName)
+        try Data(html.utf8).write(to: url, options: .atomic)
     }
 
     static func deleteContent(of story: Story) {
@@ -104,6 +132,9 @@ enum ContentStore {
 
     private static func deleteContent(folderName: String) {
         try? FileManager.default.removeItem(at: root.appendingPathComponent(folderName, isDirectory: true))
+        lock.lock()
+        createdFolders.remove(folderName)
+        lock.unlock()
         refreshOfflineState(folderName: folderName)
     }
 

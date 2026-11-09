@@ -328,12 +328,14 @@ struct LibraryView: View {
     private func importFiles(_ result: Result<[URL], Error>) {
         switch result {
         case .success(let urls):
-            var failures: [String] = []
-            for url in urls {
-                do { _ = try library.importEPUB(at: url, context: context) }
-                catch { failures.append("\(url.lastPathComponent): \(error.localizedDescription)") }
+            Task {
+                var failures: [String] = []
+                for url in urls {
+                    do { _ = try await library.importEPUB(at: url, context: context) }
+                    catch { failures.append("\(url.lastPathComponent): \(error.localizedDescription)") }
+                }
+                if !failures.isEmpty { errorMessage = failures.joined(separator: "\n") }
             }
-            if !failures.isEmpty { errorMessage = failures.joined(separator: "\n") }
         case .failure(let error):
             errorMessage = error.localizedDescription
         }

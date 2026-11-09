@@ -3,8 +3,25 @@ import SwiftSoup
 
 /// Baut aus gespeicherten Kapiteln (AO3/FFN) eine EPUB-Datei zum Teilen oder Sichern in „Dateien“.
 enum EPUBBuilder {
+    /// Was der Export aus dem Modell braucht – herauskopiert, damit das Bauen im Hintergrund laufen kann.
+    private struct Source: Sendable {
+        var key, title, author, urlString, sourceLabel, summary, language: String
+        var fandoms: [String]
+        var chapters: [(title: String, file: URL)]
+    }
+
+    /// Kapitel lesen, nach XHTML wandeln und packen läuft im Hintergrund (bei 300 Kapiteln sonst ein spürbarer Hänger).
     @MainActor
-    static func build(_ story: Story) throws -> URL {
+    static func build(_ story: Story) async throws -> URL {
+        let source = Source(
+            key: story.key, title: story.title, author: story.author, urlString: story.urlString,
+            sourceLabel: story.source.label, summary: story.summary, language: story.language, fandoms: story.fandoms,
+            chapters: (0..<story.knownChapterCount).map { (story.title(ofChapter: $0), ContentStore.chapterURL(story, $0)) }
+        )
+        return try await Task.detached(priority: .userInitiated) { try build(source) }.value
+    }
+
+    private static func build(_ story: Source) throws -> URL {
         var zip = ZipWriter()
         zip.add("mimetype", Data("application/epub+zip".utf8))
         zip.add("META-INF/container.xml", Data("""
@@ -14,14 +31,13 @@ enum EPUBBuilder {
         </container>
         """.utf8))
 
-        let count = story.knownChapterCount
         var manifest = ""
         var spine = ""
         var nav = ""
-        for i in 0..<count {
+        for (i, chapter) in story.chapters.enumerated() {
             let file = String(format: "ch_%04d.xhtml", i)
-            let title = story.title(ofChapter: i)
-            let raw = (try? String(contentsOf: ContentStore.chapterURL(story, i), encoding: .utf8)) ?? ""
+            let title = chapter.title
+            let raw = (try? String(contentsOf: chapter.file, encoding: .utf8)) ?? ""
             zip.add("OEBPS/\(file)", Data(xhtml(title: title, body: bodyHTML(raw)).utf8))
             manifest += "<item id=\"c\(i)\" href=\"\(file)\" media-type=\"application/xhtml+xml\"/>\n"
             spine += "<itemref idref=\"c\(i)\"/>\n"
@@ -31,7 +47,7 @@ enum EPUBBuilder {
         let info = """
         <h1>\(story.title.xmlEscaped)</h1>
         <p><b>\(story.author.xmlEscaped)</b></p>
-        <p>\(story.source.label) – <a href="\(story.urlString.xmlEscaped)">\(story.urlString.xmlEscaped)</a></p>
+        <p>\(story.sourceLabel) – <a href="\(story.urlString.xmlEscaped)">\(story.urlString.xmlEscaped)</a></p>
         \(story.fandoms.isEmpty ? "" : "<p>Fandom: \(story.fandoms.joined(separator: ", ").xmlEscaped)</p>")
         \(story.summary.isEmpty ? "" : "<blockquote>\(story.summary.xmlEscaped.replacingOccurrences(of: "\n", with: "<br/>"))</blockquote>")
         """

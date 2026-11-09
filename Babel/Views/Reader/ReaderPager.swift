@@ -319,16 +319,18 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         let target = restore
         scroll(to: target)
+        // Sofort bereit: Die Nachbarkapitel laden gleich vor, statt eine feste Frist abzuwarten.
+        isReady = true
+        isWaiting = false
+        model.pageState(index, loading: false, error: nil)
+        applySpeech()
+        onReady?()
+        guard target > 0 else { return }
         Task { [weak self] in
-            // Bilder können die Höhe später ändern – noch einmal nachjustieren.
+            // Bilder können die Höhe später ändern – noch einmal nachjustieren, solange niemand weitergescrollt hat.
             try? await Task.sleep(for: .milliseconds(400))
-            guard let self else { return }
-            if target > 0 { self.scroll(to: target) }
-            self.isReady = true
-            self.isWaiting = false
-            self.model.pageState(self.index, loading: false, error: nil)
-            self.applySpeech()
-            self.onReady?()
+            guard let self, abs(self.progress - target) < 0.02 else { return }
+            self.scroll(to: target)
         }
     }
 

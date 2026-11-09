@@ -34,9 +34,37 @@ final class LibraryManager {
             return existing
         }
         let story = Story(remote: remote)
+        // Zeitstempel fürs Aufräumen nur angesehener Geschichten (`pruneViewed`).
+        story.viewedAt = .now
         context.insert(story)
         try? context.save()
         return story
+    }
+
+    /// Jede geöffnete Detailseite legt eine Zeile an. Wer nie gelesen und nicht in die Bibliothek gelegt wurde,
+    /// fliegt nach zwei Wochen wieder raus – sonst wachsen Bibliothek, Suche und iCloud ohne Ende.
+    /// Bewusst gelöschte bleiben (`userRemoved`): Sie halten den Konto-Sync davon ab, sie zurückzuholen.
+    func pruneViewed(context: ModelContext) {
+        let descriptor = FetchDescriptor<Story>(predicate: #Predicate {
+            !$0.inLibrary && $0.lastOpenedAt == nil && !$0.userRemoved
+        })
+        guard let rows = try? context.fetch(descriptor), !rows.isEmpty else { return }
+        let held = StoryHold.heldKeys
+        let limit = Date().addingTimeInterval(-14 * 24 * 3600)
+        var changed = false
+        for story in rows where !held.contains(story.key) {
+            guard let seen = story.viewedAt else {
+                // Zeilen aus der Zeit vor dem Zeitstempel: Frist beginnt jetzt.
+                story.viewedAt = .now
+                changed = true
+                continue
+            }
+            guard seen < limit else { continue }
+            ContentStore.deleteContent(of: story)
+            context.delete(story)
+            changed = true
+        }
+        if changed { try? context.save() }
     }
 
     func addToLibrary(_ story: Story, context: ModelContext) {
@@ -103,9 +131,7 @@ final class LibraryManager {
     /// AO3: ein einziger Abruf liefert das ganze Werk.
     private func downloadAO3(_ story: Story) async throws {
         let result = try await AO3Service.fetchWork(id: story.sourceID)
-        for (i, chapter) in result.chapters.enumerated() {
-            try ContentStore.writeChapter(chapter, story: story, index: i)
-        }
+        try await ContentStore.writeChapters(result.chapters, story: story)
         story.apply(remote: result.meta)
         story.chapterTitles = result.chapters.map(\.title)
         story.chapterCount = result.chapters.count
@@ -161,7 +187,7 @@ final class LibraryManager {
         switch story.source {
         case .ao3, .ffn:
             try await downloadAll(story)
-            return try EPUBBuilder.build(story)
+            return try await EPUBBuilder.build(story)
         case .gutenberg, .standardEbooks, .archive, .epub:
             throw BabelError.unsupported(String(localized: "Bücher liegen schon als EPUB vor"))
         }
@@ -294,16 +320,26 @@ final class LibraryManager {
         let tmp = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".epub")
         try await HTTPClient.shared.download(url, to: tmp)
         downloads[key] = 0.7
-        try installEPUB(at: tmp, into: story)
-        try? FileManager.default.removeItem(at: tmp)
+        defer { try? FileManager.default.removeItem(at: tmp) }
+        try await installEPUB(at: tmp, into: story)
     }
 
-    private func installEPUB(at file: URL, into story: Story) throws {
+    /// Entpacken und Lesen im Hintergrund – ein EPUB mit Bildern braucht dafür spürbar Zeit.
+    private func installEPUB(at file: URL, into story: Story) async throws {
         let bookDir = ContentStore.bookFolder(for: story)
-        try? FileManager.default.removeItem(at: bookDir)
-        try ZipArchive.extract(file, to: bookDir)
-        ContentStore.refreshOfflineState(folderName: story.folderName)
-        let book = try EPUBParser.parse(folder: bookDir)
+        let folderName = story.folderName
+        let book: EPUBBook
+        do {
+            book = try await Task.detached(priority: .userInitiated) {
+                try? FileManager.default.removeItem(at: bookDir)
+                try ZipArchive.extract(file, to: bookDir)
+                return try EPUBParser.parse(folder: bookDir)
+            }.value
+        } catch {
+            ContentStore.refreshOfflineState(folderName: folderName)
+            throw error
+        }
+        ContentStore.refreshOfflineState(folderName: folderName)
         if let t = book.title, !t.isEmpty { story.title = t }
         if let a = book.author, !a.isEmpty, story.author.isEmpty { story.author = a }
         if let s = book.summary, story.summary.isEmpty { story.summary = s }
@@ -317,7 +353,7 @@ final class LibraryManager {
     }
 
     /// Eigene EPUB-Datei importieren (z. B. aus der Dateien-App).
-    func importEPUB(at url: URL, context: ModelContext) throws -> Story {
+    func importEPUB(at url: URL, context: ModelContext) async throws -> Story {
         let accessing = url.startAccessingSecurityScopedResource()
         defer { if accessing { url.stopAccessingSecurityScopedResource() } }
 
@@ -331,7 +367,7 @@ final class LibraryManager {
         let story = Story(remote: remote)
         context.insert(story)
         do {
-            try installEPUB(at: tmp, into: story)
+            try await installEPUB(at: tmp, into: story)
         } catch {
             ContentStore.deleteContent(of: story)
             context.delete(story)
@@ -365,7 +401,7 @@ final class LibraryManager {
             let tmp = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".epub")
             try await HTTPClient.shared.download(url, to: tmp)
             defer { try? FileManager.default.removeItem(at: tmp) }
-            return try importEPUB(at: tmp, context: context)
+            return try await importEPUB(at: tmp, context: context)
         }
         throw BabelError.unsupported(host)
     }

@@ -64,11 +64,13 @@ struct RootView: View {
         }
         .onOpenURL { url in
             guard url.isFileURL, url.pathExtension.lowercased() == "epub" else { return }
-            do {
-                _ = try library.importEPUB(at: url, context: context)
-                tab = .library
-            } catch {
-                importError = error.localizedDescription
+            Task {
+                do {
+                    _ = try await library.importEPUB(at: url, context: context)
+                    tab = .library
+                } catch {
+                    importError = error.localizedDescription
+                }
             }
         }
         .alert("Import fehlgeschlagen", isPresented: .constant(importError != nil), presenting: importError) { _ in
@@ -85,6 +87,7 @@ struct RootView: View {
             }
         }
         .task {
+            library.pruneViewed(context: context)
             if checkUpdatesOnLaunch { await library.checkAllUpdates(context: context) }
             await FFNAccount.shared.syncIfDue(library: library, context: context)
         }

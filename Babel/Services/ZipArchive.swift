@@ -4,7 +4,12 @@ import Compression
 /// Minimaler ZIP-Entpacker (reicht für EPUBs: "stored" und "deflate").
 enum ZipArchive {
     static func extract(_ archive: URL, to destination: URL) throws {
-        let bytes = [UInt8](try Data(contentsOf: archive, options: .mappedIfSafe))
+        // Eingeblendet statt kopiert: Ein EPUB mit Bildern hat schnell 50 MB.
+        let data = try Data(contentsOf: archive, options: .mappedIfSafe)
+        try data.withUnsafeBytes { try extract($0, to: destination) }
+    }
+
+    private static func extract(_ bytes: UnsafeRawBufferPointer, to destination: URL) throws {
         guard bytes.count > 22 else { throw BabelError.epub(String(localized: "Datei ist zu klein")) }
 
         func u16(_ o: Int) -> Int { Int(bytes[o]) | Int(bytes[o + 1]) << 8 }
@@ -38,8 +43,7 @@ enum ZipArchive {
             guard offset + 46 + nameLength + extraLength + commentLength <= bytes.count else {
                 throw BabelError.epub(String(localized: "Beschädigtes Inhaltsverzeichnis"))
             }
-            let nameBytes = Array(bytes[(offset + 46)..<(offset + 46 + nameLength)])
-            let name = String(decoding: nameBytes, as: UTF8.self)
+            let name = String(decoding: UnsafeRawBufferPointer(rebasing: bytes[(offset + 46)..<(offset + 46 + nameLength)]), as: UTF8.self)
             offset += 46 + nameLength + extraLength + commentLength
 
             // Pfad absichern
@@ -60,7 +64,7 @@ enum ZipArchive {
             let output: Data
             switch method {
             case 0:
-                output = Data(bytes[dataStart..<(dataStart + compressedSize)])
+                output = Data(UnsafeRawBufferPointer(rebasing: bytes[dataStart..<(dataStart + compressedSize)]))
             case 8:
                 output = try inflate(bytes, start: dataStart, length: compressedSize, expected: size)
             default:
@@ -71,16 +75,16 @@ enum ZipArchive {
         }
     }
 
-    private static func inflate(_ bytes: [UInt8], start: Int, length: Int, expected: Int) throws -> Data {
+    private static func inflate(_ bytes: UnsafeRawBufferPointer, start: Int, length: Int, expected: Int) throws -> Data {
         if expected == 0 { return Data() }
-        var out = [UInt8](repeating: 0, count: expected)
-        let written = bytes.withUnsafeBufferPointer { src in
-            out.withUnsafeMutableBufferPointer { dst in
-                // COMPRESSION_ZLIB entspricht rohem DEFLATE (ohne zlib-Header) – genau wie in ZIP.
-                compression_decode_buffer(dst.baseAddress!, expected, src.baseAddress! + start, length, nil, COMPRESSION_ZLIB)
-            }
+        var out = Data(count: expected)
+        let source = bytes.baseAddress!.assumingMemoryBound(to: UInt8.self) + start
+        let written = out.withUnsafeMutableBytes { dst in
+            // COMPRESSION_ZLIB entspricht rohem DEFLATE (ohne zlib-Header) – genau wie in ZIP.
+            compression_decode_buffer(dst.baseAddress!.assumingMemoryBound(to: UInt8.self), expected, source, length, nil, COMPRESSION_ZLIB)
         }
         guard written > 0 else { throw BabelError.epub(String(localized: "Entpacken fehlgeschlagen")) }
-        return Data(out.prefix(written))
+        if written < expected { out.removeSubrange(written..<expected) }
+        return out
     }
 }
