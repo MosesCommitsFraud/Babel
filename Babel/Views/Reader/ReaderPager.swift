@@ -42,15 +42,15 @@ final class ReaderPagerCoordinator: NSObject, UIPageViewControllerDataSource, UI
     func attach(_ pager: UIPageViewController) {
         self.pager = pager
         pager.view.backgroundColor = background
-        let first = page(model.chapterIndex, restore: model.initialRestore)
+        let first = page(model.chapterIndex, restore: model.initialRestore, anchor: model.initialAnchor)
         pager.setViewControllers([first], direction: .forward, animated: false)
         // Nicht während SwiftUI die Ansicht aufbaut den beobachteten Zustand ändern.
         DispatchQueue.main.async { self.becameCurrent(first) }
     }
 
-    private func page(_ index: Int, restore: Double = 0) -> ChapterPageController {
+    private func page(_ index: Int, restore: Double = 0, anchor: Double? = nil) -> ChapterPageController {
         if let existing = pages[index] { return existing }
-        let page = ChapterPageController(index: index, model: model, restore: restore, background: background)
+        let page = ChapterPageController(index: index, model: model, restore: restore, anchor: anchor, background: background)
         pages[index] = page
         return page
     }
@@ -101,7 +101,7 @@ final class ReaderPagerCoordinator: NSObject, UIPageViewControllerDataSource, UI
         guard let pager else { return }
         pages = [:]
         pager.dataSource = model.paged ? nil : self
-        let current = page(model.chapterIndex, restore: restore)
+        let current = page(model.chapterIndex, restore: restore, anchor: model.anchor)
         pager.setViewControllers([current], direction: .forward, animated: false)
         becameCurrent(current)
     }
@@ -130,7 +130,7 @@ final class ReaderPagerCoordinator: NSObject, UIPageViewControllerDataSource, UI
     }
 
     private func becameCurrent(_ page: ChapterPageController) {
-        model.didShow(page.index, progress: page.progress, loading: page.isWaiting, error: page.errorText)
+        model.didShow(page.index, progress: page.progress, anchor: page.anchor, loading: page.isWaiting, error: page.errorText)
         // Nur aktuelles Kapitel ± 2 im Speicher halten.
         pages = pages.filter { abs($0.key - page.index) <= 2 }
         if page.isReady {
@@ -170,6 +170,8 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
     let index: Int
     let model: ReaderModel
     private var restore: Double
+    /// Absatz-Anker der Stelle; hat Vorrang vor dem Bruchteil `restore`.
+    private(set) var anchor: Double?
     private var background: UIColor
     private var webView: WKWebView!
     private var loadTask: Task<Void, Never>?
@@ -180,10 +182,11 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
     private(set) var errorText: String?
     var onReady: (() -> Void)?
 
-    init(index: Int, model: ReaderModel, restore: Double, background: UIColor) {
+    init(index: Int, model: ReaderModel, restore: Double, anchor: Double?, background: UIColor) {
         self.index = index
         self.model = model
         self.restore = restore
+        self.anchor = anchor
         self.progress = restore
         self.background = background
         super.init(nibName: nil, bundle: nil)
@@ -289,11 +292,14 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
     func jump(to fraction: Double) {
         restore = fraction
         progress = fraction
-        if isReady { scroll(to: fraction) }
+        anchor = nil
+        if isReady { scroll(to: fraction, anchor: nil) }
     }
 
-    private func scroll(to fraction: Double) {
-        webView.evaluateJavaScript("window.babelRestore && window.babelRestore(\(fraction)); true", completionHandler: nil)
+    /// Zum Absatz-Anker, sonst (oder wenn es den Absatz nicht gibt) zum Bruchteil.
+    private func scroll(to fraction: Double, anchor: Double?) {
+        let byAnchor = anchor.map { "(window.babelRestoreAnchor && window.babelRestoreAnchor(\($0))) || " } ?? ""
+        webView.evaluateJavaScript("\(byAnchor)(window.babelRestore && window.babelRestore(\(fraction))); true", completionHandler: nil)
     }
 
     /// Seitenweise: Wischen über die erste/letzte Seite hinaus wechselt das Kapitel.
@@ -318,19 +324,20 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         let target = restore
-        scroll(to: target)
+        let targetAnchor = anchor
+        scroll(to: target, anchor: targetAnchor)
         // Sofort bereit: Die Nachbarkapitel laden gleich vor, statt eine feste Frist abzuwarten.
         isReady = true
         isWaiting = false
         model.pageState(index, loading: false, error: nil)
         applySpeech()
         onReady?()
-        guard target > 0 else { return }
+        guard target > 0 || targetAnchor != nil else { return }
         Task { [weak self] in
             // Bilder können die Höhe später ändern – noch einmal nachjustieren, solange niemand weitergescrollt hat.
             try? await Task.sleep(for: .milliseconds(400))
             guard let self, abs(self.progress - target) < 0.02 else { return }
-            self.scroll(to: target)
+            self.scroll(to: target, anchor: targetAnchor)
         }
     }
 
@@ -357,7 +364,8 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
             guard isReady, let value = body["value"] as? Double else { return }
             progress = min(1, max(0, value))
             restore = progress
-            model.pageProgress(index, progress)
+            anchor = body["anchor"] as? Double
+            model.pageProgress(index, progress, anchor: anchor)
         } else {
             model.handle(message: body, from: index)
         }

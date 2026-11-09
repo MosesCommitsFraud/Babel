@@ -105,26 +105,28 @@ enum GutenbergService {
         let (html, _, status) = try await HTTPClient.shared.html(searchURL(filters, page: page), minInterval: 0.3)
         guard status == 200 else { throw BabelError.http(status) }
         let language = filters.language
-        return try await Task.detached(priority: .userInitiated) {
-            let doc = try SwiftSoup.parse(html, base.absoluteString)
-            var books: [RemoteStory] = []
-            for li in try doc.select("li.booklink").array() {
-                guard let a = try li.select("a.link").first(),
-                      let id = try a.attr("href").firstMatch(#"/ebooks/(\d+)"#)?[1] else { continue }
-                var s = RemoteStory(source: .gutenberg, sourceID: id,
-                                    title: cleanTitle(try li.select("span.title").first()?.text() ?? String(localized: "Ohne Titel")),
-                                    url: base.appendingPathComponent("ebooks/\(id)"))
-                s.author = try li.select("span.subtitle").first()?.text() ?? ""
-                s.hits = try li.select("span.extra").first()?.text().firstMatch(#"(\d+)"#)?[1].digitsInt
-                s.isComplete = true
-                s.language = language
-                s.coverURL = coverURL(id)
-                s.downloadURL = epubURL(id)
-                books.append(s)
-            }
-            let hasNext = try !doc.select("a[accesskey=\"+\"], a[title=\"Go to the next page of results.\"]").array().isEmpty
-            return Page(books: books, hasNext: hasNext)
-        }.value
+        return try await Task.detached(priority: .userInitiated) { try parseSearch(html, language: language) }.value
+    }
+
+    static func parseSearch(_ html: String, language: String) throws -> Page {
+        let doc = try SwiftSoup.parse(html, base.absoluteString)
+        var books: [RemoteStory] = []
+        for li in try doc.select("li.booklink").array() {
+            guard let a = try li.select("a.link").first(),
+                  let id = try a.attr("href").firstMatch(#"/ebooks/(\d+)"#)?[1] else { continue }
+            var s = RemoteStory(source: .gutenberg, sourceID: id,
+                                title: cleanTitle(try li.select("span.title").first()?.text() ?? String(localized: "Ohne Titel")),
+                                url: base.appendingPathComponent("ebooks/\(id)"))
+            s.author = try li.select("span.subtitle").first()?.text() ?? ""
+            s.hits = try li.select("span.extra").first()?.text().firstMatch(#"(\d+)"#)?[1].digitsInt
+            s.isComplete = true
+            s.language = language
+            s.coverURL = coverURL(id)
+            s.downloadURL = epubURL(id)
+            books.append(s)
+        }
+        let hasNext = try !doc.select("a[accesskey=\"+\"], a[title=\"Go to the next page of results.\"]").array().isEmpty
+        return Page(books: books, hasNext: hasNext)
     }
 
     static func coverURL(_ id: String) -> URL { base.appendingPathComponent("cache/epub/\(id)/pg\(id).cover.medium.jpg") }

@@ -22,14 +22,17 @@
 		2BFFF1A0761C571B3ECD848A /* CookieSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3038A35919D0B5A3CFE1089F /* CookieSync.swift */; };
 		34889CAFC00706C77448119E /* ReaderStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6DCF18AABE1204DB9E937FE /* ReaderStyle.swift */; };
 		398C609997FF3B87A9B36885 /* CommentsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9220F5639846657A95CE62C /* CommentsService.swift */; };
+		4166A31E65B22AD8EE021994 /* sample.epub in Resources */ = {isa = PBXBuildFile; fileRef = 9D3759E9AE748F71A4F7281B /* sample.epub */; };
 		44246123EC4903606C72DDEE /* FFNViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E73558FBBF43221AE5B9C59 /* FFNViews.swift */; };
 		49614C063D30DC055FD5F427 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E39C63374D0B12562899003E /* Assets.xcassets */; };
+		4B729F3153350998F077F897 /* gutenberg-search.html in Resources */ = {isa = PBXBuildFile; fileRef = 397CD779C4EEAD53D826DD54 /* gutenberg-search.html */; };
 		4C2415B2DA2ECF9CFD87D82A /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEF52AE5C74AD34E79BD26C /* HTTPClient.swift */; };
 		504B46D6883EEE25172828B5 /* SiteActionsBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F36E912808577F801A99812 /* SiteActionsBar.swift */; };
 		51A0F929958845C113623A5C /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8439E07395F7898D26952241 /* LibraryView.swift */; };
 		5467B896E90DCB36482435C9 /* SiteStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5F267654EB4E8058B29DB5 /* SiteStatus.swift */; };
 		59B995201042109386046C32 /* StoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91F803FF91C284A7A81A387 /* StoryDetailView.swift */; };
 		630FB6C74F3E633D6B3BFA26 /* BooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED8C2CD5C244C5114CA2A422 /* BooksView.swift */; };
+		80CBFBFFA3D2CC8FB1430748 /* BabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55D07DBD778A8883282A1C2 /* BabelTests.swift */; };
 		831F1AF8D3CED6348240A3F1 /* ReadAloudControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A8F59D8958B1EF423E9880 /* ReadAloudControls.swift */; };
 		87D3C9681D591E2A5554E972 /* SearchDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7290049C61D3E515B8CFAFD /* SearchDefaults.swift */; };
 		90795445F63020781C17DD8E /* LibraryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C8624FEFB62B767110C007A /* LibraryManager.swift */; };
@@ -65,6 +68,16 @@
 		FE4CDFA22E24AD632B518C01 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7B1EB0D39B83A1E7B0DA4B /* RootView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		30387148CDF2AA1C8545576F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E0186F5923D39B3AEC6BE9FA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2229CFEB75F72978A7D8C81B;
+			remoteInfo = Babel;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		02E2AADD6B677DDA1151EAA3 /* UpdateNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateNotifier.swift; sourceTree = "<group>"; };
 		06D5EC56C7C09627597A997A /* GutenbergService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutenbergService.swift; sourceTree = "<group>"; };
@@ -76,6 +89,7 @@
 		3038A35919D0B5A3CFE1089F /* CookieSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieSync.swift; sourceTree = "<group>"; };
 		370D9AD0B044F7C14B9EFC45 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		39075793117956CC5038008F /* BabelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabelApp.swift; sourceTree = "<group>"; };
+		397CD779C4EEAD53D826DD54 /* gutenberg-search.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "gutenberg-search.html"; sourceTree = "<group>"; };
 		40635D758914BA1C4099AA11 /* VolumeKeyScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeKeyScroller.swift; sourceTree = "<group>"; };
 		42D657FB996B8337736AC567 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
 		43258D30B4D0134B7E85AF1E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -100,6 +114,7 @@
 		9986DF66E3ABEC855199BF5B /* ContentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentStore.swift; sourceTree = "<group>"; };
 		99C1CA0E3746B6AB01586CB5 /* FFNService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNService.swift; sourceTree = "<group>"; };
 		9AF9F2FE25268508D04C01A7 /* GlobalSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalSearchView.swift; sourceTree = "<group>"; };
+		9D3759E9AE748F71A4F7281B /* sample.epub */ = {isa = PBXFileReference; path = sample.epub; sourceTree = "<group>"; };
 		A08665C99E1FA1B78B3A47B4 /* Babel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Babel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5E4B292B7D3EF9704ECECBB /* AccountViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViews.swift; sourceTree = "<group>"; };
 		A63E22E5889EBD4EC8319283 /* AO3Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AO3Service.swift; sourceTree = "<group>"; };
@@ -115,6 +130,7 @@
 		E202982CEC37159A37C774C0 /* StoryActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryActions.swift; sourceTree = "<group>"; };
 		E3222CDECAFA3DC2D9B46024 /* ThemeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsView.swift; sourceTree = "<group>"; };
 		E39C63374D0B12562899003E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E55D07DBD778A8883282A1C2 /* BabelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabelTests.swift; sourceTree = "<group>"; };
 		E6CC39F8CD101E8E82A7E445 /* EPUBBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPUBBuilder.swift; sourceTree = "<group>"; };
 		E735728B0AFF95B40783A557 /* Story.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
 		E7A8A1ACDD3F52FC62380971 /* WebFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFetcher.swift; sourceTree = "<group>"; };
@@ -122,6 +138,7 @@
 		EDEF52AE5C74AD34E79BD26C /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
 		F6DCF18AABE1204DB9E937FE /* ReaderStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderStyle.swift; sourceTree = "<group>"; };
 		F9B5E984C8A0B7C0D77620F7 /* EPUBParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPUBParser.swift; sourceTree = "<group>"; };
+		FC23CE261C0C80C3526D2138 /* BabelTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BabelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC332CE618A30C5EBBAF5ECE /* PageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageCache.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -151,6 +168,15 @@
 				BC8978CDCC3DBFB1C879A445 /* Views */,
 			);
 			path = Babel;
+			sourceTree = "<group>";
+		};
+		06FD5621E4E49689BFCB1BE1 /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				397CD779C4EEAD53D826DD54 /* gutenberg-search.html */,
+				9D3759E9AE748F71A4F7281B /* sample.epub */,
+			);
+			path = Fixtures;
 			sourceTree = "<group>";
 		};
 		1D5CCF828629D34D7ED277A7 /* Settings */ = {
@@ -227,6 +253,15 @@
 			path = Account;
 			sourceTree = "<group>";
 		};
+		A77F9F1406D98A0A22E9BDF6 /* BabelTests */ = {
+			isa = PBXGroup;
+			children = (
+				E55D07DBD778A8883282A1C2 /* BabelTests.swift */,
+				06FD5621E4E49689BFCB1BE1 /* Fixtures */,
+			);
+			path = BabelTests;
+			sourceTree = "<group>";
+		};
 		AA2166C90254CEB0406FB17A /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -260,6 +295,7 @@
 			isa = PBXGroup;
 			children = (
 				A08665C99E1FA1B78B3A47B4 /* Babel.app */,
+				FC23CE261C0C80C3526D2138 /* BabelTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -332,6 +368,7 @@
 			isa = PBXGroup;
 			children = (
 				01896666F3F0AF8939C21D0A /* Babel */,
+				A77F9F1406D98A0A22E9BDF6 /* BabelTests */,
 				B7733768726A58F635540918 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -359,6 +396,25 @@
 			productReference = A08665C99E1FA1B78B3A47B4 /* Babel.app */;
 			productType = "com.apple.product-type.application";
 		};
+		8316D62F8B94C6107D5B6184 /* BabelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5882F6E5480E40702889EA98 /* Build configuration list for PBXNativeTarget "BabelTests" */;
+			buildPhases = (
+				B50F2D0072878C2E2412C455 /* Sources */,
+				35DB361522D11E1B9282E2FA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F41FA02E7C80353CFC33FAA5 /* PBXTargetDependency */,
+			);
+			name = BabelTests;
+			packageProductDependencies = (
+			);
+			productName = BabelTests;
+			productReference = FC23CE261C0C80C3526D2138 /* BabelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -371,6 +427,9 @@
 					2229CFEB75F72978A7D8C81B = {
 						DevelopmentTeam = 6Y9DZT5MQZ;
 						ProvisioningStyle = Automatic;
+					};
+					8316D62F8B94C6107D5B6184 = {
+						DevelopmentTeam = 6Y9DZT5MQZ;
 					};
 				};
 			};
@@ -393,11 +452,21 @@
 			projectRoot = "";
 			targets = (
 				2229CFEB75F72978A7D8C81B /* Babel */,
+				8316D62F8B94C6107D5B6184 /* BabelTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		35DB361522D11E1B9282E2FA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B729F3153350998F077F897 /* gutenberg-search.html in Resources */,
+				4166A31E65B22AD8EE021994 /* sample.epub in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0AFD6E6B5516B4EBC8D791F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -470,7 +539,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B50F2D0072878C2E2412C455 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				80CBFBFFA3D2CC8FB1430748 /* BabelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F41FA02E7C80353CFC33FAA5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2229CFEB75F72978A7D8C81B /* Babel */;
+			targetProxy = 30387148CDF2AA1C8545576F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		076FFFB1AEB752905220FAB1 /* Debug */ = {
@@ -481,7 +566,7 @@
 				CODE_SIGN_ENTITLEMENTS = Babel/Babel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 86;
+				CURRENT_PROJECT_VERSION = 87;
 				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Support/Info.plist;
@@ -495,7 +580,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 0.32.9;
+				MARKETING_VERSION = 0.32.10;
 				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app;
 				PRODUCT_NAME = Babel;
 				SDKROOT = iphoneos;
@@ -568,6 +653,25 @@
 			};
 			name = Debug;
 		};
+		15366F29AE79A2E34893E462 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.BabelTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Babel.app/Babel";
+			};
+			name = Release;
+		};
 		51C687FF909C2D9870D15F9A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -576,7 +680,7 @@
 				CODE_SIGN_ENTITLEMENTS = Babel/Babel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 86;
+				CURRENT_PROJECT_VERSION = 87;
 				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Support/Info.plist;
@@ -590,7 +694,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 0.32.9;
+				MARKETING_VERSION = 0.32.10;
 				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app;
 				PRODUCT_NAME = Babel;
 				SDKROOT = iphoneos;
@@ -599,6 +703,25 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
+		};
+		574F72ECB72C93A69A5AEBB6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.BabelTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Babel.app/Babel";
+			};
+			name = Debug;
 		};
 		D2B88488B6C6936947BC8536 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -664,6 +787,15 @@
 			buildConfigurations = (
 				076FFFB1AEB752905220FAB1 /* Debug */,
 				51C687FF909C2D9870D15F9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5882F6E5480E40702889EA98 /* Build configuration list for PBXNativeTarget "BabelTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				574F72ECB72C93A69A5AEBB6 /* Debug */,
+				15366F29AE79A2E34893E462 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

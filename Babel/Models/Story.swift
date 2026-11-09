@@ -57,6 +57,9 @@ final class Story {
     var isFavorite: Bool = false
     var currentChapter: Int = 0
     var chapterProgress: Double = 0
+    /// Genaue Lesestelle als Absatz: „Kapitel|Absatz.Anteil|Fortschritt“. Gilt nur, solange Kapitel und Fortschritt
+    /// noch dazu passen – wer `chapterProgress` anders setzt (ältere Version, Kapitelsprung), entwertet sie von selbst.
+    var readingAnchor: String? = nil
     var chapterTitles: [String] = []
     var spinePaths: [String] = []
     var coverPath: String? = nil
@@ -108,6 +111,20 @@ final class Story {
     }
 
     var hasStarted: Bool { lastOpenedAt != nil }
+
+    /// Absatz-Anker der gespeicherten Lesestelle (Absatzindex + Anteil im Absatz), falls er noch zur Stelle passt.
+    var currentAnchor: Double? {
+        guard let parts = readingAnchor?.split(separator: "|"), parts.count == 3,
+              Int(parts[0]) == currentChapter, let anchor = Double(parts[1]), let progress = Double(parts[2]),
+              abs(progress - chapterProgress) < 0.000_01 else { return nil }
+        return anchor
+    }
+
+    /// Lesestelle im aktuellen Kapitel setzen, mit Absatz-Anker, wenn es einen gibt.
+    func setPosition(progress: Double, anchor: Double?) {
+        chapterProgress = progress
+        readingAnchor = anchor.map { "\(currentChapter)|\($0)|\(progress)" }
+    }
 
     func title(ofChapter index: Int) -> String {
         if index < chapterTitles.count, !chapterTitles[index].isEmpty { return chapterTitles[index] }

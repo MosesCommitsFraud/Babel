@@ -238,6 +238,7 @@ extension Story {
         if otherIsNewer {
             currentChapter = other.currentChapter
             chapterProgress = other.chapterProgress
+            readingAnchor = other.readingAnchor
             lastOpenedAt = other.lastOpenedAt
         }
         if status == .none || (otherIsNewer && other.status != .none) { status = other.status }

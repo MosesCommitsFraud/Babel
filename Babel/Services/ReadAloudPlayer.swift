@@ -437,7 +437,8 @@ final class ReadAloudPlayer: NSObject {
     /// Fortschritt mitschreiben, damit „Weiterlesen“ nach dem Zuhören an der richtigen Stelle landet.
     private func savePosition(_ story: Story) {
         story.currentChapter = chapter
-        if !paragraphs.isEmpty { story.chapterProgress = Double(paragraph) / Double(paragraphs.count) }
+        // Der vorgelesene Absatz ist zugleich der Anker: Der Reader öffnet genau dort.
+        if !paragraphs.isEmpty { story.setPosition(progress: Double(paragraph) / Double(paragraphs.count), anchor: Double(paragraph)) }
         story.lastOpenedAt = .now
         try? story.modelContext?.save()
     }

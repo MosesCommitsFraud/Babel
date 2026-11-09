@@ -18,6 +18,9 @@ final class ReaderModel {
     @ObservationIgnored weak var pager: ReaderPagerCoordinator?
     @ObservationIgnored var css = ""
     @ObservationIgnored var initialRestore: Double
+    /// Absatz-Anker zur Lesestelle – übersteht andere Schriftgrößen und Bildschirme, der Bruchteil allein nicht.
+    @ObservationIgnored var initialAnchor: Double?
+    @ObservationIgnored var anchor: Double?
     /// Seitenweise blättern (Spalten) statt scrollen.
     @ObservationIgnored var paged = UserDefaults.standard.bool(forKey: ReaderDefaults.pagedKey)
     @ObservationIgnored private var lastSave = Date.distantPast
@@ -31,6 +34,8 @@ final class ReaderModel {
         self.chapterIndex = min(story.currentChapter, max(story.knownChapterCount - 1, 0))
         self.progress = story.chapterProgress
         self.initialRestore = story.chapterProgress
+        self.initialAnchor = story.currentAnchor
+        self.anchor = story.currentAnchor
     }
 
     var chapterCount: Int { story.knownChapterCount }
@@ -64,13 +69,14 @@ final class ReaderModel {
     }
 
     /// Eine Seite ist zur aktuellen geworden – nach dem Wischen oder einem Sprung.
-    func didShow(_ index: Int, progress: Double, loading: Bool, error: String?) {
+    func didShow(_ index: Int, progress: Double, anchor: Double?, loading: Bool, error: String?) {
         chapterIndex = index
         self.progress = progress
+        self.anchor = anchor
         isLoading = loading
         self.error = error
         story.currentChapter = index
-        story.chapterProgress = progress
+        story.setPosition(progress: progress, anchor: anchor)
         story.lastOpenedAt = .now
         try? story.modelContext?.save()
     }
@@ -81,10 +87,11 @@ final class ReaderModel {
         self.error = error
     }
 
-    func pageProgress(_ index: Int, _ value: Double) {
+    func pageProgress(_ index: Int, _ value: Double, anchor: Double?) {
         guard index == chapterIndex else { return }
         progress = min(1, max(0, value))
-        story.chapterProgress = progress
+        self.anchor = anchor
+        story.setPosition(progress: progress, anchor: anchor)
         // Selten sichern: Jedes Speichern schickt die ganze Zeile an iCloud und weckt die Listen dahinter.
         // Kapitelwechsel, Schließen und der Wechsel in den Hintergrund sichern ohnehin.
         if Date().timeIntervalSince(lastSave) > 30 {
@@ -151,10 +158,12 @@ final class ReaderModel {
             var h = document.documentElement.scrollHeight - window.innerHeight;
             return h > 0 ? window.scrollY / h : 1;
           };
+          // Neue Schrift oder Ränder: Der Absatz oben bleibt oben, statt mit dem Umbruch davonzulaufen.
           window.babelSetCSS = function(c){
-            var f = window.babelFraction();
+            var f = window.babelFraction(), a = window.babelAnchor();
             var s = document.getElementById('babel-style'); if (s) s.textContent = c;
-            if (window.babelPaged) { window.babelPaginate(); window.babelRestore(f); }
+            if (window.babelPaged) window.babelPaginate();
+            if (a != null) { window.babelRestoreAnchor(a); } else if (window.babelPaged) { window.babelRestore(f); }
           };
           window.babelRestore = function(f){
             if (window.babelPaged) {
@@ -217,7 +226,9 @@ final class ReaderModel {
             timer = setTimeout(function(){
               // Solange die Spalten noch nicht stehen, gäbe es „100 %“ – dann nichts melden.
               if (window.babelPaged && document.documentElement.scrollWidth <= window.innerWidth + 1) return;
-              post({ type: 'progress', value: window.babelFraction() });
+              var m = { type: 'progress', value: window.babelFraction() }, a = window.babelAnchor();
+              if (a != null) m.anchor = a;
+              post(m);
             }, 120);
           }, { passive: true });
           // Vorlesen: dieselbe Absatz-Zählung wie ReadAloudPlayer.blocks(from:).
@@ -228,6 +239,39 @@ final class ReaderModel {
             });
             if (!list.length && document.body.textContent.trim().length) list = [document.body];
             return list;
+          };
+          // Lesestelle als Absatz: Index des obersten sichtbaren Absatzes + wie weit er schon durchgelesen ist.
+          window.babelAnchor = function(){
+            // Ganz oben gilt der Kapitelanfang, nicht der erste Absatz (der läge sonst unter der Leiste).
+            if (!window.babelPaged && window.scrollY <= 0) return null;
+            var list = window.babelBlocks();
+            for (var i = 0; i < list.length; i++) {
+              var r = list[i].getBoundingClientRect();
+              if (window.babelPaged) {
+                if (r.right <= 1) continue;
+                // Ein Absatz über mehrere Seiten hat je Spalte ein Rechteck.
+                var rects = list[i].getClientRects(), k = 0;
+                while (k < rects.length - 1 && rects[k].right <= 1) k++;
+                return i + Math.min(0.999, rects.length ? k / rects.length : 0);
+              }
+              if (r.bottom > 0) return i + Math.min(0.999, Math.max(0, r.height > 0 ? -r.top / r.height : 0));
+            }
+            return null;
+          };
+          window.babelRestoreAnchor = function(a){
+            var list = window.babelBlocks(), i = Math.floor(a), frac = a - i;
+            if (i < 0 || i >= list.length) return false;
+            if (window.babelPaged) {
+              window.babelPaginate();
+              var rects = list[i].getClientRects(), w = window.innerWidth;
+              if (!rects.length) return false;
+              var rect = rects[Math.min(rects.length - 1, Math.floor(frac * rects.length + 0.001))];
+              window.scrollTo(Math.max(0, Math.floor((window.scrollX + rect.left + 1) / w) * w), 0);
+              return true;
+            }
+            var r = list[i].getBoundingClientRect();
+            window.scrollTo(0, Math.max(0, window.scrollY + r.top + frac * r.height));
+            return true;
           };
           window.babelFirstVisible = function(){
             var list = window.babelBlocks(), top = 110, w = window.innerWidth;

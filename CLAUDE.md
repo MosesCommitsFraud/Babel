@@ -84,6 +84,9 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
 - `Models/Story.swift` – SwiftData `Story`, `Shelf`. Achtung: kein Attribut `updated` nennen (kollidiert mit Core Datas `isUpdated`) → heißt `lastUpdated`.
 - `Views/Reader/` – `ReaderModel` + `ReaderPager` (Kapitelseiten mit WKWebView, injiziertes CSS, Fortschritt per JS-Message), Glas-Leisten.
 
+- Lesestelle: `chapterProgress` (Bruchteil 0…1) bleibt für Fortschrittsanzeigen, genau ist der Absatz-Anker `Story.readingAnchor` („Kapitel|Absatz.Anteil|Fortschritt“, Absatzzählung = `babelBlocks`). Er gilt nur, solange Kapitel und Fortschritt dazu passen (`currentAnchor`) – Stellen, die nur `chapterProgress` setzen, entwerten ihn von selbst. Immer über `Story.setPosition(progress:anchor:)` schreiben. Schriftwechsel hält den obersten Absatz (`babelSetCSS` → `babelRestoreAnchor`).
+- Tests: Target `BabelTests` (`xcodebuild test -project Babel.xcodeproj -scheme Babel -destination …`), ohne Netz: ZIP/EPUB, Gutenberg-Suche (echte Seite unter `BabelTests/Fixtures`), FFN-Metazeile, Lesestelle. AO3/FFN-Seiten fehlen als Fixture (AO3 in Wartung, FFN hinter Cloudflare) – nachlegen, sobald erreichbar.
+
 ## Geprüft (Simulator)
 AO3-Suche/Blurbs, FFN-Fandoms/Listen/Filter-Apply/Cover, Gutenberg-Suche + Details, Themes hell/dunkel.
 
