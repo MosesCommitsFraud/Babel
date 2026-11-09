@@ -397,7 +397,9 @@ struct StoryRow: View {
         // Wer schon im Pairing steht, nicht noch einmal nennen.
         let others = story.characters.filter { c in !story.relationships.contains { $0.localizedCaseInsensitiveContains(c) } }
         let people = (story.relationships + others).joined(separator: ", ")
-        let parts = [genres, people].filter { !$0.isEmpty }
+        var parts = [genres, people].filter { !$0.isEmpty }
+        // Web-Serien (Royal Road) kennen keine Pairings oder Charaktere – dort stehen die Tags in der Zeile.
+        if people.isEmpty, !story.tags.isEmpty { parts.append(story.tags.prefix(6).joined(separator: ", ")) }
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
@@ -424,6 +426,9 @@ struct StoryRow: View {
             add("heart", story.kudos, String(localized: "Kudos"))
             add("eye", story.hits, String(localized: "Aufrufe"))
             add("bookmark", story.bookmarks, String(localized: "Lesezeichen"))
+        case .syosetu:
+            add("star", story.kudos, String(localized: "Punkte"))
+            add("bookmark", story.favs, String(localized: "Lesezeichen"))
         case .royalRoad:
             add("bell", story.follows, String(localized: "Follower"))
             add("eye", story.hits, String(localized: "Aufrufe"))

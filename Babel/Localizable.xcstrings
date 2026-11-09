@@ -2,7 +2,89 @@
   "sourceLanguage" : "de",
   "strings" : {
     "" : {},
-    "\n" : {},
+    "–" : {},
+    "„%@“ auf AO3 suchen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search AO3 for \"%@\""
+          }
+        }
+      }
+    },
+    "„%@“ auf FanFiction.net suchen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search FanFiction.net for \"%@\""
+          }
+        }
+      }
+    },
+    "„%@“ in der Bibliothek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"%@\" is in your library"
+          }
+        }
+      }
+    },
+    "„%@“ löschen?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete “%@”?"
+          }
+        }
+      }
+    },
+    "„%@“ offline gespeichert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"%@\" saved offline"
+          }
+        }
+      }
+    },
+    "„%@“ überall suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search everywhere for “%@”"
+          }
+        }
+      }
+    },
+    "„%@“ vollständig löschen?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete “%@” completely?"
+          }
+        }
+      }
+    },
+    "„Als Paar“ zeigt nur Geschichten, in denen die beiden ein Pairing sind. Jedes Paar lässt sich einzeln einschalten." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"As a Pair\" only shows stories where the two are a pairing. Each pair can be switched on separately."
+          }
+        }
+      }
+    },
     "%@  %lld" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -10,6 +92,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@  %lld"
+          }
+        }
+      }
+    },
+    "%@ · %lld %%" : {},
+    "%@ (angepasst)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ custom"
+          }
+        }
+      }
+    },
+    "%@ (Build %@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ (build %2$@)"
+          }
+        }
+      }
+    },
+    "%@ & %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ & %@"
           }
         }
       }
@@ -44,33 +158,22 @@
         }
       }
     },
-    "%@ & %@" : {
-      "extractionState" : "stale",
+    "%@ begrenzt gerade die Anfragen – weiter in %lld s" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ & %@"
+            "value" : "%@ is rate limiting – continuing in %lld s"
           }
         }
       }
     },
-    "%@ (Build %@)" : {
+    "%@ ist nicht erreichbar" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ (build %2$@)"
-          }
-        }
-      }
-    },
-    "%@ (angepasst)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ custom"
+            "value" : "%@ is unreachable"
           }
         }
       }
@@ -95,27 +198,6 @@
         }
       }
     },
-    "%@ begrenzt gerade die Anfragen – weiter in %lld s" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ is rate limiting – continuing in %lld s"
-          }
-        }
-      }
-    },
-    "%@ ist nicht erreichbar" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ is unreachable"
-          }
-        }
-      }
-    },
-    "%@ · %lld %%" : {},
     "%@: Fehler" : {
       "localizations" : {
         "en" : {
@@ -158,6 +240,16 @@
         }
       }
     },
+    "%lld Einträge ohne EPUB sind ausgeblendet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entries without an EPUB are hidden."
+          }
+        }
+      }
+    },
     "%lld Geschichten übernommen" : {
       "localizations" : {
         "en" : {
@@ -168,33 +260,12 @@
         }
       }
     },
-    "%lld Minuten" : {
+    "%lld geteilte Titel in der Bibliothek" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld minutes"
-          }
-        }
-      }
-    },
-    "%lld Treffer" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld results"
-          }
-        }
-      }
-    },
-    "%lld Wörter" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld words"
+            "value" : "%lld shared titles added to your library"
           }
         }
       }
@@ -205,6 +276,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld selected"
+          }
+        }
+      }
+    },
+    "%lld Minuten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld minutes"
           }
         }
       }
@@ -225,6 +306,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld new chapters – latest: %2$@"
+          }
+        }
+      }
+    },
+    "%lld Sprachen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld languages"
+          }
+        }
+      }
+    },
+    "%lld Treffer" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld results"
+          }
+        }
+      }
+    },
+    "%lld Werke · %@%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld works · %@%@"
+          }
+        }
+      }
+    },
+    "%lld Wörter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld words"
           }
         }
       }
@@ -250,6 +372,27 @@
       }
     },
     "+%lld" : {},
+    "< 10k" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "< 10k"
+          }
+        }
+      }
+    },
+    "> %lld" : {},
+    "> 150k" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "> 150k"
+          }
+        }
+      }
+    },
     "0" : {},
     "1 Geschichte übernommen" : {
       "localizations" : {
@@ -287,88 +430,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "50–150k"
-          }
-        }
-      }
-    },
-    "< 10k" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "< 10k"
-          }
-        }
-      }
-    },
-    "> %lld" : {},
-    "> 150k" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "> 150k"
-          }
-        }
-      }
-    },
-    "AO3" : {},
-    "AO3 antwortet gerade langsam. Du kannst den Tag auch ganz eintippen und mit ↵ übernehmen." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AO3 is responding slowly. You can also type the full tag and press ↵ to add it."
-          }
-        }
-      }
-    },
-    "AO3 ist gerade langsam. Das kann bis zu einer Minute dauern." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AO3 is slow right now. This can take up to a minute."
-          }
-        }
-      }
-    },
-    "AO3, FanFiction.net und Project Gutenberg gleichzeitig." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AO3, FanFiction.net and Project Gutenberg at once."
-          }
-        }
-      }
-    },
-    "AO3-Formular" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AO3 form"
-          }
-        }
-      }
-    },
-    "AO3-Konto" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AO3 Account"
-          }
-        }
-      }
-    },
-    "AO3-Lesezeichen entfernt" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AO3 bookmark removed"
           }
         }
       }
@@ -504,12 +565,43 @@
         }
       }
     },
+    "Abschnitt %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section %lld"
+          }
+        }
+      }
+    },
     "Abspielen" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Play"
+          }
+        }
+      }
+    },
+    "Adresse des Katalogs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catalog address"
+          }
+        }
+      }
+    },
+    "akt. %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "upd. %@"
           }
         }
       }
@@ -637,22 +729,22 @@
         }
       }
     },
-    "Alle Werke" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "All works"
-          }
-        }
-      }
-    },
     "Alle übernehmen" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Import All"
+          }
+        }
+      }
+    },
+    "Alle Werke" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All works"
           }
         }
       }
@@ -707,6 +799,16 @@
         }
       }
     },
+    "Als gelesen markieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mark as Read"
+          }
+        }
+      }
+    },
     "Als Paar" : {
       "localizations" : {
         "en" : {
@@ -727,12 +829,12 @@
         }
       }
     },
-    "Als gelesen markieren" : {
+    "Am besten bewertet" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mark as Read"
+            "value" : "Best rated"
           }
         }
       }
@@ -788,12 +890,103 @@
         }
       }
     },
+    "Anmerkung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
+          }
+        }
+      }
+    },
+    "antwortet nicht (Fehler %lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "isn't responding (error %lld)"
+          }
+        }
+      }
+    },
+    "antwortet nicht (Zeitüberschreitung)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "isn't responding (timed out)"
+          }
+        }
+      }
+    },
     "Anwenden" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apply"
+          }
+        }
+      }
+    },
+    "AO3" : {},
+    "AO3 antwortet gerade langsam. Du kannst den Tag auch ganz eintippen und mit ↵ übernehmen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AO3 is responding slowly. You can also type the full tag and press ↵ to add it."
+          }
+        }
+      }
+    },
+    "AO3 ist gerade langsam. Das kann bis zu einer Minute dauern." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AO3 is slow right now. This can take up to a minute."
+          }
+        }
+      }
+    },
+    "AO3-Formular" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AO3 form"
+          }
+        }
+      }
+    },
+    "AO3-Konto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AO3 Account"
+          }
+        }
+      }
+    },
+    "AO3-Lesezeichen entfernt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AO3 bookmark removed"
+          }
+        }
+      }
+    },
+    "AO3, FanFiction.net und Project Gutenberg gleichzeitig." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AO3, FanFiction.net and Project Gutenberg at once."
           }
         }
       }
@@ -930,6 +1123,16 @@
         }
       }
     },
+    "Aufsteiger" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rising stars"
+          }
+        }
+      }
+    },
     "Aus" : {
       "localizations" : {
         "en" : {
@@ -977,6 +1180,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paste from Clipboard"
+          }
+        }
+      }
+    },
+    "ausschließen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "exclude"
           }
         }
       }
@@ -1102,6 +1315,36 @@
         }
       }
     },
+    "Beliebt & laufend" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popular & ongoing"
+          }
+        }
+      }
+    },
+    "Beliebt diese Woche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popular this week"
+          }
+        }
+      }
+    },
+    "Beliebt diesen Monat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popular this month"
+          }
+        }
+      }
+    },
     "Beliebtheit" : {
       "localizations" : {
         "en" : {
@@ -1189,6 +1432,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Library, AO3, FanFiction.net, books"
+          }
+        }
+      }
+    },
+    "bis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "to"
           }
         }
       }
@@ -1356,6 +1609,26 @@
         }
       }
     },
+    "Das ist kein OPDS-Katalog (OPDS 1.x, Atom)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is not an OPDS catalog (OPDS 1.x, Atom)."
+          }
+        }
+      }
+    },
+    "Das ist keine gültige Adresse." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That is not a valid address."
+          }
+        }
+      }
+    },
     "Das sind genau die Filter, die FanFiction.net für diesen Fandom anbietet – inklusive Charakteren." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1373,6 +1646,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "File is too small"
+          }
+        }
+      }
+    },
+    "Dein Gedanke dazu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your thoughts"
           }
         }
       }
@@ -1468,6 +1751,38 @@
         }
       }
     },
+    "Die gewählten Charaktere sind ein Paar." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The selected characters are a couple."
+          }
+        }
+      }
+    },
+    "Die gewählten Charaktere sind kein Paar." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The selected characters are not a couple."
+          }
+        }
+      }
+    },
+    "Die importierte Datei und deine Lesestelle werden gelöscht." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The imported file and your reading position will be deleted."
+          }
+        }
+      }
+    },
     "Die Seite hat zu lange gebraucht." : {
       "localizations" : {
         "en" : {
@@ -1508,38 +1823,6 @@
         }
       }
     },
-    "Die gewählten Charaktere sind ein Paar." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The selected characters are a couple."
-          }
-        }
-      }
-    },
-    "Die gewählten Charaktere sind kein Paar." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The selected characters are not a couple."
-          }
-        }
-      }
-    },
-    "Die importierte Datei und deine Lesestelle werden gelöscht." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The imported file and your reading position will be deleted."
-          }
-        }
-      }
-    },
     "Diese EPUB-Datei liegt nur auf dem Gerät, auf dem du sie importiert hast." : {
       "localizations" : {
         "en" : {
@@ -1556,6 +1839,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This list is empty."
+          }
+        }
+      }
+    },
+    "Diesen Katalog hast du schon." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You already have this catalog."
+          }
+        }
+      }
+    },
+    "Dieser Katalog ist hier leer." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This catalog is empty here."
+          }
+        }
+      }
+    },
+    "Dieser Katalog verlangt eine Anmeldung – das kann Babel noch nicht." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This catalog requires a sign-in – Babel doesn't support that yet."
           }
         }
       }
@@ -1653,22 +1966,12 @@
         }
       }
     },
-    "EPUB importieren" : {
+    "egal" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Import EPUB"
-          }
-        }
-      }
-    },
-    "EPUB wird erstellt …" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Creating EPUB …"
+            "value" : "any"
           }
         }
       }
@@ -1704,6 +2007,7 @@
       }
     },
     "Eigenes EPUB importieren" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1785,6 +2089,26 @@
         }
       }
     },
+    "EPUB importieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import EPUB"
+          }
+        }
+      }
+    },
+    "EPUB wird erstellt …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creating EPUB …"
+          }
+        }
+      }
+    },
     "Erneut prüfen" : {
       "localizations" : {
         "en" : {
@@ -1818,69 +2142,6 @@
     },
     "Español" : {},
     "F" : {},
-    "FFN" : {},
-    "FFN synchronisiert (%@)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "FFN synced (%@)"
-          }
-        }
-      }
-    },
-    "FFN-Konto" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "FFN Account"
-          }
-        }
-      }
-    },
-    "FFN-Suche" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "FFN Search"
-          }
-        }
-      }
-    },
-    "FFN: %lld neu übernommen (%@)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "FFN: %lld newly imported (%@)"
-          }
-        }
-      }
-    },
-    "FanFiction.net" : {},
-    "FanFiction.net möchte prüfen, dass du kein Bot bist. Tippe auf das Kästchen – danach geht's automatisch weiter." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "FanFiction.net wants to check that you're not a bot. Tap the checkbox – it continues automatically afterwards."
-          }
-        }
-      }
-    },
-    "FanFiction.net zeigt ohne Filter nur K bis T. Eingeschaltet erscheinen auch Geschichten mit Rating M. Auf AO3 sind ohnehin alle Ratings sichtbar, solange du keine ausschließt." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Without a filter, FanFiction.net only shows K to T. When on, stories rated M appear too. On AO3 all ratings are visible anyway unless you exclude some."
-          }
-        }
-      }
-    },
     "Fandom merken" : {
       "localizations" : {
         "en" : {
@@ -1913,6 +2174,29 @@
       }
     },
     "Fandoms" : {},
+    "Fanfiction" : {},
+    "FanFiction.net" : {},
+    "FanFiction.net möchte prüfen, dass du kein Bot bist. Tippe auf das Kästchen – danach geht's automatisch weiter." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FanFiction.net wants to check that you're not a bot. Tap the checkbox – it continues automatically afterwards."
+          }
+        }
+      }
+    },
+    "FanFiction.net zeigt ohne Filter nur K bis T. Eingeschaltet erscheinen auch Geschichten mit Rating M. Auf AO3 sind ohnehin alle Ratings sichtbar, solange du keine ausschließt." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Without a filter, FanFiction.net only shows K to T. When on, stories rated M appear too. On AO3 all ratings are visible anyway unless you exclude some."
+          }
+        }
+      }
+    },
     "Fantasy" : {},
     "Farbe" : {
       "localizations" : {
@@ -2064,6 +2348,47 @@
         }
       }
     },
+    "FFN" : {},
+    "FFN synchronisiert (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FFN synced (%@)"
+          }
+        }
+      }
+    },
+    "FFN-Konto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FFN Account"
+          }
+        }
+      }
+    },
+    "FFN-Suche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FFN Search"
+          }
+        }
+      }
+    },
+    "FFN: %lld neu übernommen (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FFN: %lld newly imported (%@)"
+          }
+        }
+      }
+    },
     "Filme" : {
       "localizations" : {
         "en" : {
@@ -2145,6 +2470,16 @@
         }
       }
     },
+    "Follower" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Followers"
+          }
+        }
+      }
+    },
     "Follows" : {},
     "Fortschritt" : {
       "localizations" : {
@@ -2152,6 +2487,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Progress"
+          }
+        }
+      }
+    },
+    "Französische Klassiker, sorgfältig aufbereitet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "French classics, carefully prepared."
+          }
+        }
+      }
+    },
+    "Freie Bücher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Free Books"
           }
         }
       }
@@ -2166,12 +2521,32 @@
         }
       }
     },
+    "Frisch aktualisiert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Latest updates"
+          }
+        }
+      }
+    },
     "Funktioniert mit AO3-Werken, FanFiction.net-Geschichten und direkten .epub-Links." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Works with AO3 works, FanFiction.net stories and direct .epub links."
+          }
+        }
+      }
+    },
+    "Für diesen Eintrag gibt es kein freies EPUB." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There's no free EPUB for this item."
           }
         }
       }
@@ -2183,16 +2558,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Use for Light and Dark"
-          }
-        }
-      }
-    },
-    "Für diesen Eintrag gibt es kein freies EPUB." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "There's no free EPUB for this item."
           }
         }
       }
@@ -2256,6 +2621,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Following"
+          }
+        }
+      }
+    },
+    "Gekürzt (Stub)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stubbed"
           }
         }
       }
@@ -2380,12 +2755,22 @@
         }
       }
     },
-    "Gilt für AO3, FanFiction.net und Bücher gemeinsam." : {
+    "Geteilter Link noch nicht geladen: %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Applies to AO3, FanFiction.net and books together."
+            "value" : "Shared link not loaded yet: %@"
+          }
+        }
+      }
+    },
+    "Geteiltes konnte nicht übernommen werden: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't add the shared item: %@"
           }
         }
       }
@@ -2396,6 +2781,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Applies to stories you've started. iOS decides when to check."
+          }
+        }
+      }
+    },
+    "Gilt für AO3, FanFiction.net und Bücher gemeinsam." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Applies to AO3, FanFiction.net and books together."
           }
         }
       }
@@ -2430,12 +2825,32 @@
         }
       }
     },
+    "Hält um %@ an" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stops at %@"
+          }
+        }
+      }
+    },
     "Halte ein Theme gedrückt, um es als Vorlage zu nehmen." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Press and hold a theme to use it as a template."
+          }
+        }
+      }
+    },
+    "hat einen Serverfehler (Fehler %lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "has a server error (error %lld)"
           }
         }
       }
@@ -2491,6 +2906,16 @@
         }
       }
     },
+    "Hier gibt es nur Einträge ohne EPUB." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are only entries without an EPUB here."
+          }
+        }
+      }
+    },
     "Hier ist noch nichts" : {
       "localizations" : {
         "en" : {
@@ -2541,12 +2966,24 @@
         }
       }
     },
-    "Hält um %@ an" : {
+    "https://…" : {},
+    "https://archiveofourown.org/works/…" : {},
+    "iCloud" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stops at %@"
+            "value" : "iCloud"
+          }
+        }
+      }
+    },
+    "iCloud-Sync" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud Sync"
           }
         }
       }
@@ -2561,6 +2998,26 @@
         }
       }
     },
+    "Im Katalog suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search this catalog"
+          }
+        }
+      }
+    },
+    "Im Trend" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trending"
+          }
+        }
+      }
+    },
     "Import" : {},
     "Import fehlgeschlagen" : {
       "localizations" : {
@@ -2568,6 +3025,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Import Failed"
+          }
+        }
+      }
+    },
+    "In allen Quellen suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search all sources"
           }
         }
       }
@@ -2612,6 +3079,16 @@
         }
       }
     },
+    "Inaktiv" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inactive"
+          }
+        }
+      }
+    },
     "Inhalt" : {
       "localizations" : {
         "en" : {
@@ -2649,6 +3126,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Internet Archive: tens of thousands of public-domain books as EPUB. Often generated from scans automatically, so quality varies."
+          }
+        }
+      }
+    },
+    "ist gerade in Wartung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "is down for maintenance"
+          }
+        }
+      }
+    },
+    "ist hinter Cloudflare nicht erreichbar (Fehler %lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "is unreachable behind Cloudflare (error %lld)"
+          }
+        }
+      }
+    },
+    "ist nicht erreichbar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "is unreachable"
+          }
+        }
+      }
+    },
+    "ist überlastet oder in Wartung (Fehler 503)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "is overloaded or under maintenance (error 503)"
           }
         }
       }
@@ -2733,12 +3250,72 @@
         }
       }
     },
+    "Kapiteltext" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chapter text"
+          }
+        }
+      }
+    },
     "Karten & Felder" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cards & fields"
+          }
+        }
+      }
+    },
+    "Katalog" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catalog"
+          }
+        }
+      }
+    },
+    "Katalog entfernen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove Catalog"
+          }
+        }
+      }
+    },
+    "Katalog hinzufügen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Catalog"
+          }
+        }
+      }
+    },
+    "Kataloge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catalogs"
+          }
+        }
+      }
+    },
+    "Kataloge sind Bücherlisten im offenen OPDS-Format: von Bibliotheken, Verlagen oder deinem eigenen Server (Calibre-Web, Kavita …)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catalogs are book lists in the open OPDS format: from libraries, publishers or your own server (Calibre-Web, Kavita …)."
           }
         }
       }
@@ -2763,6 +3340,16 @@
         }
       }
     },
+    "Kein gültiges ZIP-Archiv" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not a valid ZIP archive"
+          }
+        }
+      }
+    },
     "Kein OPF gefunden" : {
       "localizations" : {
         "en" : {
@@ -2779,16 +3366,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Not a Pair"
-          }
-        }
-      }
-    },
-    "Kein gültiges ZIP-Archiv" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not a valid ZIP archive"
           }
         }
       }
@@ -2843,6 +3420,26 @@
         }
       }
     },
+    "Keine neuen Kapitel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No new chapters"
+          }
+        }
+      }
+    },
+    "Keine neuen Kapitel (%lld nicht erreichbar)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No new chapters (%lld unreachable)"
+          }
+        }
+      }
+    },
     "Keine Treffer" : {
       "localizations" : {
         "en" : {
@@ -2869,26 +3466,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No connection to iCloud."
-          }
-        }
-      }
-    },
-    "Keine neuen Kapitel" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No new chapters"
-          }
-        }
-      }
-    },
-    "Keine neuen Kapitel (%lld nicht erreichbar)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No new chapters (%lld unreachable)"
           }
         }
       }
@@ -2964,16 +3541,6 @@
         }
       }
     },
-    "Kurze Sicherheitsprüfung" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quick Security Check"
-          }
-        }
-      }
-    },
     "Kühles Graublau für lange Nächte" : {
       "localizations" : {
         "en" : {
@@ -2984,12 +3551,42 @@
         }
       }
     },
+    "Kurze Sicherheitsprüfung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick Security Check"
+          }
+        }
+      }
+    },
+    "Kurzgeschichte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short story"
+          }
+        }
+      }
+    },
     "Kürzlich aktualisiert" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recently updated"
+          }
+        }
+      }
+    },
+    "Lade „%@“ …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downloading \"%@\" …"
           }
         }
       }
@@ -3014,12 +3611,42 @@
         }
       }
     },
+    "Lade deine FFN-Favoriten und Follows …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading your FFN favorites and follows …"
+          }
+        }
+      }
+    },
     "Lade Fandoms …" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Loading fandoms …"
+          }
+        }
+      }
+    },
+    "Lade Geschichten …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading stories …"
+          }
+        }
+      }
+    },
+    "Lade Katalog …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading catalog …"
           }
         }
       }
@@ -3034,12 +3661,12 @@
         }
       }
     },
-    "Lade deine FFN-Favoriten und Follows …" : {
+    "Lade Serie …" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Loading your FFN favorites and follows …"
+            "value" : "Loading series …"
           }
         }
       }
@@ -3054,22 +3681,43 @@
         }
       }
     },
-    "Lade „%@“ …" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Downloading \"%@\" …"
-          }
-        }
-      }
-    },
     "Laden" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Download"
+          }
+        }
+      }
+    },
+    "Länge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Length"
+          }
+        }
+      }
+    },
+    "Länge (Wörter)" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Length (words)"
+          }
+        }
+      }
+    },
+    "Laufend" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ongoing"
           }
         }
       }
@@ -3204,37 +3852,6 @@
         }
       }
     },
-    "Lyrik" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poetry"
-          }
-        }
-      }
-    },
-    "Länge" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Length"
-          }
-        }
-      }
-    },
-    "Länge (Wörter)" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Length (words)"
-          }
-        }
-      }
-    },
     "Löschen" : {
       "localizations" : {
         "en" : {
@@ -3245,12 +3862,82 @@
         }
       }
     },
-    "META-INF/container.xml fehlt" : {
+    "Lyrik" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "META-INF/container.xml is missing"
+            "value" : "Poetry"
+          }
+        }
+      }
+    },
+    "Märchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fairy tales"
+          }
+        }
+      }
+    },
+    "Markiere im Reader Text und wähle „Markieren“ oder „Notiz“." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select text in the reader and choose “Highlight” or “Note”."
+          }
+        }
+      }
+    },
+    "Markieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highlight"
+          }
+        }
+      }
+    },
+    "Markierung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highlight"
+          }
+        }
+      }
+    },
+    "Markierung löschen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Highlight"
+          }
+        }
+      }
+    },
+    "Markierungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highlights"
+          }
+        }
+      }
+    },
+    "Markierungen und Notizen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highlights and Notes"
           }
         }
       }
@@ -3296,12 +3983,32 @@
         }
       }
     },
+    "Meiste Lesezeichen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Most bookmarked"
+          }
+        }
+      }
+    },
     "Merken" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bookmark"
+          }
+        }
+      }
+    },
+    "META-INF/container.xml fehlt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "META-INF/container.xml is missing"
           }
         }
       }
@@ -3316,26 +4023,6 @@
         }
       }
     },
-    "Mit Anmeldung siehst du hier deine Lesezeichen, „Später lesen“, Abos und deinen Verlauf und kannst sie in die Bibliothek übernehmen. Babel speichert kein Passwort – die Anmeldung läuft direkt auf archiveofourown.org." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "When logged in, you'll see your bookmarks, Marked for Later, subscriptions and history here and can add them to your library. Babel never stores your password – you log in directly on archiveofourown.org."
-          }
-        }
-      }
-    },
-    "Mit Lautstärketasten blättern" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turn pages with volume buttons"
-          }
-        }
-      }
-    },
     "Mit aktuellen Filtern überschreiben" : {
       "localizations" : {
         "en" : {
@@ -3346,12 +4033,32 @@
         }
       }
     },
+    "Mit Anmeldung siehst du hier deine Lesezeichen, „Später lesen“, Abos und deinen Verlauf und kannst sie in die Bibliothek übernehmen. Babel speichert kein Passwort – die Anmeldung läuft direkt auf archiveofourown.org." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When logged in, you'll see your bookmarks, Marked for Later, subscriptions and history here and can add them to your library. Babel never stores your password – you log in directly on archiveofourown.org."
+          }
+        }
+      }
+    },
     "Mit diesen Filtern gibt es nichts." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nothing matches these filters."
+          }
+        }
+      }
+    },
+    "Mit Lautstärketasten blättern" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn pages with volume buttons"
           }
         }
       }
@@ -3386,22 +4093,22 @@
         }
       }
     },
+    "muss" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "must"
+          }
+        }
+      }
+    },
     "Muss enthalten" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Must include"
-          }
-        }
-      }
-    },
-    "Märchen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fairy tales"
           }
         }
       }
@@ -3422,6 +4129,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Check for New Chapters"
+          }
+        }
+      }
+    },
+    "Nächster Absatz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next paragraph"
+          }
+        }
+      }
+    },
+    "Nächstes Kapitel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next Chapter"
           }
         }
       }
@@ -3527,6 +4254,16 @@
         }
       }
     },
+    "Neuere Bücher unter freier Lizenz (Creative Commons), dazu frei zugängliche Sach- und Fachbücher." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Newer books under a free license (Creative Commons), plus open-access non-fiction and academic books."
+          }
+        }
+      }
+    },
     "Neues Farbschema" : {
       "localizations" : {
         "en" : {
@@ -3587,6 +4324,16 @@
         }
       }
     },
+    "Nicht in deinen Lesesprachen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not in your reading languages"
+          }
+        }
+      }
+    },
     "Nicht mehr merken" : {
       "localizations" : {
         "en" : {
@@ -3628,6 +4375,16 @@
         }
       }
     },
+    "Noch keine Markierungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Highlights Yet"
+          }
+        }
+      }
+    },
     "Noch nicht synchronisiert" : {
       "localizations" : {
         "en" : {
@@ -3638,12 +4395,32 @@
         }
       }
     },
+    "Nochmal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        }
+      }
+    },
     "Nochmal versuchen" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Try Again"
+          }
+        }
+      }
+    },
+    "Notiz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
           }
         }
       }
@@ -3708,37 +4485,6 @@
         }
       }
     },
-    "Nächster Absatz" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next paragraph"
-          }
-        }
-      }
-    },
-    "Nächstes Kapitel" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next Chapter"
-          }
-        }
-      }
-    },
-    "OK" : {},
-    "OPF nicht lesbar" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OPF couldn't be read"
-          }
-        }
-      }
-    },
     "Offiziell: %@" : {
       "localizations" : {
         "en" : {
@@ -3785,6 +4531,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Offline Storage"
+          }
+        }
+      }
+    },
+    "Öffne eine Geschichte, um hier weiterzulesen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open a story to continue reading here"
           }
         }
       }
@@ -3855,6 +4611,27 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Without: Pairing"
+          }
+        }
+      }
+    },
+    "OK" : {},
+    "OPDS-Adresse, zum Beispiel von deinem Calibre-Web-Server (endet oft auf /opds). Kataloge mit Anmeldung gehen noch nicht." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OPDS address, for example of your Calibre-Web server (often ends in /opds). Catalogs that require a sign-in aren't supported yet."
+          }
+        }
+      }
+    },
+    "OPF nicht lesbar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OPF couldn't be read"
           }
         }
       }
@@ -3962,6 +4739,16 @@
         }
       }
     },
+    "Polnische Literatur, frei zugänglich." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Polish literature, freely available."
+          }
+        }
+      }
+    },
     "Premium" : {
       "localizations" : {
         "en" : {
@@ -3979,6 +4766,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Check the spelling or try different words."
+          }
+        }
+      }
+    },
+    "Punkte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Points"
           }
         }
       }
@@ -4006,6 +4803,16 @@
       }
     },
     "Reviews" : {},
+    "Rezensionen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reviews"
+          }
+        }
+      }
+    },
     "Romane" : {
       "localizations" : {
         "en" : {
@@ -4156,6 +4963,22 @@
         }
       }
     },
+    "Seiten %lld–%lld" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Seiten %1$lld–%2$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pages %lld–%lld"
+          }
+        }
+      }
+    },
     "Seitenrand %lld pt" : {
       "localizations" : {
         "en" : {
@@ -4177,6 +5000,16 @@
       }
     },
     "Sepia" : {},
+    "Serie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Series"
+          }
+        }
+      }
+    },
     "Sicherheitsprüfung von FanFiction.net öffnen" : {
       "localizations" : {
         "en" : {
@@ -4257,6 +5090,26 @@
         }
       }
     },
+    "Spanischsprachige Literatur, frei zugänglich." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spanish-language literature, freely available."
+          }
+        }
+      }
+    },
+    "Später lesen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read Later"
+          }
+        }
+      }
+    },
     "Speichern" : {
       "localizations" : {
         "en" : {
@@ -4277,12 +5130,12 @@
         }
       }
     },
-    "Später lesen" : {
+    "Sprachen der Bücher" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Read Later"
+            "value" : "Book languages"
           }
         }
       }
@@ -4379,6 +5232,16 @@
         }
       }
     },
+    "Suche …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching…"
+          }
+        }
+      }
+    },
     "Suche auf AO3 …" : {
       "localizations" : {
         "en" : {
@@ -4399,12 +5262,12 @@
         }
       }
     },
-    "Suche nach Updates …" : {
+    "Suche in %lld Quellen …" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Checking for updates …"
+            "value" : "Searching %lld sources …"
           }
         }
       }
@@ -4420,12 +5283,12 @@
         }
       }
     },
-    "Suche …" : {
+    "Suche nach Updates …" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Searching…"
+            "value" : "Checking for updates …"
           }
         }
       }
@@ -4460,24 +5323,34 @@
         }
       }
     },
-    "System" : {},
-    "T" : {},
-    "TV-Serien" : {
+    "Syosetu: japanische Web Novels, von den Autor:innen selbst veröffentlicht." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "TV Shows"
+            "value" : "Syosetu: Japanese web novels, published by the authors themselves."
           }
         }
       }
     },
+    "System" : {},
+    "T" : {},
     "Tags ausschließen" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exclude tags"
+          }
+        }
+      }
+    },
+    "Teil %lld der Serie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Part %lld of the series"
           }
         }
       }
@@ -4498,6 +5371,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Text"
+          }
+        }
+      }
+    },
+    "Text im Reader markieren und im Menü „Markieren“ oder „Notiz“ wählen. Tippen auf eine Markierung öffnet sie. Alle Markierungen einer Geschichte stehen auf ihrer Detailseite." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select text in the reader and choose “Highlight” or “Note” from the menu. Tap a highlight to open it. All highlights of a story are listed on its detail page."
           }
         }
       }
@@ -4592,6 +5475,16 @@
         }
       }
     },
+    "Titel suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search titles"
+          }
+        }
+      }
+    },
     "Titel und Fließtext" : {
       "localizations" : {
         "en" : {
@@ -4619,6 +5512,66 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Title, author, fandom, tag"
+          }
+        }
+      }
+    },
+    "TV-Serien" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TV Shows"
+          }
+        }
+      }
+    },
+    "Über" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
+          }
+        }
+      }
+    },
+    "Über 75.000 freie Bücher, viele auf Deutsch." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Over 75,000 free books, many in German."
+          }
+        }
+      }
+    },
+    "Übernommene Favoriten werden als Favorit markiert." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported favorites are marked as favorite."
+          }
+        }
+      }
+    },
+    "Übernommene Follows bekommen den Status „Lese ich“." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported follows get the status \"Reading\"."
+          }
+        }
+      }
+    },
+    "Umblättern wie im Buch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn pages like a book"
           }
         }
       }
@@ -4663,13 +5616,13 @@
         }
       }
     },
-    "Version" : {},
-    "Versuch es mit weniger Filtern." : {
+    "veröff. %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Try fewer filters."
+            "value" : "pub. %@"
           }
         }
       }
@@ -4694,12 +5647,43 @@
         }
       }
     },
+    "Version" : {},
+    "Versuch es mit einem anderen Titel." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try a different title."
+          }
+        }
+      }
+    },
+    "Versuch es mit weniger Filtern." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try fewer filters."
+          }
+        }
+      }
+    },
     "Vollständig löschen" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete Completely"
+          }
+        }
+      }
+    },
+    "von" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from"
           }
         }
       }
@@ -4764,12 +5748,42 @@
         }
       }
     },
+    "Vorschläge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestions"
+          }
+        }
+      }
+    },
     "Warmes Papier und Sepia, wie alte Bücher" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Warm paper and sepia, like old books"
+          }
+        }
+      }
+    },
+    "Web-Serien" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web Serials"
+          }
+        }
+      }
+    },
+    "Web-Serien und Web Novels, laufend fortgesetzt." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web serials and web novels, continued chapter by chapter."
           }
         }
       }
@@ -4882,6 +5896,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Words"
+          }
+        }
+      }
+    },
+    "Zähle Geschichten … %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Counting stories … %@"
           }
         }
       }
@@ -5028,908 +6052,32 @@
         }
       }
     },
-    "Zähle Geschichten … %@" : {
+    "Stand" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Counting stories … %@"
+            "value" : "Status"
           }
         }
       }
     },
-    "akt. %@" : {
-      "extractionState" : "stale",
+    "Art" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "upd. %@"
+            "value" : "Type"
           }
         }
       }
     },
-    "antwortet nicht (Fehler %lld)" : {
+    "Lizenz und Herausgeber" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "isn't responding (error %lld)"
-          }
-        }
-      }
-    },
-    "antwortet nicht (Zeitüberschreitung)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "isn't responding (timed out)"
-          }
-        }
-      }
-    },
-    "ausschließen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "exclude"
-          }
-        }
-      }
-    },
-    "bis" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "to"
-          }
-        }
-      }
-    },
-    "egal" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "any"
-          }
-        }
-      }
-    },
-    "hat einen Serverfehler (Fehler %lld)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "has a server error (error %lld)"
-          }
-        }
-      }
-    },
-    "https://archiveofourown.org/works/…" : {},
-    "iCloud" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "iCloud"
-          }
-        }
-      }
-    },
-    "iCloud-Sync" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "iCloud Sync"
-          }
-        }
-      }
-    },
-    "ist gerade in Wartung" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "is down for maintenance"
-          }
-        }
-      }
-    },
-    "ist hinter Cloudflare nicht erreichbar (Fehler %lld)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "is unreachable behind Cloudflare (error %lld)"
-          }
-        }
-      }
-    },
-    "ist nicht erreichbar" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "is unreachable"
-          }
-        }
-      }
-    },
-    "ist überlastet oder in Wartung (Fehler 503)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "is overloaded or under maintenance (error 503)"
-          }
-        }
-      }
-    },
-    "muss" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "must"
-          }
-        }
-      }
-    },
-    "veröff. %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "pub. %@"
-          }
-        }
-      }
-    },
-    "von" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "from"
-          }
-        }
-      }
-    },
-    "Öffne eine Geschichte, um hier weiterzulesen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open a story to continue reading here"
-          }
-        }
-      }
-    },
-    "Über" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "About"
-          }
-        }
-      }
-    },
-    "Über 75.000 freie Bücher, viele auf Deutsch." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Over 75,000 free books, many in German."
-          }
-        }
-      }
-    },
-    "Übernommene Favoriten werden als Favorit markiert." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Imported favorites are marked as favorite."
-          }
-        }
-      }
-    },
-    "Übernommene Follows bekommen den Status „Lese ich“." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Imported follows get the status \"Reading\"."
-          }
-        }
-      }
-    },
-    "–" : {},
-    "„%@“ auf AO3 suchen" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search AO3 for \"%@\""
-          }
-        }
-      }
-    },
-    "„%@“ auf FanFiction.net suchen" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search FanFiction.net for \"%@\""
-          }
-        }
-      }
-    },
-    "„%@“ in der Bibliothek" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "\"%@\" is in your library"
-          }
-        }
-      }
-    },
-    "„%@“ löschen?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete “%@”?"
-          }
-        }
-      }
-    },
-    "„%@“ offline gespeichert" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "\"%@\" saved offline"
-          }
-        }
-      }
-    },
-    "„%@“ vollständig löschen?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete “%@” completely?"
-          }
-        }
-      }
-    },
-    "„%@“ überall suchen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search everywhere for “%@”"
-          }
-        }
-      }
-    },
-    "„Als Paar“ zeigt nur Geschichten, in denen die beiden ein Pairing sind. Jedes Paar lässt sich einzeln einschalten." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "\"As a Pair\" only shows stories where the two are a pairing. Each pair can be switched on separately."
-          }
-        }
-      }
-    },
-    "%lld Einträge ohne EPUB sind ausgeblendet." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entries without an EPUB are hidden."
-          }
-        }
-      }
-    },
-    "Adresse des Katalogs" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Catalog address"
-          }
-        }
-      }
-    },
-    "Am besten bewertet" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Best rated"
-          }
-        }
-      }
-    },
-    "Anmerkung" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Note"
-          }
-        }
-      }
-    },
-    "Aufsteiger" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rising stars"
-          }
-        }
-      }
-    },
-    "Beliebt & laufend" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Popular & ongoing"
-          }
-        }
-      }
-    },
-    "Beliebt diese Woche" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Popular this week"
-          }
-        }
-      }
-    },
-    "Das ist kein OPDS-Katalog (OPDS 1.x, Atom)." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This is not an OPDS catalog (OPDS 1.x, Atom)."
-          }
-        }
-      }
-    },
-    "Das ist keine gültige Adresse." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "That is not a valid address."
-          }
-        }
-      }
-    },
-    "Diesen Katalog hast du schon." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You already have this catalog."
-          }
-        }
-      }
-    },
-    "Dieser Katalog ist hier leer." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This catalog is empty here."
-          }
-        }
-      }
-    },
-    "Dieser Katalog verlangt eine Anmeldung – das kann Babel noch nicht." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This catalog requires a sign-in – Babel doesn't support that yet."
-          }
-        }
-      }
-    },
-    "Follower" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Followers"
-          }
-        }
-      }
-    },
-    "Französische Klassiker, sorgfältig aufbereitet." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "French classics, carefully prepared."
-          }
-        }
-      }
-    },
-    "Freie Bücher" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Free Books"
-          }
-        }
-      }
-    },
-    "Frisch aktualisiert" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Latest updates"
-          }
-        }
-      }
-    },
-    "Hier gibt es nur Einträge ohne EPUB." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "There are only entries without an EPUB here."
-          }
-        }
-      }
-    },
-    "Im Katalog suchen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search this catalog"
-          }
-        }
-      }
-    },
-    "Im Trend" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trending"
-          }
-        }
-      }
-    },
-    "In allen Quellen suchen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search all sources"
-          }
-        }
-      }
-    },
-    "Kapiteltext" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chapter text"
-          }
-        }
-      }
-    },
-    "Katalog" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Catalog"
-          }
-        }
-      }
-    },
-    "Katalog entfernen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remove Catalog"
-          }
-        }
-      }
-    },
-    "Katalog hinzufügen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add Catalog"
-          }
-        }
-      }
-    },
-    "Kataloge" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Catalogs"
-          }
-        }
-      }
-    },
-    "Kataloge sind Bücherlisten im offenen OPDS-Format: von Bibliotheken, Verlagen oder deinem eigenen Server (Calibre-Web, Kavita …)." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Catalogs are book lists in the open OPDS format: from libraries, publishers or your own server (Calibre-Web, Kavita …)."
-          }
-        }
-      }
-    },
-    "Lade Geschichten …" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading stories …"
-          }
-        }
-      }
-    },
-    "Lade Katalog …" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading catalog …"
-          }
-        }
-      }
-    },
-    "Neuere Bücher unter freier Lizenz (Creative Commons), dazu frei zugängliche Sach- und Fachbücher." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Newer books under a free license (Creative Commons), plus open-access non-fiction and academic books."
-          }
-        }
-      }
-    },
-    "Nochmal" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retry"
-          }
-        }
-      }
-    },
-    "OPDS-Adresse, zum Beispiel von deinem Calibre-Web-Server (endet oft auf /opds). Kataloge mit Anmeldung gehen noch nicht." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OPDS address, for example of your Calibre-Web server (often ends in /opds). Catalogs that require a sign-in aren't supported yet."
-          }
-        }
-      }
-    },
-    "Polnische Literatur, frei zugänglich." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Polish literature, freely available."
-          }
-        }
-      }
-    },
-    "Suche in %lld Quellen …" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Searching %lld sources …"
-          }
-        }
-      }
-    },
-    "Titel suchen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search titles"
-          }
-        }
-      }
-    },
-    "Versuch es mit einem anderen Titel." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Try a different title."
-          }
-        }
-      }
-    },
-    "Vorschläge" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suggestions"
-          }
-        }
-      }
-    },
-    "Web-Serien" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Web Serials"
-          }
-        }
-      }
-    },
-    "Web-Serien und Web Novels, laufend fortgesetzt." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Web serials and web novels, continued chapter by chapter."
-          }
-        }
-      }
-    },
-    "Geteilter Link noch nicht geladen: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Shared link not loaded yet: %@"
-          }
-        }
-      }
-    },
-    "Geteiltes konnte nicht übernommen werden: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't add the shared item: %@"
-          }
-        }
-      }
-    },
-    "%lld geteilte Titel in der Bibliothek" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld shared titles added to your library"
-          }
-        }
-      }
-    },
-    "Umblättern wie im Buch" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turn pages like a book"
-          }
-        }
-      }
-    },
-    "Markieren" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Highlight"
-          }
-        }
-      }
-    },
-    "Notiz" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Note"
-          }
-        }
-      }
-    },
-    "Markierung" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Highlight"
-          }
-        }
-      }
-    },
-    "Dein Gedanke dazu" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your thoughts"
-          }
-        }
-      }
-    },
-    "Markierung löschen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete Highlight"
-          }
-        }
-      }
-    },
-    "Markierungen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Highlights"
-          }
-        }
-      }
-    },
-    "Noch keine Markierungen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No Highlights Yet"
-          }
-        }
-      }
-    },
-    "Markiere im Reader Text und wähle „Markieren“ oder „Notiz“." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select text in the reader and choose “Highlight” or “Note”."
-          }
-        }
-      }
-    },
-    "Markierungen und Notizen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Highlights and Notes"
-          }
-        }
-      }
-    },
-    "Text im Reader markieren und im Menü „Markieren“ oder „Notiz“ wählen. Tippen auf eine Markierung öffnet sie. Alle Markierungen einer Geschichte stehen auf ihrer Detailseite." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select text in the reader and choose “Highlight” or “Note” from the menu. Tap a highlight to open it. All highlights of a story are listed on its detail page."
-          }
-        }
-      }
-    },
-    "Lade Serie …" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading series …"
-          }
-        }
-      }
-    },
-    "%lld Werke · %@%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld works · %@%@"
-          }
-        }
-      }
-    },
-    "Teil %lld der Serie" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Part %lld of the series"
-          }
-        }
-      }
-    },
-    "Serie" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Series"
-          }
-        }
-      }
-    },
-    "Spanischsprachige Literatur, frei zugänglich." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spanish-language literature, freely available."
-          }
-        }
-      }
-    },
-    "%lld Sprachen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld languages"
-          }
-        }
-      }
-    },
-    "Sprachen der Bücher" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Book languages"
-          }
-        }
-      }
-    },
-    "Nicht in deinen Lesesprachen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not in your reading languages"
+            "value" : "License and publisher"
           }
         }
       }

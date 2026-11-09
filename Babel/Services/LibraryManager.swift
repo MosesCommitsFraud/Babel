@@ -128,7 +128,7 @@ final class LibraryManager {
             try await downloadFFNChapter(story, index: index)
             return url
 
-        case .royalRoad:
+        case .royalRoad, .syosetu:
             let url = ContentStore.chapterURL(story, index)
             if FileManager.default.fileExists(atPath: url.path) { return url }
             try await downloadRoyalRoadChapter(story, index: index)
@@ -141,7 +141,9 @@ final class LibraryManager {
     @discardableResult
     private func refreshRoyalRoad(_ story: Story) async throws -> Int {
         let before = story.spinePaths.count
-        let fiction = try await RoyalRoadService.fiction(id: story.sourceID)
+        let fiction = story.source == .syosetu
+            ? try await SyosetuService.fiction(id: story.sourceID, knownTitles: story.chapterTitles)
+            : try await RoyalRoadService.fiction(id: story.sourceID)
         story.apply(remote: fiction.meta)
         if !fiction.paths.isEmpty {
             story.spinePaths = fiction.paths
@@ -155,7 +157,12 @@ final class LibraryManager {
     private func downloadRoyalRoadChapter(_ story: Story, index: Int) async throws {
         if index >= story.spinePaths.count { try await refreshRoyalRoad(story) }
         guard index < story.spinePaths.count else { throw BabelError.notFound }
-        let chapter = try await RoyalRoadService.chapter(path: story.spinePaths[index], fallbackTitle: story.title(ofChapter: index))
+        let path = story.spinePaths[index], fallback = story.title(ofChapter: index)
+        let chapter = story.source == .syosetu
+            ? try await SyosetuService.chapter(path: path, fallbackTitle: fallback)
+            : try await RoyalRoadService.chapter(path: path, fallbackTitle: fallback)
+        // Fehlte der Titel in der Kapitelliste, steht er jetzt fest.
+        if index < story.chapterTitles.count, story.chapterTitles[index].isEmpty { story.chapterTitles[index] = chapter.title }
         try ContentStore.writeChapter(chapter, story: story, index: index)
     }
 
@@ -199,7 +206,7 @@ final class LibraryManager {
                 i += 1
                 downloads[key] = Double(i) / Double(max(story.chapterCount, 1))
             }
-        case .royalRoad:
+        case .royalRoad, .syosetu:
             if story.spinePaths.isEmpty { try await refreshRoyalRoad(story) }
             let count = story.spinePaths.count
             for i in 0..<count {
@@ -223,7 +230,7 @@ final class LibraryManager {
     /// Ganze Geschichte laden und als EPUB-Datei (zum Teilen / Sichern) bauen.
     func exportEPUB(_ story: Story) async throws -> URL {
         switch story.source {
-        case .ao3, .ffn, .royalRoad:
+        case .ao3, .ffn, .royalRoad, .syosetu:
             try await downloadAll(story)
             return try await EPUBBuilder.build(story)
         case .gutenberg, .standardEbooks, .archive, .opds, .epub:
@@ -267,7 +274,7 @@ final class LibraryManager {
                 story.apply(remote: try await AO3Service.fetchWorkMeta(id: story.sourceID))
             case .ffn:
                 _ = try await ensureChapter(story, index: 0)
-            case .royalRoad:
+            case .royalRoad, .syosetu:
                 try await refreshRoyalRoad(story)
             default: break
             }
@@ -313,7 +320,7 @@ final class LibraryManager {
                 story.chapterTitles = result.titles
                 story.chapterCount = result.titles.count
             }
-        case .royalRoad:
+        case .royalRoad, .syosetu:
             try await refreshRoyalRoad(story)
         case .epub, .gutenberg, .standardEbooks, .archive, .opds:
             return 0
@@ -326,6 +333,22 @@ final class LibraryManager {
         try? story.modelContext?.save()
         return diff
     }
+
+    #if DEBUG
+    /// Zum Testen der Update-Erkennung (Startargument `-debugForgetLastChapters`): vergisst bei angefangenen,
+    /// unfertigen Royal-Road-Geschichten der Bibliothek die letzten zwei Kapitel – die nächste Prüfung findet sie als neu.
+    func debugForgetLastChapters(context: ModelContext) {
+        guard CommandLine.arguments.contains("-debugForgetLastChapters") else { return }
+        let descriptor = FetchDescriptor<Story>(predicate: #Predicate { $0.inLibrary && !$0.isComplete && $0.lastOpenedAt != nil })
+        for story in (try? context.fetch(descriptor)) ?? [] where story.source.isSerial && story.spinePaths.count > 3 {
+            story.spinePaths.removeLast(2)
+            story.chapterTitles = Array(story.chapterTitles.prefix(story.spinePaths.count))
+            story.chapterCount = story.spinePaths.count
+            story.newChapters = 0
+        }
+        try? context.save()
+    }
+    #endif
 
     func checkAllUpdates(context: ModelContext) async {
         guard !isCheckingUpdates else { return }
@@ -436,6 +459,15 @@ final class LibraryManager {
             let story = self.story(for: result.meta, context: context)
             try ContentStore.writeChapter(result.content, story: story, index: 0)
             if !result.titles.isEmpty { story.chapterTitles = result.titles; story.chapterCount = result.titles.count }
+            addToLibrary(story, context: context)
+            return story
+        }
+        if host.hasSuffix("ncode.syosetu.com"), let code = url.path.firstMatch(#"^/(n\d+[a-z]+)"#)?[1] {
+            let fiction = try await SyosetuService.fiction(id: code)
+            let story = self.story(for: fiction.meta, context: context)
+            story.spinePaths = fiction.paths
+            story.chapterTitles = fiction.titles
+            story.chapterCount = max(fiction.paths.count, 1)
             addToLibrary(story, context: context)
             return story
         }

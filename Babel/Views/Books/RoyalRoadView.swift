@@ -1,11 +1,54 @@
 import SwiftUI
 
-/// Royal Road: die Listen der Website als Chips, dazu die Titelsuche.
-struct RoyalRoadView: View {
-    var initialQuery = ""
-    @AppStorage("royalroad.list") private var list: RoyalRoadService.List = .trending
-    @ObservedObject private var fetcher = WebFetcher.shared
+/// Web-Serien-Seiten im Bücher-Tab: Royal Road (Englisch) und Syosetu (Japanisch).
+enum SerialSite: String, Hashable, CaseIterable, Sendable {
+    case royalRoad, syosetu
 
+    var title: String {
+        switch self {
+        case .royalRoad: "Royal Road"
+        case .syosetu: "小説家になろう"
+        }
+    }
+
+    var about: String {
+        switch self {
+        case .royalRoad: String(localized: "Web-Serien und Web Novels, laufend fortgesetzt.")
+        case .syosetu: String(localized: "Syosetu: japanische Web Novels, von den Autor:innen selbst veröffentlicht.")
+        }
+    }
+
+    var languages: [String] { self == .royalRoad ? ["en"] : ["ja"] }
+
+    /// Listen der Seite: Kennung und Name.
+    var lists: [(id: String, label: String)] {
+        switch self {
+        case .royalRoad: RoyalRoadService.List.allCases.map { ($0.rawValue, $0.label) }
+        case .syosetu: SyosetuService.List.allCases.map { ($0.rawValue, $0.label) }
+        }
+    }
+
+    func list(_ id: String, page: Int) async throws -> RoyalRoadService.Page {
+        switch self {
+        case .royalRoad: try await RoyalRoadService.list(RoyalRoadService.List(rawValue: id) ?? .trending, page: page)
+        case .syosetu: try await SyosetuService.list(SyosetuService.List(rawValue: id) ?? .weekly, page: page)
+        }
+    }
+
+    func search(_ query: String, page: Int) async throws -> RoyalRoadService.Page {
+        switch self {
+        case .royalRoad: try await RoyalRoadService.search(query, page: page)
+        case .syosetu: try await SyosetuService.search(query, page: page)
+        }
+    }
+}
+
+/// Eine Web-Serien-Seite: ihre Listen als Chips, dazu die Suche.
+struct SerialSiteView: View {
+    let site: SerialSite
+    var initialQuery = ""
+
+    @State private var listID = ""
     @State private var query = ""
     @State private var submitted = ""
     @State private var stories: [RemoteStory] = []
@@ -16,6 +59,8 @@ struct RoyalRoadView: View {
     @State private var didStart = false
     @State private var loadTask: Task<Void, Never>?
 
+    private var storageKey: String { "serial.list.\(site.rawValue)" }
+
     var body: some View {
         List {
             if submitted.isEmpty {
@@ -23,9 +68,10 @@ struct RoyalRoadView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         GlassEffectContainer(spacing: 8) {
                             HStack(spacing: 8) {
-                                ForEach(RoyalRoadService.List.allCases) { item in
-                                    GlassChip(title: item.label, isSelected: list == item) {
-                                        withAnimation(.snappy) { list = item }
+                                ForEach(site.lists, id: \.id) { item in
+                                    GlassChip(title: item.label, isSelected: listID == item.id) {
+                                        withAnimation(.snappy) { listID = item.id }
+                                        UserDefaults.standard.set(item.id, forKey: storageKey)
                                         reload()
                                     }
                                 }
@@ -57,7 +103,7 @@ struct RoyalRoadView: View {
         }
         .listStyle(.plain)
         .themedBackground()
-        .navigationTitle("Royal Road")
+        .navigationTitle(site.title)
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Titel suchen")
         .onSubmit(of: .search) {
@@ -79,6 +125,8 @@ struct RoyalRoadView: View {
         .refreshable { await load(page: 1) }
         .task {
             guard !didStart else { return }
+            let saved = UserDefaults.standard.string(forKey: storageKey) ?? ""
+            listID = site.lists.contains { $0.id == saved } ? saved : (site.lists.first?.id ?? "")
             if !initialQuery.isEmpty {
                 query = initialQuery
                 submitted = initialQuery
@@ -99,12 +147,10 @@ struct RoyalRoadView: View {
         error = nil
         defer { isLoading = false }
         let search = submitted
-        let current = list
+        let current = listID
         do {
-            let result = search.isEmpty
-                ? try await RoyalRoadService.list(current, page: page)
-                : try await RoyalRoadService.search(search, page: page)
-            guard !Task.isCancelled, search == submitted, current == list else { return }
+            let result = search.isEmpty ? try await site.list(current, page: page) : try await site.search(search, page: page)
+            guard !Task.isCancelled, search == submitted, current == listID else { return }
             if page == 1 {
                 stories = result.stories
             } else {

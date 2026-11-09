@@ -104,9 +104,7 @@ enum RoyalRoadService {
             var s = RemoteStory(source: .royalRoad, sourceID: id, title: try link.text(), url: fictionURL(id))
             s.coverURL = try cover(item.select("figure img").first())
             s.tags = try item.select("a.fiction-tag").array().map { try $0.text() }
-            let labels = try item.select("span.label").array().map { try $0.text().trimmed.uppercased() }
-            s.isComplete = labels.contains("COMPLETED")
-            s.genres = labels.contains("FAN FICTION") ? [String(localized: "Fanfiction")] : []
+            apply(labels: try item.select("span.label.bg-blue-hoki").array().map { try $0.text().trimmed }, to: &s)
             for stat in try item.select("div.stats > div").array() {
                 apply(stat: try stat.text(), to: &s)
                 if let time = try stat.select("time").first() { s.updated = date(time) }
@@ -117,6 +115,23 @@ enum RoyalRoadService {
         }
         let hasNext = try doc.select("ul.pagination a").array().contains { (try? $0.text().contains("Next")) == true }
         return Page(stories: stories, hasNext: hasNext)
+    }
+
+    /// Die blauen Marken der Seite: Art („Original“/„Fan Fiction“) und Stand („ONGOING“, „COMPLETED“, „HIATUS“, „STUB“, „DROPPED“).
+    /// Art → `genres`, Stand → `categories` (die Detailseite zeigt beides).
+    private static func apply(labels: [String], to s: inout RemoteStory) {
+        let states = ["ONGOING": String(localized: "Laufend"), "COMPLETED": String(localized: "Abgeschlossen"),
+                      "HIATUS": String(localized: "Pausiert"), "STUB": String(localized: "Gekürzt (Stub)"),
+                      "DROPPED": String(localized: "Abgebrochen"), "INACTIVE": String(localized: "Inaktiv")]
+        var kinds: [String] = [], status: [String] = []
+        for label in labels {
+            if let state = states[label.uppercased()] { status.append(state) }
+            else if label.uppercased() == "FAN FICTION" { kinds.append(String(localized: "Fanfiction")) }
+            else if !label.isEmpty { kinds.append(label) }
+        }
+        s.isComplete = labels.contains { $0.uppercased() == "COMPLETED" }
+        s.genres = kinds
+        s.categories = status
     }
 
     /// „34,388 Followers“, „2,932 Pages“, „109 Chapters“, „28,837,937 Views“
@@ -158,9 +173,9 @@ enum RoyalRoadService {
         s.coverURL = try cover(doc.select("img.thumbnail[data-type=cover]").first())
         if let description = try doc.select("div.description div.hidden-content").first() { s.summary = try AO3Service.paragraphText(description) }
         s.tags = try doc.select("span.tags a.fiction-tag").array().map { try $0.text() }
-        let labels = try doc.select("div.fiction-info span.label").array().map { try $0.text().trimmed.uppercased() }
-        s.isComplete = labels.contains("COMPLETED")
-        s.genres = labels.contains("FAN FICTION") ? [String(localized: "Fanfiction")] : []
+        apply(labels: try doc.select("div.fiction-info span.label.bg-blue-hoki").array().map { try $0.text().trimmed }, to: &s)
+        // „Warning – This fiction contains: Graphic Violence, Profanity …“
+        s.warnings = try doc.select("div.fiction-info div.font-red-sunglo ul.list-inline li").array().map { try $0.text().trimmed }.filter { !$0.isEmpty }
         s.language = "English"
 
         // Kennzahlen: „Total Views :“ und der Wert stehen als benachbarte Listenpunkte.

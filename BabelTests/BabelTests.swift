@@ -97,7 +97,10 @@ final class BabelTests: XCTestCase {
         XCTAssertEqual(first.coverURL?.pathExtension, "jpg")
         XCTAssertNotNil(first.updated)
         XCTAssertTrue(first.summary.hasPrefix("Zorian is a teenage mage"))
+        XCTAssertEqual(first.genres, ["Original"])
+        XCTAssertEqual(first.categories.count, 1, "Stand als eigene Angabe")
         XCTAssertFalse(page.stories[1].isComplete)
+        XCTAssertEqual(page.stories[1].categories.count, 1)
         XCTAssertNil(page.stories[1].coverURL)
     }
 
@@ -109,6 +112,9 @@ final class BabelTests: XCTestCase {
         XCTAssertEqual(fiction.meta.authorURL?.path, "/profile/100374")
         XCTAssertTrue(fiction.meta.isComplete)
         XCTAssertEqual(fiction.meta.words, 806_306)
+        XCTAssertEqual(fiction.meta.warnings, ["Graphic Violence", "Profanity"])
+        XCTAssertEqual(fiction.meta.genres, ["Original"])
+        XCTAssertEqual(fiction.meta.categories.count, 1)
         XCTAssertEqual(fiction.meta.follows, 34_388)
         XCTAssertEqual(fiction.meta.favs, 32_960)
         XCTAssertEqual(fiction.meta.hits, 28_838_070)
@@ -144,6 +150,8 @@ final class BabelTests: XCTestCase {
         XCTAssertNotNil(book.coverURL)
         XCTAssertTrue(book.tags.contains("Education"))
         XCTAssertTrue(book.source.isOnlineBook)
+        XCTAssertEqual(book.categories.first, "CC BY-SA", "Lizenz vom Download-Link")
+        XCTAssertGreaterThanOrEqual(book.tags.count, 7, "alle Themen, nicht nur die ersten")
     }
 
     func testParsesOPDSNavigation() throws {
@@ -211,8 +219,8 @@ final class BabelTests: XCTestCase {
         XCTAssertTrue(BookLanguages.matches(book, []))
 
         // Quellen ohne Bücher in den Lesesprachen fallen weg; Kataloge ohne Sprachangabe nie.
-        XCTAssertFalse(BookShelf(kind: .royalRoad).offers(["de"]))
-        XCTAssertTrue(BookShelf(kind: .royalRoad).offers(["de", "en"]))
+        XCTAssertFalse(BookShelf(kind: .serial(.royalRoad)).offers(["de"]))
+        XCTAssertTrue(BookShelf(kind: .serial(.royalRoad)).offers(["de", "en"]))
         XCTAssertTrue(BookShelf(kind: .library(.gutenberg)).offers(["de"]))
         XCTAssertFalse(BookShelf(kind: .library(.standardEbooks)).offers(["de"]))
         let own = OPDSCatalog(title: "Mein Server", url: URL(string: "https://example.org/opds")!)
@@ -234,6 +242,60 @@ final class BabelTests: XCTestCase {
         XCTAssertGreaterThan(luminance(BookLeaf.backColor(for: .white)), 0.7)
         XCTAssertLessThan(luminance(BookLeaf.backColor(for: .black)), 0.15)
         XCTAssertGreaterThan(luminance(BookLeaf.backColor(for: .black)), 0)
+    }
+
+    func testSyosetuOnlyForJapanese() {
+        XCTAssertFalse(BookShelf(kind: .serial(.syosetu)).offers(["de", "en"]))
+        XCTAssertTrue(BookShelf(kind: .serial(.syosetu)).offers(["ja"]))
+        XCTAssertTrue(StorySource.syosetu.isWebFiction)
+    }
+
+    func testParsesSyosetuChapter() throws {
+        let html = """
+        <h1 class="p-novel__title p-novel__title--rensai">第一話</h1>
+        <div class="p-novel__body">
+        <div class="js-novel-text p-novel__text p-novel__text--preface"><p id="Lp1">まえがき</p></div>
+        <div class="js-novel-text p-novel__text"><p id="L1">一行目</p><p id="L2"><br></p><p id="L3"><ruby>漢字<rt>かんじ</rt></ruby>の行</p></div>
+        </div>
+        """
+        let chapter = try SyosetuService.parseChapter(html, fallbackTitle: "Kapitel 1")
+        XCTAssertEqual(chapter.title, "第一話")
+        XCTAssertTrue(chapter.html.contains("lang=\"ja\""))
+        XCTAssertTrue(chapter.html.contains("babel-gap"), "Leerzeile wird zum Abstand")
+        XCTAssertTrue(chapter.html.contains("<ruby>"), "Lesehilfen bleiben")
+        XCTAssertTrue(chapter.html.contains("babel-notes"), "Vorwort als Anmerkung")
+        XCTAssertEqual(try SyosetuService.parseContents("<div class=\"p-eplist__sublist\"><a href=\"/n1/1/\" class=\"p-eplist__subtitle\"> １ 題 </a></div>"), ["１ 題"])
+    }
+
+    func testMergesScannedPages() throws {
+        let folder = try temporaryFolder()
+        var paths: [String] = []
+        for i in 0..<60 {
+            let name = "page_\(i).html"
+            // Jede dritte Seite ist leer – sie fällt weg.
+            let body = i % 3 == 2 ? "<p> </p>" : "<p>Seite \(i) Text</p>"
+            try Data("<html><head><title>Page \(i)</title><link href=\"style.css\" rel=\"stylesheet\"/></head><body>\(body)</body></html>".utf8)
+                .write(to: folder.appendingPathComponent(name))
+            paths.append(name)
+        }
+        let merged = try XCTUnwrap(EPUBParser.mergePages(paths, folder: folder, tocCount: 0))
+        XCTAssertLessThan(merged.count, 10)
+        let first = try String(contentsOf: folder.appendingPathComponent(merged[0].path), encoding: .utf8)
+        XCTAssertTrue(first.contains("style.css"), "Stylesheet der Seiten bleibt")
+        XCTAssertTrue(first.contains("Seite 0 Text") && first.contains("Seite 1 Text"))
+        XCTAssertFalse(first.contains("babel-page-3\""), "leere Seite fehlt")
+        // Bücher mit echten Kapiteln bleiben unangetastet.
+        XCTAssertNil(EPUBParser.mergePages(Array(paths.prefix(20)), folder: folder, tocCount: 0))
+        XCTAssertNil(EPUBParser.mergePages(paths, folder: folder, tocCount: 30))
+    }
+
+    func testDocumentTitle() throws {
+        let folder = try temporaryFolder()
+        let file = folder.appendingPathComponent("a.html")
+        try Data("<html><head><title>Website</title></head><body><h2 class=\"x\"><a id=\"a\"></a>XI<br/>LE VIEUX  CRIME</h2><p>…</p></body></html>".utf8).write(to: file)
+        XCTAssertEqual(EPUBParser.documentTitle(file), "XI LE VIEUX CRIME")
+        try Data("<html><head><title>Nur Titel</title></head><body><p>…</p></body></html>".utf8).write(to: file)
+        XCTAssertEqual(EPUBParser.documentTitle(file), "Nur Titel")
     }
 
     func testParsesFFNMetaLine() {

@@ -297,6 +297,10 @@ struct StoryDetailView: View {
             add(String(localized: "Lesezeichen"), story.bookmarks, "bookmark.fill", StoryRow.followYellow)
             add(String(localized: "Kommentare"), story.comments, "text.bubble.fill", theme.primary, comments: true)
             add(String(localized: "Aufrufe"), story.hits, "eye.fill", .secondary)
+        case .syosetu:
+            add(String(localized: "Punkte"), story.kudos, "star.fill", StoryRow.followYellow)
+            add(String(localized: "Lesezeichen"), story.favs, "bookmark.fill", StoryRow.heartRed)
+            add(String(localized: "Rezensionen"), story.reviews, "text.bubble.fill", theme.primary)
         case .royalRoad:
             add(String(localized: "Follower"), story.follows, "bell.fill", StoryRow.followYellow)
             add(String(localized: "Favoriten"), story.favs, "heart.fill", StoryRow.heartRed)
@@ -429,8 +433,9 @@ struct StoryDetailView: View {
     private var tagSections: some View {
         tagSection("Fandoms", story.fandoms)
         tagSection("Warnungen", story.warnings)
-        tagSection("Kategorien", story.categories)
-        tagSection("Genres", story.genres)
+        // Je Quelle etwas anderes: AO3 Kategorien (F/M …), Royal Road der Stand, Kataloge Lizenz und Verlag.
+        tagSection(story.source.isSerial ? "Stand" : (story.source == .opds ? "Lizenz und Herausgeber" : "Kategorien"), story.categories)
+        tagSection(story.source == .royalRoad ? "Art" : "Genres", story.genres)
         tagSection("Beziehungen", story.relationships)
         tagSection("Charaktere", story.characters)
         tagSection(story.source.isOnlineBook ? "Themen" : "Tags", story.tags)

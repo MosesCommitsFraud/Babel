@@ -5,14 +5,14 @@ import UniformTypeIdentifiers
 /// Wohin der Bücher-Tab führt.
 enum BookRoute: Hashable {
     case library(BookLibrary, query: String = "")
-    case royalRoad(query: String = "")
+    case serial(SerialSite, query: String = "")
     case feed(title: String, url: URL)
 }
 
 /// Eine Reihe auf der Startseite: Quelle mit ein paar Büchern zum Hineinschauen.
 struct BookShelf: Identifiable, Hashable {
     enum Kind: Hashable {
-        case royalRoad
+        case serial(SerialSite)
         case library(BookLibrary)
         case catalog(OPDSCatalog)
     }
@@ -21,7 +21,7 @@ struct BookShelf: Identifiable, Hashable {
 
     var id: String {
         switch kind {
-        case .royalRoad: "royalroad"
+        case .serial(let site): site == .royalRoad ? "royalroad" : site.rawValue
         case .library(let library): "library.\(library.rawValue)"
         case .catalog(let catalog): "catalog.\(catalog.id)"
         }
@@ -29,7 +29,7 @@ struct BookShelf: Identifiable, Hashable {
 
     var title: String {
         switch kind {
-        case .royalRoad: "Royal Road"
+        case .serial(let site): site.title
         case .library(let library): library.title
         case .catalog(let catalog): catalog.title
         }
@@ -37,7 +37,7 @@ struct BookShelf: Identifiable, Hashable {
 
     var about: String {
         switch kind {
-        case .royalRoad: String(localized: "Web-Serien und Web Novels, laufend fortgesetzt.")
+        case .serial(let site): site.about
         case .library(let library): library.about
         case .catalog(let catalog): catalog.about
         }
@@ -45,7 +45,7 @@ struct BookShelf: Identifiable, Hashable {
 
     var route: BookRoute {
         switch kind {
-        case .royalRoad: .royalRoad()
+        case .serial(let site): .serial(site)
         case .library(let library): .library(library)
         case .catalog(let catalog): .feed(title: catalog.title, url: catalog.url)
         }
@@ -54,7 +54,7 @@ struct BookShelf: Identifiable, Hashable {
     /// Sprachen, in denen diese Quelle Bücher hat – leer = viele oder unbekannt.
     var languages: [String] {
         switch kind {
-        case .royalRoad: ["en"]
+        case .serial(let site): site.languages
         case .library(let library): library.supportsLanguage ? [] : ["en"]
         case .catalog(let catalog): catalog.languages
         }
@@ -75,10 +75,10 @@ struct BookShelf: Identifiable, Hashable {
 
     private func fetch(query: String, languages codes: [String]) async throws -> [RemoteStory] {
         switch kind {
-        case .royalRoad:
+        case .serial(let site):
             return query.isEmpty
-                ? try await RoyalRoadService.list(.trending, page: 1).stories
-                : try await RoyalRoadService.search(query, page: 1).stories
+                ? try await site.list(site.lists.first?.id ?? "", page: 1).stories
+                : try await site.search(query, page: 1).stories
         case .library(let library):
             // Die Bibliotheken filtern je Abfrage nach einer Sprache: je Sprache einmal fragen und reihum mischen.
             let wanted = library.supportsLanguage ? Array(codes.prefix(3)) : []
@@ -214,7 +214,7 @@ struct BooksView: View {
     private var languages: [String] { BookLanguages.codes(stored: storedLanguages, reading: readingLanguage) }
 
     // Quellen ohne Bücher in den gewählten Sprachen erscheinen gar nicht erst.
-    private var serials: [BookShelf] { [BookShelf(kind: .royalRoad)].filter { $0.offers(languages) } }
+    private var serials: [BookShelf] { SerialSite.allCases.map { BookShelf(kind: .serial($0)) }.filter { $0.offers(languages) } }
     private var libraries: [BookShelf] { BookLibrary.allCases.map { BookShelf(kind: .library($0)) }.filter { $0.offers(languages) } }
     private var catalogShelves: [BookShelf] { catalogs.map { BookShelf(kind: .catalog($0)) } }
     private var allShelves: [BookShelf] { serials + libraries + catalogShelves.filter { $0.offers(languages) } }
@@ -259,7 +259,7 @@ struct BooksView: View {
         .navigationDestination(for: BookRoute.self) { route in
             switch route {
             case .library(let library, let query): BookSourceView(bookLibrary: library, initialQuery: query)
-            case .royalRoad(let query): RoyalRoadView(initialQuery: query)
+            case .serial(let site, let query): SerialSiteView(site: site, initialQuery: query)
             case .feed(let title, let url): OPDSFeedView(title: title, url: url)
             }
         }
@@ -471,7 +471,7 @@ struct BooksView: View {
     /// „Alle Treffer“: die Quelle mit demselben Suchbegriff öffnen.
     private func searchRoute(_ shelf: BookShelf) -> BookRoute {
         switch shelf.kind {
-        case .royalRoad: .royalRoad(query: submitted)
+        case .serial(let site): .serial(site, query: submitted)
         case .library(let library): .library(library, query: submitted)
         case .catalog(let catalog): .feed(title: catalog.title, url: catalog.url)
         }

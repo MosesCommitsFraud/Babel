@@ -19,6 +19,7 @@ enum ShareInbox {
         if host.contains("archiveofourown") { return url.path.contains("/works/") }
         if host.contains("fanfiction.net") { return url.path.contains("/s/") }
         if host.contains("royalroad.com") { return url.path.contains("/fiction/") }
+        if host.hasSuffix("ncode.syosetu.com") { return url.path.count > 3 }
         return url.pathExtension.lowercased() == "epub"
     }
 

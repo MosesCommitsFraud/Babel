@@ -127,6 +127,12 @@ struct ReaderStyle {
             max-width: 100% !important;
         }
         p { margin: 0 0 \(paragraphSpacing)em 0 !important; }
+        /* Japanische Web Novels setzen jede Zeile als Absatz und Leerzeilen als eigenen: Zeilen dicht, Leerzeile = Abstand. */
+        :lang(ja) p { margin-bottom: 0 !important; text-align: start !important; }
+        p.babel-gap { height: \(max(paragraphSpacing, 0.6))em; margin: 0 !important; }
+        ruby rt { font-size: .5em; opacity: .8; }
+        /* Aus Scans zusammengelegte Seiten (EPUBParser.mergePages): dezente Trennung, kein Seitenumbruch. */
+        .babel-page + .babel-page { margin-top: .6em; }
         img, svg, video { max-width: 100% !important; height: auto !important; }
         a { color: \(theme.link) !important; }
         ::highlight(babel-mark) { background-color: \(theme.colorScheme == .dark ? "rgba(255, 214, 10, .30)" : "rgba(255, 204, 0, .38)"); }

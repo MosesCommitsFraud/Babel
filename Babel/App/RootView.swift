@@ -94,6 +94,9 @@ struct RootView: View {
         }
         .task {
             library.pruneViewed(context: context)
+            #if DEBUG
+            library.debugForgetLastChapters(context: context)
+            #endif
             if checkUpdatesOnLaunch { await library.checkAllUpdates(context: context) }
             await FFNAccount.shared.syncIfDue(library: library, context: context)
         }

@@ -2,13 +2,14 @@ import SwiftUI
 
 /// Woher eine Geschichte kommt.
 enum StorySource: String, Codable, CaseIterable, Sendable, Hashable {
-    case ao3, ffn, royalRoad, gutenberg, standardEbooks, archive, opds, epub
+    case ao3, ffn, royalRoad, syosetu, gutenberg, standardEbooks, archive, opds, epub
 
     var label: String {
         switch self {
         case .ao3: String(localized: "Archive of Our Own")
         case .ffn: String(localized: "FanFiction.net")
         case .royalRoad: "Royal Road"
+        case .syosetu: "小説家になろう"
         case .opds: String(localized: "Katalog")
         case .gutenberg: String(localized: "Project Gutenberg")
         case .standardEbooks: String(localized: "Standard Ebooks")
@@ -22,6 +23,7 @@ enum StorySource: String, Codable, CaseIterable, Sendable, Hashable {
         case .ao3: "AO3"
         case .ffn: "FFN"
         case .royalRoad: "Royal Road"
+        case .syosetu: "Syosetu"
         case .opds: String(localized: "Katalog")
         case .gutenberg: "Gutenberg"
         case .standardEbooks: "Standard"
@@ -35,6 +37,7 @@ enum StorySource: String, Codable, CaseIterable, Sendable, Hashable {
         case .ao3: "archivebox.fill"
         case .ffn: "text.book.closed.fill"
         case .royalRoad: "crown.fill"
+        case .syosetu: "character.book.closed.fill.ja"
         case .opds: "square.stack.3d.up.fill"
         case .gutenberg: "building.columns.fill"
         case .standardEbooks: "book.pages.fill"
@@ -48,6 +51,7 @@ enum StorySource: String, Codable, CaseIterable, Sendable, Hashable {
         case .ao3: (0x9e1419, 0xff8a80)
         case .ffn: (0x33409e, 0x9fa8ff)
         case .royalRoad: (0x8a5a1e, 0xe2b877)
+        case .syosetu: (0x2f7f8f, 0x8fd0dc)
         case .opds: (0x4b6a58, 0x9fc4ad)
         case .gutenberg: (0x8c612e, 0xe0b27a)
         case .standardEbooks: (0x8a6d3b, 0xd8bb85)
@@ -58,7 +62,10 @@ enum StorySource: String, Codable, CaseIterable, Sendable, Hashable {
     }
 
     /// Geschichten, die online Kapitel nachladen (und Updates bekommen) können.
-    var isWebFiction: Bool { self == .ao3 || self == .ffn || self == .royalRoad }
+    var isWebFiction: Bool { self == .ao3 || self == .ffn || isSerial }
+
+    /// Web-Serien aus dem Bücher-Tab: Werkseite kennt alle Kapitel, jedes Kapitel ist eine eigene Seite (Adressen in `spinePaths`).
+    var isSerial: Bool { self == .royalRoad || self == .syosetu }
 
     /// Freie Bücher aus Online-Bibliotheken (werden als EPUB geladen).
     var isOnlineBook: Bool { self == .gutenberg || self == .standardEbooks || self == .archive || self == .opds }

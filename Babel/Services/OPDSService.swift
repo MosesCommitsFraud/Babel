@@ -224,9 +224,20 @@ enum OPDSService {
                         let label = (try? c.attr("label")) ?? ""
                         let term = (try? c.attr("term")) ?? ""
                         return label.isEmpty ? (term.isEmpty ? nil : term) : label
-                    }.prefix(12))
+                    }.prefix(40))
                 let issued = text(entry, "dcterms:issued", "dc:date", "published")
                 if let year = issued.firstMatch(#"(\d{4})"#)?[1] { story.published = DateParsing.iso.date(from: "\(year)-01-01") }
+                // Lizenz/Rechte: am Download-Link (Unglue.it: „CC BY-SA“) oder als eigenes Feld. Die Detailseite zeigt sie.
+                let linkRights = links.compactMap { try? $0.attr("dcterms:rights") }.first { !$0.isEmpty } ?? ""
+                let rights = linkRights.isEmpty ? text(entry, "rights", "dcterms:rights", "dc:rights") : linkRights
+                var facts: [String] = []
+                if !rights.isEmpty { facts.append(String(rights.prefix(80))) }
+                let publisher = text(entry, "dcterms:publisher", "dc:publisher", "publisher")
+                if !publisher.isEmpty { facts.append(publisher) }
+                story.categories = facts
+                // „58966 palabras“ – nur als Wortzahl nehmen, wenn es eine ist (sonst wären es z. B. Seiten oder Bytes).
+                let extent = text(entry, "dcterms:extent", "dc:extent")
+                if extent.firstMatch(#"^\s*[\d.,]+\s*(palabras|words|wörter|mots|parole|słów)"#) != nil { story.words = extent.digitsInt }
                 story.coverURL = cover ?? thumbnail
                 story.downloadURL = download
                 story.isComplete = true
