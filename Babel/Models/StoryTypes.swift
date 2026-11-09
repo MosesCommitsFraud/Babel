@@ -2,12 +2,14 @@ import SwiftUI
 
 /// Woher eine Geschichte kommt.
 enum StorySource: String, Codable, CaseIterable, Sendable, Hashable {
-    case ao3, ffn, gutenberg, standardEbooks, archive, epub
+    case ao3, ffn, royalRoad, gutenberg, standardEbooks, archive, opds, epub
 
     var label: String {
         switch self {
         case .ao3: String(localized: "Archive of Our Own")
         case .ffn: String(localized: "FanFiction.net")
+        case .royalRoad: "Royal Road"
+        case .opds: String(localized: "Katalog")
         case .gutenberg: String(localized: "Project Gutenberg")
         case .standardEbooks: String(localized: "Standard Ebooks")
         case .archive: String(localized: "Internet Archive")
@@ -19,6 +21,8 @@ enum StorySource: String, Codable, CaseIterable, Sendable, Hashable {
         switch self {
         case .ao3: "AO3"
         case .ffn: "FFN"
+        case .royalRoad: "Royal Road"
+        case .opds: String(localized: "Katalog")
         case .gutenberg: "Gutenberg"
         case .standardEbooks: "Standard"
         case .archive: "Archive"
@@ -30,6 +34,8 @@ enum StorySource: String, Codable, CaseIterable, Sendable, Hashable {
         switch self {
         case .ao3: "archivebox.fill"
         case .ffn: "text.book.closed.fill"
+        case .royalRoad: "crown.fill"
+        case .opds: "square.stack.3d.up.fill"
         case .gutenberg: "building.columns.fill"
         case .standardEbooks: "book.pages.fill"
         case .archive: "archivebox.circle.fill"
@@ -41,6 +47,8 @@ enum StorySource: String, Codable, CaseIterable, Sendable, Hashable {
         let (light, dark): (UInt32, UInt32) = switch self {
         case .ao3: (0x9e1419, 0xff8a80)
         case .ffn: (0x33409e, 0x9fa8ff)
+        case .royalRoad: (0x8a5a1e, 0xe2b877)
+        case .opds: (0x4b6a58, 0x9fc4ad)
         case .gutenberg: (0x8c612e, 0xe0b27a)
         case .standardEbooks: (0x8a6d3b, 0xd8bb85)
         case .archive: (0x52606d, 0xaab6c2)
@@ -50,10 +58,13 @@ enum StorySource: String, Codable, CaseIterable, Sendable, Hashable {
     }
 
     /// Geschichten, die online Kapitel nachladen (und Updates bekommen) können.
-    var isWebFiction: Bool { self == .ao3 || self == .ffn }
+    var isWebFiction: Bool { self == .ao3 || self == .ffn || self == .royalRoad }
 
     /// Freie Bücher aus Online-Bibliotheken (werden als EPUB geladen).
-    var isOnlineBook: Bool { self == .gutenberg || self == .standardEbooks || self == .archive }
+    var isOnlineBook: Bool { self == .gutenberg || self == .standardEbooks || self == .archive || self == .opds }
+
+    /// Kommentare/Reviews und Autorenseiten gibt es in der App nur für AO3 und FanFiction.net.
+    var hasCommunityPages: Bool { self == .ao3 || self == .ffn }
 }
 
 enum ReadingStatus: String, Codable, CaseIterable, Sendable, Hashable {

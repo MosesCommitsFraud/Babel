@@ -15,6 +15,18 @@ extension String {
     }
 
     /// Zahl aus Text wie "12,345" oder "1.234" ziehen.
+    /// Alle Treffer eines Musters, je Treffer die Gruppen wie bei `firstMatch`.
+    func allMatches(_ pattern: String) -> [[String]] {
+        guard let re = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else { return [] }
+        let ns = self as NSString
+        return re.matches(in: self, range: NSRange(location: 0, length: ns.length)).map { m in
+            (0..<m.numberOfRanges).map { i in
+                let r = m.range(at: i)
+                return r.location == NSNotFound ? "" : ns.substring(with: r)
+            }
+        }
+    }
+
     var digitsInt: Int? {
         let d = filter(\.isNumber)
         return d.isEmpty ? nil : Int(d)

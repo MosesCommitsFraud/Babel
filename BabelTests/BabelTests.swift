@@ -81,6 +81,88 @@ final class BabelTests: XCTestCase {
         XCTAssertTrue(page.books.allSatisfy { !$0.sourceID.isEmpty && !$0.title.isEmpty })
     }
 
+    func testParsesRoyalRoadList() throws {
+        let html = try String(contentsOf: try fixture("royalroad-list", "html"), encoding: .utf8)
+        let page = try RoyalRoadService.parseList(html)
+        XCTAssertEqual(page.stories.map(\.sourceID), ["21220", "36735"])
+        XCTAssertTrue(page.hasNext)
+        let first = page.stories[0]
+        XCTAssertEqual(first.title, "Mother of Learning")
+        XCTAssertEqual(first.tags, ["Time Loop", "Adventure"])
+        XCTAssertTrue(first.isComplete)
+        XCTAssertEqual(first.follows, 34_388)
+        XCTAssertEqual(first.hits, 28_838_070)
+        XCTAssertEqual(first.chapters, 109)
+        XCTAssertEqual(first.words, 2_932 * 275)
+        XCTAssertEqual(first.coverURL?.pathExtension, "jpg")
+        XCTAssertNotNil(first.updated)
+        XCTAssertTrue(first.summary.hasPrefix("Zorian is a teenage mage"))
+        XCTAssertFalse(page.stories[1].isComplete)
+        XCTAssertNil(page.stories[1].coverURL)
+    }
+
+    func testParsesRoyalRoadFiction() throws {
+        let html = try String(contentsOf: try fixture("royalroad-fiction", "html"), encoding: .utf8)
+        let fiction = try RoyalRoadService.parseFiction(html, id: "21220")
+        XCTAssertEqual(fiction.meta.title, "Mother of Learning")
+        XCTAssertEqual(fiction.meta.author, "nobody103")
+        XCTAssertEqual(fiction.meta.authorURL?.path, "/profile/100374")
+        XCTAssertTrue(fiction.meta.isComplete)
+        XCTAssertEqual(fiction.meta.words, 806_306)
+        XCTAssertEqual(fiction.meta.follows, 34_388)
+        XCTAssertEqual(fiction.meta.favs, 32_960)
+        XCTAssertEqual(fiction.meta.hits, 28_838_070)
+        XCTAssertEqual(fiction.meta.summary.components(separatedBy: "\n\n").count, 2)
+        // Kapitel kommen aus dem Skript der Seite, sortiert nach `order`.
+        XCTAssertEqual(fiction.titles, ["1. Good Morning Brother", "2. Life’s Little Problems", "3. The Bitter Truth"])
+        XCTAssertEqual(fiction.paths.first, "/fiction/21220/mother-of-learning/chapter/301778/1-good-morning-brother")
+        XCTAssertEqual(fiction.meta.chapters, 3)
+    }
+
+    func testParsesRoyalRoadChapter() throws {
+        let html = try String(contentsOf: try fixture("royalroad-chapter", "html"), encoding: .utf8)
+        let chapter = try RoyalRoadService.parseChapter(html, fallbackTitle: "Kapitel 1")
+        XCTAssertEqual(chapter.title, "1. Good Morning Brother")
+        XCTAssertTrue(chapter.html.contains("Zorian’s eyes abruptly shot open"))
+        // Per CSS ausgeblendete Einschübe gehören nicht zum Text.
+        XCTAssertFalse(chapter.html.contains("hidden on the website"))
+        // Die Anmerkung steht vor dem Text.
+        let note = try XCTUnwrap(chapter.html.range(of: "Thanks for reading."))
+        let text = try XCTUnwrap(chapter.html.range(of: "Zorian’s eyes"))
+        XCTAssertLessThan(note.lowerBound, text.lowerBound)
+    }
+
+    func testParsesOPDSFeed() throws {
+        let xml = try String(contentsOf: try fixture("opds-unglue", "xml"), encoding: .utf8)
+        let feed = try OPDSService.parse(xml, url: URL(string: "https://unglue.it/api/opds/all/?order_by=popular")!)
+        XCTAssertNotNil(feed.next)
+        XCTAssertEqual(feed.books.count + feed.hiddenCount, 4)
+        let book = try XCTUnwrap(feed.books.first { $0.title == "So You Want to Be a Librarian" })
+        XCTAssertEqual(book.author, "Lauren Pressley")
+        XCTAssertEqual(book.language, "EN")
+        XCTAssertEqual(book.downloadURL?.host, "unglue.it")
+        XCTAssertNotNil(book.coverURL)
+        XCTAssertTrue(book.tags.contains("Education"))
+        XCTAssertTrue(book.source.isOnlineBook)
+    }
+
+    func testParsesOPDSNavigation() throws {
+        let xml = """
+        <feed xmlns="http://www.w3.org/2005/Atom"><title>Katalog</title>
+        <link rel="search" type="application/atom+xml" href="/opds/search?q={searchTerms}"/>
+        <entry><title>Beliebt</title><content type="text">Die meistgelesenen</content>
+        <link rel="http://opds-spec.org/sort/popular" type="application/atom+xml;profile=opds-catalog" href="popular/"/></entry>
+        </feed>
+        """
+        let feed = try OPDSService.parse(xml, url: URL(string: "https://example.org:8083/opds/")!)
+        XCTAssertEqual(feed.searchTemplate, "https://example.org:8083/opds/search?q={searchTerms}")
+        XCTAssertEqual(feed.featured?.absoluteString, "https://example.org:8083/opds/popular/")
+        guard case .navigation(let title, let subtitle, let url)? = feed.entries.first else { return XCTFail("Kein Ordner") }
+        XCTAssertEqual(title, "Beliebt")
+        XCTAssertEqual(subtitle, "Die meistgelesenen")
+        XCTAssertEqual(url.absoluteString, "https://example.org:8083/opds/popular/")
+    }
+
     func testParsesFFNMetaLine() {
         var story = RemoteStory(source: .ffn, sourceID: "1", title: "T", url: URL(string: "https://www.fanfiction.net/s/1/1/")!)
         FFNService.applyMeta(

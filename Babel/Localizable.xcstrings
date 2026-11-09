@@ -5333,6 +5333,386 @@
           }
         }
       }
+    },
+    "%lld Einträge ohne EPUB sind ausgeblendet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entries without an EPUB are hidden."
+          }
+        }
+      }
+    },
+    "Adresse des Katalogs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catalog address"
+          }
+        }
+      }
+    },
+    "Am besten bewertet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best rated"
+          }
+        }
+      }
+    },
+    "Anmerkung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
+          }
+        }
+      }
+    },
+    "Aufsteiger" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rising stars"
+          }
+        }
+      }
+    },
+    "Beliebt & laufend" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popular & ongoing"
+          }
+        }
+      }
+    },
+    "Beliebt diese Woche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popular this week"
+          }
+        }
+      }
+    },
+    "Das ist kein OPDS-Katalog (OPDS 1.x, Atom)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is not an OPDS catalog (OPDS 1.x, Atom)."
+          }
+        }
+      }
+    },
+    "Das ist keine gültige Adresse." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That is not a valid address."
+          }
+        }
+      }
+    },
+    "Diesen Katalog hast du schon." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You already have this catalog."
+          }
+        }
+      }
+    },
+    "Dieser Katalog ist hier leer." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This catalog is empty here."
+          }
+        }
+      }
+    },
+    "Dieser Katalog verlangt eine Anmeldung – das kann Babel noch nicht." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This catalog requires a sign-in – Babel doesn't support that yet."
+          }
+        }
+      }
+    },
+    "Follower" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Followers"
+          }
+        }
+      }
+    },
+    "Französische Klassiker, sorgfältig aufbereitet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "French classics, carefully prepared."
+          }
+        }
+      }
+    },
+    "Freie Bücher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Free Books"
+          }
+        }
+      }
+    },
+    "Frisch aktualisiert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Latest updates"
+          }
+        }
+      }
+    },
+    "Hier gibt es nur Einträge ohne EPUB." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are only entries without an EPUB here."
+          }
+        }
+      }
+    },
+    "Im Katalog suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search this catalog"
+          }
+        }
+      }
+    },
+    "Im Trend" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trending"
+          }
+        }
+      }
+    },
+    "In allen Quellen suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search all sources"
+          }
+        }
+      }
+    },
+    "Kapiteltext" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chapter text"
+          }
+        }
+      }
+    },
+    "Katalog" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catalog"
+          }
+        }
+      }
+    },
+    "Katalog entfernen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove Catalog"
+          }
+        }
+      }
+    },
+    "Katalog hinzufügen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Catalog"
+          }
+        }
+      }
+    },
+    "Kataloge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catalogs"
+          }
+        }
+      }
+    },
+    "Kataloge sind Bücherlisten im offenen OPDS-Format: von Bibliotheken, Verlagen oder deinem eigenen Server (Calibre-Web, Kavita …)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Catalogs are book lists in the open OPDS format: from libraries, publishers or your own server (Calibre-Web, Kavita …)."
+          }
+        }
+      }
+    },
+    "Lade Geschichten …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading stories …"
+          }
+        }
+      }
+    },
+    "Lade Katalog …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading catalog …"
+          }
+        }
+      }
+    },
+    "Neuere Bücher unter freier Lizenz (Creative Commons), dazu frei zugängliche Sach- und Fachbücher." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Newer books under a free license (Creative Commons), plus open-access non-fiction and academic books."
+          }
+        }
+      }
+    },
+    "Nochmal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        }
+      }
+    },
+    "OPDS-Adresse, zum Beispiel von deinem Calibre-Web-Server (endet oft auf /opds). Kataloge mit Anmeldung gehen noch nicht." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OPDS address, for example of your Calibre-Web server (often ends in /opds). Catalogs that require a sign-in aren't supported yet."
+          }
+        }
+      }
+    },
+    "Polnische Literatur, frei zugänglich." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Polish literature, freely available."
+          }
+        }
+      }
+    },
+    "Suche in %lld Quellen …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching %lld sources …"
+          }
+        }
+      }
+    },
+    "Titel suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search titles"
+          }
+        }
+      }
+    },
+    "Versuch es mit einem anderen Titel." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try a different title."
+          }
+        }
+      }
+    },
+    "Vorschläge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestions"
+          }
+        }
+      }
+    },
+    "Web-Serien" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web Serials"
+          }
+        }
+      }
+    },
+    "Web-Serien und Web Novels, laufend fortgesetzt." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web serials and web novels, continued chapter by chapter."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

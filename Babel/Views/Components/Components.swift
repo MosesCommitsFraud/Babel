@@ -391,9 +391,13 @@ struct StoryRow: View {
             add("heart", story.kudos, String(localized: "Kudos"))
             add("eye", story.hits, String(localized: "Aufrufe"))
             add("bookmark", story.bookmarks, String(localized: "Lesezeichen"))
+        case .royalRoad:
+            add("bell", story.follows, String(localized: "Follower"))
+            add("eye", story.hits, String(localized: "Aufrufe"))
+            add("heart", story.favs, String(localized: "Favoriten"))
         case .gutenberg, .standardEbooks, .archive:
             add("arrow.down.circle", story.hits, String(localized: "Downloads"))
-        case .epub:
+        case .epub, .opds:
             break
         }
         return list.map { (symbol: $0.0, value: $0.1, name: $0.2) }

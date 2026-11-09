@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <feed xmlns:dcterms="http://purl.org/dc/terms/"
+      xmlns:opds="http://opds-spec.org/"
+      xmlns="http://www.w3.org/2005/Atom"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:schema="http://schema.org/"
+      xsi:noNamespaceSchemaLocation="http://www.kbcafe.com/rss/atom.xsd.xml"
+      xsi:schemaLocation="http://purl.org/dc/elements/1.1/ http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd
+      http://purl.org/dc/terms/ http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd">
+      <title>
+ Unglue.it Free eBooks - sorted by popular
+</title><id>
+ https://unglue.it/api/opds/all/?order_by=popular
+</id><updated>
+ 2026-11-09T20:28:48.892978+00:00
+</updated><author>
+ <name>
+  unglue.it
+ </name>
+ <uri>
+  https://unglue.it
+ </uri>
+</author>
+<link href="https://unglue.it/api/opds/all/?order_by=popular" rel="start" title="First 10" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+<link href="https://unglue.it/api/opds/all/?order_by=popular&amp;page=1" rel="next" title="Next 10" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+<entry>
+ <title>
+  So You Want to Be a Librarian
+ </title>
+ <id>
+  https://unglue.it/api/id/work/76348/
+ </id>
+ <updated>
+  2020-06-20T16:40:44
+ </updated>
+ <link dcterms:rights="CC BY-SA" href="https://unglue.it/download_ebook/249663/?feed=opds" rel="http://opds-spec.org/acquisition/open-access" type="application/epub+zip"/>
+ <link href="https://files.unglue.it/cache/82/53/82532928e810f0efc5f2753cb1248278.jpg" rel="http://opds-spec.org/image/thumbnail" type="image/jpeg"/>
+ <link href="https://files.unglue.it/cache/60/54/6054f6ad467e45646e2ffa5be0f9045b.jpg" rel="http://opds-spec.org/image" type="image/jpeg"/>
+ <dcterms:issued>
+  2009-Octo
+ </dcterms:issued>
+ <author>
+  <name>
+   Lauren Pressley
+  </name>
+ </author>
+ <dcterms:language>
+  en
+ </dcterms:language>
+ <content type="html">
+  "Provides information about librarianship as a career, including types of libraries, types of jobs within libraries, professional issues, and educational requirements"--Provided by publisher.
+ </content>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780980200485
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9781936117291
+ </dcterms:identifier>
+ <category term="College students">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.College%20students/?order_by=popular&amp;page=0" rel="related" title="College students" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Education">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Education/?order_by=popular&amp;page=0" rel="related" title="Education" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Information science">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Information%20science/?order_by=popular&amp;page=0" rel="related" title="Information science" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="library">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.library/?order_by=popular&amp;page=0" rel="related" title="library" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Nonfiction">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Nonfiction/?order_by=popular&amp;page=0" rel="related" title="Nonfiction" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Reference">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Reference/?order_by=popular&amp;page=0" rel="related" title="Reference" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Vocational guidance">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Vocational%20guidance/?order_by=popular&amp;page=0" rel="related" title="Vocational guidance" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <schema:Rating schema:ratingValue="5">
+ </schema:Rating>
+</entry>
+<entry>
+ <title>
+  Oral Literature in Africa
+ </title>
+ <id>
+  https://unglue.it/api/id/work/81835/
+ </id>
+ <updated>
+  2021-03-06T11:52:05
+ </updated>
+ <link dcterms:rights="CC BY" href="https://unglue.it/download_ebook/299262/?feed=opds" rel="http://opds-spec.org/acquisition/open-access" type="application/pdf"/>
+ <link href="https://files.unglue.it/cache/7c/60/7c6002af17d0477bbf435a47eabf6e42.jpg" rel="http://opds-spec.org/image/thumbnail" type="image/jpeg"/>
+ <link href="https://files.unglue.it/cache/20/41/20413852c99ed66eda27a33c4a08c4c4.jpg" rel="http://opds-spec.org/image" type="image/jpeg"/>
+ <dcterms:issued>
+  1970-2012
+ </dcterms:issued>
+ <author>
+  <name>
+   Ruth Finnegan
+  </name>
+ </author>
+ <dcterms:publisher>
+  Open Book Publishers
+ </dcterms:publisher>
+ <dcterms:language>
+  en
+ </dcterms:language>
+ <content type="html">
+  &lt;p&gt;Ruth Finnegan&amp;rsquo;s Oral Literature in Africa was first published in 1970, and since then has been widely praised as one of the most important books in its field. Based on years of fieldwork, the study traces the history of storytelling across the continent of Africa. This revised edition makes Finnegan&amp;rsquo;s ground-breaking research available to the next generation of scholars. It includes a new introduction, additional images and an updated bibliography, as well as its original chapters on poetry, prose, &amp;quot;drum language&amp;rdquo; and drama, and an overview of the social, linguistic and historical background of oral literature in Africa. This volume is complemented by original recordings of stories and songs from the Limba country (Sierra Leone), collected by Finnegan during her fieldwork in the late 1960s, which are freely accessible here. The book is available as a free pdf and ebook download thanks to the generous support of interested readers and organisations, who made donations using the crowd-funding website unglue.it. Oral Literature in Africa is part of the World Oral Literature Series published in conjunction with the World Oral Literature Project.&lt;/p&gt;
+ </content>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780195724134
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780198151319
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780198151314
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780198151315
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9781906924737
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9781906924713
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9781906924720
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9781906924744
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9781906924706
+ </dcterms:identifier>
+ <category term=" 20th century">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.%2020th%20century/?order_by=popular&amp;page=0" rel="related" title=" 20th century" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term=" anthropology">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.%20anthropology/?order_by=popular&amp;page=0" rel="related" title=" anthropology" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term=" Literary Criticism">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.%20Literary%20Criticism/?order_by=popular&amp;page=0" rel="related" title=" Literary Criticism" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Africa">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Africa/?order_by=popular&amp;page=0" rel="related" title="Africa" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="African culture">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.African%20culture/?order_by=popular&amp;page=0" rel="related" title="African culture" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="African Folk literature">
+ </category>
+ <category term="Children's literature, English">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Children%27s%20literature%2C%20English/?order_by=popular&amp;page=0" rel="related" title="Children's literature, English" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Drama">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Drama/?order_by=popular&amp;page=0" rel="related" title="Drama" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Drama / African">
+ </category>
+ <category term="Folk literature">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Folk%20literature/?order_by=popular&amp;page=0" rel="related" title="Folk literature" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Folk literature, African">
+ </category>
+ <category term="History">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.History/?order_by=popular&amp;page=0" rel="related" title="History" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="History and criticism">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.History%20and%20criticism/?order_by=popular&amp;page=0" rel="related" title="History and criticism" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Limba">
+ </category>
+ <category term="Limba people (Sierra Leone)">
+ </category>
+ <category term="Literary Criticism">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Literary%20Criticism/?order_by=popular&amp;page=0" rel="related" title="Literary Criticism" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Literary Criticism / African">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Literary%20Criticism%20/%20African/?order_by=popular&amp;page=0" rel="related" title="Literary Criticism / African" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Literature &amp; literary studies">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Literature%20%26%20literary%20studies/?order_by=popular&amp;page=0" rel="related" title="Literature &amp; literary studies" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Nonfiction">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Nonfiction/?order_by=popular&amp;page=0" rel="related" title="Nonfiction" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Oral literature">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Oral%20literature/?order_by=popular&amp;page=0" rel="related" title="Oral literature" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Oral tradition">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Oral%20tradition/?order_by=popular&amp;page=0" rel="related" title="Oral tradition" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Orality">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Orality/?order_by=popular&amp;page=0" rel="related" title="Orality" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Prose">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Prose/?order_by=popular&amp;page=0" rel="related" title="Prose" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Proverb">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Proverb/?order_by=popular&amp;page=0" rel="related" title="Proverb" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Sierra Leone">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Sierra%20Leone/?order_by=popular&amp;page=0" rel="related" title="Sierra Leone" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Social Science">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Social%20Science/?order_by=popular&amp;page=0" rel="related" title="Social Science" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Social Science / Anthropology">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Social%20Science%20/%20Anthropology/?order_by=popular&amp;page=0" rel="related" title="Social Science / Anthropology" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Social Science / Anthropology / Cultural">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Social%20Science%20/%20Anthropology%20/%20Cultural/?order_by=popular&amp;page=0" rel="related" title="Social Science / Anthropology / Cultural" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Storytelling">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Storytelling/?order_by=popular&amp;page=0" rel="related" title="Storytelling" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="thema EDItEUR::D Biography, Literature and Literary studies">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.thema%20EDItEUR%3A%3AD%20Biography%2C%20Literature%20and%20Literary%20studies/?order_by=popular&amp;page=0" rel="related" title="thema EDItEUR::D Biography, Literature and Literary studies" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Unglue.it">
+ </category>
+ <category term="Unglued">
+ </category>
+ <category term="West Africa">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.West%20Africa/?order_by=popular&amp;page=0" rel="related" title="West Africa" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Yoruba people">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Yoruba%20people/?order_by=popular&amp;page=0" rel="related" title="Yoruba people" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category label="Adult/Advanced Reader" scheme="http://schema.org/typicalAgeRange" term="18-">
+ </category>
+ <schema:Rating schema:ratingValue="5">
+ </schema:Rating>
+</entry>
+<entry>
+ <title>
+  Warbreaker
+ </title>
+ <id>
+  https://unglue.it/api/id/work/7775/
+ </id>
+ <updated>
+  2019-06-18T10:56:17
+ </updated>
+ <link dcterms:rights="CC BY-NC-ND" href="https://unglue.it/download_ebook/238019/?feed=opds" rel="http://opds-spec.org/acquisition/open-access" type="application/x-mobipocket-ebook"/>
+ <link href="https://encrypted.google.com/books?id=Prj1iTmPJn4C&amp;printsec=frontcover&amp;img=1&amp;zoom=5" rel="http://opds-spec.org/image/thumbnail" type="image/jpeg"/>
+ <link href="https://encrypted.google.com/books?id=Prj1iTmPJn4C&amp;printsec=frontcover&amp;img=1&amp;zoom=1" rel="http://opds-spec.org/image" type="image/jpeg"/>
+ <dcterms:issued>
+  2009-2011
+ </dcterms:issued>
+ <author>
+  <name>
+   Brandon Sanderson
+  </name>
+ </author>
+ <dcterms:language>
+  en
+ </dcterms:language>
+ <content type="html">
+  After bursting onto the fantasy scene with his acclaimed debut novel, Elantris, and following up with his blockbuster Mistborn trilogy, Brandon Sanderson proves again that he is today’s leading master of what Tolkien called “secondary creation,” the invention of whole worlds, complete with magics and myths all their own.
+
+Warbreaker is the story of two sisters, who happen to be princesses, the God King one of them has to marry, the lesser god who doesn’t like his job, and the immortal who’s still trying to undo the mistakes he made hundreds of years ago.
+
+Their world is one in which those who die in glory return as gods to live confined to a pantheon in Hallandren’s capital city and where a power known as BioChromatic magic is based on an essence known as breath that can only be collected one unit at a time from individual people.
+
+By using breath and drawing upon the color in everyday objects, all manner of miracles and mischief can be accomplished. It will take considerable quantities of each to resolve all the challenges facing Vivenna and Siri, princesses of Idris; Susebron the God King; Lightsong, reluctant god of  bravery, and mysterious Vasher, the Warbreaker.
+ </content>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780765360038
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780765320308
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780575097476
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780575097469
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9788466658874
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9781429967945
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9781938570216
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780765360045
+ </dcterms:identifier>
+ <category term="Fiction">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Fiction/?order_by=popular&amp;page=0" rel="related" title="Fiction" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Fiction / Fantasy">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Fiction%20/%20Fantasy/?order_by=popular&amp;page=0" rel="related" title="Fiction / Fantasy" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Fiction / Fantasy / Epic">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Fiction%20/%20Fantasy%20/%20Epic/?order_by=popular&amp;page=0" rel="related" title="Fiction / Fantasy / Epic" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Fiction, fantasy, general">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Fiction%2C%20fantasy%2C%20general/?order_by=popular&amp;page=0" rel="related" title="Fiction, fantasy, general" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Gods">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Gods/?order_by=popular&amp;page=0" rel="related" title="Gods" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Imaginary places">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Imaginary%20places/?order_by=popular&amp;page=0" rel="related" title="Imaginary places" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Imaginary places, fiction">
+ </category>
+ <category term="Magic">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Magic/?order_by=popular&amp;page=0" rel="related" title="Magic" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Princesses">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Princesses/?order_by=popular&amp;page=0" rel="related" title="Princesses" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Sisters">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Sisters/?order_by=popular&amp;page=0" rel="related" title="Sisters" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Sisters, fiction">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Sisters%2C%20fiction/?order_by=popular&amp;page=0" rel="related" title="Sisters, fiction" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <schema:Rating schema:ratingValue="5">
+ </schema:Rating>
+</entry>
+<entry>
+ <title>
+  Zero Sum Game
+ </title>
+ <id>
+  https://unglue.it/api/id/work/417357/
+ </id>
+ <updated>
+  2016-09-30T14:32:26
+ </updated>
+ <link dcterms:rights="CC BY-NC-SA" href="https://unglue.it/download_ebook/18180/?feed=opds" rel="http://opds-spec.org/acquisition/open-access" type="application/pdf"/>
+ <link href="https://encrypted.google.com/books?id=rW7ErQEACAAJ&amp;printsec=frontcover&amp;img=1&amp;zoom=5" rel="http://opds-spec.org/image/thumbnail" type="image/jpeg"/>
+ <link href="https://encrypted.google.com/books?id=rW7ErQEACAAJ&amp;printsec=frontcover&amp;img=1&amp;zoom=1" rel="http://opds-spec.org/image" type="image/jpeg"/>
+ <dcterms:issued>
+  2014
+ </dcterms:issued>
+ <author>
+  <name>
+   S. L. Huang
+  </name>
+ </author>
+ <dcterms:language>
+  en
+ </dcterms:language>
+ <content type="html">
+  &lt;p&gt;&lt;em&gt;&lt;strong&gt;Deadly. Mercenary. Superhuman. Not your ordinary math geek.&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Cas Russell is good at math. Scary good.&lt;/p&gt;
+
+&lt;p&gt;The vector calculus blazing through her head lets her smash through armed men twice her size and dodge every bullet in a gunfight. She can take any job for the right price and shoot anyone who gets in her way.&lt;/p&gt;
+
+&lt;p&gt;As far as she knows, she&amp;rsquo;s the only person around with a superpower . . . but then Cas discovers someone with a power even more dangerous than her own. Someone who can reach directly into people&amp;rsquo;s minds and twist their brains into Moebius strips. Someone intent on becoming the world&amp;rsquo;s puppet master.&lt;/p&gt;
+
+&lt;p&gt;Someone who&amp;rsquo;s already warped Cas&amp;rsquo;s thoughts once before, with her none the wiser.&lt;/p&gt;
+
+&lt;p&gt;Cas should run. Going up against a psychic with a god complex isn&amp;rsquo;t exactly a rational move, and saving the world from a power-hungry telepath isn&amp;rsquo;t her responsibility. But she isn&amp;rsquo;t about to let anyone get away with violating her brain &amp;mdash; and besides, she&amp;rsquo;s got a small arsenal and some deadly mathematics on her side. There&amp;rsquo;s only one problem . . .&lt;/p&gt;
+
+&lt;p&gt;She doesn&amp;rsquo;t know which of her thoughts are her own anymore.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;ZERO SUM GAME is a speculative fiction thriller by an MIT math graduate.&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+ </content>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780996070003
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780996070010
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780996070027
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9781250180261
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9780996070034
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9783453320000
+ </dcterms:identifier>
+ <dcterms:identifier xsi:type="dcterms:URI">
+  urn:ISBN:9781250749895
+ </dcterms:identifier>
+ <category term="Fiction">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Fiction/?order_by=popular&amp;page=0" rel="related" title="Fiction" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Fiction, fantasy, general">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Fiction%2C%20fantasy%2C%20general/?order_by=popular&amp;page=0" rel="related" title="Fiction, fantasy, general" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Fiction, science fiction, action &amp; adventure">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Fiction%2C%20science%20fiction%2C%20action%20%26%20adventure/?order_by=popular&amp;page=0" rel="related" title="Fiction, science fiction, action &amp; adventure" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Fiction, science fiction, general">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Fiction%2C%20science%20fiction%2C%20general/?order_by=popular&amp;page=0" rel="related" title="Fiction, science fiction, general" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <category term="Fiction, thrillers">
+ </category>
+ <category term="Science Fiction">
+ </category>
+ <link href="https://unglue.it/api/opds/kw.Science%20Fiction/?order_by=popular&amp;page=0" rel="related" title="Science Fiction" type="application/atom+xml; profile=opds-catalog ;kind=acquisition; charset=utf-8"/>
+ <schema:Rating schema:ratingValue="5">
+ </schema:Rating>
+</entry>
+</feed>

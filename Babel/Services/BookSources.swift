@@ -14,6 +14,15 @@ enum BookLibrary: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    /// Voller Name für Überschriften.
+    var title: String {
+        switch self {
+        case .gutenberg: "Project Gutenberg"
+        case .standardEbooks: "Standard Ebooks"
+        case .archive: "Internet Archive"
+        }
+    }
+
     var about: String {
         switch self {
         case .gutenberg: String(localized: "Über 75.000 freie Bücher, viele auf Deutsch.")

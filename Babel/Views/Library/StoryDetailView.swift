@@ -37,7 +37,7 @@ struct StoryDetailView: View {
                 stats
                 if !story.summary.isEmpty { summary }
                 tagSections
-                if story.source.isWebFiction { commentsLink }
+                if story.source.hasCommunityPages { commentsLink }
                 chapters
             }
             .padding(.horizontal)
@@ -105,7 +105,7 @@ struct StoryDetailView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(story.title).font(.title2.weight(.bold)).fixedSize(horizontal: false, vertical: true)
                 if !story.author.isEmpty {
-                    if let authorURL = story.authorURLString.flatMap(URL.init(string:)), story.source.isWebFiction {
+                    if let authorURL = story.authorURLString.flatMap(URL.init(string:)), story.source.hasCommunityPages {
                         NavigationLink {
                             AuthorView(source: story.source, name: story.author, url: authorURL)
                         } label: {
@@ -288,6 +288,10 @@ struct StoryDetailView: View {
             add(String(localized: "Kudos"), story.kudos, "heart.fill", StoryRow.heartRed)
             add(String(localized: "Lesezeichen"), story.bookmarks, "bookmark.fill", StoryRow.followYellow)
             add(String(localized: "Kommentare"), story.comments, "text.bubble.fill", theme.primary, comments: true)
+            add(String(localized: "Aufrufe"), story.hits, "eye.fill", .secondary)
+        case .royalRoad:
+            add(String(localized: "Follower"), story.follows, "bell.fill", StoryRow.followYellow)
+            add(String(localized: "Favoriten"), story.favs, "heart.fill", StoryRow.heartRed)
             add(String(localized: "Aufrufe"), story.hits, "eye.fill", .secondary)
         default:
             break

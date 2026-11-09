@@ -108,7 +108,7 @@ final class LibraryManager {
     /// Gibt die Datei-URL eines Kapitels zurück und lädt es bei Bedarf herunter.
     func ensureChapter(_ story: Story, index: Int) async throws -> URL {
         switch story.source {
-        case .epub, .gutenberg, .standardEbooks, .archive:
+        case .epub, .gutenberg, .standardEbooks, .archive, .opds:
             if !ContentStore.isBookInstalled(story) { try await prepareBook(story) }
             guard index < story.spinePaths.count else { throw BabelError.notFound }
             return ContentStore.bookFolder(for: story).appendingPathComponent(story.spinePaths[index])
@@ -125,7 +125,36 @@ final class LibraryManager {
             if FileManager.default.fileExists(atPath: url.path) { return url }
             try await downloadFFNChapter(story, index: index)
             return url
+
+        case .royalRoad:
+            let url = ContentStore.chapterURL(story, index)
+            if FileManager.default.fileExists(atPath: url.path) { return url }
+            try await downloadRoyalRoadChapter(story, index: index)
+            return url
         }
+    }
+
+    /// Royal Road: Die Werkseite kennt alle Kapitel (Titel und Adresse), jedes Kapitel ist eine eigene Seite.
+    /// Die Adressen liegen in `spinePaths`.
+    @discardableResult
+    private func refreshRoyalRoad(_ story: Story) async throws -> Int {
+        let before = story.spinePaths.count
+        let fiction = try await RoyalRoadService.fiction(id: story.sourceID)
+        story.apply(remote: fiction.meta)
+        if !fiction.paths.isEmpty {
+            story.spinePaths = fiction.paths
+            story.chapterTitles = fiction.titles
+            story.chapterCount = fiction.paths.count
+        }
+        try? story.modelContext?.save()
+        return max(0, story.spinePaths.count - before)
+    }
+
+    private func downloadRoyalRoadChapter(_ story: Story, index: Int) async throws {
+        if index >= story.spinePaths.count { try await refreshRoyalRoad(story) }
+        guard index < story.spinePaths.count else { throw BabelError.notFound }
+        let chapter = try await RoyalRoadService.chapter(path: story.spinePaths[index], fallbackTitle: story.title(ofChapter: index))
+        try ContentStore.writeChapter(chapter, story: story, index: index)
     }
 
     /// AO3: ein einziger Abruf liefert das ganze Werk.
@@ -168,7 +197,14 @@ final class LibraryManager {
                 i += 1
                 downloads[key] = Double(i) / Double(max(story.chapterCount, 1))
             }
-        case .epub, .gutenberg, .standardEbooks, .archive:
+        case .royalRoad:
+            if story.spinePaths.isEmpty { try await refreshRoyalRoad(story) }
+            let count = story.spinePaths.count
+            for i in 0..<count {
+                if !ContentStore.hasChapter(story, i) { try await downloadRoyalRoadChapter(story, index: i) }
+                downloads[key] = Double(i + 1) / Double(max(count, 1))
+            }
+        case .epub, .gutenberg, .standardEbooks, .archive, .opds:
             if !ContentStore.isBookInstalled(story) { try await prepareBook(story) }
         }
     }
@@ -185,10 +221,10 @@ final class LibraryManager {
     /// Ganze Geschichte laden und als EPUB-Datei (zum Teilen / Sichern) bauen.
     func exportEPUB(_ story: Story) async throws -> URL {
         switch story.source {
-        case .ao3, .ffn:
+        case .ao3, .ffn, .royalRoad:
             try await downloadAll(story)
             return try await EPUBBuilder.build(story)
-        case .gutenberg, .standardEbooks, .archive, .epub:
+        case .gutenberg, .standardEbooks, .archive, .opds, .epub:
             throw BabelError.unsupported(String(localized: "Bücher liegen schon als EPUB vor"))
         }
     }
@@ -229,6 +265,8 @@ final class LibraryManager {
                 story.apply(remote: try await AO3Service.fetchWorkMeta(id: story.sourceID))
             case .ffn:
                 _ = try await ensureChapter(story, index: 0)
+            case .royalRoad:
+                try await refreshRoyalRoad(story)
             default: break
             }
             story.lastCheckedAt = .now
@@ -273,7 +311,9 @@ final class LibraryManager {
                 story.chapterTitles = result.titles
                 story.chapterCount = result.titles.count
             }
-        case .epub, .gutenberg, .standardEbooks, .archive:
+        case .royalRoad:
+            try await refreshRoyalRoad(story)
+        case .epub, .gutenberg, .standardEbooks, .archive, .opds:
             return 0
         }
         let diff = max(0, story.knownChapterCount - before)
@@ -394,6 +434,15 @@ final class LibraryManager {
             let story = self.story(for: result.meta, context: context)
             try ContentStore.writeChapter(result.content, story: story, index: 0)
             if !result.titles.isEmpty { story.chapterTitles = result.titles; story.chapterCount = result.titles.count }
+            addToLibrary(story, context: context)
+            return story
+        }
+        if host.contains("royalroad.com"), let id = url.path.firstMatch(#"/fiction/(\d+)"#)?[1] {
+            let fiction = try await RoyalRoadService.fiction(id: id)
+            let story = self.story(for: fiction.meta, context: context)
+            story.spinePaths = fiction.paths
+            story.chapterTitles = fiction.titles
+            story.chapterCount = max(fiction.paths.count, 1)
             addToLibrary(story, context: context)
             return story
         }

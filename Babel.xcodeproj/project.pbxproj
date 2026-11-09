@@ -18,6 +18,7 @@
 		1BE376BE330A3D1BEAE0498E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43258D30B4D0134B7E85AF1E /* Theme.swift */; };
 		1C560D8E5BFE715D676F85A8 /* ReaderPager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1FC8C973626D38718C981 /* ReaderPager.swift */; };
 		26601EFE03EA874A3EFE9F0E /* AO3FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E7FD3E3D4C03C8DF90E3BEF /* AO3FilterView.swift */; };
+		27BF12B42ADB5EDF08FD8A59 /* royalroad-list.html in Resources */ = {isa = PBXBuildFile; fileRef = 605DE260A09016EAFB5B6FCE /* royalroad-list.html */; };
 		2900ED97597FA1FBD49B94AB /* LibraryFilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE1920E2DA36461228B1574 /* LibraryFilterSheet.swift */; };
 		2BFFF1A0761C571B3ECD848A /* CookieSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3038A35919D0B5A3CFE1089F /* CookieSync.swift */; };
 		34889CAFC00706C77448119E /* ReaderStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6DCF18AABE1204DB9E937FE /* ReaderStyle.swift */; };
@@ -32,9 +33,11 @@
 		5467B896E90DCB36482435C9 /* SiteStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5F267654EB4E8058B29DB5 /* SiteStatus.swift */; };
 		59B995201042109386046C32 /* StoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91F803FF91C284A7A81A387 /* StoryDetailView.swift */; };
 		630FB6C74F3E633D6B3BFA26 /* BooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED8C2CD5C244C5114CA2A422 /* BooksView.swift */; };
+		638102118FF3DE8427752240 /* opds-unglue.xml in Resources */ = {isa = PBXBuildFile; fileRef = 13EA7D9CF69F6004A8A8D58A /* opds-unglue.xml */; };
 		80CBFBFFA3D2CC8FB1430748 /* BabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55D07DBD778A8883282A1C2 /* BabelTests.swift */; };
 		831F1AF8D3CED6348240A3F1 /* ReadAloudControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A8F59D8958B1EF423E9880 /* ReadAloudControls.swift */; };
 		87D3C9681D591E2A5554E972 /* SearchDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7290049C61D3E515B8CFAFD /* SearchDefaults.swift */; };
+		8D5538F0638760F4F2F38FE7 /* OPDSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381F42207A4A4A0102FD647A /* OPDSService.swift */; };
 		90795445F63020781C17DD8E /* LibraryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C8624FEFB62B767110C007A /* LibraryManager.swift */; };
 		908E56D44AC630ADD86597DE /* ContentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9986DF66E3ABEC855199BF5B /* ContentStore.swift */; };
 		95CB4B7D63C5E17F931D5A68 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD73D35F0F5B3196BF1AABF /* SettingsView.swift */; };
@@ -51,13 +54,18 @@
 		ADF92A28A89D3BF705C510B7 /* CloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B09C04014D94380C8944049 /* CloudSync.swift */; };
 		B2465E95D0DF6B5B30AC2D2B /* ThemeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3222CDECAFA3DC2D9B46024 /* ThemeSettingsView.swift */; };
 		B6312220DFB957280DBA02E7 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA69A74409A6C2344B1584F /* Components.swift */; };
+		B901236531BD718ADED390E8 /* RoyalRoadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B137B250669CB9386DF8B274 /* RoyalRoadView.swift */; };
 		BAC1CCED4B5E9B3F578FC3D1 /* FFNFilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746D72C6FAD6B685831695A0 /* FFNFilterSheet.swift */; };
 		BC64183367D2A212AB88401C /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 370D9AD0B044F7C14B9EFC45 /* AppIcon.icon */; };
+		BCCA26309B70C3B8BD93D5B0 /* BookSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119DBE04F90852C376AD8AE5 /* BookSourceView.swift */; };
 		BE4678BF2F067DB105FA24D9 /* SiteActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF4A2B483A4EA551516477A /* SiteActions.swift */; };
 		C28CF77A56C77C9671979E98 /* GlobalSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF9F2FE25268508D04C01A7 /* GlobalSearchView.swift */; };
 		C3D00F7142E7A4E6F5491C78 /* AccountViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E4B292B7D3EF9704ECECBB /* AccountViews.swift */; };
 		C4E5B9C4F702F1D0DAA9D6F4 /* PageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC332CE618A30C5EBBAF5ECE /* PageCache.swift */; };
+		C63E5D9E5977B5BF833CD90E /* royalroad-fiction.html in Resources */ = {isa = PBXBuildFile; fileRef = 3B422A3E355D4CFF6A31E4C5 /* royalroad-fiction.html */; };
 		CB1845BB630B66E8F608A630 /* EPUBBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CC39F8CD101E8E82A7E445 /* EPUBBuilder.swift */; };
+		CD14BBD7DBC8E1FAF43A12B0 /* royalroad-chapter.html in Resources */ = {isa = PBXBuildFile; fileRef = F344B06DCCA127B95EF5A676 /* royalroad-chapter.html */; };
+		D841F6D4197516C8AB319F9C /* RoyalRoadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15972F4CF954A00C4626453 /* RoyalRoadService.swift */; };
 		D963173EFEDCDE9071C4B638 /* ReadAloudPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBBC815BF1AF17E43E24B9C1 /* ReadAloudPlayer.swift */; };
 		DC60691FA72438A692247923 /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB92BE6E37EEC3F7C16169F1 /* LibraryStore.swift */; };
 		EE67FAF4A655B5D920F1FE8B /* AO3SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62CC4316CAB5285483CFA67B /* AO3SearchView.swift */; };
@@ -81,6 +89,8 @@
 /* Begin PBXFileReference section */
 		02E2AADD6B677DDA1151EAA3 /* UpdateNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateNotifier.swift; sourceTree = "<group>"; };
 		06D5EC56C7C09627597A997A /* GutenbergService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutenbergService.swift; sourceTree = "<group>"; };
+		119DBE04F90852C376AD8AE5 /* BookSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookSourceView.swift; sourceTree = "<group>"; };
+		13EA7D9CF69F6004A8A8D58A /* opds-unglue.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "opds-unglue.xml"; sourceTree = "<group>"; };
 		1483FA078C5FCBA890090576 /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
 		1C90CCF74C3909B300CD6ADA /* ZipArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipArchive.swift; sourceTree = "<group>"; };
 		1E1811B210919E19E1A46579 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
@@ -88,8 +98,10 @@
 		2E73558FBBF43221AE5B9C59 /* FFNViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNViews.swift; sourceTree = "<group>"; };
 		3038A35919D0B5A3CFE1089F /* CookieSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieSync.swift; sourceTree = "<group>"; };
 		370D9AD0B044F7C14B9EFC45 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		381F42207A4A4A0102FD647A /* OPDSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPDSService.swift; sourceTree = "<group>"; };
 		39075793117956CC5038008F /* BabelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabelApp.swift; sourceTree = "<group>"; };
 		397CD779C4EEAD53D826DD54 /* gutenberg-search.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "gutenberg-search.html"; sourceTree = "<group>"; };
+		3B422A3E355D4CFF6A31E4C5 /* royalroad-fiction.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "royalroad-fiction.html"; sourceTree = "<group>"; };
 		40635D758914BA1C4099AA11 /* VolumeKeyScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeKeyScroller.swift; sourceTree = "<group>"; };
 		42D657FB996B8337736AC567 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
 		43258D30B4D0134B7E85AF1E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -98,6 +110,7 @@
 		50DFFB30CE2C2C950703DA46 /* BookSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookSources.swift; sourceTree = "<group>"; };
 		53EA69B1B09A7733617C8235 /* AuthorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorView.swift; sourceTree = "<group>"; };
 		5DD73D35F0F5B3196BF1AABF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		605DE260A09016EAFB5B6FCE /* royalroad-list.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "royalroad-list.html"; sourceTree = "<group>"; };
 		62CC4316CAB5285483CFA67B /* AO3SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AO3SearchView.swift; sourceTree = "<group>"; };
 		6B874D8A91BFF9BC9BAA2B7A /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		6CF4A2B483A4EA551516477A /* SiteActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteActions.swift; sourceTree = "<group>"; };
@@ -116,8 +129,10 @@
 		9AF9F2FE25268508D04C01A7 /* GlobalSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalSearchView.swift; sourceTree = "<group>"; };
 		9D3759E9AE748F71A4F7281B /* sample.epub */ = {isa = PBXFileReference; path = sample.epub; sourceTree = "<group>"; };
 		A08665C99E1FA1B78B3A47B4 /* Babel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Babel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A15972F4CF954A00C4626453 /* RoyalRoadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoyalRoadService.swift; sourceTree = "<group>"; };
 		A5E4B292B7D3EF9704ECECBB /* AccountViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViews.swift; sourceTree = "<group>"; };
 		A63E22E5889EBD4EC8319283 /* AO3Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AO3Service.swift; sourceTree = "<group>"; };
+		B137B250669CB9386DF8B274 /* RoyalRoadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoyalRoadView.swift; sourceTree = "<group>"; };
 		B9220F5639846657A95CE62C /* CommentsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsService.swift; sourceTree = "<group>"; };
 		BB92BE6E37EEC3F7C16169F1 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
 		BFE1920E2DA36461228B1574 /* LibraryFilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilterSheet.swift; sourceTree = "<group>"; };
@@ -136,6 +151,7 @@
 		E7A8A1ACDD3F52FC62380971 /* WebFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFetcher.swift; sourceTree = "<group>"; };
 		ED8C2CD5C244C5114CA2A422 /* BooksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooksView.swift; sourceTree = "<group>"; };
 		EDEF52AE5C74AD34E79BD26C /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		F344B06DCCA127B95EF5A676 /* royalroad-chapter.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "royalroad-chapter.html"; sourceTree = "<group>"; };
 		F6DCF18AABE1204DB9E937FE /* ReaderStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderStyle.swift; sourceTree = "<group>"; };
 		F9B5E984C8A0B7C0D77620F7 /* EPUBParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPUBParser.swift; sourceTree = "<group>"; };
 		FC23CE261C0C80C3526D2138 /* BabelTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BabelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -174,6 +190,10 @@
 			isa = PBXGroup;
 			children = (
 				397CD779C4EEAD53D826DD54 /* gutenberg-search.html */,
+				13EA7D9CF69F6004A8A8D58A /* opds-unglue.xml */,
+				F344B06DCCA127B95EF5A676 /* royalroad-chapter.html */,
+				3B422A3E355D4CFF6A31E4C5 /* royalroad-fiction.html */,
+				605DE260A09016EAFB5B6FCE /* royalroad-list.html */,
 				9D3759E9AE748F71A4F7281B /* sample.epub */,
 			);
 			path = Fixtures;
@@ -240,7 +260,9 @@
 		7BACE7B1547DB8184F768BFA /* Books */ = {
 			isa = PBXGroup;
 			children = (
+				119DBE04F90852C376AD8AE5 /* BookSourceView.swift */,
 				ED8C2CD5C244C5114CA2A422 /* BooksView.swift */,
+				B137B250669CB9386DF8B274 /* RoyalRoadView.swift */,
 			);
 			path = Books;
 			sourceTree = "<group>";
@@ -279,8 +301,10 @@
 				D2F05AE361B51E309D21F7BA /* ImageLoader.swift */,
 				8C8624FEFB62B767110C007A /* LibraryManager.swift */,
 				BB92BE6E37EEC3F7C16169F1 /* LibraryStore.swift */,
+				381F42207A4A4A0102FD647A /* OPDSService.swift */,
 				FC332CE618A30C5EBBAF5ECE /* PageCache.swift */,
 				CBBC815BF1AF17E43E24B9C1 /* ReadAloudPlayer.swift */,
+				A15972F4CF954A00C4626453 /* RoyalRoadService.swift */,
 				7F19A35474E4037E0FA89C11 /* SettingsSync.swift */,
 				6CF4A2B483A4EA551516477A /* SiteActions.swift */,
 				6D5F267654EB4E8058B29DB5 /* SiteStatus.swift */,
@@ -463,6 +487,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B729F3153350998F077F897 /* gutenberg-search.html in Resources */,
+				638102118FF3DE8427752240 /* opds-unglue.xml in Resources */,
+				CD14BBD7DBC8E1FAF43A12B0 /* royalroad-chapter.html in Resources */,
+				C63E5D9E5977B5BF833CD90E /* royalroad-fiction.html in Resources */,
+				27BF12B42ADB5EDF08FD8A59 /* royalroad-list.html in Resources */,
 				4166A31E65B22AD8EE021994 /* sample.epub in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -490,6 +518,7 @@
 				C3D00F7142E7A4E6F5491C78 /* AccountViews.swift in Sources */,
 				9C2904BBE87CC8E11CD4EA90 /* AuthorView.swift in Sources */,
 				12161EB20D743F3E8016D0E7 /* BabelApp.swift in Sources */,
+				BCCA26309B70C3B8BD93D5B0 /* BookSourceView.swift in Sources */,
 				0890284DBBA41DA4531B79E9 /* BookSources.swift in Sources */,
 				630FB6C74F3E633D6B3BFA26 /* BooksView.swift in Sources */,
 				ADF92A28A89D3BF705C510B7 /* CloudSync.swift in Sources */,
@@ -513,6 +542,7 @@
 				90795445F63020781C17DD8E /* LibraryManager.swift in Sources */,
 				DC60691FA72438A692247923 /* LibraryStore.swift in Sources */,
 				51A0F929958845C113623A5C /* LibraryView.swift in Sources */,
+				8D5538F0638760F4F2F38FE7 /* OPDSService.swift in Sources */,
 				C4E5B9C4F702F1D0DAA9D6F4 /* PageCache.swift in Sources */,
 				831F1AF8D3CED6348240A3F1 /* ReadAloudControls.swift in Sources */,
 				D963173EFEDCDE9071C4B638 /* ReadAloudPlayer.swift in Sources */,
@@ -520,6 +550,8 @@
 				34889CAFC00706C77448119E /* ReaderStyle.swift in Sources */,
 				0C46A0D6B6BC9385CC9C4B34 /* ReaderView.swift in Sources */,
 				FE4CDFA22E24AD632B518C01 /* RootView.swift in Sources */,
+				D841F6D4197516C8AB319F9C /* RoyalRoadService.swift in Sources */,
+				B901236531BD718ADED390E8 /* RoyalRoadView.swift in Sources */,
 				87D3C9681D591E2A5554E972 /* SearchDefaults.swift in Sources */,
 				9CCC0BE3E1A3096BE1CA1D2A /* SettingsSync.swift in Sources */,
 				95CB4B7D63C5E17F931D5A68 /* SettingsView.swift in Sources */,
@@ -566,7 +598,7 @@
 				CODE_SIGN_ENTITLEMENTS = Babel/Babel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 87;
+				CURRENT_PROJECT_VERSION = 88;
 				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Support/Info.plist;
@@ -580,7 +612,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 0.32.10;
+				MARKETING_VERSION = 0.33.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app;
 				PRODUCT_NAME = Babel;
 				SDKROOT = iphoneos;
@@ -680,7 +712,7 @@
 				CODE_SIGN_ENTITLEMENTS = Babel/Babel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 87;
+				CURRENT_PROJECT_VERSION = 88;
 				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Support/Info.plist;
@@ -694,7 +726,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 0.32.10;
+				MARKETING_VERSION = 0.33.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app;
 				PRODUCT_NAME = Babel;
 				SDKROOT = iphoneos;

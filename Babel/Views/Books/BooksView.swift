@@ -2,136 +2,221 @@ import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
 
-/// Freie Online-Bücher (Project Gutenberg, Standard Ebooks, Internet Archive) + eigene EPUBs.
+/// Wohin der Bücher-Tab führt.
+enum BookRoute: Hashable {
+    case library(BookLibrary, query: String = "")
+    case royalRoad(query: String = "")
+    case feed(title: String, url: URL)
+}
+
+/// Eine Reihe auf der Startseite: Quelle mit ein paar Büchern zum Hineinschauen.
+struct BookShelf: Identifiable, Hashable {
+    enum Kind: Hashable {
+        case royalRoad
+        case library(BookLibrary)
+        case catalog(OPDSCatalog)
+    }
+
+    let kind: Kind
+
+    var id: String {
+        switch kind {
+        case .royalRoad: "royalroad"
+        case .library(let library): "library.\(library.rawValue)"
+        case .catalog(let catalog): "catalog.\(catalog.id)"
+        }
+    }
+
+    var title: String {
+        switch kind {
+        case .royalRoad: "Royal Road"
+        case .library(let library): library.title
+        case .catalog(let catalog): catalog.title
+        }
+    }
+
+    var about: String {
+        switch kind {
+        case .royalRoad: String(localized: "Web-Serien und Web Novels, laufend fortgesetzt.")
+        case .library(let library): library.about
+        case .catalog(let catalog): catalog.about
+        }
+    }
+
+    var route: BookRoute {
+        switch kind {
+        case .royalRoad: .royalRoad()
+        case .library(let library): .library(library)
+        case .catalog(let catalog): .feed(title: catalog.title, url: catalog.url)
+        }
+    }
+
+    func load(language: String) async throws -> [RemoteStory] {
+        switch kind {
+        case .royalRoad:
+            return try await RoyalRoadService.list(.trending, page: 1).stories
+        case .library(let library):
+            var filters = GutenbergFilters()
+            filters.language = language
+            return try await library.search(filters, page: 1).books
+        case .catalog(let catalog):
+            return try await OPDSService.showcase(catalog)
+        }
+    }
+
+    func search(_ query: String, language: String) async throws -> [RemoteStory] {
+        switch kind {
+        case .royalRoad:
+            return try await RoyalRoadService.search(query, page: 1).stories
+        case .library(let library):
+            var filters = GutenbergFilters()
+            filters.query = query
+            // Bei einer gezielten Suche nicht nach Sprache aussieben.
+            filters.language = ""
+            return try await library.search(filters, page: 1).books
+        case .catalog(let catalog):
+            let root = try await OPDSService.feed(catalog.url)
+            guard let url = try await OPDSService.searchURL(root, query: query) else { return [] }
+            return try await OPDSService.feed(url).books
+        }
+    }
+}
+
+/// Lädt die Reihen der Startseite und merkt sie sich (Speicher + Caches/Shelves, 12 Stunden frisch),
+/// damit der Tab sofort gefüllt aufgeht.
+@MainActor
+@Observable
+final class BookShelfStore {
+    static let shared = BookShelfStore()
+
+    private(set) var books: [String: [RemoteStory]] = [:]
+    private(set) var errors: [String: String] = [:]
+    private(set) var loading: Set<String> = []
+    @ObservationIgnored private var loadedAt: [String: Date] = [:]
+
+    private static let fresh: TimeInterval = 12 * 3600
+    private static let folder: URL = {
+        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("Shelves", isDirectory: true)
+        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        return url
+    }()
+
+    private struct Saved: Codable { var date: Date; var books: [RemoteStory] }
+
+    private static func file(_ key: String) -> URL {
+        folder.appendingPathComponent(String(key.stableHash) + ".json")
+    }
+
+    func load(_ shelf: BookShelf, language: String, force: Bool = false) async {
+        let key = shelf.id + "|" + language
+        guard !loading.contains(shelf.id) else { return }
+        if books[shelf.id] == nil || loadedAt[shelf.id] == nil {
+            let file = Self.file(key)
+            let saved = await Task.detached(priority: .userInitiated) {
+                (try? Data(contentsOf: file)).flatMap { try? JSONDecoder().decode(Saved.self, from: $0) }
+            }.value
+            if let saved {
+                books[shelf.id] = saved.books
+                loadedAt[shelf.id] = saved.date
+            }
+        }
+        if !force, let date = loadedAt[shelf.id], Date().timeIntervalSince(date) < Self.fresh, books[shelf.id]?.isEmpty == false { return }
+        loading.insert(shelf.id)
+        defer { loading.remove(shelf.id) }
+        do {
+            let result = Array(try await shelf.load(language: language).prefix(14))
+            books[shelf.id] = result
+            errors[shelf.id] = nil
+            loadedAt[shelf.id] = .now
+            let file = Self.file(key)
+            let saved = Saved(date: .now, books: result)
+            Task.detached(priority: .utility) { try? JSONEncoder().encode(saved).write(to: file, options: .atomic) }
+        } catch {
+            // Der letzte Stand bleibt stehen – eine Fehlermeldung gibt es nur, wenn gar nichts da ist.
+            if books[shelf.id]?.isEmpty != false { errors[shelf.id] = error.localizedDescription }
+        }
+    }
+
+    func forget(_ shelf: BookShelf) {
+        books[shelf.id] = nil
+        loadedAt[shelf.id] = nil
+        errors[shelf.id] = nil
+    }
+}
+
+/// Bücher-Tab: alle Quellen auf einen Blick – je Quelle eine Reihe mit Büchern, Tippen auf den Namen öffnet die Quelle.
+/// Die Suche oben sucht in allen Quellen zugleich.
 struct BooksView: View {
     @Environment(\.modelContext) private var context
     @Environment(LibraryManager.self) private var library
+    @Environment(\.theme) private var theme
+    @AppStorage(OPDSCatalogStore.key) private var catalogData: Data = Data()
     @AppStorage("books.filters") private var filtersData: Data = Data()
-    @AppStorage("books.library") private var bookLibrary: BookLibrary = .gutenberg
 
-    @State private var filters = GutenbergFilters()
-    @State private var didLoadFilters = false
-    @State private var books: [RemoteStory] = []
-    @State private var page = 1
-    @State private var hasNext = false
-    @State private var isLoading = false
-    @State private var error: String?
-    @State private var showFilters = false
+    @State private var store = BookShelfStore.shared
+    @State private var query = ""
+    @State private var submitted = ""
+    @State private var results: [String: [RemoteStory]] = [:]
+    @State private var searching: Set<String> = []
+    @State private var searchTask: Task<Void, Never>?
     @State private var showImporter = false
-    @State private var importMessage: String?
-    @State private var loadTask: Task<Void, Never>?
+    @State private var showAddCatalog = false
+    @State private var message: String?
+
+    private var catalogs: [OPDSCatalog] { OPDSCatalogStore.decode(catalogData) }
+
+    /// Sprache für die Vorschau der Bibliotheken – die zuletzt in den Filtern gewählte.
+    private var language: String {
+        (try? JSONDecoder().decode(GutenbergFilters.self, from: filtersData))?.language ?? "de"
+    }
+
+    private var serials: [BookShelf] { [BookShelf(kind: .royalRoad)] }
+    private var libraries: [BookShelf] { BookLibrary.allCases.map { BookShelf(kind: .library($0)) } }
+    private var catalogShelves: [BookShelf] { catalogs.map { BookShelf(kind: .catalog($0)) } }
+    private var allShelves: [BookShelf] { serials + libraries + catalogShelves }
 
     var body: some View {
-        List {
-            Section {
-                VStack(alignment: .leading, spacing: 6) {
-                    GlassSegmented(options: BookLibrary.allCases.map { ($0, $0.label) }, selection: $bookLibrary)
-                    Text(bookLibrary.about).font(.caption).foregroundStyle(.secondary)
-                }
-                .padding(.horizontal)
-                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0))
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.clear)
-            }
-
-            if bookLibrary.supportsSubjects {
-                Section {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        GlassEffectContainer(spacing: 8) {
-                            HStack(spacing: 8) {
-                                GlassChip(title: String(localized: "Alle"), isSelected: filters.subject.isEmpty) { setSubject("") }
-                                ForEach(GutenbergService.subjects, id: \.query) { s in
-                                    GlassChip(title: s.label, isSelected: filters.subject == s.query) { setSubject(s.query) }
-                                }
-                            }
-                            .padding(.horizontal)
-                            .padding(.vertical, 6)
-                        }
-                    }
-                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 26) {
+                if submitted.isEmpty {
+                    group(String(localized: "Web-Serien"), serials)
+                    group(String(localized: "Freie Bücher"), libraries)
+                    catalogGroup
+                } else {
+                    searchResults
                 }
             }
-
-            Section {
-                ForEach(books) { book in
-                    NavigationLink(value: book) { StoryRow(story: book) }
-                        .navigationLinkIndicatorVisibility(.hidden)
-                        .remoteStoryActions(book)
-                        .loadsMore(near: book, in: books) { if hasNext && !isLoading { await load(page: page + 1) } }
-                }
-                if hasNext {
-                    HStack { Spacer(); ProgressView(); Spacer() }
-                        .listRowSeparator(.hidden)
-                        .task { if !isLoading { await load(page: page + 1) } }
-                }
-            }
-            .themedRows(grouped: false)
+            .padding(.vertical, 12)
         }
-        // Wie die FFN-Listen: schlicht, ohne Kartenhintergrund.
-        .listStyle(.plain)
         .themedBackground()
         .navigationTitle("Bücher")
-        .searchable(text: $filters.query, placement: .navigationBarDrawer(displayMode: .always), prompt: searchPrompt)
-        .searchScopes($filters.scope, activation: .onSearchPresentation) {
-            ForEach(GutenbergScope.allCases, id: \.self) { Text($0.label).tag($0) }
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "In allen Quellen suchen")
+        .onSubmit(of: .search) { search() }
+        .onChange(of: query) { _, new in
+            if new.trimmed.isEmpty { searchTask?.cancel(); submitted = "" }
         }
-        .onSubmit(of: .search) { reload() }
-        .onChange(of: filters.scope) { if !filters.query.trimmed.isEmpty { reload() } }
-        .onChange(of: filters.query) { old, new in
-            // Suchfeld geleert (z. B. mit dem x) → wieder die beliebtesten Bücher zeigen.
-            if !old.isEmpty && new.isEmpty { reload() }
-        }
-        .overlay {
-            if isLoading && books.isEmpty {
-                ProgressView("Lade Bücher …")
-            } else if let error, books.isEmpty {
-                ErrorBanner(message: error) { reload() }
-            } else if !isLoading && books.isEmpty {
-                ContentUnavailableView("Keine Bücher", systemImage: "books.vertical", description: Text("Versuch es mit weniger Filtern."))
+        .refreshable {
+            await withTaskGroup(of: Void.self) { group in
+                for shelf in allShelves { group.addTask { await store.load(shelf, language: language, force: true) } }
             }
         }
         .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                Button {
-                    showImporter = true
-                } label: {
-                    Label("Eigenes EPUB importieren", systemImage: "doc.badge.plus")
-                }
+            ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    Picker("Sortieren nach", selection: $filters.sort) {
-                        ForEach(GutenbergSort.allCases, id: \.self) { Text($0.label).tag($0) }
-                    }
+                    Button("EPUB importieren", systemImage: "doc.badge.plus") { showImporter = true }
+                    Button("Katalog hinzufügen", systemImage: "plus.rectangle.on.folder") { showAddCatalog = true }
                 } label: {
-                    Label("Sortieren", systemImage: "arrow.up.arrow.down")
+                    Label("Hinzufügen", systemImage: "plus")
                 }
-                Button {
-                    showFilters = true
-                } label: {
-                    Label("Filter", systemImage: filters.activeCount > 0
-                          ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
-                }
-                .badge(filters.activeCount)
             }
         }
-        .sheet(isPresented: $showFilters) {
-            GutenbergFilterSheet(filters: filters, library: bookLibrary) { new in
-                filters = new
-                reload()
+        .navigationDestination(for: BookRoute.self) { route in
+            switch route {
+            case .library(let library, let query): BookSourceView(bookLibrary: library, initialQuery: query)
+            case .royalRoad(let query): RoyalRoadView(initialQuery: query)
+            case .feed(let title, let url): OPDSFeedView(title: title, url: url)
             }
         }
-        .onChange(of: filters.sort) { reload() }
-        .onChange(of: bookLibrary) { books = []; reload() }
-        .onChange(of: filters) { _, new in filtersData = (try? JSONEncoder().encode(new)) ?? Data() }
-        .task {
-            if !didLoadFilters {
-                didLoadFilters = true
-                if let saved = try? JSONDecoder().decode(GutenbergFilters.self, from: filtersData) { filters = saved }
-            }
-            if books.isEmpty { await load(page: 1) }
-        }
-        .refreshable { await load(page: 1) }
         .fileImporter(isPresented: $showImporter, allowedContentTypes: [.epub], allowsMultipleSelection: true) { result in
             guard case .success(let urls) = result else { return }
             Task {
@@ -141,115 +226,353 @@ struct BooksView: View {
                     do { _ = try await library.importEPUB(at: url, context: context); ok += 1 }
                     catch { failures.append(error.localizedDescription) }
                 }
-                importMessage = failures.isEmpty ? String(localized: "\(ok) Buch/Bücher in deine Bibliothek gelegt.") : failures.joined(separator: String(localized: "\n"))
+                message = failures.isEmpty ? String(localized: "\(ok) Buch/Bücher in deine Bibliothek gelegt.") : failures.joined(separator: "\n")
             }
         }
-        .alert("Import", isPresented: .constant(importMessage != nil), presenting: importMessage) { _ in
-            Button("OK") { importMessage = nil }
+        .sheet(isPresented: $showAddCatalog) {
+            AddCatalogSheet(existing: catalogs) { catalog in
+                catalogData = OPDSCatalogStore.encode(catalogs + [catalog])
+            }
+        }
+        .alert("Import", isPresented: .constant(message != nil), presenting: message) { _ in
+            Button("OK") { message = nil }
         } message: { Text($0) }
     }
 
-    private var searchPrompt: String {
-        switch filters.scope {
-        case .all: "Titel, Autor:in, Thema …"
-        case .title: "Titel suchen"
-        case .author: "Autor:in suchen, z. B. Kafka"
-        case .subject: "Thema suchen (englisch, z. B. poetry)"
+    // MARK: Startseite
+
+    private func group(_ title: String, _ shelves: [BookShelf]) -> some View {
+        VStack(alignment: .leading, spacing: 18) {
+            groupTitle(title)
+            ForEach(shelves) { shelf in
+                BookShelfRow(shelf: shelf, language: language)
+            }
         }
     }
 
-    private func setSubject(_ subject: String) {
-        withAnimation(.snappy) { filters.subject = subject }
-        reload()
+    private func groupTitle(_ title: String) -> some View {
+        Text(title)
+            .font(.title2.weight(.bold))
+            .padding(.horizontal)
+            .accessibilityAddTraits(.isHeader)
     }
 
-    private func reload() {
-        loadTask?.cancel()
-        loadTask = Task { await load(page: 1) }
-    }
-
-    private func load(page: Int) async {
-        isLoading = true
-        error = nil
-        defer { isLoading = false }
-        let current = filters
-        let source = bookLibrary
-        do {
-            let result = try await bookLibrary.search(current, page: page)
-            guard !Task.isCancelled, current == filters, source == bookLibrary else { return }
-            if page == 1 {
-                books = result.books
-            } else {
-                let known = Set(books.map(\.id))
-                books += result.books.filter { !known.contains($0.id) }
+    private var catalogGroup: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            groupTitle(String(localized: "Kataloge"))
+            ForEach(catalogShelves) { shelf in
+                BookShelfRow(shelf: shelf, language: language)
+                    .contextMenu {
+                        Button("Katalog entfernen", systemImage: "trash", role: .destructive) { remove(shelf) }
+                    }
             }
-            self.page = page
-            hasNext = result.hasNext
-        } catch {
-            guard !Task.isCancelled else { return }
-            if page == 1 { books = []; self.error = error.localizedDescription }
-            hasNext = false
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Kataloge sind Bücherlisten im offenen OPDS-Format: von Bibliotheken, Verlagen oder deinem eigenen Server (Calibre-Web, Kavita …).")
+                    .font(.footnote).foregroundStyle(.secondary)
+                Button("Katalog hinzufügen", systemImage: "plus") { showAddCatalog = true }
+                    .buttonStyle(.glass)
+            }
+            .padding(.horizontal)
+        }
+    }
+
+    private func remove(_ shelf: BookShelf) {
+        guard case .catalog(let catalog) = shelf.kind else { return }
+        // Auch ein leeres Ergebnis speichern – sonst käme der Startkatalog wieder.
+        let left = catalogs.filter { $0.id != catalog.id }
+        catalogData = left.isEmpty ? Data("[]".utf8) : OPDSCatalogStore.encode(left)
+        store.forget(shelf)
+    }
+
+    // MARK: Suche in allen Quellen
+
+    private func search() {
+        let text = query.trimmed
+        guard !text.isEmpty else { return }
+        searchTask?.cancel()
+        submitted = text
+        results = [:]
+        let shelves = allShelves
+        let language = language
+        searching = Set(shelves.map(\.id))
+        searchTask = Task {
+            await withTaskGroup(of: (String, [RemoteStory]).self) { group in
+                for shelf in shelves {
+                    group.addTask { (shelf.id, (try? await shelf.search(text, language: language)) ?? []) }
+                }
+                for await (id, found) in group {
+                    guard !Task.isCancelled, submitted == text else { return }
+                    results[id] = found
+                    searching.remove(id)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var searchResults: some View {
+        let shelves = allShelves
+        let withHits = shelves.filter { results[$0.id]?.isEmpty == false }
+        ForEach(withHits) { shelf in
+            VStack(alignment: .leading, spacing: 4) {
+                NavigationLink(value: searchRoute(shelf)) {
+                    HStack(spacing: 6) {
+                        Text(shelf.title).font(.title3.weight(.bold))
+                        Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.secondary)
+                        Spacer()
+                    }
+                    .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal)
+
+                ForEach((results[shelf.id] ?? []).prefix(4)) { book in
+                    NavigationLink(value: book) {
+                        StoryRow(story: book, showSummary: false)
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
+                            .contentShape(.rect)
+                    }
+                    .buttonStyle(.plain)
+                    .contextMenu { BookTileMenu(book: book) }
+                    Divider().padding(.leading)
+                }
+            }
+        }
+        if !searching.isEmpty {
+            HStack(spacing: 10) {
+                ProgressView()
+                Text("Suche in \(searching.count) Quellen …").font(.footnote).foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.top, withHits.isEmpty ? 60 : 0)
+        } else if withHits.isEmpty {
+            VStack(spacing: 10) {
+                Image(systemName: "magnifyingglass").font(.system(size: 40)).foregroundStyle(.secondary)
+                Text("Keine Treffer für „\(submitted)“").font(.title3.weight(.bold))
+                Text("Prüfe die Schreibweise oder versuche es mit anderen Wörtern.")
+                    .font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 24)
+            .padding(.top, 60)
+        }
+    }
+
+    /// „Alle Treffer“: die Quelle mit demselben Suchbegriff öffnen.
+    private func searchRoute(_ shelf: BookShelf) -> BookRoute {
+        switch shelf.kind {
+        case .royalRoad: .royalRoad(query: submitted)
+        case .library(let library): .library(library, query: submitted)
+        case .catalog(let catalog): .feed(title: catalog.title, url: catalog.url)
         }
     }
 }
 
-struct GutenbergFilterSheet: View {
-    var library: BookLibrary = .gutenberg
-    var onApply: (GutenbergFilters) -> Void
-    @Environment(\.dismiss) private var dismiss
-    @State private var draft: GutenbergFilters
+/// Eine Quelle auf der Startseite: Name und Beschreibung (öffnet die Quelle), darunter Bücher zum Durchwischen.
+private struct BookShelfRow: View {
+    let shelf: BookShelf
+    let language: String
+    @State private var store = BookShelfStore.shared
 
-    init(filters: GutenbergFilters, library: BookLibrary, onApply: @escaping (GutenbergFilters) -> Void) {
-        self.library = library
-        self.onApply = onApply
-        _draft = State(initialValue: filters)
+    var body: some View {
+        let books = store.books[shelf.id] ?? []
+        VStack(alignment: .leading, spacing: 10) {
+            NavigationLink(value: shelf.route) {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 6) {
+                        Text(shelf.title).font(.headline)
+                        Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(.secondary)
+                    }
+                    if !shelf.about.isEmpty {
+                        Text(shelf.about).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.leading)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(.rect)
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal)
+
+            if !books.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(alignment: .top, spacing: 14) {
+                        ForEach(books) { book in
+                            NavigationLink(value: book) { BookTile(book: book) }
+                                .buttonStyle(.plain)
+                                .contextMenu { BookTileMenu(book: book) }
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 4)
+                }
+            } else if let error = store.errors[shelf.id] {
+                HStack(spacing: 8) {
+                    Image(systemName: "exclamationmark.triangle").foregroundStyle(.secondary)
+                    Text(error).font(.footnote).foregroundStyle(.secondary).lineLimit(2)
+                    Spacer()
+                    Button("Nochmal") { Task { await store.load(shelf, language: language, force: true) } }
+                        .font(.footnote.weight(.semibold))
+                }
+                .padding(.horizontal)
+            } else {
+                // Platzhalter in der Höhe der Bücher – beim Laden springt die Seite nicht.
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 14) {
+                        ForEach(0..<5, id: \.self) { _ in
+                            RoundedRectangle(cornerRadius: 11).fill(.quaternary).frame(width: BookTile.width, height: BookTile.width * 1.5)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 4)
+                }
+                .disabled(true)
+                .frame(height: BookTile.height, alignment: .top)
+            }
+        }
+        .task(id: language) { await store.load(shelf, language: language) }
+    }
+}
+
+/// Ein Buch in einer Reihe: Cover, Titel, Autor:in.
+private struct BookTile: View {
+    static let width: CGFloat = 96
+    static let height: CGFloat = width * 1.5 + 56
+
+    let book: RemoteStory
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            CoverView(story: book, width: Self.width)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(book.title).font(.caption.weight(.semibold)).lineLimit(2).multilineTextAlignment(.leading)
+                if !book.author.isEmpty {
+                    Text(book.author).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+                }
+            }
+        }
+        .frame(width: Self.width, height: Self.height, alignment: .top)
+        .contentShape(.rect)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// Kontextmenü eines Buchs außerhalb von Listen (dort gibt es Wischgesten über `remoteStoryActions`).
+private struct BookTileMenu: View {
+    let book: RemoteStory
+    @Environment(\.modelContext) private var context
+    @Environment(LibraryManager.self) private var library
+
+    var body: some View {
+        Button("In die Bibliothek", systemImage: "bookmark") {
+            let story = library.story(for: book, context: context)
+            library.addToLibrary(story, context: context)
+            library.updateMessage = String(localized: "„\(book.title)“ in der Bibliothek")
+        }
+        Button("Herunterladen (offline)", systemImage: "arrow.down.circle") {
+            library.showProgress(String(localized: "Lade „\(book.title)“ …"))
+            Task {
+                do {
+                    try await library.download(book, context: context)
+                    library.updateMessage = String(localized: "„\(book.title)“ offline gespeichert")
+                } catch {
+                    library.updateMessage = String(localized: "Download fehlgeschlagen: \(error.localizedDescription)")
+                }
+            }
+        }
+        if book.url.scheme?.hasPrefix("http") == true { ShareLink(item: book.url) }
+    }
+}
+
+/// Katalog per Adresse hinzufügen oder aus den Vorschlägen wählen. Die Adresse wird geprüft, bevor sie gespeichert wird.
+struct AddCatalogSheet: View {
+    let existing: [OPDSCatalog]
+    var onAdd: (OPDSCatalog) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var address = ""
+    @State private var isChecking = false
+    @State private var error: String?
+
+    private var suggestions: [OPDSCatalog] {
+        OPDSCatalog.suggestions.filter { s in !existing.contains { $0.id == s.id } }
     }
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("Suche") {
-                    TextField("Freitext", text: $draft.query)
-                    TextField("Titel", text: $draft.title)
-                    TextField("Autor:in", text: $draft.author)
-                        .textInputAutocapitalization(.words)
-                    TextField("Thema (z. B. poetry, history)", text: $draft.subject)
-                        .textInputAutocapitalization(.never)
-                }
-                .themedRows()
                 Section {
-                    if library.supportsLanguage {
-                        Picker("Sprache", selection: $draft.language) {
-                            ForEach(GutenbergService.languages) { Text($0.name).tag($0.code) }
-                        }
-                        .pickerStyle(.navigationLink)
-                    }
-                    Picker("Sortieren nach", selection: $draft.sort) {
-                        ForEach(GutenbergSort.allCases, id: \.self) { Text($0.label).tag($0) }
-                    }
-                    .pickerStyle(.navigationLink)
+                    TextField("https://…", text: $address)
+                        .keyboardType(.URL)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .onSubmit { check() }
+                    if let error { Text(error).font(.footnote).foregroundStyle(.red) }
+                } header: {
+                    Text("Adresse des Katalogs")
                 } footer: {
-                    Text("Gutenberg sucht nach englischen Begriffen am zuverlässigsten, auch bei deutschen Büchern (Thema „poetry“ statt „Lyrik“).")
+                    Text("OPDS-Adresse, zum Beispiel von deinem Calibre-Web-Server (endet oft auf /opds). Kataloge mit Anmeldung gehen noch nicht.")
                 }
                 .themedRows()
+
+                if !suggestions.isEmpty {
+                    Section("Vorschläge") {
+                        ForEach(suggestions) { catalog in
+                            Button {
+                                onAdd(catalog)
+                                dismiss()
+                            } label: {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(catalog.title).foregroundStyle(.primary)
+                                    Text(catalog.about).font(.footnote).foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    .themedRows()
+                }
             }
             .themedBackground()
-            .navigationTitle("Filter")
+            .navigationTitle("Katalog hinzufügen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Zurücksetzen", systemImage: "arrow.counterclockwise") {
-                        let language = draft.language
-                        draft = GutenbergFilters()
-                        draft.language = language
-                    }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Abbrechen", systemImage: "xmark") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Anwenden", systemImage: "checkmark") {
-                        dismiss()
-                        onApply(draft)
+                    if isChecking {
+                        ProgressView()
+                    } else {
+                        Button("Hinzufügen", systemImage: "checkmark") { check() }
+                            .disabled(address.trimmed.isEmpty)
                     }
                 }
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+
+    private func check() {
+        var text = address.trimmed
+        guard !text.isEmpty, !isChecking else { return }
+        if !text.contains("://") { text = "https://" + text }
+        guard let url = URL(string: text), url.host != nil else {
+            error = String(localized: "Das ist keine gültige Adresse.")
+            return
+        }
+        if existing.contains(where: { $0.url == url }) {
+            error = String(localized: "Diesen Katalog hast du schon.")
+            return
+        }
+        isChecking = true
+        error = nil
+        Task {
+            defer { isChecking = false }
+            do {
+                let feed = try await OPDSService.feed(url)
+                onAdd(OPDSCatalog(title: feed.title.isEmpty ? (url.host ?? text) : feed.title, url: url))
+                dismiss()
+            } catch {
+                self.error = error.localizedDescription
             }
         }
     }
