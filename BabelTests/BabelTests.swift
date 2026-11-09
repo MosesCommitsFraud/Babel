@@ -272,21 +272,70 @@ final class BabelTests: XCTestCase {
         var paths: [String] = []
         for i in 0..<60 {
             let name = "page_\(i).html"
-            // Jede dritte Seite ist leer – sie fällt weg.
-            let body = i % 3 == 2 ? "<p> </p>" : "<p>Seite \(i) Text</p>"
+            // Gedruckte Seitenzahl = Position + 5; jede dritte Seite ist leer; Sätze laufen über das Seitenende.
+            // Jede Seite beginnt anders – gleiche Anfänge wären eine Kopfzeile.
+            let word = ["Apfel", "Birne", "Kirsche", "Dattel", "Erdbeere", "Feige", "Guave"][i % 7]
+            let body: String
+            switch i % 3 {
+            case 2: body = i == 2 ? "<b>The text on this page is estimated to be only 45.00% accurate</b><p>Buch stab ens alat<img src=\"bild.jpeg\" alt=\"x\"/></p>" : "<p> </p>"
+            case 0: body = "<p>\(i + 5) \(word) reift auf Seite \(i). Hier wird \(word) ge-</p>"
+            default: body = "<p>trennt \(word.lowercased()) und geht weiter. “Rede beginnt,” sagte sie. Noch eine \(word). \(i + 5)</p>"
+            }
             try Data("<html><head><title>Page \(i)</title><link href=\"style.css\" rel=\"stylesheet\"/></head><body>\(body)</body></html>".utf8)
                 .write(to: folder.appendingPathComponent(name))
             paths.append(name)
         }
         let merged = try XCTUnwrap(EPUBParser.mergePages(paths, folder: folder, tocCount: 0))
         XCTAssertLessThan(merged.count, 10)
+        XCTAssertTrue(merged[0].path.contains("babel-sec-"))
         let first = try String(contentsOf: folder.appendingPathComponent(merged[0].path), encoding: .utf8)
         XCTAssertTrue(first.contains("style.css"), "Stylesheet der Seiten bleibt")
-        XCTAssertTrue(first.contains("Seite 0 Text") && first.contains("Seite 1 Text"))
-        XCTAssertFalse(first.contains("babel-page-3\""), "leere Seite fehlt")
+        XCTAssertTrue(first.contains("Hier wird Apfel getrennt birne und geht weiter."), "Satz und getrenntes Wort über die Seitengrenze verbunden")
+        XCTAssertTrue(first.contains("<p>“Rede beginnt,” sagte sie."), "wörtliche Rede beginnt einen Absatz")
+        XCTAssertTrue(first.contains("<p>Apfel reift auf Seite 0."), "Seitenzahl am Anfang entfernt")
+        XCTAssertFalse(first.contains("Noch eine Birne. 6"), "Seitenzahl am Ende entfernt")
+        XCTAssertTrue(first.contains("bild.jpeg") && first.contains("loading=\"lazy\""), "Bildseite bleibt als Bild")
+        XCTAssertFalse(first.contains("ens alat") || first.contains("estimated"), "unsicher erkannter Text einer Bildseite entfällt")
         // Bücher mit echten Kapiteln bleiben unangetastet.
         XCTAssertNil(EPUBParser.mergePages(Array(paths.prefix(20)), folder: folder, tocCount: 0))
         XCTAssertNil(EPUBParser.mergePages(paths, folder: folder, tocCount: 30))
+    }
+
+    func testRemovesRunningHeader() {
+        let pages: [String?] = (0..<40).map { i in
+            // Auf zwei von drei Seiten steht dieselbe Kopfzeile mit laufender Nummer.
+            let word = ["Apfel", "Birne", "Kirsche", "Dattel", "Erdbeere", "Feige", "Guave"][i % 7]
+            return i % 3 == 0 ? "\(word) beginnt die Seite \(i) ohne Kopfzeile und mit genug Text dahinter."
+                              : "Page \(i + 7) Verlag | beispiel.org \(word) – der eigentliche Text der Seite \(i) geht hier weiter."
+        }
+        let header = ScanText.runningHeader(pages)
+        XCTAssertEqual(header, ["Page", "#", "Verlag", "|", "beispiel.org"])
+        XCTAssertEqual(ScanText.strippingHeader(pages[1]!, header!), "Birne – der eigentliche Text der Seite 1 geht hier weiter.")
+        XCTAssertEqual(ScanText.strippingHeader(pages[0]!, header!), pages[0]!, "Seiten ohne Kopfzeile bleiben")
+        // Dasselbe am Seitenende (Fußzeile).
+        let fruits = ["Apfel", "Birne", "Kirsche", "Dattel", "Erdbeere", "Feige", "Guave"]
+        let footed: [String?] = pages.enumerated().map { i, page in
+            page.map { ScanText.strippingHeader($0, header!) + " Am Ende steht \(fruits[(i * 3) % 7]) Page \(i) Verlag | beispiel.org" }
+        }
+        let footer = ScanText.runningHeader(footed, atEnd: true)
+        XCTAssertEqual(footer, ["Page", "#", "Verlag", "|", "beispiel.org"])
+        XCTAssertFalse(ScanText.strippingHeader(footed[1]!, footer!, atEnd: true).contains("beispiel.org"))
+        // Kein gemeinsamer Anfang: nichts entfernen.
+        XCTAssertNil(ScanText.runningHeader(pages.map { $0.map { ScanText.strippingHeader($0, header!) } }))
+    }
+
+    func testScanTextKeepsWording() {
+        // Zahlen im Text sind keine Seitenzahlen, wenn sie nicht zur Seitenfolge passen.
+        XCTAssertNil(ScanText.pageNumberOffset((0..<30).map { _ in "1848 war ein Jahr. Ende" }))
+        XCTAssertEqual(ScanText.strippingPageNumber("12 Text bleibt 12", page: 3, offset: nil), "12 Text bleibt 12")
+        XCTAssertEqual(ScanText.join("Wort-", "Ende"), "Wort- Ende", "Bindestrich vor Großbuchstabe bleibt")
+        let split = ScanText.splitAtLastSentenceEnd("Eins. Zwei! Und dann")
+        XCTAssertEqual(split.complete, "Eins. Zwei!")
+        XCTAssertEqual(split.rest, "Und dann")
+        // Nichts geht verloren: Die Absätze ergeben zusammen wieder den Text.
+        let text = "Er kam. “Hallo,” sagte er. Sie schwieg. “Nun?” fragte er."
+        XCTAssertEqual(ScanText.paragraphs(text).joined(separator: " "), text)
+        XCTAssertEqual(ScanText.paragraphs(text).count, 3)
     }
 
     func testDocumentTitle() throws {

@@ -111,7 +111,7 @@ final class LibraryManager {
     func ensureChapter(_ story: Story, index: Int) async throws -> URL {
         switch story.source {
         case .epub, .gutenberg, .standardEbooks, .archive, .opds:
-            if !ContentStore.isBookInstalled(story) { try await prepareBook(story) }
+            if !ContentStore.isBookInstalled(story) { try await prepareBook(story) } else { await upgradeScannedBook(story) }
             guard index < story.spinePaths.count else { throw BabelError.notFound }
             return ContentStore.bookFolder(for: story).appendingPathComponent(story.spinePaths[index])
 
@@ -390,6 +390,34 @@ final class LibraryManager {
     }
 
     /// Entpacken und Lesen im Hintergrund – ein EPUB mit Bildern braucht dafür spürbar Zeit.
+    /// Schon geladene Scan-Bücher (eine Datei je Seite) nachträglich zusammenlegen – einmal je Buch und App-Start geprüft.
+    @ObservationIgnored private var checkedLayouts: Set<String> = []
+
+    /// Hochzählen, wenn `EPUBParser.mergePages` Scan-Bücher anders aufbereitet – geladene Bücher werden dann neu aufgebaut.
+    private static let scanLayoutVersion = 6
+
+    private func upgradeScannedBook(_ story: Story) async {
+        guard checkedLayouts.insert(story.key).inserted else { return }
+        let paths = story.spinePaths
+        let isOldMerge = paths.contains { $0.contains("babel-part-") }
+        // Auch schon zusammengelegte Bücher einmal neu aufbauen, wenn sich die Aufbereitung geändert hat.
+        let versionKey = "epub.scanLayout." + story.folderName
+        let isOutdated = paths.contains { $0.contains("babel-sec-") } && UserDefaults.standard.integer(forKey: versionKey) < Self.scanLayoutVersion
+        guard isOldMerge || isOutdated || (paths.count >= 40 && !paths.contains { $0.contains("babel-sec-") }) else { return }
+        defer { UserDefaults.standard.set(Self.scanLayoutVersion, forKey: versionKey) }
+        let bookDir = ContentStore.bookFolder(for: story)
+        guard let book = try? await Task.detached(priority: .userInitiated, operation: { try EPUBParser.parse(folder: bookDir) }).value,
+              book.spine.contains(where: { $0.path.contains("babel-sec-") }) else { return }
+        // Die Lesestelle bleibt ungefähr, wo sie war.
+        let fraction = Double(story.currentChapter) / Double(max(paths.count, 1))
+        story.spinePaths = book.spine.map(\.path)
+        story.chapterTitles = book.spine.map(\.title)
+        story.chapterCount = book.spine.count
+        story.currentChapter = min(Int(fraction * Double(book.spine.count)), book.spine.count - 1)
+        story.setPosition(progress: 0, anchor: nil)
+        try? story.modelContext?.save()
+    }
+
     private func installEPUB(at file: URL, into story: Story) async throws {
         let bookDir = ContentStore.bookFolder(for: story)
         let folderName = story.folderName

@@ -1,4 +1,5 @@
 import Foundation
+import NaturalLanguage
 import SwiftSoup
 
 struct EPUBBook {
@@ -149,15 +150,15 @@ enum EPUBParser {
     }
 
     /// Aus Scans erzeugte EPUBs (Internet Archive) haben eine winzige Datei je Buchseite und kein Inhaltsverzeichnis:
-    /// Hunderte „Kapitel“ von einer Bildschirmseite. Solche Bücher werden zu größeren Abschnitten zusammengelegt,
-    /// leere Seiten fallen weg. Gibt `nil` zurück, wenn das Buch nicht so aufgebaut ist.
+    /// Hunderte „Kapitel“ von einer Bildschirmseite, jede Seite ein einziger Absatz, der mitten im Satz endet.
+    /// Solche Bücher werden zu größeren Abschnitten zusammengelegt und der Text wieder lesbar gemacht (`ScanText`).
+    /// Gibt `nil` zurück, wenn das Buch nicht so aufgebaut ist.
     static func mergePages(_ paths: [String], folder: URL, tocCount: Int) -> [EPUBBook.Item]? {
         guard paths.count >= 40, tocCount * 10 < paths.count else { return nil }
         let fm = FileManager.default
         let sizes = paths.map { ((try? fm.attributesOfItem(atPath: folder.appendingPathComponent($0).path))?[.size] as? Int) ?? 0 }
-        let total = sizes.reduce(0, +)
         // Echte Kapitel sind im Schnitt deutlich größer als 8 KB.
-        guard total / paths.count < 8_000 else { return nil }
+        guard sizes.reduce(0, +) / paths.count < 8_000 else { return nil }
 
         func body(_ html: String) -> String {
             guard let open = html.range(of: "<body", options: .caseInsensitive),
@@ -165,37 +166,104 @@ enum EPUBParser {
                   let end = html.range(of: "</body>", options: [.caseInsensitive, .backwards]) else { return "" }
             return String(html[html.index(after: start)..<end.lowerBound])
         }
-        func hasContent(_ body: String) -> Bool {
-            if body.range(of: "<img", options: .caseInsensitive) != nil || body.range(of: "<svg", options: .caseInsensitive) != nil { return true }
-            return body.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
-                .contains { !$0.isWhitespace }
+
+        // Alle Seiten lesen: reiner Text (ein Absatz ohne weitere Tags) oder etwas anderes (Bilder, Tabellen …).
+        var head = ""
+        var pages: [(text: String?, raw: String)] = []
+        for path in paths {
+            guard let html = try? String(contentsOf: folder.appendingPathComponent(path), encoding: .utf8) else { pages.append((nil, "")); continue }
+            if head.isEmpty, let end = html.range(of: "</head>", options: .caseInsensitive) { head = String(html[..<end.upperBound]) }
+            // Das Archive vermerkt Seiten, auf denen die Texterkennung unsicher war. Den Vermerk braucht beim Lesen niemand;
+            // ist die Seite ein Bild (Umschlag, Illustration), ist ihr „Text“ nur Buchstabensalat aus dem Bild – dann bleibt das Bild allein.
+            var content = body(html)
+            var accuracy = 100.0
+            if let note = content.firstMatch(#"<b>\s*The text on this page is estimated to be only\s*([\d.]+)%[^<]*</b>"#) {
+                content = content.replacingOccurrences(of: note[0], with: "")
+                accuracy = Double(note[1]) ?? 100
+            }
+            let letters = content.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression).filter { !$0.isWhitespace }.count
+            let hasPicture = content.range(of: "<img", options: .caseInsensitive) != nil
+            if hasPicture, accuracy < 75 || letters < 200 {
+                // Bildseite: Der „Text“ ist die Erkennung der Schrift im Bild selbst.
+                content = content.allMatches(#"<img\b[^>]*>"#).map { $0[0].hasSuffix("/>") ? $0[0] : String($0[0].dropLast()) + "/>" }.joined()
+            } else if !hasPicture, accuracy < 75, letters < 400 {
+                // Kurze, unsicher erkannte Seite ohne Bild: Umschlag, Schmutztitel, Stempel – nichts zum Lesen.
+                content = ""
+            }
+            // Der Hinweis des Internet Archive zur automatischen Umwandlung ist kein Teil des Buchs.
+            if content.contains("produced in EPUB format by the Internet Archive") { pages.append((nil, "")); continue }
+            if let text = content.firstMatch(#"(?s)^\s*<p[^>]*>([^<]*)</p>\s*$"#)?[1] {
+                pages.append((text, ""))
+            } else {
+                pages.append((nil, content))
+            }
+        }
+        // Kopfzeilen, die auf den meisten Seiten wiederkehren („Seite 12 Buchtitel …“), stünden sonst mitten im Satz.
+        // Dasselbe gilt für Fußzeilen am Seitenende.
+        if let header = ScanText.runningHeader(pages.map(\.text)) {
+            pages = pages.map { ($0.text.map { ScanText.strippingHeader($0, header) }, $0.raw) }
+        }
+        if let footer = ScanText.runningHeader(pages.map(\.text), atEnd: true) {
+            pages = pages.map { ($0.text.map { ScanText.strippingHeader($0, footer, atEnd: true) }, $0.raw) }
+        }
+        let offset = ScanText.pageNumberOffset(pages.map(\.text))
+        // Die Scans tragen keine brauchbare Sprachangabe (`lang="None"`) – ohne sie trennt der Reader nach englischen
+        // Regeln („Fre-undschaft“). Sprache aus dem Text bestimmen; ist sie unklar, gar nicht trennen.
+        let sample = pages.compactMap(\.text).filter { $0.count > 200 }.dropFirst(5).prefix(12).joined(separator: " ")
+        let language = NLLanguageRecognizer.dominantLanguage(for: String(sample.prefix(6_000)))?.rawValue
+        let bodyTag = language.map { "<body lang=\"\($0)\">" } ?? "<body style=\"-webkit-hyphens: manual; hyphens: manual;\">"
+
+        guard let directory = paths.first.map({ ($0 as NSString).deletingLastPathComponent }) else { return nil }
+        if head.isEmpty { head = "<html><head><meta charset=\"utf-8\"/></head>" }
+        var items: [EPUBBook.Item] = []
+        var section: [String] = [], characters = 0, images = 0, firstPage = 1
+        var carry = ""
+
+        func close(at lastPage: Int) -> Bool {
+            defer { section = []; characters = 0; images = 0; firstPage = lastPage + 1 }
+            guard !section.isEmpty else { return true }
+            let name = String(format: "babel-sec-%04d.xhtml", items.count + 1)
+            let path = directory.isEmpty ? name : "\(directory)/\(name)"
+            let document = head + bodyTag + section.joined(separator: "\n") + "</body></html>"
+            guard (try? Data(document.utf8).write(to: folder.appendingPathComponent(path), options: .atomic)) != nil else { return false }
+            let title = firstPage == lastPage ? String(localized: "Seite \(firstPage)") : String(localized: "Seiten \(firstPage)–\(lastPage)")
+            items.append(EPUBBook.Item(path: path, title: title))
+            return true
+        }
+        func emit(_ paragraphs: [String]) {
+            for paragraph in paragraphs where !paragraph.isEmpty {
+                section.append("<p>\(paragraph)</p>")
+                characters += paragraph.count
+            }
         }
 
-        // Etwa 60 KB Text je Abschnitt, mindestens 10 Seiten.
-        let perPart = max(10, Int((Double(paths.count) * 60_000 / Double(max(total, 1))).rounded()))
-        var items: [EPUBBook.Item] = []
-        var index = 0
-        while index < paths.count {
-            let group = Array(paths[index..<min(index + perPart, paths.count)])
-            var parts: [String] = []
-            var head = ""
-            for (offset, path) in group.enumerated() {
-                guard let html = try? String(contentsOf: folder.appendingPathComponent(path), encoding: .utf8) else { continue }
-                // Den Kopf (Stylesheets) der ersten Seite übernehmen – alle Seiten liegen im selben Ordner.
-                if head.isEmpty, let end = html.range(of: "</head>", options: .caseInsensitive) { head = String(html[..<end.upperBound]) }
-                let content = body(html)
-                if hasContent(content) { parts.append("<div class=\"babel-page\" id=\"babel-page-\(index + offset + 1)\">\(content)</div>") }
+        for (index, page) in pages.enumerated() {
+            if let text = page.text {
+                let cleaned = ScanText.strippingPageNumber(text, page: index, offset: offset)
+                let joined = ScanText.join(carry, cleaned)
+                // Bis zum letzten Satzende ausgeben, der angefangene Satz wandert auf die nächste Seite.
+                let (complete, rest) = ScanText.splitAtLastSentenceEnd(joined)
+                carry = rest
+                // Seiten ganz ohne Satzende (Listen, Tabellen): nicht endlos ansammeln.
+                if complete.isEmpty, carry.count > 2_500 { emit([carry]); carry = "" }
+                emit(ScanText.paragraphs(complete))
+            } else if !page.raw.isEmpty {
+                let hasText = page.raw.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression).contains { !$0.isWhitespace }
+                let pictureCount = page.raw.components(separatedBy: "<img").count - 1
+                guard hasText || pictureCount > 0 else { continue }
+                if !carry.isEmpty { emit([carry]); carry = "" }
+                // Bilder erst laden, wenn sie in Sicht kommen – ein Abschnitt kann Dutzende enthalten.
+                section.append("<div class=\"babel-page\">\(page.raw.replacingOccurrences(of: "<img ", with: "<img loading=\"lazy\" decoding=\"async\" "))</div>")
+                characters += page.raw.count / 2
+                images += pictureCount
             }
-            let first = index + 1, last = index + group.count
-            index += group.count
-            guard !parts.isEmpty, let directory = group.first.map({ ($0 as NSString).deletingLastPathComponent }) else { continue }
-            if head.isEmpty { head = "<html><head><meta charset=\"utf-8\"/></head>" }
-            let name = String(format: "babel-part-%04d.xhtml", items.count + 1)
-            let path = directory.isEmpty ? name : "\(directory)/\(name)"
-            let document = head + "<body>" + parts.joined(separator: "\n") + "</body></html>"
-            guard (try? Data(document.utf8).write(to: folder.appendingPathComponent(path), options: .atomic)) != nil else { return nil }
-            items.append(EPUBBook.Item(path: path, title: String(localized: "Seiten \(first)–\(last)")))
+            // Etwa 40.000 Zeichen oder 24 Bilder je Abschnitt.
+            if characters >= 40_000 || images >= 24 {
+                guard close(at: index + 1) else { return nil }
+            }
         }
+        if !carry.isEmpty { emit([carry]) }
+        guard close(at: pages.count) else { return nil }
         return items.isEmpty ? nil : items
     }
 
@@ -208,5 +276,123 @@ enum EPUBParser {
             out.append(part)
         }
         return out.joined(separator: "/")
+    }
+}
+
+/// Text aus gescannten Seiten wieder lesbar machen. Die automatische Umwandlung liefert je Buchseite einen Absatz:
+/// Seitenzahlen stehen mitten im Text, Sätze brechen am Seitenende ab, Absätze und Dialoge sind verloren.
+/// Alles hier sind vorsichtige Näherungen – am Wortlaut wird nichts geändert, nur an Umbrüchen.
+enum ScanText {
+    private static let sentenceEnd = try! NSRegularExpression(pattern: #"[.!?…]["”’»)\]]*(?=\s|$)"#)
+    private static let openingQuotes: Set<Character> = ["“", "\"", "„", "«", "‘", "「"]
+
+    /// Seitenzahl am Anfang oder Ende einer Seite („56 Erstes Buch …“ / „… 57“).
+    private static func pageNumbers(_ text: String) -> [Int] {
+        var found: [Int] = []
+        if let n = text.firstMatch(#"^\s*(\d{1,4})\s"#)?[1], let value = Int(n) { found.append(value) }
+        if let n = text.firstMatch(#"\s(\d{1,4})\s*$"#)?[1], let value = Int(n) { found.append(value) }
+        return found
+    }
+
+    /// Wörter am Seitenanfang (oder -ende) mit Ziffern als „#“ – so sind „Page 12 Titel“ und „Page 13 Titel“ gleich.
+    private static func edgeWords(_ text: String, _ count: Int, atEnd: Bool) -> [String] {
+        let words = (atEnd ? Substring(text.suffix(160)) : text.prefix(160)).split(whereSeparator: \.isWhitespace)
+        return (atEnd ? Array(words.suffix(count)) : Array(words.prefix(count))).map {
+            $0.replacingOccurrences(of: "[0-9]+", with: "#", options: .regularExpression)
+        }
+    }
+
+    /// Wiederkehrende Kopf- oder Fußzeile: die längste Wortfolge (2–8 Wörter), mit der mindestens 40 % der Textseiten
+    /// beginnen bzw. enden.
+    static func runningHeader(_ pages: [String?], atEnd: Bool = false) -> [String]? {
+        let texts = pages.compactMap { $0 }.filter { $0.count > 40 }
+        guard texts.count >= 20 else { return nil }
+        let edges = texts.map { edgeWords($0, 8, atEnd: atEnd) }
+        for length in stride(from: 8, through: 2, by: -1) {
+            var counts: [[String]: Int] = [:]
+            for words in edges where words.count >= length {
+                counts[atEnd ? Array(words.suffix(length)) : Array(words.prefix(length)), default: 0] += 1
+            }
+            if let best = counts.max(by: { $0.value < $1.value }), best.value * 5 >= texts.count * 2 { return best.key }
+        }
+        return nil
+    }
+
+    static func strippingHeader(_ text: String, _ header: [String], atEnd: Bool = false) -> String {
+        guard edgeWords(text, header.count, atEnd: atEnd) == header else { return text }
+        let words = text.split(whereSeparator: \.isWhitespace)
+        return (atEnd ? words.dropLast(header.count) : words.dropFirst(header.count)).joined(separator: " ")
+    }
+
+    /// Abstand zwischen gedruckter Seitenzahl und Position im Buch – wenn er bei vielen Seiten gleich ist,
+    /// sind diese Zahlen Seitenzahlen und keine Zahlen aus dem Text.
+    static func pageNumberOffset(_ pages: [String?]) -> Int? {
+        var counts: [Int: Int] = [:]
+        var textPages = 0
+        for (index, text) in pages.enumerated() {
+            guard let text else { continue }
+            textPages += 1
+            for number in Set(pageNumbers(text)) { counts[number - index, default: 0] += 1 }
+        }
+        guard let best = counts.max(by: { $0.value < $1.value }), textPages >= 20, best.value * 4 >= textPages else { return nil }
+        return best.key
+    }
+
+    static func strippingPageNumber(_ text: String, page: Int, offset: Int?) -> String {
+        var result = text.split(whereSeparator: \.isWhitespace).joined(separator: " ")
+        guard let offset else { return result }
+        let number = String(page + offset)
+        if result.hasPrefix(number + " ") { result = String(result.dropFirst(number.count + 1)) }
+        if result.hasSuffix(" " + number) { result = String(result.dropLast(number.count + 1)) }
+        return result
+    }
+
+    /// Seitenende und Seitenanfang verbinden; ein am Seitenende getrenntes Wort wird wieder eins.
+    static func join(_ first: String, _ second: String) -> String {
+        if first.isEmpty { return second }
+        if second.isEmpty { return first }
+        if first.hasSuffix("-"), first.count > 1, first.dropLast().last?.isLetter == true, second.first?.isLowercase == true {
+            return first.dropLast() + second
+        }
+        return first + " " + second
+    }
+
+    /// Teilt hinter dem letzten Satzende: (vollständige Sätze, angefangener Rest).
+    static func splitAtLastSentenceEnd(_ text: String) -> (complete: String, rest: String) {
+        let range = NSRange(text.startIndex..., in: text)
+        guard let last = sentenceEnd.matches(in: text, range: range).last, let end = Range(last.range, in: text)?.upperBound else {
+            return ("", text)
+        }
+        return (String(text[..<end]), String(text[end...]).trimmed)
+    }
+
+    /// Absätze aus einem Seitentext: Ein neuer Absatz beginnt, wo nach einem Satzende wörtliche Rede einsetzt,
+    /// und spätestens nach rund 700 Zeichen am nächsten Satzende – eine ganze Seite am Stück liest sich auf dem iPhone schlecht.
+    static func paragraphs(_ text: String) -> [String] {
+        guard !text.isEmpty else { return [] }
+        let range = NSRange(text.startIndex..., in: text)
+        var sentences: [Substring] = []
+        var start = text.startIndex
+        for match in sentenceEnd.matches(in: text, range: range) {
+            guard let end = Range(match.range, in: text)?.upperBound, end > start else { continue }
+            sentences.append(text[start..<end])
+            start = end
+        }
+        if start < text.endIndex { sentences.append(text[start...]) }
+
+        var result: [String] = []
+        var current = ""
+        for sentence in sentences {
+            let trimmed = sentence.trimmingCharacters(in: .whitespaces)
+            guard !trimmed.isEmpty else { continue }
+            let startsSpeech = trimmed.first.map(openingQuotes.contains) ?? false
+            if !current.isEmpty, startsSpeech || current.count >= 700 {
+                result.append(current)
+                current = ""
+            }
+            current += current.isEmpty ? trimmed : " " + trimmed
+        }
+        if !current.isEmpty { result.append(current) }
+        return result
     }
 }

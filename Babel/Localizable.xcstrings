@@ -6081,6 +6081,16 @@
           }
         }
       }
+    },
+    "Seite %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Page %lld"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
