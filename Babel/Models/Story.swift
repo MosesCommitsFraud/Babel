@@ -43,6 +43,10 @@ final class Story {
     var urlString: String = ""
     var coverURLString: String? = nil
     var downloadURLString: String? = nil
+    /// AO3-Serie: Nummer der Serie, Name und der wievielte Teil.
+    var seriesID: String? = nil
+    var seriesName: String = ""
+    var seriesPosition: Int? = nil
 
     // Lokaler Zustand
     var folderName: String = ""
@@ -167,6 +171,15 @@ final class Story {
         urlString = r.url.absoluteString
         if let c = r.coverURL { coverURLString = c.absoluteString }
         if let d = r.downloadURL { downloadURLString = d.absoluteString }
+        if let s = r.series {
+            seriesID = s.id
+            seriesName = s.name
+            seriesPosition = s.position ?? seriesPosition
+        }
+    }
+
+    var series: SeriesRef? {
+        seriesID.map { SeriesRef(id: $0, name: seriesName, position: seriesPosition) }
     }
 
     /// Für die Anzeige in Listen wird dieselbe Struktur wie bei Suchergebnissen benutzt.
@@ -181,7 +194,8 @@ final class Story {
             published: published, kudos: kudos, hits: hits, comments: comments,
             bookmarks: bookmarks, reviews: reviews, favs: favs, follows: follows,
             url: url ?? URL(string: "about:blank")!, coverURL: coverURL,
-            downloadURL: downloadURLString.flatMap(URL.init(string:))
+            downloadURL: downloadURLString.flatMap(URL.init(string:)),
+            series: series
         )
     }
 }

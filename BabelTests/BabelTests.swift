@@ -163,6 +163,35 @@ final class BabelTests: XCTestCase {
         XCTAssertEqual(url.absoluteString, "https://example.org:8083/opds/popular/")
     }
 
+    /// Nachgebautes AO3-HTML (AO3 war beim Schreiben in Wartung) – prüft die Logik, nicht die echte Seite.
+    func testParsesAO3Series() throws {
+        func blurb(_ id: Int, _ title: String, part: Int?) -> String {
+            let series = part.map { "<ul class=\"series\"><li>Part <strong>\($0)</strong> of <a href=\"/series/77\">Die Reihe</a></li></ul>" } ?? ""
+            return "<li class=\"work blurb group\"><div class=\"header module\"><h4 class=\"heading\"><a href=\"/works/\(id)\">\(title)</a> by <a rel=\"author\" href=\"/users/a/pseuds/a\">a</a></h4></div>\(series)<dl class=\"stats\"><dd class=\"chapters\">3/3</dd><dd class=\"words\">1,200</dd></dl></li>"
+        }
+        let html = """
+        <div id="main"><h2 class="heading">Die Reihe</h2>
+        <dl class="series meta group"><dt>Creator:</dt><dd><a rel="author" href="/users/a/pseuds/a">a</a></dd>
+        <dt>Description:</dt><dd><blockquote class="userstuff"><p>Worum es geht.</p></blockquote></dd>
+        <dt class="stats">Stats:</dt><dd class="stats"><dl class="stats"><dt>Words:</dt><dd>12,345</dd><dt>Works:</dt><dd>2</dd><dt>Complete:</dt><dd>Yes</dd></dl></dd></dl>
+        <ul class="series work index group">\(blurb(1, "Eins", part: 1))\(blurb(2, "Zwei", part: nil))</ul></div>
+        """
+        let series = try AO3Service.parseSeries(html, id: "77")
+        XCTAssertEqual(series.title, "Die Reihe")
+        XCTAssertEqual(series.creator, "a")
+        XCTAssertEqual(series.summary, "Worum es geht.")
+        XCTAssertEqual(series.words, 12_345)
+        XCTAssertEqual(series.workCount, 2)
+        XCTAssertTrue(series.isComplete)
+        XCTAssertEqual(series.works.map(\.title), ["Eins", "Zwei"])
+        XCTAssertEqual(series.works.map { $0.series?.position }, [1, 2])
+        // Gespeicherte Einträge ohne Serie (das Feld fehlt dann im JSON) laden weiter.
+        let plain = RemoteStory(source: .ao3, sourceID: "1", title: "T", url: URL(string: "https://archiveofourown.org/works/1")!)
+        let data = try JSONEncoder().encode(plain)
+        XCTAssertFalse(String(decoding: data, as: UTF8.self).contains("series"))
+        XCTAssertNil(try JSONDecoder().decode(RemoteStory.self, from: data).series)
+    }
+
     func testParsesFFNMetaLine() {
         var story = RemoteStory(source: .ffn, sourceID: "1", title: "T", url: URL(string: "https://www.fanfiction.net/s/1/1/")!)
         FFNService.applyMeta(

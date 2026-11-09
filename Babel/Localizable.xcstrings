@@ -5853,6 +5853,46 @@
           }
         }
       }
+    },
+    "Lade Serie …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading series …"
+          }
+        }
+      }
+    },
+    "%lld Werke · %@%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld works · %@%@"
+          }
+        }
+      }
+    },
+    "Teil %lld der Serie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Part %lld of the series"
+          }
+        }
+      }
+    },
+    "Serie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Series"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

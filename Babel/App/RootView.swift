@@ -180,6 +180,7 @@ extension View {
             .navigationDestination(for: Story.self) { StoryDetailView(story: $0) }
             .navigationDestination(for: RemoteStory.self) { RemoteStoryDetail(remote: $0) }
             .navigationDestination(for: AO3SearchRoute.self) { AO3SearchView(initialFilters: $0.filters, title: $0.title) }
+            .navigationDestination(for: AO3SeriesRoute.self) { AO3SeriesView(route: $0) }
             .navigationDestination(for: TagSearchRoute.self) { route in
                 AO3SearchView(initialFilters: AO3Filters(otherTags: [route.tag]), title: route.tag)
             }

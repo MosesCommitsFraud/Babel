@@ -562,7 +562,70 @@ enum AO3Service {
         story.comments = try stat("comments")
         story.bookmarks = try stat("bookmarks")
         if let d = try li.select("p.datetime").first()?.text() { story.updated = DateParsing.ao3Blurb.date(from: d) }
+        // „Part 2 of <a href="/series/123">Name</a>“
+        if let item = try li.select("ul.series li").first() { story.series = try seriesRef(item) }
         return story
+    }
+
+    /// Serienangabe aus einem Blurb (`ul.series li`) oder der Werkseite (`dd.series span.position`).
+    static func seriesRef(_ element: Element) throws -> SeriesRef? {
+        guard let link = try element.select("a[href*=\"/series/\"]").first(),
+              let id = try link.attr("href").firstMatch(#"/series/(\d+)"#)?[1] else { return nil }
+        let position = try element.text().firstMatch(#"Part\s+([\d,]+)"#)?[1].digitsInt
+        return SeriesRef(id: id, name: try link.text(), position: position)
+    }
+
+    // MARK: - Serien
+
+    struct Series: Sendable {
+        var title: String
+        var creator: String
+        var summary: String
+        var words: Int?
+        var workCount: Int?
+        var isComplete: Bool
+        var works: [RemoteStory]
+        var hasNext: Bool
+    }
+
+    static func seriesURL(_ id: String, page: Int) -> URL {
+        var comps = URLComponents(url: base.appendingPathComponent("series/\(id)"), resolvingAgainstBaseURL: false)!
+        if page > 1 { comps.queryItems = [URLQueryItem(name: "page", value: String(page))] }
+        return comps.url!
+    }
+
+    static func series(id: String, page: Int, fresh: TimeInterval = 300) async throws -> Series {
+        let (html, _, status) = try await fetchCachedHTML(seriesURL(id, page: page), fresh: fresh)
+        if status == 404 { throw BabelError.notFound }
+        guard status == 200 else { throw BabelError.http(status) }
+        return try await Task.detached(priority: .userInitiated) { try parseSeries(html, id: id, page: page) }.value
+    }
+
+    static func parseSeries(_ html: String, id: String, page: Int = 1) throws -> Series {
+        let doc = try SwiftSoup.parse(html, base.absoluteString)
+        let list = try parseWorkList(html)
+        let title = try doc.select("#main h2.heading").first()?.text() ?? ""
+        func value(after label: String) throws -> String {
+            for dt in try doc.select("dl.series.meta dt, dl.series.meta dl.stats dt").array() where try dt.text().hasPrefix(label) {
+                return try dt.nextElementSibling()?.text() ?? ""
+            }
+            return ""
+        }
+        var works = list.works
+        // Die Liste steht in Lesereihenfolge; die Seite nennt die Position nicht bei jedem Werk.
+        for i in works.indices {
+            let known = works[i].series?.id == id ? works[i].series?.position : nil
+            works[i].series = SeriesRef(id: id, name: title, position: known ?? ((page - 1) * 20 + i + 1))
+        }
+        return Series(
+            title: title,
+            creator: try doc.select("dl.series.meta a[rel=author]").array().map { try $0.text() }.joined(separator: ", "),
+            summary: try doc.select("dl.series.meta blockquote.userstuff").first().map { try paragraphText($0) } ?? "",
+            words: try value(after: "Words").digitsInt,
+            workCount: try value(after: "Works").digitsInt,
+            isComplete: try value(after: "Complete").lowercased().hasPrefix("yes"),
+            works: works, hasNext: list.hasNext
+        )
     }
 
     static func parseWorkMeta(_ doc: Document, id: String) throws -> RemoteStory {
@@ -600,6 +663,7 @@ enum AO3Service {
         story.hits = try stat("hits")
         story.comments = try stat("comments")
         story.bookmarks = try stat("bookmarks")
+        if let position = try doc.select("dl.work.meta dd.series span.position").first() { story.series = try seriesRef(position) }
         if let p = try doc.select("dl.stats dd.published").first()?.text() { story.published = DateParsing.iso.date(from: p) }
         if let u = try doc.select("dl.stats dd.status").first()?.text() {
             story.updated = DateParsing.iso.date(from: u)

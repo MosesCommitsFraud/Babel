@@ -93,6 +93,13 @@ enum ReadingStatus: String, Codable, CaseIterable, Sendable, Hashable {
     }
 }
 
+/// Zugehörigkeit zu einer Serie (AO3): welche Serie und der wievielte Teil.
+struct SeriesRef: Codable, Hashable, Sendable {
+    var id: String
+    var name: String
+    var position: Int? = nil
+}
+
 /// Einheitliche Metadaten für Suchergebnisse aus allen Quellen.
 struct RemoteStory: Identifiable, Hashable, Codable, Sendable {
     var source: StorySource
@@ -129,6 +136,8 @@ struct RemoteStory: Identifiable, Hashable, Codable, Sendable {
     var url: URL
     var coverURL: URL? = nil
     var downloadURL: URL? = nil
+    /// Optional, damit ältere gespeicherte Einträge (ohne das Feld) weiter laden.
+    var series: SeriesRef? = nil
 
     var key: String { "\(source.rawValue):\(sourceID)" }
     var id: String { key }
