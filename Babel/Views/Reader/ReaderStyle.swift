@@ -69,6 +69,9 @@ struct ReaderStyle {
     /// Seitenweise blättern: Text in Spalten von Bildschirmbreite statt einer langen Seite.
     var paged = false
 
+    /// Breiteste Textspalte beim Scrollen auf großen Bildschirmen.
+    static let readableWidth = 720
+
     var css: String { baseCSS + (paged ? pagedCSS : "") }
 
     /// Spalten so breit wie der Bildschirm (Rand als Spaltenabstand) – eine Spalte = eine Seite.
@@ -82,6 +85,14 @@ struct ReaderStyle {
             column-width: calc(100vw - \(2 * m)px) !important; column-gap: \(2 * m)px !important; column-fill: auto !important;
         }
         img, svg, video { max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 160px) !important; object-fit: contain; }
+        /* Breite Bildschirme (iPad): zwei Seiten nebeneinander wie ein aufgeschlagenes Buch. Zwei Spalten samt
+           Abständen ergeben genau eine Bildschirmbreite, das Blättern bleibt also bildschirmweise. */
+        @media (min-width: 700px) {
+            body {
+                padding-left: \(m + 14)px !important; padding-right: \(m + 14)px !important;
+                column-width: calc(50vw - \(2 * (m + 14))px) !important; column-gap: \(2 * (m + 14))px !important;
+            }
+        }
         """
     }
 
@@ -125,6 +136,10 @@ struct ReaderStyle {
         .babel-notes { font-size: .88em !important; opacity: .82; border-left: 3px solid \(theme.link) !important; padding: .2em 0 .2em .9em !important; margin: 1.2em 0 2em 0 !important; }
         .babel-notes.end { margin-top: 3em !important; }
         .babel-notes-label { font-weight: 700 !important; text-transform: uppercase; letter-spacing: .06em; font-size: .78em !important; opacity: .7; margin-bottom: .5em !important; }
+        /* Breite Bildschirme (iPad): lesbare Zeilenlänge statt Text über die ganze Breite. */
+        @media (min-width: 700px) {
+            body { padding-left: max(\(Int(margin))px, calc((100vw - \(Self.readableWidth)px) / 2)) !important; padding-right: max(\(Int(margin))px, calc((100vw - \(Self.readableWidth)px) / 2)) !important; }
+        }
         """
     }
 }

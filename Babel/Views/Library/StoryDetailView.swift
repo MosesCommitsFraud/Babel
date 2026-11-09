@@ -36,6 +36,7 @@ struct StoryDetailView: View {
                 if story.inLibrary { organize }
                 stats
                 if !story.summary.isEmpty { summary }
+                if let series = story.series { seriesLink(series) }
                 tagSections
                 if story.source.hasCommunityPages { commentsLink }
                 HighlightsLink(story: story) { open(at: $0) }
@@ -43,6 +44,9 @@ struct StoryDetailView: View {
             }
             .padding(.horizontal)
             .padding(.bottom, 40)
+            // iPad: lesbare Breite in der Mitte statt Karten über den ganzen Bildschirm.
+            .frame(maxWidth: 760)
+            .frame(maxWidth: .infinity)
         }
         .background(theme.screen.ignoresSafeArea())
         .navigationTitle(story.title)
@@ -337,6 +341,25 @@ struct StoryDetailView: View {
                 }
             }
         }
+    }
+
+    /// „Teil 2 der Serie …“ – öffnet die Serie mit allen Werken in Lesereihenfolge.
+    private func seriesLink(_ series: SeriesRef) -> some View {
+        NavigationLink(value: AO3SeriesRoute(id: series.id, name: series.name)) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(series.position.map { String(localized: "Teil \($0) der Serie") } ?? String(localized: "Serie"))
+                        .font(.footnote).foregroundStyle(.secondary)
+                    Text(series.name).font(.headline).multilineTextAlignment(.leading)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary)
+            }
+            .padding(14)
+            .background(theme.card, in: .rect(cornerRadius: 16))
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
     }
 
     private var commentsLink: some View {
