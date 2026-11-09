@@ -15,13 +15,19 @@ enum LibraryStore {
     /// `false`, wenn die Bibliothek diesmal nur lokal geöffnet werden konnte.
     private(set) static var isCloudEnabled = false
 
+    /// Immer die Datei im eigenen Ordner der App. Ohne `groupContainer: .none` legt SwiftData die Bibliothek
+    /// in den Ordner der App-Gruppe, sobald es eine gibt (Teilen-Erweiterung) – und öffnet dort eine leere.
+    private static func configuration(_ cloud: ModelConfiguration.CloudKitDatabase) -> ModelConfiguration {
+        ModelConfiguration(schema: schema, groupContainer: .none, cloudKitDatabase: cloud)
+    }
+
     static func open() -> ModelContainer {
         #if DEBUG
         if CommandLine.arguments.contains("-initCloudKitSchema") { initializeCloudKitSchemaAndExit() }
         #endif
         if prepareExistingLibrary() {
             do {
-                let container = try ModelContainer(for: schema, configurations: ModelConfiguration(schema: schema, cloudKitDatabase: .private(containerID)))
+                let container = try ModelContainer(for: schema, configurations: configuration(.private(containerID)))
                 isCloudEnabled = true
                 return container
             } catch {
@@ -29,7 +35,7 @@ enum LibraryStore {
             }
         }
         do {
-            return try ModelContainer(for: schema, configurations: ModelConfiguration(schema: schema, cloudKitDatabase: .none))
+            return try ModelContainer(for: schema, configurations: configuration(.none))
         } catch {
             fatalError("Bibliothek konnte nicht geöffnet werden: \(error)")
         }
@@ -41,11 +47,11 @@ enum LibraryStore {
     /// Schlägt das fehl, bleibt es diesmal beim lokalen Öffnen.
     private static func prepareExistingLibrary() -> Bool {
         guard !UserDefaults.standard.bool(forKey: preparedKey) else { return true }
-        let store = ModelConfiguration(schema: schema, cloudKitDatabase: .none).url
+        let store = configuration(.none).url
         if FileManager.default.fileExists(atPath: store.path) {
             backUp(store)
             do {
-                let container = try ModelContainer(for: schema, configurations: ModelConfiguration(schema: schema, cloudKitDatabase: .none))
+                let container = try ModelContainer(for: schema, configurations: configuration(.none))
                 let context = ModelContext(container)
                 for story in try context.fetch(FetchDescriptor<Story>()) { story.syncID = UUID().uuidString }
                 for shelf in try context.fetch(FetchDescriptor<Shelf>()) { shelf.syncID = UUID().uuidString }

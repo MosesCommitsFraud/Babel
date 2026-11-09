@@ -11,6 +11,7 @@ struct RootView: View {
     @Environment(LibraryManager.self) private var library
     @Environment(\.modelContext) private var context
     @Environment(UpdateNotifier.self) private var notifier
+    @Environment(\.scenePhase) private var scenePhase
     @ObservedObject private var fetcher = WebFetcher.shared
     @AppStorage("checkUpdatesOnLaunch") private var checkUpdatesOnLaunch = true
 
@@ -85,6 +86,10 @@ struct RootView: View {
                 tab = .library
                 self.reader.open(story)
             }
+        }
+        // „In Babel öffnen“ aus dem Teilen-Menü: beim Zurückkommen abholen.
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            if phase == .active { Task { await ShareInbox.drain(library: library, context: context) } }
         }
         .task {
             library.pruneViewed(context: context)

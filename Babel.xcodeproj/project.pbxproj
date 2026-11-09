@@ -12,11 +12,13 @@
 		0C46A0D6B6BC9385CC9C4B34 /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D657FB996B8337736AC567 /* ReaderView.swift */; };
 		0DA714B684DBD559E3892E67 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1811B210919E19E1A46579 /* Helpers.swift */; };
 		0E890B2942383E6CF818C0D1 /* CustomThemeEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD8775395A2F517D1783152 /* CustomThemeEditor.swift */; };
+		11127A47F4FFE706E5F33D18 /* ShareInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFDC77AC0B976AA13269DC2 /* ShareInbox.swift */; };
 		12161EB20D743F3E8016D0E7 /* BabelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39075793117956CC5038008F /* BabelApp.swift */; };
 		14D9AFB2ACE37CC2FFBB1AAA /* StoryTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954176E78BCE69663DA9A0B1 /* StoryTypes.swift */; };
 		18A8DA2CC3EBAF6436617339 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F05AE361B51E309D21F7BA /* ImageLoader.swift */; };
 		1BE376BE330A3D1BEAE0498E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43258D30B4D0134B7E85AF1E /* Theme.swift */; };
 		1C560D8E5BFE715D676F85A8 /* ReaderPager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F1FC8C973626D38718C981 /* ReaderPager.swift */; };
+		1EDA687F41CF885A5E6F6BDB /* ShareInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFDC77AC0B976AA13269DC2 /* ShareInbox.swift */; };
 		26601EFE03EA874A3EFE9F0E /* AO3FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E7FD3E3D4C03C8DF90E3BEF /* AO3FilterView.swift */; };
 		27BF12B42ADB5EDF08FD8A59 /* royalroad-list.html in Resources */ = {isa = PBXBuildFile; fileRef = 605DE260A09016EAFB5B6FCE /* royalroad-list.html */; };
 		2900ED97597FA1FBD49B94AB /* LibraryFilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE1920E2DA36461228B1574 /* LibraryFilterSheet.swift */; };
@@ -32,6 +34,7 @@
 		51A0F929958845C113623A5C /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8439E07395F7898D26952241 /* LibraryView.swift */; };
 		5467B896E90DCB36482435C9 /* SiteStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5F267654EB4E8058B29DB5 /* SiteStatus.swift */; };
 		59B995201042109386046C32 /* StoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91F803FF91C284A7A81A387 /* StoryDetailView.swift */; };
+		5AE390A5F5371A483D56F3C8 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C5949B5223E37E735E1214 /* ShareViewController.swift */; };
 		630FB6C74F3E633D6B3BFA26 /* BooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED8C2CD5C244C5114CA2A422 /* BooksView.swift */; };
 		638102118FF3DE8427752240 /* opds-unglue.xml in Resources */ = {isa = PBXBuildFile; fileRef = 13EA7D9CF69F6004A8A8D58A /* opds-unglue.xml */; };
 		80CBFBFFA3D2CC8FB1430748 /* BabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55D07DBD778A8883282A1C2 /* BabelTests.swift */; };
@@ -47,6 +50,7 @@
 		9C2904BBE87CC8E11CD4EA90 /* AuthorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EA69B1B09A7733617C8235 /* AuthorView.swift */; };
 		9CCC0BE3E1A3096BE1CA1D2A /* SettingsSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F19A35474E4037E0FA89C11 /* SettingsSync.swift */; };
 		9FF4F789DCC989C692245A1E /* ZipArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C90CCF74C3909B300CD6ADA /* ZipArchive.swift */; };
+		A21E1A14A146E7B6DB329A03 /* BabelShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 436268EE6ECDBE5287C67F41 /* BabelShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A5268CAFFA9B82692662DA5A /* AO3Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63E22E5889EBD4EC8319283 /* AO3Service.swift */; };
 		A6A4CC3337ADB6898736C49C /* GutenbergService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D5EC56C7C09627597A997A /* GutenbergService.swift */; };
 		AAB21C33EEE1D5A559BDF51F /* VolumeKeyScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40635D758914BA1C4099AA11 /* VolumeKeyScroller.swift */; };
@@ -77,6 +81,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		140232DC269C5FAE455BCB79 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E0186F5923D39B3AEC6BE9FA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 16B67F2CE73E82DA8A86B374;
+			remoteInfo = BabelShare;
+		};
 		30387148CDF2AA1C8545576F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E0186F5923D39B3AEC6BE9FA /* Project object */;
@@ -85,6 +96,20 @@
 			remoteInfo = Babel;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DB706A057ECCA7EAB7661CB6 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A21E1A14A146E7B6DB329A03 /* BabelShare.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		02E2AADD6B677DDA1151EAA3 /* UpdateNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateNotifier.swift; sourceTree = "<group>"; };
@@ -95,6 +120,7 @@
 		1C90CCF74C3909B300CD6ADA /* ZipArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipArchive.swift; sourceTree = "<group>"; };
 		1E1811B210919E19E1A46579 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		2C7B1EB0D39B83A1E7B0DA4B /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		2CFDC77AC0B976AA13269DC2 /* ShareInbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareInbox.swift; sourceTree = "<group>"; };
 		2E73558FBBF43221AE5B9C59 /* FFNViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFNViews.swift; sourceTree = "<group>"; };
 		3038A35919D0B5A3CFE1089F /* CookieSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieSync.swift; sourceTree = "<group>"; };
 		370D9AD0B044F7C14B9EFC45 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = AppIcon.icon; sourceTree = "<group>"; };
@@ -105,6 +131,9 @@
 		40635D758914BA1C4099AA11 /* VolumeKeyScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeKeyScroller.swift; sourceTree = "<group>"; };
 		42D657FB996B8337736AC567 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
 		43258D30B4D0134B7E85AF1E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		436268EE6ECDBE5287C67F41 /* BabelShare.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = BabelShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4885BC8C1B4A8B38121276A4 /* BabelShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BabelShare.entitlements; sourceTree = "<group>"; };
+		49C5949B5223E37E735E1214 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		4AD8775395A2F517D1783152 /* CustomThemeEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomThemeEditor.swift; sourceTree = "<group>"; };
 		4F36E912808577F801A99812 /* SiteActionsBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteActionsBar.swift; sourceTree = "<group>"; };
 		50DFFB30CE2C2C950703DA46 /* BookSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookSources.swift; sourceTree = "<group>"; };
@@ -132,6 +161,7 @@
 		A15972F4CF954A00C4626453 /* RoyalRoadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoyalRoadService.swift; sourceTree = "<group>"; };
 		A5E4B292B7D3EF9704ECECBB /* AccountViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViews.swift; sourceTree = "<group>"; };
 		A63E22E5889EBD4EC8319283 /* AO3Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AO3Service.swift; sourceTree = "<group>"; };
+		A683757C97B65B9411B1EAF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B137B250669CB9386DF8B274 /* RoyalRoadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoyalRoadView.swift; sourceTree = "<group>"; };
 		B9220F5639846657A95CE62C /* CommentsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsService.swift; sourceTree = "<group>"; };
 		BB92BE6E37EEC3F7C16169F1 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
@@ -306,6 +336,7 @@
 				CBBC815BF1AF17E43E24B9C1 /* ReadAloudPlayer.swift */,
 				A15972F4CF954A00C4626453 /* RoyalRoadService.swift */,
 				7F19A35474E4037E0FA89C11 /* SettingsSync.swift */,
+				2CFDC77AC0B976AA13269DC2 /* ShareInbox.swift */,
 				6CF4A2B483A4EA551516477A /* SiteActions.swift */,
 				6D5F267654EB4E8058B29DB5 /* SiteStatus.swift */,
 				02E2AADD6B677DDA1151EAA3 /* UpdateNotifier.swift */,
@@ -319,6 +350,7 @@
 			isa = PBXGroup;
 			children = (
 				A08665C99E1FA1B78B3A47B4 /* Babel.app */,
+				436268EE6ECDBE5287C67F41 /* BabelShare.appex */,
 				FC23CE261C0C80C3526D2138 /* BabelTests.xctest */,
 			);
 			name = Products;
@@ -347,6 +379,16 @@
 				1D5CCF828629D34D7ED277A7 /* Settings */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		BD60F49AD067E55A70109766 /* BabelShare */ = {
+			isa = PBXGroup;
+			children = (
+				4885BC8C1B4A8B38121276A4 /* BabelShare.entitlements */,
+				A683757C97B65B9411B1EAF3 /* Info.plist */,
+				49C5949B5223E37E735E1214 /* ShareViewController.swift */,
+			);
+			path = BabelShare;
 			sourceTree = "<group>";
 		};
 		C35AE1A040B1B19672D87300 /* Library */ = {
@@ -392,6 +434,7 @@
 			isa = PBXGroup;
 			children = (
 				01896666F3F0AF8939C21D0A /* Babel */,
+				BD60F49AD067E55A70109766 /* BabelShare */,
 				A77F9F1406D98A0A22E9BDF6 /* BabelTests */,
 				B7733768726A58F635540918 /* Products */,
 			);
@@ -400,6 +443,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		16B67F2CE73E82DA8A86B374 /* BabelShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 94DE94185FCB3120B50833E3 /* Build configuration list for PBXNativeTarget "BabelShare" */;
+			buildPhases = (
+				1908F7F3B1D9A60A726577D3 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BabelShare;
+			packageProductDependencies = (
+			);
+			productName = BabelShare;
+			productReference = 436268EE6ECDBE5287C67F41 /* BabelShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		2229CFEB75F72978A7D8C81B /* Babel */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 30BC9E13D325284AE00C684E /* Build configuration list for PBXNativeTarget "Babel" */;
@@ -407,10 +467,12 @@
 				53BE79D2E038C3F3E19E6651 /* Sources */,
 				C0AFD6E6B5516B4EBC8D791F /* Resources */,
 				D5CF8EB0D7E5D38CDDA7B1BD /* Frameworks */,
+				DB706A057ECCA7EAB7661CB6 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				48C9219849B44B40BBF1C5F2 /* PBXTargetDependency */,
 			);
 			name = Babel;
 			packageProductDependencies = (
@@ -448,6 +510,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					16B67F2CE73E82DA8A86B374 = {
+						DevelopmentTeam = 6Y9DZT5MQZ;
+						ProvisioningStyle = Automatic;
+					};
 					2229CFEB75F72978A7D8C81B = {
 						DevelopmentTeam = 6Y9DZT5MQZ;
 						ProvisioningStyle = Automatic;
@@ -476,6 +542,7 @@
 			projectRoot = "";
 			targets = (
 				2229CFEB75F72978A7D8C81B /* Babel */,
+				16B67F2CE73E82DA8A86B374 /* BabelShare */,
 				8316D62F8B94C6107D5B6184 /* BabelTests */,
 			);
 		};
@@ -508,6 +575,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1908F7F3B1D9A60A726577D3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1EDA687F41CF885A5E6F6BDB /* ShareInbox.swift in Sources */,
+				5AE390A5F5371A483D56F3C8 /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		53BE79D2E038C3F3E19E6651 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -555,6 +631,7 @@
 				87D3C9681D591E2A5554E972 /* SearchDefaults.swift in Sources */,
 				9CCC0BE3E1A3096BE1CA1D2A /* SettingsSync.swift in Sources */,
 				95CB4B7D63C5E17F931D5A68 /* SettingsView.swift in Sources */,
+				11127A47F4FFE706E5F33D18 /* ShareInbox.swift in Sources */,
 				BE4678BF2F067DB105FA24D9 /* SiteActions.swift in Sources */,
 				504B46D6883EEE25172828B5 /* SiteActionsBar.swift in Sources */,
 				5467B896E90DCB36482435C9 /* SiteStatus.swift in Sources */,
@@ -582,6 +659,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		48C9219849B44B40BBF1C5F2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 16B67F2CE73E82DA8A86B374 /* BabelShare */;
+			targetProxy = 140232DC269C5FAE455BCB79 /* PBXContainerItemProxy */;
+		};
 		F41FA02E7C80353CFC33FAA5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2229CFEB75F72978A7D8C81B /* Babel */;
@@ -598,7 +680,6 @@
 				CODE_SIGN_ENTITLEMENTS = Babel/Babel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 88;
 				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Support/Info.plist;
@@ -612,7 +693,6 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 0.33.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app;
 				PRODUCT_NAME = Babel;
 				SDKROOT = iphoneos;
@@ -656,6 +736,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 89;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -674,6 +755,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.34.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -704,6 +786,28 @@
 			};
 			name = Release;
 		};
+		4202DAEB7F90EEBE868FF424 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = BabelShare/BabelShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BabelShare/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app.share;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) BABEL_SHARE_EXTENSION";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		51C687FF909C2D9870D15F9A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -712,7 +816,6 @@
 				CODE_SIGN_ENTITLEMENTS = Babel/Babel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 88;
 				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Support/Info.plist;
@@ -726,7 +829,6 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 0.33.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app;
 				PRODUCT_NAME = Babel;
 				SDKROOT = iphoneos;
@@ -752,6 +854,28 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Babel.app/Babel";
+			};
+			name = Debug;
+		};
+		86B1F238C7DEA072DAE16485 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = BabelShare/BabelShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6Y9DZT5MQZ;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BabelShare/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = de.babelreader.app.share;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) BABEL_SHARE_EXTENSION";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -789,6 +913,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 89;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -801,6 +926,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.34.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -837,6 +963,15 @@
 			buildConfigurations = (
 				10368BE2C423C4683D3B4E74 /* Debug */,
 				D2B88488B6C6936947BC8536 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		94DE94185FCB3120B50833E3 /* Build configuration list for PBXNativeTarget "BabelShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86B1F238C7DEA072DAE16485 /* Debug */,
+				4202DAEB7F90EEBE868FF424 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

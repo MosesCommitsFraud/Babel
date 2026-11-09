@@ -5713,6 +5713,36 @@
           }
         }
       }
+    },
+    "Geteilter Link noch nicht geladen: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared link not loaded yet: %@"
+          }
+        }
+      }
+    },
+    "Geteiltes konnte nicht übernommen werden: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't add the shared item: %@"
+          }
+        }
+      }
+    },
+    "%lld geteilte Titel in der Bibliothek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld shared titles added to your library"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
