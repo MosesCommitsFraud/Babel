@@ -8,7 +8,7 @@ final class SettingsSync {
 
     private static let keys = [
         "reader.theme", "reader.font", "reader.fontSize", "reader.lineHeight", "reader.margin",
-        "reader.justify", "reader.paragraphSpacing", ReaderDefaults.pagedKey, ReaderDefaults.curlKey, VolumeKeyScroller.settingKey,
+        "reader.justify", "reader.paragraphSpacing", ReaderDefaults.pagedKey, ReaderDefaults.curlKey, HighlightSettings.key, VolumeKeyScroller.settingKey,
         AppTheme.lightKey, AppTheme.darkKey, AppearanceMode.key, ThemeCatalog.customKey,
         DefaultRating.key, StoryLanguage.key, "search.history", "ffn.pinned", "ffn.savedFilters", "ffn.searchMatch",
         "ao3.savedSearches", "library.sort", OPDSCatalogStore.key, "royalroad.list", "checkUpdatesOnLaunch", "readAloud.rate",

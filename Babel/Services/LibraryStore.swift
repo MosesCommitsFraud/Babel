@@ -7,7 +7,7 @@ import CoreData
 /// Öffnet die Bibliothek: dieselbe Datei wie immer (`default.store`), abgeglichen über die private iCloud-Datenbank.
 /// Ohne iCloud-Konto bleibt alles lokal; meldet sich jemand später an, lädt iOS die Bibliothek nach oben.
 enum LibraryStore {
-    static let schema = Schema([Story.self, Shelf.self])
+    static let schema = Schema([Story.self, Shelf.self, Highlight.self])
     /// Muss zu `com.apple.developer.icloud-container-identifiers` in `project.yml` passen.
     static let containerID = "iCloud.de.babelreader.app"
 
@@ -83,7 +83,7 @@ enum LibraryStore {
     private static func initializeCloudKitSchemaAndExit() -> Never {
         let store = FileManager.default.temporaryDirectory.appendingPathComponent("schema-\(UUID().uuidString).store")
         do {
-            guard let model = NSManagedObjectModel.makeManagedObjectModel(for: [Story.self, Shelf.self]) else {
+            guard let model = NSManagedObjectModel.makeManagedObjectModel(for: [Story.self, Shelf.self, Highlight.self]) else {
                 throw CocoaError(.coreData)
             }
             let description = NSPersistentStoreDescription(url: store)

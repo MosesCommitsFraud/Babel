@@ -16,6 +16,54 @@ final class ReaderModel {
     var showChrome = true
 
     @ObservationIgnored weak var pager: (any ReaderPaging)?
+    /// Markierungen und Notizen – nur, wenn in den Einstellungen eingeschaltet.
+    @ObservationIgnored let marksEnabled = HighlightSettings.isEnabled
+    /// Angetippte Markierung (öffnet Notiz/Löschen) bzw. frisch markierte Stellen, zu denen eine Notiz soll.
+    var openedMarks: MarkSelection?
+
+    struct MarkSelection: Identifiable {
+        let id = UUID()
+        var highlights: [Highlight]
+        var chapter: Int
+    }
+
+    /// Markierungen eines Kapitels als JSON fürs Seitenskript.
+    func marksJSON(chapter: Int) -> String {
+        let items = HighlightSettings.all(for: story.key, in: story.modelContext).filter { $0.chapter == chapter }
+            .map { ["id": $0.syncID, "p": $0.paragraph, "s": $0.start, "e": $0.end, "n": !$0.note.isEmpty] as [String: Any] }
+        let data = (try? JSONSerialization.data(withJSONObject: items)) ?? Data("[]".utf8)
+        return String(decoding: data, as: UTF8.self)
+    }
+
+    /// Auswahl aus dem Seitenskript speichern: je Absatz eine Markierung.
+    @discardableResult
+    func addMarks(_ parts: [[String: Any]], chapter: Int) -> [Highlight] {
+        guard let context = story.modelContext else { return [] }
+        var added: [Highlight] = []
+        for part in parts {
+            guard let paragraph = part["p"] as? Int, let start = part["s"] as? Int, let end = part["e"] as? Int,
+                  let text = part["t"] as? String, end > start else { continue }
+            let highlight = Highlight(storyKey: story.key, chapter: chapter, paragraph: paragraph, start: start, end: end, text: text)
+            context.insert(highlight)
+            added.append(highlight)
+        }
+        try? context.save()
+        pager?.applyMarks()
+        return added
+    }
+
+    func deleteMarks(_ highlights: [Highlight]) {
+        guard let context = story.modelContext else { return }
+        for highlight in highlights { context.delete(highlight) }
+        try? context.save()
+        pager?.applyMarks()
+    }
+
+    func marksChanged() {
+        try? story.modelContext?.save()
+        pager?.applyMarks()
+    }
+
     /// Es gab schon eine Seitenansicht – eine neue (anderer Blättermodus) macht an der aktuellen Stelle weiter.
     @ObservationIgnored var hadPager = false
     @ObservationIgnored var css = ""
@@ -65,6 +113,12 @@ final class ReaderModel {
     func jump(to index: Int) {
         guard index >= 0, index < max(chapterCount, 1), index != chapterIndex else { return }
         pager?.show(index, restore: nil)
+    }
+
+    /// Zu einem Absatz springen (Markierung aus der Liste) – auch im schon offenen Kapitel.
+    func jump(to index: Int, anchor: Double) {
+        guard index >= 0, index < max(chapterCount, 1) else { return }
+        pager?.show(index, anchor: anchor)
     }
 
     func retry() {
@@ -118,6 +172,10 @@ final class ReaderModel {
             if let page = message["page"] as? Int { pager?.turn(toPage: page, chapter: index) }
         case "layout":
             pager?.layoutChanged(chapter: index)
+        case "mark":
+            guard let ids = message["ids"] as? [String], !ids.isEmpty else { break }
+            let found = HighlightSettings.all(for: story.key, in: story.modelContext).filter { ids.contains($0.syncID) }
+            if !found.isEmpty { openedMarks = MarkSelection(highlights: found, chapter: index) }
         case "speakFrom":
             if let paragraph = message["paragraph"] as? Int { onSpeakFrom?(index, paragraph) }
         default:
@@ -295,6 +353,63 @@ final class ReaderModel {
             window.scrollTo(0, Math.max(0, window.scrollY + r.top + frac * r.height));
             return true;
           };
+          // Markierungen: Zeichenbereiche in Absätzen, gezeichnet über CSS Custom Highlights (ändert das HTML nicht).
+          var markRanges = [];
+          var rangeIn = function(el, start, end){
+            var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), pos = 0, r = document.createRange(), open = false;
+            while (walker.nextNode()) {
+              var n = walker.currentNode, len = n.nodeValue.length;
+              if (!open && start < pos + len) { r.setStart(n, Math.max(0, start - pos)); open = true; }
+              if (open && end <= pos + len) { r.setEnd(n, Math.max(0, end - pos)); return r; }
+              pos += len;
+            }
+            if (open) { r.setEndAfter(el.lastChild); return r; }
+            return null;
+          };
+          window.babelSetMarks = function(items){
+            markRanges = [];
+            if (!(window.CSS && CSS.highlights)) return;
+            var plain = [], noted = [], list = window.babelBlocks();
+            items.forEach(function(m){
+              if (m.p < 0 || m.p >= list.length) return;
+              var r = rangeIn(list[m.p], m.s, m.e);
+              if (!r) return;
+              markRanges.push({ id: m.id, range: r });
+              (m.n ? noted : plain).push(r);
+            });
+            if (plain.length) CSS.highlights.set('babel-mark', new Highlight(...plain)); else CSS.highlights.delete('babel-mark');
+            if (noted.length) CSS.highlights.set('babel-note', new Highlight(...noted)); else CSS.highlights.delete('babel-note');
+          };
+          // Aktuelle Auswahl als Stücke je Absatz: [{p, s, e, t}].
+          window.babelSelectionParts = function(){
+            var sel = window.getSelection();
+            if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return [];
+            var range = sel.getRangeAt(0), list = window.babelBlocks(), parts = [];
+            for (var i = 0; i < list.length; i++) {
+              var el = list[i];
+              if (!range.intersectsNode(el)) continue;
+              var whole = document.createRange(); whole.selectNodeContents(el);
+              var from = range.compareBoundaryPoints(Range.START_TO_START, whole) > 0 ? range : whole;
+              var to = range.compareBoundaryPoints(Range.END_TO_END, whole) < 0 ? range : whole;
+              var before = document.createRange(); before.selectNodeContents(el); before.setEnd(from.startContainer, from.startOffset);
+              var inside = document.createRange(); inside.setStart(from.startContainer, from.startOffset); inside.setEnd(to.endContainer, to.endOffset);
+              var s = before.toString().length, t = inside.toString();
+              if (t.trim().length) parts.push({ p: i, s: s, e: s + t.length, t: t });
+            }
+            sel.removeAllRanges();
+            return parts;
+          };
+          var marksAt = function(x, y){
+            var ids = [];
+            markRanges.forEach(function(m){
+              var rects = m.range.getClientRects();
+              for (var k = 0; k < rects.length; k++) {
+                var r = rects[k];
+                if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) { ids.push(m.id); break; }
+              }
+            });
+            return ids;
+          };
           window.babelFirstVisible = function(){
             var list = window.babelBlocks(), top = 110, w = window.innerWidth;
             for (var i = 0; i < list.length; i++) {
@@ -350,6 +465,11 @@ final class ReaderModel {
           document.addEventListener('click', function(e){
             if (e.target.closest('a, button, input, select, textarea')) return;
             if ((window.getSelection() + '').length > 0) return;
+            // Tippen auf eine Markierung öffnet sie (Notiz, Löschen).
+            if (markRanges.length) {
+              var hit = marksAt(e.clientX, e.clientY);
+              if (hit.length) { post({ type: 'mark', ids: hit }); return; }
+            }
             // Beim Vorlesen springt ein Tipp auf einen Absatz dorthin.
             if (window.babelReadAloud) {
               var list = window.babelBlocks();
@@ -499,6 +619,9 @@ struct ReaderView: View {
                 .presentationDetents([.medium, .large])
                 .presentationBackgroundInteraction(.enabled(upThrough: .medium))
         }
+        .sheet(item: Binding(get: { model.openedMarks }, set: { model.openedMarks = $0 })) { selection in
+            MarkSheet(selection: selection, model: model)
+        }
         .sheet(isPresented: $showChapters) {
             ChapterListSheet(model: model)
                 .presentationDetents([.medium, .large])
@@ -514,10 +637,14 @@ struct ReaderView: View {
                     }
             }
             // „Lesen“ oder ein Kapitel auf der Storyseite springt im offenen Reader dorthin.
-            .environment(\.readerJump, ReaderJump { chapter in
-                showDetail = false
-                if let chapter { model.jump(to: chapter) }
-            })
+            .environment(\.readerJump, {
+                var jump = ReaderJump { chapter in
+                    showDetail = false
+                    if let chapter { model.jump(to: chapter) }
+                }
+                jump.jumpToAnchor = { chapter, paragraph in model.jump(to: chapter, anchor: paragraph) }
+                return jump
+            }())
         }
         .onChange(of: style.css) { _, css in model.applyCSS(css) }
         .onChange(of: scenePhase) { _, phase in
@@ -717,6 +844,8 @@ final class WeakScriptHandler: NSObject, WKScriptMessageHandler {
 /// Aus dem Reader geöffnete Storyseite: „Lesen“/Kapitel springt im offenen Reader, statt ihn neu zu öffnen.
 struct ReaderJump {
     let jump: (Int?) -> Void
+    /// Zu einem Absatz eines Kapitels (Markierungen).
+    var jumpToAnchor: ((_ chapter: Int, _ paragraph: Double) -> Void)?
     init(_ jump: @escaping (Int?) -> Void) { self.jump = jump }
 }
 

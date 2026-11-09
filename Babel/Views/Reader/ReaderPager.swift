@@ -55,6 +55,8 @@ struct ReaderPager: UIViewControllerRepresentable {
 protocol ReaderPaging: AnyObject {
     /// Zu einem Kapitel wechseln. `restore`: Stelle im Zielkapitel (0…1), z. B. 1 = letzte Seite beim Zurückblättern.
     func show(_ index: Int, restore: Double?)
+    /// Zu einem Absatz eines Kapitels wechseln.
+    func show(_ index: Int, anchor: Double)
     func reloadCurrent()
     func applySpeech()
     func firstVisibleParagraph(_ completion: @escaping (Int) -> Void)
@@ -65,6 +67,8 @@ protocol ReaderPaging: AnyObject {
     func turn(_ direction: Int)
     func turn(toPage page: Int, chapter: Int)
     func layoutChanged(chapter: Int)
+    /// Markierungen auf allen geladenen Kapitelseiten neu zeichnen.
+    func applyMarks()
 }
 
 extension ReaderPaging {
@@ -120,6 +124,17 @@ final class ReaderPagerCoordinator: NSObject, ReaderPaging, UIPageViewController
 
     // MARK: Navigation
 
+    func show(_ index: Int, anchor: Double) {
+        if index == model.chapterIndex {
+            pages[index]?.jump(toAnchor: anchor)
+        } else {
+            // Die Seite neu anlegen, damit sie gleich am Absatz aufgeht.
+            pages[index] = nil
+            _ = page(index, restore: 0, anchor: anchor)
+            show(index, restore: nil)
+        }
+    }
+
     /// Zu einem Kapitel blättern (Knöpfe, Kapitelliste, Rand beim seitenweisen Blättern).
     /// `restore`: Stelle im Zielkapitel (0…1), z. B. 1 = letzte Seite beim Zurückblättern.
     func show(_ index: Int, restore: Double?) {
@@ -147,6 +162,10 @@ final class ReaderPagerCoordinator: NSObject, ReaderPaging, UIPageViewController
     /// Vorlese-Markierung auf alle geladenen Kapitelseiten übertragen.
     func applySpeech() {
         for page in pages.values { page.applySpeech() }
+    }
+
+    func applyMarks() {
+        for page in pages.values { page.applyMarks() }
     }
 
     /// Erster sichtbarer Absatz des aktuellen Kapitels (Start fürs Vorlesen).
@@ -233,7 +252,10 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         config.userContentController.add(WeakScriptHandler(self), name: "babel")
         for script in model.scripts(for: index) { config.userContentController.addUserScript(script) }
         config.dataDetectorTypes = []
-        let view = WKWebView(frame: .zero, configuration: config)
+        let view = ReaderWebView(frame: .zero, configuration: config)
+        if model.marksEnabled {
+            view.onMark = { [weak self] withNote in self?.markSelection(withNote: withNote) }
+        }
         view.navigationDelegate = self
         view.isOpaque = false
         view.backgroundColor = background
@@ -320,6 +342,22 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         webView.evaluateJavaScript(js, completionHandler: nil)
     }
 
+    func applyMarks() {
+        guard isReady, model.marksEnabled else { return }
+        webView.evaluateJavaScript("window.babelSetMarks && window.babelSetMarks(\(model.marksJSON(chapter: index))); true", completionHandler: nil)
+    }
+
+    /// Auswahl markieren (aus dem Menü über dem markierten Text), auf Wunsch gleich mit Notiz.
+    private func markSelection(withNote: Bool) {
+        webView.evaluateJavaScript("window.babelSelectionParts ? window.babelSelectionParts() : []") { [weak self] result, _ in
+            guard let self, let parts = result as? [[String: Any]], !parts.isEmpty else { return }
+            let added = self.model.addMarks(parts, chapter: self.index)
+            if withNote, !added.isEmpty {
+                self.model.openedMarks = ReaderModel.MarkSelection(highlights: added, chapter: self.index)
+            }
+        }
+    }
+
     func firstVisibleParagraph(_ completion: @escaping (Int) -> Void) {
         webView.evaluateJavaScript("window.babelFirstVisible ? window.babelFirstVisible() : 0") { result, _ in
             completion((result as? NSNumber)?.intValue ?? 0)
@@ -332,6 +370,11 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         progress = fraction
         anchor = nil
         if isReady { scroll(to: fraction, anchor: nil) }
+    }
+
+    func jump(toAnchor value: Double) {
+        anchor = value
+        if isReady { scroll(to: restore, anchor: value) }
     }
 
     /// Zum Absatz-Anker, sonst (oder wenn es den Absatz nicht gibt) zum Bruchteil.
@@ -369,6 +412,7 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         isWaiting = false
         model.pageState(index, loading: false, error: nil)
         applySpeech()
+        applyMarks()
         onReady?()
         guard target > 0 || targetAnchor != nil else { return }
         Task { [weak self] in
@@ -407,5 +451,20 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         } else {
             model.handle(message: body, from: index)
         }
+    }
+}
+
+/// WKWebView des Readers: ergänzt das Menü über markiertem Text um „Markieren“ und „Notiz“,
+/// wenn Markierungen in den Einstellungen eingeschaltet sind.
+final class ReaderWebView: WKWebView {
+    /// `true` = gleich mit Notiz. Nicht gesetzt = Markierungen aus, das Menü bleibt wie von iOS.
+    var onMark: ((Bool) -> Void)?
+
+    override func buildMenu(with builder: any UIMenuBuilder) {
+        super.buildMenu(with: builder)
+        guard let onMark else { return }
+        let mark = UIAction(title: String(localized: "Markieren"), image: UIImage(systemName: "highlighter")) { _ in onMark(false) }
+        let note = UIAction(title: String(localized: "Notiz"), image: UIImage(systemName: "note.text")) { _ in onMark(true) }
+        builder.insertChild(UIMenu(options: .displayInline, children: [mark, note]), atStartOfMenu: .standardEdit)
     }
 }

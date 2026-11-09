@@ -114,6 +114,8 @@ struct ReaderStyle {
         p { margin: 0 0 \(paragraphSpacing)em 0 !important; }
         img, svg, video { max-width: 100% !important; height: auto !important; }
         a { color: \(theme.link) !important; }
+        ::highlight(babel-mark) { background-color: \(theme.colorScheme == .dark ? "rgba(255, 214, 10, .30)" : "rgba(255, 204, 0, .38)"); }
+        ::highlight(babel-note) { background-color: \(theme.colorScheme == .dark ? "rgba(255, 214, 10, .30)" : "rgba(255, 204, 0, .38)"); text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; }
         ::highlight(babel-speech) { background-color: \(theme.link)38; }
         body .babel-speaking-fallback { background-color: \(theme.link)22 !important; border-radius: 4px; }
         h1, h2, h3, h4 { line-height: 1.25 !important; text-align: start !important; }

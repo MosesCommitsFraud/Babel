@@ -7,6 +7,7 @@ struct SettingsView: View {
     @Environment(\.modelContext) private var context
     @Environment(LibraryManager.self) private var library
     @AppStorage("checkUpdatesOnLaunch") private var checkUpdatesOnLaunch = true
+    @AppStorage(HighlightSettings.key) private var highlightsEnabled = false
     @AppStorage(DefaultRating.key) private var defaultRating: DefaultRating = .all
     @AppStorage(StoryLanguage.key) private var defaultLanguage = ""
 
@@ -144,9 +145,16 @@ struct SettingsView: View {
 
                 CloudSyncSection()
 
-                Section("Lesen") {
+                Section {
                     NavigationLink("Darstellung im Reader") {
                         Form { ReaderSettingsControls() }.navigationTitle("Darstellung")
+                    }
+                    Toggle("Markierungen und Notizen", isOn: $highlightsEnabled)
+                } header: {
+                    Text("Lesen")
+                } footer: {
+                    if highlightsEnabled {
+                        Text("Text im Reader markieren und im Menü „Markieren“ oder „Notiz“ wählen. Tippen auf eine Markierung öffnet sie. Alle Markierungen einer Geschichte stehen auf ihrer Detailseite.")
                     }
                 }
                 .themedRows()

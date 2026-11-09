@@ -83,6 +83,7 @@ final class LibraryManager {
 
     func delete(_ story: Story, context: ModelContext) {
         ContentStore.deleteContent(of: story)
+        HighlightSettings.deleteAll(for: story.key, in: context)
         context.delete(story)
         try? context.save()
     }
@@ -98,6 +99,7 @@ final class LibraryManager {
         let descriptor = FetchDescriptor<Story>(predicate: #Predicate { !$0.inLibrary })
         for story in (try? context.fetch(descriptor)) ?? [] {
             ContentStore.deleteContent(of: story)
+            HighlightSettings.deleteAll(for: story.key, in: context)
             context.delete(story)
         }
         try? context.save()

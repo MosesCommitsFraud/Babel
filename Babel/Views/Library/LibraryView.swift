@@ -458,6 +458,7 @@ struct LibrarySwipeActions: ViewModifier {
         story.viewedAt = nil
         story.lastOpenedAt = nil
         story.userRemoved = true
+        HighlightSettings.deleteAll(for: story.key, in: context)
         try? context.save()
     }
 

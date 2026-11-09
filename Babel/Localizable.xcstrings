@@ -5753,6 +5753,106 @@
           }
         }
       }
+    },
+    "Markieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highlight"
+          }
+        }
+      }
+    },
+    "Notiz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
+          }
+        }
+      }
+    },
+    "Markierung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highlight"
+          }
+        }
+      }
+    },
+    "Dein Gedanke dazu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your thoughts"
+          }
+        }
+      }
+    },
+    "Markierung löschen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Highlight"
+          }
+        }
+      }
+    },
+    "Markierungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highlights"
+          }
+        }
+      }
+    },
+    "Noch keine Markierungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Highlights Yet"
+          }
+        }
+      }
+    },
+    "Markiere im Reader Text und wähle „Markieren“ oder „Notiz“." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select text in the reader and choose “Highlight” or “Note”."
+          }
+        }
+      }
+    },
+    "Markierungen und Notizen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highlights and Notes"
+          }
+        }
+      }
+    },
+    "Text im Reader markieren und im Menü „Markieren“ oder „Notiz“ wählen. Tippen auf eine Markierung öffnet sie. Alle Markierungen einer Geschichte stehen auf ihrer Detailseite." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select text in the reader and choose “Highlight” or “Note” from the menu. Tap a highlight to open it. All highlights of a story are listed on its detail page."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

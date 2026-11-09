@@ -38,6 +38,7 @@ struct StoryDetailView: View {
                 if !story.summary.isEmpty { summary }
                 tagSections
                 if story.source.hasCommunityPages { commentsLink }
+                HighlightsLink(story: story) { open(at: $0) }
                 chapters
             }
             .padding(.horizontal)
@@ -504,6 +505,19 @@ struct StoryDetailView: View {
     }
 
     // MARK: - Aktionen
+
+    /// Markierung im Reader öffnen: Die Lesestelle springt auf ihren Absatz.
+    private func open(at highlight: Highlight) {
+        story.currentChapter = highlight.chapter
+        story.setPosition(progress: 0, anchor: Double(highlight.paragraph))
+        try? context.save()
+        if let readerJump {
+            readerJump.jumpToAnchor?(highlight.chapter, Double(highlight.paragraph))
+            readerJump.jump(nil)
+        } else {
+            reader.open(story)
+        }
+    }
 
     private func open(at chapter: Int?) {
         if let readerJump {

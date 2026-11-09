@@ -349,6 +349,16 @@ final class BookPagerController: UIViewController, ReaderPaging, UIPageViewContr
         open(index, restore: restore, anchor: nil, replacePosition: true)
     }
 
+    func show(_ index: Int, anchor: Double) {
+        guard index >= 0, index < model.chapterCount else { return }
+        if let existing = chapters[index] {
+            existing.jump(toAnchor: anchor)
+            open(index, restore: nil, anchor: anchor, replacePosition: false)
+        } else {
+            open(index, restore: 0, anchor: anchor, replacePosition: false)
+        }
+    }
+
     func turn(_ direction: Int) {
         guard !isAnimating, let leaf = pageController.viewControllers?.first as? BookLeaf,
               let key = direction > 0 ? key(after: leaf) : key(before: leaf) else { return }
@@ -392,6 +402,12 @@ final class BookPagerController: UIViewController, ReaderPaging, UIPageViewContr
 
     func applySpeech() {
         for controller in chapters.values { controller.applySpeech() }
+    }
+
+    func applyMarks() {
+        for controller in chapters.values { controller.applyMarks() }
+        // Die Seitenbilder zeigen die Markierung sonst erst nach dem nächsten Blättern.
+        scheduleRefresh()
     }
 
     func firstVisibleParagraph(_ completion: @escaping (Int) -> Void) {
