@@ -8,16 +8,36 @@ struct OPDSCatalog: Codable, Hashable, Identifiable, Sendable {
     var title: String
     var url: URL
     var about: String = ""
+    /// Sprachen des Katalogs (ISO, klein), falls bekannt – leer = gemischt oder unbekannt, wird nie ausgeblendet.
+    var languages: [String] = []
     var id: String { url.absoluteString }
+
+    init(title: String, url: URL, about: String = "", languages: [String] = []) {
+        self.title = title
+        self.url = url
+        self.about = about
+        self.languages = languages
+    }
+
+    // Eigener Decoder: Gespeicherte Kataloge aus älteren Versionen kennen `languages` nicht.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        title = try c.decode(String.self, forKey: .title)
+        url = try c.decode(URL.self, forKey: .url)
+        about = try c.decodeIfPresent(String.self, forKey: .about) ?? ""
+        languages = try c.decodeIfPresent([String].self, forKey: .languages) ?? []
+    }
 
     /// Geprüfte, frei zugängliche Kataloge als Vorschlag.
     static let suggestions: [OPDSCatalog] = [
         OPDSCatalog(title: "Unglue.it", url: URL(string: "https://unglue.it/api/opds/")!,
                     about: String(localized: "Neuere Bücher unter freier Lizenz (Creative Commons), dazu frei zugängliche Sach- und Fachbücher.")),
         OPDSCatalog(title: "Ebooks libres et gratuits", url: URL(string: "https://www.ebooksgratuits.com/opds/")!,
-                    about: String(localized: "Französische Klassiker, sorgfältig aufbereitet.")),
+                    about: String(localized: "Französische Klassiker, sorgfältig aufbereitet."), languages: ["fr"]),
+        OPDSCatalog(title: "textos.info", url: URL(string: "https://www.textos.info/catalogo.atom")!,
+                    about: String(localized: "Spanischsprachige Literatur, frei zugänglich."), languages: ["es"]),
         OPDSCatalog(title: "Wolne Lektury", url: URL(string: "https://wolnelektury.pl/opds/")!,
-                    about: String(localized: "Polnische Literatur, frei zugänglich.")),
+                    about: String(localized: "Polnische Literatur, frei zugänglich."), languages: ["pl"]),
     ]
 }
 

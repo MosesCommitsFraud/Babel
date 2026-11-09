@@ -5893,6 +5893,46 @@
           }
         }
       }
+    },
+    "Spanischsprachige Literatur, frei zugänglich." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spanish-language literature, freely available."
+          }
+        }
+      }
+    },
+    "%lld Sprachen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld languages"
+          }
+        }
+      }
+    },
+    "Sprachen der Bücher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Book languages"
+          }
+        }
+      }
+    },
+    "Nicht in deinen Lesesprachen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not in your reading languages"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

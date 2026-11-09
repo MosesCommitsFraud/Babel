@@ -11,7 +11,7 @@ final class SettingsSync {
         "reader.justify", "reader.paragraphSpacing", ReaderDefaults.pagedKey, ReaderDefaults.curlKey, HighlightSettings.key, VolumeKeyScroller.settingKey,
         AppTheme.lightKey, AppTheme.darkKey, AppearanceMode.key, ThemeCatalog.customKey,
         DefaultRating.key, StoryLanguage.key, "search.history", "ffn.pinned", "ffn.savedFilters", "ffn.searchMatch",
-        "ao3.savedSearches", "library.sort", OPDSCatalogStore.key, "royalroad.list", "checkUpdatesOnLaunch", "readAloud.rate",
+        "ao3.savedSearches", "library.sort", OPDSCatalogStore.key, BookLanguages.key, "royalroad.list", "checkUpdatesOnLaunch", "readAloud.rate",
     ]
 
     private let cloud = NSUbiquitousKeyValueStore.default

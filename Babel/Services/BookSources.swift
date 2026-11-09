@@ -246,3 +246,41 @@ enum ArchiveService {
         }
     }
 }
+
+/// In welchen Sprachen der Bücher-Tab Bücher zeigt. Folgt der Lesesprache aus den Einstellungen
+/// (`StoryLanguage`, nicht der Sprache der App), bis oben im Bücher-Tab etwas anderes gewählt wird.
+enum BookLanguages {
+    static let key = "books.languages"
+    /// Gespeicherter Wert für „alle Sprachen“ (leer hieße „noch nichts gewählt“).
+    static let allValue = "*"
+
+    /// Auswahl im Filter: was die Bibliotheken als Sprache kennen.
+    static let options: [LanguageOption] = GutenbergService.languages.filter { !$0.code.isEmpty } + [
+        .init(code: "pl", name: "Polski"), .init(code: "ru", name: "Русский"),
+        .init(code: "ja", name: "日本語"), .init(code: "zh", name: "中文"),
+    ]
+
+    /// ISO-Kürzel, klein, zweistellig. Leer = alle Sprachen.
+    static func codes(stored: String, reading: String) -> [String] {
+        if stored == allValue { return [] }
+        if !stored.isEmpty { return stored.split(separator: ",").map(String.init) }
+        // AO3 schreibt z. B. „ptBR“ – die Bibliotheken kennen nur „pt“.
+        let code = String(reading.prefix(2)).lowercased()
+        return code.isEmpty ? [] : [code]
+    }
+
+    static func stored(_ codes: [String]) -> String {
+        codes.isEmpty ? allValue : codes.joined(separator: ",")
+    }
+
+    /// Passt ein Buch zur Auswahl? Bücher ohne Sprachangabe bleiben – lieber eins zu viel als eins unterschlagen.
+    static func matches(_ story: RemoteStory, _ codes: [String]) -> Bool {
+        guard !codes.isEmpty else { return true }
+        let language = story.language.lowercased()
+        guard !language.isEmpty else { return true }
+        let names = ["english": "en", "deutsch": "de", "german": "de", "français": "fr", "french": "fr", "español": "es",
+                     "spanish": "es", "italiano": "it", "italian": "it", "polski": "pl", "polish": "pl"]
+        let code = names[language] ?? String(language.prefix(2))
+        return codes.contains(code)
+    }
+}

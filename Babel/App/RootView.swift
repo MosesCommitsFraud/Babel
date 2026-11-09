@@ -24,7 +24,7 @@ struct RootView: View {
 
         TabView(selection: $tab) {
             Tab("Bibliothek", systemImage: "books.vertical.fill", value: AppTab.library) {
-                NavigationStack { LibraryView().babelDestinations() }
+                NavigationStack { LibraryView().babelDestinations() }.layoutRoot()
             }
             Tab("AO3", systemImage: "archivebox.fill", value: AppTab.ao3) {
                 // Eigener Pfad: Die Filterwand schiebt die Ergebnisse als Wert auf den Stapel.
@@ -32,15 +32,16 @@ struct RootView: View {
                 NavigationStack(path: $ao3Path) {
                     AO3FilterWallView(path: $ao3Path).babelDestinations()
                 }
+                .layoutRoot()
             }
             Tab("FFN", systemImage: "text.book.closed.fill", value: AppTab.ffn) {
-                NavigationStack { FFNBrowseView().babelDestinations() }
+                NavigationStack { FFNBrowseView().babelDestinations() }.layoutRoot()
             }
             Tab("Bücher", systemImage: "building.columns.fill", value: AppTab.books) {
-                NavigationStack { BooksView().babelDestinations() }
+                NavigationStack { BooksView().babelDestinations() }.layoutRoot()
             }
             Tab("Suchen", systemImage: "magnifyingglass", value: AppTab.search, role: .search) {
-                NavigationStack { GlobalSearchView().babelDestinations() }
+                NavigationStack { GlobalSearchView().babelDestinations() }.layoutRoot()
             }
         }
         .tabBarMinimizeBehavior(.onScrollDown)

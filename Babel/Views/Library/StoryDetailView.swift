@@ -10,6 +10,8 @@ struct StoryDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.theme) private var theme
     @Environment(\.readerJump) private var readerJump
+    @Environment(\.layoutClass) private var layout
+    @Environment(\.layoutWidth) private var layoutWidth
     @Query(sort: \Shelf.createdAt) private var shelves: [Shelf]
 
     @State private var errorMessage: String?
@@ -25,27 +27,28 @@ struct StoryDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 22) {
-                header
-                VStack(spacing: 10) {
-                    actions
-                    // Direkt unter den Lesen-Knöpfen: was du auf AO3/FFN gesetzt hast.
-                    SiteActionsBar(story: story)
+            Group {
+                if layout == .wide {
+                    // iPad: zwei Spalten – links Kopf, Knöpfe und Angaben, rechts Text, Tags und Kapitel.
+                    HStack(alignment: .top, spacing: 32) {
+                        VStack(alignment: .leading, spacing: 22) { overview }
+                            .frame(width: min(440, layoutWidth * 0.42))
+                        VStack(alignment: .leading, spacing: 22) { content }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(.horizontal, 28)
+                    .frame(maxWidth: 1240)
+                } else {
+                    VStack(alignment: .leading, spacing: 22) {
+                        overview
+                        content
+                    }
+                    .padding(.horizontal)
+                    // Falt-iPhone: lesbare Breite in der Mitte.
+                    .frame(maxWidth: 760)
                 }
-                if !ratingItems.isEmpty { ratingBar }
-                if story.inLibrary { organize }
-                stats
-                if !story.summary.isEmpty { summary }
-                if let series = story.series { seriesLink(series) }
-                tagSections
-                if story.source.hasCommunityPages { commentsLink }
-                HighlightsLink(story: story) { open(at: $0) }
-                chapters
             }
-            .padding(.horizontal)
             .padding(.bottom, 40)
-            // iPad: lesbare Breite in der Mitte statt Karten über den ganzen Bildschirm.
-            .frame(maxWidth: 760)
             .frame(maxWidth: .infinity)
         }
         .background(theme.screen.ignoresSafeArea())
@@ -490,6 +493,29 @@ struct StoryDetailView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private var overview: some View {
+        header
+        VStack(spacing: 10) {
+            actions
+            // Direkt unter den Lesen-Knöpfen: was du auf AO3/FFN gesetzt hast.
+            SiteActionsBar(story: story)
+        }
+        if !ratingItems.isEmpty { ratingBar }
+        if story.inLibrary { organize }
+        stats
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if !story.summary.isEmpty { summary }
+        if let series = story.series { seriesLink(series) }
+        tagSections
+        if story.source.hasCommunityPages { commentsLink }
+        HighlightsLink(story: story) { open(at: $0) }
+        chapters
     }
 
     // MARK: - Toolbar

@@ -29,6 +29,8 @@ struct LibraryView: View {
     @Environment(LibraryManager.self) private var library
     @Environment(ReaderPresenter.self) private var reader
     @Environment(\.theme) private var theme
+    @Environment(\.layoutClass) private var layout
+    @Environment(\.layoutWidth) private var layoutWidth
 
     @Query(filter: #Predicate<Story> { $0.inLibrary }) private var stories: [Story]
     /// Verlauf = im Reader geöffnet. Nur die Detailseite anzusehen zählt nicht.
@@ -51,6 +53,77 @@ struct LibraryView: View {
     var body: some View {
         // Einmal pro Neuzeichnen filtern und sortieren – nicht für Liste und Hinweise je einzeln.
         let list = filtered
+        Group {
+            if layout == .wide { grid(list) } else { rows(list) }
+        }
+        // Eine Animation für jeden Filterwechsel – Chip, Filter-Sheet, Sortierung, Suche.
+        .animation(.snappy, value: filterState)
+        .themedBackground()
+        .navigationTitle("Bibliothek")
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Titel, Autor:in, Fandom, Pairing, Tag")
+        .refreshable { await library.checkAllUpdates(context: context) }
+        .toolbar { toolbarContent }
+        .fileImporter(isPresented: $showImporter, allowedContentTypes: [.epub], allowsMultipleSelection: true) { result in
+            importFiles(result)
+        }
+        .sheet(isPresented: $showLinkSheet) { LinkImportSheet() }
+        .sheet(isPresented: $showSettings) { SettingsView() }
+        .sheet(isPresented: $showQuery) {
+            LibraryFilterSheet(query: $query, stories: stories)
+        }
+        .alert("Neue Sammlung", isPresented: $showNewShelf) {
+            TextField("Name", text: $newShelfName)
+            Button("Abbrechen", role: .cancel) { newShelfName = "" }
+            Button("Anlegen") {
+                let name = newShelfName.trimmed
+                if !name.isEmpty { context.insert(Shelf(name: name)); try? context.save() }
+                newShelfName = ""
+            }
+        }
+        .alert("Fehler", isPresented: .constant(errorMessage != nil), presenting: errorMessage) { _ in
+            Button("OK") { errorMessage = nil }
+        } message: { Text($0) }
+    }
+
+    /// iPad: Karten in zwei oder drei Spalten statt einer Liste über die ganze Breite.
+    /// Wischgesten gibt es hier nicht – Lesen, Status, Favorit und Sammlungen stehen im Kontextmenü, Löschen auf der Detailseite.
+    private func grid(_ list: [Story]) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                filterBar
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16, alignment: .top), count: layoutWidth >= 1100 ? 3 : 2),
+                          spacing: 16) {
+                    ForEach(list) { story in
+                        NavigationLink(value: story) {
+                            StoryRow(
+                                story: story.asRemote,
+                                localCover: ContentStore.coverFileURL(story),
+                                progress: story.hasStarted ? story.overallProgress : nil,
+                                newChapters: story.newChapters,
+                                showSummary: true,
+                                showSource: true
+                            )
+                            .padding(16)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                            .background(theme.card, in: .rect(cornerRadius: 20))
+                            .contentShape(.rect(cornerRadius: 20))
+                        }
+                        .buttonStyle(.plain)
+                        .contextMenu { StoryContextMenu(story: story) }
+                    }
+                }
+                .padding(.horizontal)
+                if list.isEmpty {
+                    emptyHint
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 70)
+                }
+            }
+            .padding(.bottom, 24)
+        }
+    }
+
+    private func rows(_ list: [Story]) -> some View {
         List {
             Section {
                 ForEach(list) { story in
@@ -93,33 +166,6 @@ struct LibraryView: View {
 
         }
         .listStyle(.plain)
-        // Eine Animation für jeden Filterwechsel – Chip, Filter-Sheet, Sortierung, Suche.
-        .animation(.snappy, value: filterState)
-        .themedBackground()
-        .navigationTitle("Bibliothek")
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Titel, Autor:in, Fandom, Pairing, Tag")
-        .refreshable { await library.checkAllUpdates(context: context) }
-        .toolbar { toolbarContent }
-        .fileImporter(isPresented: $showImporter, allowedContentTypes: [.epub], allowsMultipleSelection: true) { result in
-            importFiles(result)
-        }
-        .sheet(isPresented: $showLinkSheet) { LinkImportSheet() }
-        .sheet(isPresented: $showSettings) { SettingsView() }
-        .sheet(isPresented: $showQuery) {
-            LibraryFilterSheet(query: $query, stories: stories)
-        }
-        .alert("Neue Sammlung", isPresented: $showNewShelf) {
-            TextField("Name", text: $newShelfName)
-            Button("Abbrechen", role: .cancel) { newShelfName = "" }
-            Button("Anlegen") {
-                let name = newShelfName.trimmed
-                if !name.isEmpty { context.insert(Shelf(name: name)); try? context.save() }
-                newShelfName = ""
-            }
-        }
-        .alert("Fehler", isPresented: .constant(errorMessage != nil), presenting: errorMessage) { _ in
-            Button("OK") { errorMessage = nil }
-        } message: { Text($0) }
     }
 
     // MARK: - Filter

@@ -9,6 +9,8 @@ struct BookSourceView: View {
     /// Suchbegriff, mit dem die Seite öffnet (aus der Suche über alle Quellen).
     var initialQuery = ""
     @AppStorage("books.filters") private var filtersData: Data = Data()
+    @AppStorage(BookLanguages.key) private var storedLanguages = ""
+    @AppStorage(StoryLanguage.key) private var readingLanguage = ""
 
     @State private var filters = GutenbergFilters()
     @State private var didLoadFilters = false
@@ -111,6 +113,9 @@ struct BookSourceView: View {
             if !didLoadFilters {
                 didLoadFilters = true
                 if let saved = try? JSONDecoder().decode(GutenbergFilters.self, from: filtersData) { filters = saved }
+                // Sprache folgt den Lesesprachen des Bücher-Tabs, solange die gespeicherte nicht dazugehört.
+                let languages = BookLanguages.codes(stored: storedLanguages, reading: readingLanguage)
+                if !languages.contains(filters.language) { filters.language = languages.first ?? "" }
                 if !initialQuery.isEmpty {
                     filters.query = initialQuery
                     filters.scope = .all

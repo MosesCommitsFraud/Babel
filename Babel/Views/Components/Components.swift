@@ -148,6 +148,7 @@ struct FlowLayout: Layout {
 /// Eine Zeile für Suchergebnisse und Bibliothek.
 struct StoryRow: View {
     @Environment(\.theme) private var theme
+    @Environment(\.layoutClass) private var layout
     let story: RemoteStory
     var localCover: URL? = nil
     var progress: Double? = nil
@@ -157,10 +158,16 @@ struct StoryRow: View {
     /// Quelle (AO3/FFN …) nur dort zeigen, wo Quellen gemischt sind – nicht auf der jeweiligen Quellen-Seite.
     var showSource = false
 
+    /// Zusammenfassung neben dem Cover statt darunter: bei Büchern (ihnen fehlen Bewertungen, Pairings und Daten –
+    /// neben dem Cover bliebe sonst eine Lücke) und überall, wo die Zeile breit genug ist (Falt-iPhone, iPad).
+    private var sideSummary: Bool { isBook || layout != .compact }
+    private var isBook: Bool { !story.source.isWebFiction }
+    private var coverWidth: CGFloat { layout == .wide ? 84 : (layout == .medium ? 68 : 54) }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
-            HStack(alignment: .top, spacing: 12) {
-                CoverView(story: story, localCover: localCover, width: 54)
+            HStack(alignment: .top, spacing: layout == .compact ? 12 : 14) {
+                CoverView(story: story, localCover: localCover, width: coverWidth)
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
                         // fixedSize: Die Zelle wird mit der Idealhöhe vermessen – ohne das bekam der Titel
@@ -189,32 +196,32 @@ struct StoryRow: View {
                     HStack(spacing: 4) {
                         if showSource { TagChip(text: story.source.shortLabel, symbol: story.source.symbol) }
                         if !story.rating.isEmpty { TagChip(text: shortRating) }
-                        TagChip(text: chapterText)
+                        if !isBook { TagChip(text: chapterText) }
                         if let w = story.words { TagChip(text: Self.wordsShort(w)).layoutPriority(-1) }
                         if !story.language.isEmpty { TagChip(text: languageShort).layoutPriority(-2) }
+                        // Bücher: Erscheinungsjahr als Chip statt einer eigenen Datumszeile.
+                        if isBook, let year = story.published.map({ Calendar.current.component(.year, from: $0) }) {
+                            TagChip(text: String(year)).layoutPriority(-3)
+                        }
+                        if isBook, let downloads = story.hits, downloads > 0 {
+                            TagChip(text: downloads.short, symbol: "arrow.down.circle").layoutPriority(-4)
+                        }
                     }
                     .lineLimit(1)
 
                     // Ohne Bewertungen wandert das Datum in die Tag-Zeile (Genre, Pairings, Charaktere) – keine fast leere Zeile.
-                    if !stats.isEmpty { statsAndDates }
+                    if !isBook, !stats.isEmpty { statsAndDates }
+                    if sideSummary {
+                        tagBlock
+                        summaryText(lines: isBook ? 4 : 3)
+                    }
                 }
             }
 
             // Unter dem Cover über die ganze Breite – Genre, Pairings und Charaktere bekommen die Zeile für sich.
-            if stats.isEmpty && hasDates {
-                ViewThatFits(in: .horizontal) {
-                    tagRow(latestOnly: false, truncating: false)
-                    tagRow(latestOnly: true, truncating: false)
-                    tagRow(latestOnly: true, truncating: true)
-                }
-            } else if let tags = tagLine {
-                tagText(tags)
-            }
-            if showSummary, !story.summary.isEmpty {
-                // Zeilenumbrüche aus der Quelle raus – sonst misst Text mit lineLimit teils eine Zeile zu viel
-                // und der Abstand zum Trenner schwankt von Zeile zu Zeile.
-                Text(summaryPreview).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
-                    .fixedSize(horizontal: false, vertical: true)
+            if !sideSummary {
+                tagBlock
+                summaryText(lines: 3)
             }
 
             if let progress, progress > 0 {
@@ -227,6 +234,32 @@ struct StoryRow: View {
             }
         }
         .padding(.vertical, 3)
+    }
+
+    @ViewBuilder
+    private var tagBlock: some View {
+        if isBook {
+            // Bücher haben Themen statt Pairings.
+            if !story.tags.isEmpty { tagText(story.tags.prefix(5).joined(separator: ", ")) }
+        } else if stats.isEmpty && hasDates {
+            ViewThatFits(in: .horizontal) {
+                tagRow(latestOnly: false, truncating: false)
+                tagRow(latestOnly: true, truncating: false)
+                tagRow(latestOnly: true, truncating: true)
+            }
+        } else if let tags = tagLine {
+            tagText(tags)
+        }
+    }
+
+    @ViewBuilder
+    private func summaryText(lines: Int) -> some View {
+        if showSummary, !story.summary.isEmpty {
+            // Zeilenumbrüche aus der Quelle raus – sonst misst Text mit lineLimit teils eine Zeile zu viel
+            // und der Abstand zum Trenner schwankt von Zeile zu Zeile.
+            Text(summaryPreview).font(.footnote).foregroundStyle(.secondary).lineLimit(lines)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     static let leafGreen = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0x7ED492) : UIColor(hex: 0x3E9A57) })

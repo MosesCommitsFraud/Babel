@@ -192,6 +192,50 @@ final class BabelTests: XCTestCase {
         XCTAssertNil(try JSONDecoder().decode(RemoteStory.self, from: data).series)
     }
 
+    func testBookLanguages() throws {
+        // Ohne eigene Auswahl gilt die Lesesprache aus den Einstellungen (AO3 schreibt „ptBR“).
+        XCTAssertEqual(BookLanguages.codes(stored: "", reading: "de"), ["de"])
+        XCTAssertEqual(BookLanguages.codes(stored: "", reading: "ptBR"), ["pt"])
+        XCTAssertEqual(BookLanguages.codes(stored: "", reading: ""), [])
+        XCTAssertEqual(BookLanguages.codes(stored: "de,en", reading: "fr"), ["de", "en"])
+        // „Alle Sprachen“ bewusst gewählt – nicht wieder auf die Lesesprache zurückfallen.
+        XCTAssertEqual(BookLanguages.codes(stored: BookLanguages.stored([]), reading: "de"), [])
+
+        var book = RemoteStory(source: .opds, sourceID: "1", title: "T", url: URL(string: "https://example.org")!)
+        XCTAssertTrue(BookLanguages.matches(book, ["de"]), "ohne Sprachangabe bleibt das Buch")
+        book.language = "EN"
+        XCTAssertFalse(BookLanguages.matches(book, ["de"]))
+        XCTAssertTrue(BookLanguages.matches(book, ["de", "en"]))
+        book.language = "English"
+        XCTAssertTrue(BookLanguages.matches(book, ["en"]))
+        XCTAssertTrue(BookLanguages.matches(book, []))
+
+        // Quellen ohne Bücher in den Lesesprachen fallen weg; Kataloge ohne Sprachangabe nie.
+        XCTAssertFalse(BookShelf(kind: .royalRoad).offers(["de"]))
+        XCTAssertTrue(BookShelf(kind: .royalRoad).offers(["de", "en"]))
+        XCTAssertTrue(BookShelf(kind: .library(.gutenberg)).offers(["de"]))
+        XCTAssertFalse(BookShelf(kind: .library(.standardEbooks)).offers(["de"]))
+        let own = OPDSCatalog(title: "Mein Server", url: URL(string: "https://example.org/opds")!)
+        XCTAssertTrue(BookShelf(kind: .catalog(own)).offers(["de"]))
+
+        // Kataloge aus älteren Versionen kennen keine Sprachen.
+        let old = try JSONDecoder().decode([OPDSCatalog].self, from: Data(#"[{"title":"A","url":"https://example.org/opds","about":""}]"#.utf8))
+        XCTAssertEqual(old.first?.languages, [])
+    }
+
+    func testPageBackColorFollowsTheme() {
+        func luminance(_ color: UIColor) -> CGFloat {
+            var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+            color.getRed(&r, green: &g, blue: &b, alpha: &a)
+            return 0.299 * r + 0.587 * g + 0.114 * b
+        }
+        // Helles Papier: Rückseite dunkler. Schwarz: etwas heller, aber weit weg von Weiß.
+        XCTAssertLessThan(luminance(BookLeaf.backColor(for: .white)), 0.9)
+        XCTAssertGreaterThan(luminance(BookLeaf.backColor(for: .white)), 0.7)
+        XCTAssertLessThan(luminance(BookLeaf.backColor(for: .black)), 0.15)
+        XCTAssertGreaterThan(luminance(BookLeaf.backColor(for: .black)), 0)
+    }
+
     func testParsesFFNMetaLine() {
         var story = RemoteStory(source: .ffn, sourceID: "1", title: "T", url: URL(string: "https://www.fanfiction.net/s/1/1/")!)
         FFNService.applyMeta(

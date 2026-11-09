@@ -16,13 +16,13 @@ enum ReaderTheme: String, CaseIterable, Identifiable {
 
     var background: String {
         switch self {
-        case .system, .light: "#FBFAF7"; case .sepia: "#F3E9D2"; case .dark: "#1C1C1E"; case .black: "#000000"
+        case .system, .light: "#FFFFFF"; case .sepia: "#F3E9D2"; case .dark: "#1C1C1E"; case .black: "#000000"
         }
     }
 
     var foreground: String {
         switch self {
-        case .system, .light: "#1C1C1E"; case .sepia: "#4A3B2A"; case .dark: "#E6E6E9"; case .black: "#CFCFD3"
+        case .system, .light: "#000000"; case .sepia: "#4A3B2A"; case .dark: "#E6E6E9"; case .black: "#CFCFD3"
         }
     }
 
@@ -75,22 +75,26 @@ struct ReaderStyle {
     var css: String { baseCSS + (paged ? pagedCSS : "") }
 
     /// Spalten so breit wie der Bildschirm (Rand als Spaltenabstand) – eine Spalte = eine Seite.
+    /// `--sl`/`--sr` sind die seitlichen sicheren Ränder: Auf dem iPhone Duo liegt rechts die Leiste von iOS
+    /// (Uhr, Kamera) über dem Inhalt, dort darf kein Text stehen.
     private var pagedCSS: String {
         let m = Int(margin)
         return """
         html { height: 100vh !important; overflow-y: hidden !important; overflow-x: auto !important; }
         body {
             height: 100vh !important; box-sizing: border-box !important; overflow: visible !important;
-            padding: calc(env(safe-area-inset-top) + 64px) \(m)px calc(env(safe-area-inset-bottom) + 72px) \(m)px !important;
-            column-width: calc(100vw - \(2 * m)px) !important; column-gap: \(2 * m)px !important; column-fill: auto !important;
+            padding: calc(env(safe-area-inset-top) + 64px) calc(\(m)px + var(--sr)) calc(env(safe-area-inset-bottom) + 72px) calc(\(m)px + var(--sl)) !important;
+            column-width: calc(100vw - \(2 * m)px - var(--sl) - var(--sr)) !important;
+            column-gap: calc(\(2 * m)px + var(--sl) + var(--sr)) !important; column-fill: auto !important;
         }
         img, svg, video { max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 160px) !important; object-fit: contain; }
         /* Breite Bildschirme (iPad): zwei Seiten nebeneinander wie ein aufgeschlagenes Buch. Zwei Spalten samt
            Abständen ergeben genau eine Bildschirmbreite, das Blättern bleibt also bildschirmweise. */
         @media (min-width: 700px) {
             body {
-                padding-left: \(m + 14)px !important; padding-right: \(m + 14)px !important;
-                column-width: calc(50vw - \(2 * (m + 14))px) !important; column-gap: \(2 * (m + 14))px !important;
+                padding-left: calc(\(m + 14)px + var(--sl)) !important; padding-right: calc(\(m + 14)px + var(--sr)) !important;
+                column-width: calc(50vw - \(2 * (m + 14))px - var(--sl) - var(--sr)) !important;
+                column-gap: calc(\(2 * (m + 14))px + var(--sl) + var(--sr)) !important;
             }
         }
         """
@@ -98,13 +102,13 @@ struct ReaderStyle {
 
     private var baseCSS: String {
         """
-        :root { color-scheme: \(theme.colorScheme == .dark ? "dark" : "light"); }
+        :root { color-scheme: \(theme.colorScheme == .dark ? "dark" : "light"); --sl: env(safe-area-inset-left, 0px); --sr: env(safe-area-inset-right, 0px); }
         html { -webkit-text-size-adjust: 100%; background: \(theme.background) !important; overflow-x: hidden !important; }
         body { overflow-x: hidden !important; }
         pre, table { white-space: pre-wrap; max-width: 100% !important; }
         body {
             margin: 0 !important;
-            padding: calc(env(safe-area-inset-top) + 72px) \(Int(margin))px calc(env(safe-area-inset-bottom) + 120px) \(Int(margin))px !important;
+            padding: calc(env(safe-area-inset-top) + 72px) calc(\(Int(margin))px + var(--sr)) calc(env(safe-area-inset-bottom) + 120px) calc(\(Int(margin))px + var(--sl)) !important;
             background: \(theme.background) !important;
             color: \(theme.foreground) !important;
             font-family: \(font.css) !important;
@@ -146,6 +150,8 @@ struct ReaderStyle {
 
 /// Standard-Leseeinstellungen: Iowan Old Style, Zeilenabstand 1,2, Absatz 0,9, Rand 14 pt, Blocksatz.
 enum ReaderDefaults {
+    /// Weiß mit schwarzer Schrift (Wunsch des Nutzers) – nicht „Auto“, das im dunklen Modus dunkel wäre.
+    static let theme = ReaderTheme.light
     static let font = "iowan"
     static let fontSize = 19.0
     static let lineHeight = 1.2
@@ -170,7 +176,7 @@ enum ReaderDefaults {
 
 /// Gemeinsame Einstellungs-Steuerelemente (im Reader-Sheet und in den Einstellungen).
 struct ReaderSettingsControls: View {
-    @AppStorage("reader.theme") private var theme: ReaderTheme = .system
+    @AppStorage("reader.theme") private var theme: ReaderTheme = ReaderDefaults.theme
     @AppStorage("reader.font") private var fontID = ReaderDefaults.font
     @AppStorage("reader.fontSize") private var fontSize = ReaderDefaults.fontSize
     @AppStorage("reader.lineHeight") private var lineHeight = ReaderDefaults.lineHeight
@@ -191,7 +197,7 @@ struct ReaderSettingsControls: View {
                         VStack(spacing: 6) {
                             Circle()
                                 .fill(t == .system
-                                      ? AnyShapeStyle(LinearGradient(colors: [Color(hex: "#FBFAF7"), Color(hex: "#1C1C1E")], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                      ? AnyShapeStyle(LinearGradient(colors: [Color(hex: "#FFFFFF"), Color(hex: "#1C1C1E")], startPoint: .topLeading, endPoint: .bottomTrailing))
                                       : AnyShapeStyle(t.swiftUIBackground))
                                 .overlay(Text("Aa").font(.caption.weight(.semibold)).foregroundStyle(t == .system ? .gray : t.swiftUIForeground))
                                 .overlay(Circle().strokeBorder(theme == t ? Color.accentColor : .gray.opacity(0.3), lineWidth: theme == t ? 3 : 1))
@@ -230,6 +236,7 @@ struct ReaderSettingsControls: View {
             }
             Toggle("Blocksatz", isOn: $justify)
             Button("Auf Standard zurücksetzen", systemImage: "arrow.counterclockwise") {
+                theme = ReaderDefaults.theme
                 fontID = ReaderDefaults.font
                 fontSize = ReaderDefaults.fontSize
                 lineHeight = ReaderDefaults.lineHeight

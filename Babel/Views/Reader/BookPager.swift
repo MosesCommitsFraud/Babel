@@ -46,7 +46,9 @@ final class BookPagerController: UIViewController, ReaderPaging, UIPageViewContr
         view.backgroundColor = background
         pageController.dataSource = self
         pageController.delegate = self
-        pageController.isDoubleSided = false
+        // Doppelseitig: Die Rückseite des Blatts liefern wir selbst (`BookLeaf.isBack`) – sonst zeigt iOS
+        // eine aufgehellte, fast weiße Rückseite, auch beim schwarzen Lesethema.
+        pageController.isDoubleSided = true
         addChild(pageController)
         pageController.view.frame = view.bounds
         pageController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -61,7 +63,7 @@ final class BookPagerController: UIViewController, ReaderPaging, UIPageViewContr
         swipe.delegate = self
         swipe.cancelsTouchesInView = false
         view.addGestureRecognizer(swipe)
-        pageController.setViewControllers([leaf(Key(chapter: model.chapterIndex, page: 0))], direction: .forward, animated: false)
+        show(leaf(Key(chapter: model.chapterIndex, page: 0)), direction: .forward, animated: false)
         // Nicht während SwiftUI die Ansicht aufbaut den beobachteten Zustand ändern.
         DispatchQueue.main.async { [self] in
             open(model.chapterIndex, restore: model.initialRestore, anchor: model.initialAnchor, replacePosition: false)
@@ -137,7 +139,7 @@ final class BookPagerController: UIViewController, ReaderPaging, UIPageViewContr
             // Der WebView liegt oben und zeigt die Seite schon – sein Bild wird das Blatt darunter.
             snapshots[current] = await snapshot(controller)
             guard gen == generation else { return }
-            pageController.setViewControllers([leaf(current)], direction: .forward, animated: false)
+            show(leaf(current), direction: .forward, animated: false)
             preloadNeighbors(gen)
             await captureNeighbors(gen)
         }
@@ -238,14 +240,23 @@ final class BookPagerController: UIViewController, ReaderPaging, UIPageViewContr
         snapshots = [:]
         snapshots[current] = await snapshot(controller)
         guard gen == generation else { return }
-        pageController.setViewControllers([leaf(current)], direction: .forward, animated: false)
+        show(leaf(current), direction: .forward, animated: false)
         await captureNeighbors(gen)
     }
 
     // MARK: Blätter
 
-    private func leaf(_ key: Key) -> BookLeaf {
-        let leaf = BookLeaf(key: key, background: background)
+    /// Vorderseite zeigen. Doppelseitige Blätteransichten wollen Vorder- und Rückseite zusammen.
+    private func show(_ front: BookLeaf, direction: UIPageViewController.NavigationDirection, animated: Bool,
+                      completion: ((Bool) -> Void)? = nil) {
+        // Ohne Animation will die Blätteransicht nur die Vorderseite (mit beiden wirft sie eine Ausnahme),
+        // beim animierten Umblättern Vorder- und Rückseite.
+        let controllers = animated ? [front, leaf(front.key, isBack: true)] : [front]
+        pageController.setViewControllers(controllers, direction: direction, animated: animated, completion: completion)
+    }
+
+    private func leaf(_ key: Key, isBack: Bool = false) -> BookLeaf {
+        let leaf = BookLeaf(key: key, background: background, isBack: isBack)
         if let image = snapshots[key] { leaf.show(image) }
         leaves.add(leaf)
         return leaf
@@ -271,14 +282,18 @@ final class BookPagerController: UIViewController, ReaderPaging, UIPageViewContr
         return Key(chapter: key.chapter - 1, page: Key.last)
     }
 
+    // Reihenfolge der Blätter: Vorderseite n → Rückseite n → Vorderseite n+1 → …
+
     func pageViewController(_ pvc: UIPageViewController, viewControllerBefore vc: UIViewController) -> UIViewController? {
-        guard let leaf = vc as? BookLeaf, let key = key(before: leaf) else { return nil }
-        return self.leaf(key)
+        guard let leaf = vc as? BookLeaf else { return nil }
+        if leaf.isBack { return self.leaf(leaf.key) }
+        guard let key = key(before: leaf) else { return nil }
+        return self.leaf(key, isBack: true)
     }
 
     func pageViewController(_ pvc: UIPageViewController, viewControllerAfter vc: UIViewController) -> UIViewController? {
-        guard let leaf = vc as? BookLeaf, let key = key(after: leaf) else { return nil }
-        return self.leaf(key)
+        guard let leaf = vc as? BookLeaf, let next = key(after: leaf) else { return nil }
+        return leaf.isBack ? self.leaf(next) : self.leaf(leaf.key, isBack: true)
     }
 
     func pageViewController(_ pvc: UIPageViewController, willTransitionTo pending: [UIViewController]) {
@@ -291,7 +306,7 @@ final class BookPagerController: UIViewController, ReaderPaging, UIPageViewContr
     func pageViewController(_ pvc: UIPageViewController, didFinishAnimating finished: Bool,
                             previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         isAnimating = false
-        guard let leaf = pvc.viewControllers?.first as? BookLeaf else { return }
+        guard let leaf = (pvc.viewControllers ?? []).compactMap({ $0 as? BookLeaf }).first(where: { !$0.isBack }) else { return }
         if completed { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
         Task { await settle(on: leaf) }
     }
@@ -360,7 +375,7 @@ final class BookPagerController: UIViewController, ReaderPaging, UIPageViewContr
     }
 
     func turn(_ direction: Int) {
-        guard !isAnimating, let leaf = pageController.viewControllers?.first as? BookLeaf,
+        guard !isAnimating, let leaf = (pageController.viewControllers ?? []).compactMap({ $0 as? BookLeaf }).first(where: { !$0.isBack }),
               let key = direction > 0 ? key(after: leaf) : key(before: leaf) else { return }
         generation += 1
         isAnimating = true
@@ -368,7 +383,7 @@ final class BookPagerController: UIViewController, ReaderPaging, UIPageViewContr
         let target = self.leaf(key)
         let animated = !UIAccessibility.isReduceMotionEnabled
         if animated { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
-        pageController.setViewControllers([target], direction: direction > 0 ? .forward : .reverse, animated: animated) { [weak self] _ in
+        show(target, direction: direction > 0 ? .forward : .reverse, animated: animated) { [weak self] _ in
             Task { @MainActor in
                 self?.isAnimating = false
                 await self?.settle(on: target)
@@ -426,20 +441,23 @@ final class BookPagerController: UIViewController, ReaderPaging, UIPageViewContr
         view.backgroundColor = color
         pageController.view.backgroundColor = color
         for controller in chapters.values { controller.setBackground(color) }
-        for leaf in leaves.allObjects { leaf.view.backgroundColor = color }
+        for leaf in leaves.allObjects { leaf.setBackground(color) }
         scheduleRefresh()
     }
 }
 
-/// Ein Blatt der Blätteransicht: das Bild einer Seite.
+/// Ein Blatt der Blätteransicht: das Bild einer Seite – oder ihre Rückseite.
 final class BookLeaf: UIViewController {
     var key: BookPagerController.Key
-    private let background: UIColor
+    /// Rückseite: etwas dunkler als der Lesehintergrund, der Text scheint schwach und gespiegelt durch.
+    let isBack: Bool
+    private var background: UIColor
     private let imageView = UIImageView()
 
-    init(key: BookPagerController.Key, background: UIColor) {
+    init(key: BookPagerController.Key, background: UIColor, isBack: Bool = false) {
         self.key = key
         self.background = background
+        self.isBack = isBack
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -447,15 +465,35 @@ final class BookLeaf: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = background
         imageView.frame = view.bounds
         imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         imageView.contentMode = .scaleToFill
+        if isBack {
+            imageView.transform = CGAffineTransform(scaleX: -1, y: 1)
+            imageView.alpha = 0.1
+        }
         view.addSubview(imageView)
+        setBackground(background)
+    }
+
+    func setBackground(_ color: UIColor) {
+        background = color
+        guard isViewLoaded else { return }
+        view.backgroundColor = isBack ? Self.backColor(for: color) : color
     }
 
     func show(_ image: UIImage) {
         loadViewIfNeeded()
         imageView.image = image
+    }
+
+    /// Papier-Rückseite passend zum Lesehintergrund: helle Themen etwas dunkler,
+    /// fast schwarze ein wenig heller (dunkler als Schwarz geht nicht, und die Seite soll sich abheben).
+    static func backColor(for color: UIColor) -> UIColor {
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        guard color.getRed(&r, green: &g, blue: &b, alpha: &a) else { return color }
+        let luminance = 0.299 * r + 0.587 * g + 0.114 * b
+        if luminance < 0.2 { return UIColor(red: r + 0.07, green: g + 0.07, blue: b + 0.075, alpha: 1) }
+        return UIColor(red: r * 0.86, green: g * 0.86, blue: b * 0.86, alpha: 1)
     }
 }

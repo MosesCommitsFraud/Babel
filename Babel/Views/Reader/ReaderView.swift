@@ -526,7 +526,7 @@ struct ReaderView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.scenePhase) private var scenePhase
 
-    @AppStorage("reader.theme") private var theme: ReaderTheme = .system
+    @AppStorage("reader.theme") private var theme: ReaderTheme = ReaderDefaults.theme
     @AppStorage("reader.font") private var fontID = ReaderDefaults.font
     @AppStorage("reader.fontSize") private var fontSize = ReaderDefaults.fontSize
     @AppStorage("reader.lineHeight") private var lineHeight = ReaderDefaults.lineHeight
