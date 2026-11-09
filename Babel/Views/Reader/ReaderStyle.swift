@@ -105,7 +105,15 @@ struct ReaderStyle {
         :root { color-scheme: \(theme.colorScheme == .dark ? "dark" : "light"); --sl: env(safe-area-inset-left, 0px); --sr: env(safe-area-inset-right, 0px); }
         html { -webkit-text-size-adjust: 100%; background: \(theme.background) !important; overflow-x: hidden !important; }
         body { overflow-x: hidden !important; }
-        pre, table { white-space: pre-wrap; max-width: 100% !important; }
+        pre { white-space: pre-wrap; max-width: 100% !important; }
+        /* Tabellen (Statusfenster in Web-Serien, Tabellen in Büchern): volle Breite statt der festen Prozentbreite der Website,
+           sichtbare Linien – Hintergrundfarben der Quelle entfallen im Reader. Kein pre-wrap: Das machte die Zeilenumbrüche
+           des HTML zu Leerzeilen in jeder Zelle. */
+        table { width: 100% !important; max-width: 100% !important; border-collapse: collapse !important; margin: 1em 0 !important; table-layout: auto; }
+        td, th { width: auto !important; border: 1px solid rgba(128, 128, 128, .45) !important; padding: .5em .7em !important; vertical-align: top; text-align: start; }
+        td > p:last-child, th > p:last-child { margin-bottom: 0 !important; }
+        figure { margin: 1em 0 !important; }
+        figcaption { font-size: .85em; opacity: .75; text-align: center !important; }
         body {
             margin: 0 !important;
             padding: calc(env(safe-area-inset-top) + 72px) calc(\(Int(margin))px + var(--sr)) calc(env(safe-area-inset-bottom) + 120px) calc(\(Int(margin))px + var(--sl)) !important;
@@ -134,6 +142,8 @@ struct ReaderStyle {
         /* Aus Scans zusammengelegte Seiten (EPUBParser.mergePages): dezente Trennung, kein Seitenumbruch. */
         .babel-page + .babel-page { margin-top: .6em; }
         img, svg, video { max-width: 100% !important; height: auto !important; }
+        /* Eigenständige Bilder (Illustrationen) mittig; kleine Bilder im Text (Symbole) bleiben in der Zeile. */
+        p > img:only-child, div > img:only-child, a > img:only-child { display: block; margin: .6em auto !important; }
         a { color: \(theme.link) !important; }
         ::highlight(babel-mark) { background-color: \(theme.colorScheme == .dark ? "rgba(255, 214, 10, .30)" : "rgba(255, 204, 0, .38)"); }
         ::highlight(babel-note) { background-color: \(theme.colorScheme == .dark ? "rgba(255, 214, 10, .30)" : "rgba(255, 204, 0, .38)"); text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; }

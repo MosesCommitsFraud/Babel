@@ -138,6 +138,17 @@ final class BabelTests: XCTestCase {
         XCTAssertLessThan(note.lowerBound, text.lowerBound)
     }
 
+    func testRoyalRoadLineBreakParagraphs() throws {
+        let html = """
+        <div class="chapter-inner chapter-content"><p>Eins.<br><br>Zwei <em>betont</em>.<br>
+        <br>Drei mit<br>einem Umbruch.<br><br>Vier.<br><br>Fünf.<br><br>Sechs.</p><p>Normal<br>bleibt.</p></div>
+        """
+        let chapter = try RoyalRoadService.parseChapter(html, fallbackTitle: "Kapitel")
+        XCTAssertEqual(chapter.html.components(separatedBy: "<p>").count - 1, 7, "sechs neue Absätze und der normale")
+        XCTAssertTrue(chapter.html.contains("<p>Zwei <em>betont</em>.</p>"))
+        XCTAssertTrue(chapter.html.contains("Drei mit<br"), "einfacher Umbruch bleibt")
+    }
+
     func testParsesOPDSFeed() throws {
         let xml = try String(contentsOf: try fixture("opds-unglue", "xml"), encoding: .utf8)
         let feed = try OPDSService.parse(xml, url: URL(string: "https://unglue.it/api/opds/all/?order_by=popular")!)
@@ -264,6 +275,11 @@ final class BabelTests: XCTestCase {
         XCTAssertTrue(chapter.html.contains("babel-gap"), "Leerzeile wird zum Abstand")
         XCTAssertTrue(chapter.html.contains("<ruby>"), "Lesehilfen bleiben")
         XCTAssertTrue(chapter.html.contains("babel-notes"), "Vorwort als Anmerkung")
+        let illustrated = try SyosetuService.parseChapter("""
+        <div class="p-novel__body"><div class="js-novel-text p-novel__text"><p id="L1"><a href="//1.mitemin.net/i9/" target="_blank"><img src="//1.mitemin.net/userpageimage/viewimagebig/icode/i9/" alt="挿絵" border="0" /></a></p></div></div>
+        """, fallbackTitle: "x")
+        XCTAssertTrue(illustrated.html.contains("src=\"https://1.mitemin.net/"), "Bildadresse vollständig")
+        XCTAssertFalse(illustrated.html.contains("<a "), "kein Link um das Bild")
         XCTAssertEqual(try SyosetuService.parseContents("<div class=\"p-eplist__sublist\"><a href=\"/n1/1/\" class=\"p-eplist__subtitle\"> １ 題 </a></div>"), ["１ 題"])
     }
 

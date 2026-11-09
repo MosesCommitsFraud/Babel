@@ -234,6 +234,7 @@ enum RoyalRoadService {
             }
         }
         _ = try? content.select("script, style").remove()
+        try splitLineBreakParagraphs(content)
 
         func note(_ element: Element) throws -> String {
             let body = try element.select("div.author-note").first()?.html() ?? ""
@@ -249,5 +250,24 @@ enum RoyalRoadService {
         }
         let title = try doc.select("div.fic-header h1, h1.break-word").first()?.text() ?? fallbackTitle
         return ChapterContent(title: title.isEmpty ? fallbackTitle : title, html: before + (try content.html()) + after)
+    }
+
+    /// Manche Kapitel sind ein einziger Absatz, in dem Leerzeilen (`<br><br>`) die Absätze trennen. Daraus werden echte
+    /// Absätze – sonst gelten Absatzabstand, Vorlesen und die Lesestelle für das ganze Kapitel auf einmal.
+    static func splitLineBreakParagraphs(_ content: Element) throws {
+        for paragraph in try content.select("p").array() where try paragraph.select("br").size() >= 6 {
+            let html = try paragraph.html()
+            let parts = html.components(separatedBy: "\n").joined(separator: " ")
+                .replacingOccurrences(of: #"(?i)(<br\s*/?>\s*){2,}"#, with: "\u{1}", options: .regularExpression)
+                .split(separator: "\u{1}").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+            guard parts.count >= 3 else { continue }
+            // Nur teilen, wenn kein Element über eine Leerzeile hinwegreicht (sonst entstünde kaputtes HTML).
+            let balanced = parts.allSatisfy { part in
+                part.allMatches(#"<(?!br\b|img\b|hr\b|/)[a-zA-Z][^>]*>"#).count == part.allMatches(#"</[a-zA-Z][^>]*>"#).count
+            }
+            guard balanced else { continue }
+            try paragraph.after(parts.map { "<p>\($0)</p>" }.joined())
+            try paragraph.remove()
+        }
     }
 }

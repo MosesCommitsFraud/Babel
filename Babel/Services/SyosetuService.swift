@@ -154,6 +154,15 @@ enum SyosetuService {
         let doc = try SwiftSoup.parse(html, site.absoluteString)
         let blocks = try doc.select("div.p-novel__body div.p-novel__text").array()
         guard !blocks.isEmpty else { throw BabelError.parsing(String(localized: "Kapiteltext")) }
+        // Illustrationen stehen mit Adressen ohne Protokoll („//…mitemin.net/…“) im Text – in der gespeicherten Datei
+        // zeigten sie ins Leere. Der Link um das Bild führt nur zur Bildseite und entfällt.
+        for image in try doc.select("div.p-novel__body img").array() {
+            for attribute in ["src", "data-src"] {
+                let value = try image.attr(attribute)
+                if value.hasPrefix("//") { try image.attr(attribute, "https:" + value) }
+            }
+            if let link = image.parent(), link.tagName() == "a" { try link.unwrap() }
+        }
         var body = ""
         for block in blocks {
             // Leerzeilen stehen als <p><br></p>: zu einem Abstand zusammenfassen, sonst klafft der Text auseinander.
