@@ -136,6 +136,7 @@ enum ReaderDefaults {
     static let justify = true
     static let paragraphSpacing = 0.9
     static let pagedKey = "reader.paged"
+    static let curlKey = "reader.pageCurl"
 
     /// Einmal auf die neuen Standards umstellen – vorher gespeicherte Werte (alte Standards) würden sonst bleiben.
     static func migrate() {
@@ -161,6 +162,7 @@ struct ReaderSettingsControls: View {
     @AppStorage("reader.paragraphSpacing") private var paragraphSpacing = ReaderDefaults.paragraphSpacing
     @AppStorage(VolumeKeyScroller.settingKey) private var volumeScroll = false
     @AppStorage(ReaderDefaults.pagedKey) private var paged = false
+    @AppStorage(ReaderDefaults.curlKey) private var curl = false
 
     var body: some View {
         Section("Farbe") {
@@ -221,7 +223,10 @@ struct ReaderSettingsControls: View {
         }
 
         Section {
-            Toggle("Seitenweise blättern", isOn: $paged)
+            Toggle("Seitenweise blättern", isOn: $paged.animation())
+            if paged {
+                Toggle("Umblättern wie im Buch", isOn: $curl)
+            }
             Toggle("Mit Lautstärketasten blättern", isOn: $volumeScroll)
         } header: {
             Text("Bedienung")

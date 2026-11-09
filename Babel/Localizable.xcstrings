@@ -5743,6 +5743,16 @@
           }
         }
       }
+    },
+    "Umblättern wie im Buch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn pages like a book"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

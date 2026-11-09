@@ -15,7 +15,9 @@ final class ReaderModel {
     var error: String?
     var showChrome = true
 
-    @ObservationIgnored weak var pager: ReaderPagerCoordinator?
+    @ObservationIgnored weak var pager: (any ReaderPaging)?
+    /// Es gab schon eine Seitenansicht – eine neue (anderer Blättermodus) macht an der aktuellen Stelle weiter.
+    @ObservationIgnored var hadPager = false
     @ObservationIgnored var css = ""
     @ObservationIgnored var initialRestore: Double
     /// Absatz-Anker zur Lesestelle – übersteht andere Schriftgrößen und Bildschirme, der Bruchteil allein nicht.
@@ -23,6 +25,8 @@ final class ReaderModel {
     @ObservationIgnored var anchor: Double?
     /// Seitenweise blättern (Spalten) statt scrollen.
     @ObservationIgnored var paged = UserDefaults.standard.bool(forKey: ReaderDefaults.pagedKey)
+    /// Buch-Modus: Seiten blättern mit Umblätter-Animation (`BookPagerController`). Nur zusammen mit `paged`.
+    @ObservationIgnored var curl = UserDefaults.standard.bool(forKey: ReaderDefaults.curlKey)
     @ObservationIgnored private var lastSave = Date.distantPast
     /// Vorlesen: wo gerade gesprochen wird (nur für diese Geschichte) und ob Tippen einen Absatz startet.
     @ObservationIgnored var speech: ReadAloudPlayer.Cursor?
@@ -54,13 +58,13 @@ final class ReaderModel {
 
     // MARK: - Navigation
 
-    func next() { guard hasNext else { return }; pager?.show(chapterIndex + 1) }
+    func next() { guard hasNext else { return }; pager?.show(chapterIndex + 1, restore: nil) }
     /// `toEnd`: beim Zurückblättern über den Kapitelanfang auf der letzten Seite des vorigen Kapitels landen.
     func previous(toEnd: Bool = false) { guard hasPrevious else { return }; pager?.show(chapterIndex - 1, restore: toEnd ? 1 : nil) }
 
     func jump(to index: Int) {
         guard index >= 0, index < max(chapterCount, 1), index != chapterIndex else { return }
-        pager?.show(index)
+        pager?.show(index, restore: nil)
     }
 
     func retry() {
@@ -108,6 +112,12 @@ final class ReaderModel {
             if index == chapterIndex { next() }
         case "previous":
             if index == chapterIndex { previous(toEnd: true) }
+        case "turn":
+            if index == chapterIndex, let direction = message["dir"] as? Int { pager?.turn(direction) }
+        case "speechPage":
+            if let page = message["page"] as? Int { pager?.turn(toPage: page, chapter: index) }
+        case "layout":
+            pager?.layoutChanged(chapter: index)
         case "speakFrom":
             if let paragraph = message["paragraph"] as? Int { onSpeakFrom?(index, paragraph) }
         default:
@@ -124,6 +134,7 @@ final class ReaderModel {
           var s = document.createElement('style'); s.id = 'babel-style'; s.textContent = \(cssLiteral);
           (document.head || document.documentElement).appendChild(s);
           window.babelPaged = \(paged ? "true" : "false");
+          window.babelCurl = \(paged && curl ? "true" : "false");
         })();
         """
         let endScript = """
@@ -149,6 +160,16 @@ final class ReaderModel {
             var w = window.innerWidth;
             var pages = Math.max(1, Math.ceil((document.documentElement.scrollWidth - 1) / w));
             pad.style.left = (pages * w - 1) + 'px';
+            // Buch-Modus: Die App hält Bilder der Seiten vor – ändert sich die Seitenzahl (Bild nachgeladen), neu aufnehmen.
+            if (window.babelCurl && window.babelPages !== pages) {
+              var first = window.babelPages == null;
+              window.babelPages = pages;
+              if (!first && window.babelPost) window.babelPost({ type: 'layout' });
+            }
+          };
+          window.babelPageInfo = function(){
+            var w = window.innerWidth;
+            return [Math.round(window.scrollX / w), Math.max(1, Math.round(document.documentElement.scrollWidth / w))];
           };
           window.babelFraction = function(){
             if (window.babelPaged) {
@@ -220,6 +241,7 @@ final class ReaderModel {
             return 'ok';
           };
           var post = function(m){ window.webkit.messageHandlers.babel.postMessage(m); };
+          window.babelPost = post;
           var timer = null;
           window.addEventListener('scroll', function(){
             clearTimeout(timer);
@@ -311,6 +333,10 @@ final class ReaderModel {
             if (!follow) return;
             if (window.babelPaged) {
               var pr = (range || el).getBoundingClientRect(), pw = window.innerWidth;
+              if (window.babelCurl) {
+                if (pr.left < 0 || pr.left >= pw) post({ type: 'speechPage', page: Math.floor((window.scrollX + pr.left) / pw) });
+                return;
+              }
               if (pr.left < 0 || pr.left >= pw) {
                 window.scrollTo({ left: Math.floor((window.scrollX + pr.left) / pw) * pw, top: 0, behavior: 'smooth' });
               }
@@ -332,7 +358,11 @@ final class ReaderModel {
               }
             }
             // Seitenweise: linker/rechter Rand blättert, die Mitte blendet die Leisten ein.
-            if (window.babelPaged) {
+            if (window.babelCurl) {
+              var cx = e.clientX, cw = window.innerWidth;
+              if (cx < cw * 0.28) { post({ type: 'turn', dir: -1 }); return; }
+              if (cx > cw * 0.72) { post({ type: 'turn', dir: 1 }); return; }
+            } else if (window.babelPaged) {
               var x = e.clientX, w = window.innerWidth;
               if (x < w * 0.28) { if (window.babelTurn(-1) === 'start') post({ type: 'previous' }); return; }
               if (x > w * 0.72) { if (window.babelTurn(1) === 'end') post({ type: 'next' }); return; }
@@ -385,6 +415,7 @@ struct ReaderView: View {
     @AppStorage("reader.paragraphSpacing") private var paragraphSpacing = ReaderDefaults.paragraphSpacing
     @AppStorage(VolumeKeyScroller.settingKey) private var volumeScroll = false
     @AppStorage(ReaderDefaults.pagedKey) private var paged = false
+    @AppStorage(ReaderDefaults.curlKey) private var curl = false
     @State private var volumeKeys = VolumeKeyScroller()
 
     @State private var model: ReaderModel
@@ -410,7 +441,9 @@ struct ReaderView: View {
         ZStack {
             resolvedTheme.swiftUIBackground.ignoresSafeArea()
 
-            ReaderPager(model: model, css: style.css, background: resolvedTheme.swiftUIBackground)
+            // Anderer Blättermodus = andere Ansicht: neu aufbauen, an derselben Stelle (siehe `makeUIViewController`).
+            ReaderPager(model: model, css: style.css, background: resolvedTheme.swiftUIBackground, paged: paged, curl: paged && curl)
+                .id(paged ? (curl ? "book" : "paged") : "scroll")
                 .ignoresSafeArea()
 
             if model.isLoading {
@@ -487,12 +520,6 @@ struct ReaderView: View {
             })
         }
         .onChange(of: style.css) { _, css in model.applyCSS(css) }
-        // Umschalten Scrollen ↔ Blättern: Kapitelseiten an derselben Stelle neu aufbauen.
-        .onChange(of: paged) { _, on in
-            model.paged = on
-            model.css = style.css
-            model.pager?.rebuild(restore: model.progress)
-        }
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { model.save() }
             updateVolumeKeys()

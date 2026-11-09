@@ -8,29 +8,73 @@ struct ReaderPager: UIViewControllerRepresentable {
     let model: ReaderModel
     let css: String
     let background: Color
+    var paged = false
+    /// Buch-Modus: Umblättern mit Animation statt Schieben.
+    var curl = false
 
     func makeCoordinator() -> ReaderPagerCoordinator { ReaderPagerCoordinator(model: model) }
 
-    func makeUIViewController(context: Context) -> UIPageViewController {
+    func makeUIViewController(context: Context) -> UIViewController {
+        // Beim Wechsel des Modus wird die Ansicht neu gebaut – an der Stelle weiter, an der gerade gelesen wird.
+        if model.hadPager {
+            model.initialRestore = model.progress
+            model.initialAnchor = model.anchor
+        }
+        model.hadPager = true
+        model.paged = paged
+        model.curl = curl
+        model.css = css
+        if curl {
+            let book = BookPagerController(model: model, background: UIColor(background))
+            model.pager = book
+            return book
+        }
         let pager = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal,
                                          options: [.interPageSpacing: 20])
         // Seitenweise wischt der Finger durch die Seiten des Kapitels – Kapitelwechsel dann am Rand (siehe ChapterPageController).
         pager.dataSource = model.paged ? nil : context.coordinator
         pager.delegate = context.coordinator
-        model.css = css
         model.pager = context.coordinator
         context.coordinator.background = UIColor(background)
         context.coordinator.attach(pager)
         return pager
     }
 
-    func updateUIViewController(_ pager: UIPageViewController, context: Context) {
-        context.coordinator.setBackground(UIColor(background))
+    func updateUIViewController(_ controller: UIViewController, context: Context) {
+        if let book = controller as? BookPagerController {
+            book.setBackground(UIColor(background))
+        } else {
+            context.coordinator.setBackground(UIColor(background))
+        }
     }
 }
 
+/// Was der Reader von der Seitenansicht braucht – egal ob Scrollen/Schieben (`ReaderPagerCoordinator`)
+/// oder Buch-Modus (`BookPagerController`).
 @MainActor
-final class ReaderPagerCoordinator: NSObject, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+protocol ReaderPaging: AnyObject {
+    /// Zu einem Kapitel wechseln. `restore`: Stelle im Zielkapitel (0…1), z. B. 1 = letzte Seite beim Zurückblättern.
+    func show(_ index: Int, restore: Double?)
+    func reloadCurrent()
+    func applySpeech()
+    func firstVisibleParagraph(_ completion: @escaping (Int) -> Void)
+    /// Eine Bildschirmseite weiter (+1) oder zurück (-1); am Kapitelende weiter zum nächsten Kapitel.
+    func scrollPage(_ direction: Int)
+    func applyCSS()
+    /// Nur Buch-Modus: eine Seite umblättern, zu einer Seite springen, Seitenbilder nach Layout-Änderung erneuern.
+    func turn(_ direction: Int)
+    func turn(toPage page: Int, chapter: Int)
+    func layoutChanged(chapter: Int)
+}
+
+extension ReaderPaging {
+    func turn(_ direction: Int) {}
+    func turn(toPage page: Int, chapter: Int) {}
+    func layoutChanged(chapter: Int) {}
+}
+
+@MainActor
+final class ReaderPagerCoordinator: NSObject, ReaderPaging, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     let model: ReaderModel
     var background: UIColor = .systemBackground
     private weak var pager: UIPageViewController?
@@ -78,7 +122,7 @@ final class ReaderPagerCoordinator: NSObject, UIPageViewControllerDataSource, UI
 
     /// Zu einem Kapitel blättern (Knöpfe, Kapitelliste, Rand beim seitenweisen Blättern).
     /// `restore`: Stelle im Zielkapitel (0…1), z. B. 1 = letzte Seite beim Zurückblättern.
-    func show(_ index: Int, restore: Double? = nil) {
+    func show(_ index: Int, restore: Double?) {
         guard let pager, !isJumping else { return }
         let direction: UIPageViewController.NavigationDirection = index > model.chapterIndex ? .forward : .reverse
         let target = page(index, restore: restore ?? 0)
@@ -94,16 +138,6 @@ final class ReaderPagerCoordinator: NSObject, UIPageViewControllerDataSource, UI
                 self?.becameCurrent(target)
             }
         }
-    }
-
-    /// Alle Kapitelseiten neu aufbauen (Wechsel Scrollen ↔ Blättern), an derselben Stelle.
-    func rebuild(restore: Double) {
-        guard let pager else { return }
-        pages = [:]
-        pager.dataSource = model.paged ? nil : self
-        let current = page(model.chapterIndex, restore: restore, anchor: model.anchor)
-        pager.setViewControllers([current], direction: .forward, animated: false)
-        becameCurrent(current)
     }
 
     func reloadCurrent() {
@@ -173,7 +207,7 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
     /// Absatz-Anker der Stelle; hat Vorrang vor dem Bruchteil `restore`.
     private(set) var anchor: Double?
     private var background: UIColor
-    private var webView: WKWebView!
+    private(set) var webView: WKWebView!
     private var loadTask: Task<Void, Never>?
 
     private(set) var progress: Double
@@ -210,7 +244,11 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         view.scrollView.alwaysBounceHorizontal = false
         view.scrollView.isDirectionalLockEnabled = true
         view.allowsLinkPreview = false
-        if model.paged {
+        if model.paged && model.curl {
+            // Buch-Modus: Geblättert wird über die Seitenbilder des `BookPagerController`, nicht durch Scrollen.
+            view.scrollView.isScrollEnabled = false
+            view.scrollView.showsVerticalScrollIndicator = false
+        } else if model.paged {
             view.scrollView.isPagingEnabled = true
             view.scrollView.alwaysBounceVertical = false
             view.scrollView.showsVerticalScrollIndicator = false
