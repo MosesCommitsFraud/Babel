@@ -298,6 +298,36 @@ final class ReaderModel {
             window.babelAnim = requestAnimationFrame(step);
             return 'ok';
           };
+          // Bilderbücher legen Text über ein Hintergrundbild in fester Größe (z. B. 621 × 883 px) und rücken ihn mit festen
+          // Koordinaten in die freie Fläche der Zeichnung. Auf dem schmalen Bildschirm wäre das Bild beschnitten und der Text
+          // läge quer über der Zeichnung. Stattdessen: das Bild in Spaltenbreite oben, der Text in Lesefarbe darunter.
+          // Nur in Büchern; noch einmal nach dem Laden, weil die Stylesheets des Buchs dann sicher da sind.
+          var fixBackgrounds = function(){
+            if (document.querySelector('body > h1.babel-title')) return;
+            var boxes = document.body.querySelectorAll('div, section, td, th, figure, blockquote, p[style], p[class]');
+            if (boxes.length > 4000) return;
+            Array.prototype.forEach.call(boxes, function(el){
+              if (el.classList.contains('babel-bg')) return;
+              var match = /url\\(["']?(.*?)["']?\\)/.exec(getComputedStyle(el).backgroundImage || '');
+              if (!match) return;
+              el.classList.add('babel-bg');
+              var probe = new Image();
+              probe.onload = function(){
+                if (probe.naturalWidth < 300) return;
+                el.style.setProperty('width', '100%', 'important');
+                el.style.setProperty('height', 'auto', 'important');
+                el.style.setProperty('min-height', '0', 'important');
+                el.style.setProperty('padding-top', (probe.naturalHeight / probe.naturalWidth * 100) + '%', 'important');
+                el.style.setProperty('background-size', '100% auto', 'important');
+                el.style.setProperty('background-position', 'top center', 'important');
+                el.style.setProperty('background-repeat', 'no-repeat', 'important');
+                if (window.babelPaginate) window.babelPaginate();
+              };
+              probe.src = match[1];
+            });
+          };
+          fixBackgrounds();
+          window.addEventListener('load', fixBackgrounds);
           var post = function(m){ window.webkit.messageHandlers.babel.postMessage(m); };
           window.babelPost = post;
           var timer = null;

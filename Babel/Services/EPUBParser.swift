@@ -61,7 +61,11 @@ enum EPUBParser {
             if let html = try? String(contentsOf: folder.appendingPathComponent(navPath), encoding: .utf8) {
                 let doc = try SwiftSoup.parse(html)
                 let navDir = (navPath as NSString).deletingLastPathComponent
-                for a in try doc.select("nav a[href]").array() {
+                // Nur das Inhaltsverzeichnis: Die Datei enthält oft auch eine Seitenliste („[14]“) und Orientierungspunkte,
+                // deren Einträge sonst zu Kapiteltiteln würden.
+                let navs = try doc.select("nav").array()
+                let toc = navs.first { ((try? $0.attr("epub:type")) ?? "").contains("toc") } ?? navs.first
+                for a in try toc?.select("a[href]").array() ?? [] {
                     let href = try a.attr("href").components(separatedBy: "#")[0]
                     let path = normalize(navDir.isEmpty ? href : "\(navDir)/\(href.removingPercentEncoding ?? href)")
                     if tocTitles[path] == nil { tocTitles[path] = try a.text().trimmed }

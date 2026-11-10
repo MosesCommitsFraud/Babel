@@ -87,10 +87,20 @@ struct ReaderStyle {
             column-width: calc(100vw - \(2 * m)px - var(--sl) - var(--sr)) !important;
             column-gap: calc(\(2 * m)px + var(--sl) + var(--sr)) !important; column-fill: auto !important;
         }
-        img, svg, video { max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 160px) !important; object-fit: contain; }
+        /* Bilder passen als Ganzes auf eine Seite: Breite frei (feste Breiten aus dem Buch würden das Bild sonst verzerren oder
+           beschneiden, sobald die Höhe begrenzt ist) und nie über einen Seitenwechsel hinweg zerschnitten. */
+        img, svg, video {
+            max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 160px) !important;
+            width: auto !important; object-fit: contain;
+            break-inside: avoid !important; -webkit-column-break-inside: avoid !important;
+        }
+        figure, table, .babel-page, div:has(> img:only-child), p:has(> img:only-child) {
+            break-inside: avoid !important; -webkit-column-break-inside: avoid !important;
+        }
         /* Breite Bildschirme (iPad): zwei Seiten nebeneinander wie ein aufgeschlagenes Buch. Zwei Spalten samt
            Abständen ergeben genau eine Bildschirmbreite, das Blättern bleibt also bildschirmweise. */
         @media (min-width: 700px) {
+            :root { --col: calc(50vw - \(2 * (m + 14))px - var(--sl) - var(--sr)); }
             body {
                 padding-left: calc(\(m + 14)px + var(--sl)) !important; padding-right: calc(\(m + 14)px + var(--sr)) !important;
                 column-width: calc(50vw - \(2 * (m + 14))px - var(--sl) - var(--sr)) !important;
@@ -102,7 +112,10 @@ struct ReaderStyle {
 
     private var baseCSS: String {
         """
-        :root { color-scheme: \(theme.colorScheme == .dark ? "dark" : "light"); --sl: env(safe-area-inset-left, 0px); --sr: env(safe-area-inset-right, 0px); }
+        :root { color-scheme: \(theme.colorScheme == .dark ? "dark" : "light"); --sl: env(safe-area-inset-left, 0px); --sr: env(safe-area-inset-right, 0px);
+            /* Breite der Textspalte in festen Einheiten. Prozentangaben greifen nicht, wenn ein Bild in einem Behälter steckt,
+               der sich nach seinem Inhalt richtet (Tabellenzelle, inline-block): Das Bild bliebe in Originalgröße und liefe aus der Seite. */
+            --col: calc(100vw - \(2 * Int(margin))px - var(--sl) - var(--sr)); }
         html { -webkit-text-size-adjust: 100%; background: \(theme.background) !important; overflow-x: hidden !important; }
         body { overflow-x: hidden !important; }
         pre { white-space: pre-wrap; max-width: 100% !important; }
@@ -132,16 +145,24 @@ struct ReaderStyle {
             background-color: transparent !important;
             font-family: inherit !important;
             line-height: inherit !important;
-            max-width: 100% !important;
+            max-width: min(100%, var(--col)) !important;
+            /* Manche Bücher setzen Bilder und Verse mit festen Koordinaten für eine breite Seite (Bilderbücher). Auf dem
+               schmalen Bildschirm – und erst recht in Spalten – landet dann alles übereinander: lieber in Lesereihenfolge. */
+            position: static !important;
         }
-        p { margin: 0 0 \(paragraphSpacing)em 0 !important; }
+        /* Nur der senkrechte Abstand: Seitliche Ränder gehören dem Buch – hängende Einzüge (Rand links + negativer
+           Erstzeileneinzug, z. B. Verse, Listen im Gutenberg-Vorspann) liefen sonst links aus der Seite. */
+        p { margin-top: 0 !important; margin-bottom: \(paragraphSpacing)em !important; }
         /* Japanische Web Novels setzen jede Zeile als Absatz und Leerzeilen als eigenen: Zeilen dicht, Leerzeile = Abstand. */
         :lang(ja) p { margin-bottom: 0 !important; text-align: start !important; }
         p.babel-gap { height: \(max(paragraphSpacing, 0.6))em; margin: 0 !important; }
         ruby rt { font-size: .5em; opacity: .8; }
         /* Aus Scans zusammengelegte Seiten (EPUBParser.mergePages): dezente Trennung, kein Seitenumbruch. */
         .babel-page + .babel-page { margin-top: .6em; }
-        img, svg, video { max-width: 100% !important; height: auto !important; }
+        img, svg, video { max-width: min(100%, var(--col)) !important; height: auto !important; }
+        \(theme.colorScheme == .dark ? "/* Bücher im dunklen Thema: Strichzeichnungen sind oft schwarz auf durchsichtig und wären unsichtbar – heller Grund dahinter. Die Regel oben (alles durchsichtig) nimmt den Büchern ihren eigenen. Nicht bei Web-Kapiteln (erkennbar an der eingefügten Überschrift). */ body:not(:has(> h1.babel-title)) img { background-color: #fff !important; }" : "")
+        /* Blöcke mit Hintergrundbild des Buchs (Klasse und Maße setzt das Seitenskript): Bild oben, Text darunter. */
+        body .babel-bg { box-sizing: content-box; margin: .8em 0 !important; }
         /* Eigenständige Bilder (Illustrationen) mittig; kleine Bilder im Text (Symbole) bleiben in der Zeile. */
         p > img:only-child, div > img:only-child, a > img:only-child { display: block; margin: .6em auto !important; }
         a { color: \(theme.link) !important; }
@@ -158,6 +179,7 @@ struct ReaderStyle {
         .babel-notes-label { font-weight: 700 !important; text-transform: uppercase; letter-spacing: .06em; font-size: .78em !important; opacity: .7; margin-bottom: .5em !important; }
         /* Breite Bildschirme (iPad): lesbare Zeilenlänge statt Text über die ganze Breite. */
         @media (min-width: 700px) {
+            :root { --col: min(\(Self.readableWidth)px, calc(100vw - \(2 * Int(margin))px)); }
             body { padding-left: max(\(Int(margin))px, calc((100vw - \(Self.readableWidth)px) / 2)) !important; padding-right: max(\(Int(margin))px, calc((100vw - \(Self.readableWidth)px) / 2)) !important; }
         }
         """
