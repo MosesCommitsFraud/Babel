@@ -11,8 +11,8 @@ options:
 # Version und Build gelten für App und Erweiterung – sie müssen übereinstimmen.
 settings:
   base:
-    MARKETING_VERSION: "0.40.6"
-    CURRENT_PROJECT_VERSION: "101"
+    MARKETING_VERSION: "0.40.7"
+    CURRENT_PROJECT_VERSION: "102"
 packages:
   SwiftSoup:
     url: https://github.com/scinfu/SwiftSoup.git

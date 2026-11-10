@@ -238,9 +238,25 @@ final class ReaderModel {
             return h > 0 ? window.scrollY / h : 1;
           };
           // Neue Schrift oder Ränder: Der Absatz oben bleibt oben, statt mit dem Umbruch davonzulaufen.
+          // Blocksatz aus: Viele Bücher legen Blocksatz selbst für jeden Absatz fest und setzten sich damit über den
+          // Schalter hinweg. Solche Absätze bekommen die Klasse `babel-nojust`. (Per CSS allein geht es nicht, ohne auch
+          // zentrierte Zeilen linksbündig zu machen.) Der Schalter steht im eigenen Stil am <body>.
+          window.babelJustify = function(){
+            var marked = document.querySelectorAll('.babel-nojust');
+            for (var i = 0; i < marked.length; i++) marked[i].classList.remove('babel-nojust');
+            if (!document.body || getComputedStyle(document.body).textAlign === 'justify') return;
+            var blocks = document.body.querySelectorAll('p, li, dd, dt, blockquote, div, td');
+            if (blocks.length > 20000) return;
+            for (var k = 0; k < blocks.length; k++) {
+              if (getComputedStyle(blocks[k]).textAlign === 'justify') blocks[k].classList.add('babel-nojust');
+            }
+          };
+          window.babelJustify();
+          window.addEventListener('load', window.babelJustify);
           window.babelSetCSS = function(c){
             var f = window.babelFraction(), a = window.babelAnchor();
             var s = document.getElementById('babel-style'); if (s) s.textContent = c;
+            window.babelJustify();
             if (window.babelPaged) window.babelPaginate();
             if (a != null) { window.babelRestoreAnchor(a); } else if (window.babelPaged) { window.babelRestore(f); }
           };

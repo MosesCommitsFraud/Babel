@@ -41,8 +41,11 @@ final class SettingsSync {
     }
 
     private func push() {
+        // Nur dauerhaft gespeicherte Werte: `object(forKey:)` liefert auch Startargumente (`-reader.fontSize 30`).
+        // Die wanderten sonst in iCloud und kamen beim nächsten Start als echte Einstellung zurück – auf allen Geräten.
+        let stored = Bundle.main.bundleIdentifier.flatMap { local.persistentDomain(forName: $0) } ?? [:]
         for key in Self.keys {
-            guard let value = local.object(forKey: key), !isSame(value, cloud.object(forKey: key)) else { continue }
+            guard let value = stored[key], !isSame(value, cloud.object(forKey: key)) else { continue }
             cloud.set(value, forKey: key)
         }
     }

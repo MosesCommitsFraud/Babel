@@ -177,6 +177,8 @@ struct ReaderStyle {
         body .babel-bg { margin: 0 0 .8em 0 !important; }
         body .babel-bgpic { width: 100%; height: 0; background-size: 100% auto !important; background-repeat: no-repeat !important; margin: .8em 0 .4em 0 !important;
             break-inside: avoid !important; -webkit-column-break-inside: avoid !important; }
+        body .babel-nojust { text-align: start !important; }
+        \(fontSize >= 25 ? "/* Große Schrift: Randnotizen und Kästen, die das Buch neben den Text stellt, nähmen ihm die halbe Spalte – sie stehen dann als eigener Block. Kleine Bilder (Initialen) höchstens ein Viertel der Spalte. */ [class*=\"sidenote\"], [class*=\"marginal\"], aside, div[style*=\"float\"] { float: none !important; width: auto !important; margin: .6em 0 !important; } [class*=\"figleft\"], [class*=\"figright\"], [class*=\"dropcap\"] img, img[class*=\"dropcap\"] { max-width: 25% !important; height: auto !important; } [class*=\"figleft\"] img, [class*=\"figright\"] img { width: 100% !important; }" : "")
         /* Verse nie im Blocksatz: Eine umbrechende Verszeile würde sonst auf volle Breite gesperrt. */
         .verse, .poem, .poetry, .stanza, [class*="verse"], [class*="poem"], [class*="stanza"], [epub\\:type~="z3998:verse"] { text-align: start !important; }
         /* Eigenständige Bilder (Illustrationen) mittig; kleine Bilder im Text (Symbole) bleiben in der Zeile. */
