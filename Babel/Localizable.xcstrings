@@ -6091,6 +6091,206 @@
           }
         }
       }
+    },
+    "App-Icon" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Icon"
+          }
+        }
+      }
+    },
+    "Weinrot" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burgundy"
+          }
+        }
+      }
+    },
+    "Jade" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jade"
+          }
+        }
+      }
+    },
+    "Waldnacht" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forest Night"
+          }
+        }
+      }
+    },
+    "Tiefsee" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deep Sea"
+          }
+        }
+      }
+    },
+    "Nachtblau" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Midnight Blue"
+          }
+        }
+      }
+    },
+    "Pflaume" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plum"
+          }
+        }
+      }
+    },
+    "Rost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust"
+          }
+        }
+      }
+    },
+    "Senf" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mustard"
+          }
+        }
+      }
+    },
+    "Sand" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sand"
+          }
+        }
+      }
+    },
+    "Das Icon ließ sich nicht ändern." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The icon couldn’t be changed."
+          }
+        }
+      }
+    },
+    "Dunkles Rot wie ein Leineneinband" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deep red, like a cloth binding"
+          }
+        }
+      }
+    },
+    "Frisches Grün mit einem Hauch Blau" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fresh green with a hint of blue"
+          }
+        }
+      }
+    },
+    "Tiefes Tannengrün, sehr ruhig" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deep fir green, very calm"
+          }
+        }
+      }
+    },
+    "Dunkles Petrol wie tiefes Wasser" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark teal, like deep water"
+          }
+        }
+      }
+    },
+    "Tiefes Blau wie der Himmel nach Mitternacht" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deep blue, like the sky after midnight"
+          }
+        }
+      }
+    },
+    "Gedecktes Violett mit warmem Rot" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muted purple with warm red"
+          }
+        }
+      }
+    },
+    "Warmes Rotbraun wie altes Eisen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warm red-brown, like old iron"
+          }
+        }
+      }
+    },
+    "Gedecktes Gelb, warm und sonnig" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muted yellow, warm and sunny"
+          }
+        }
+      }
+    },
+    "Helles Beige, fast ohne Farbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light beige, almost colourless"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

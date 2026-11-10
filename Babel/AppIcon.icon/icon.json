@@ -1,14 +1,22 @@
 {
   "fill": {
-    "solid": "display-p3:0.95000,0.97000,0.94000,1.00000"
+    "automatic-gradient": "display-p3:0.46000,0.20000,0.25000,1.00000"
   },
   "groups": [
     {
       "layers": [
         {
-          "image-name": "b3.svg",
-          "name": "b3",
-          "glass": true
+          "image-name": "mark.svg",
+          "name": "mark",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "display-p3:0.93000,0.90000,0.83000,1.00000"
+              }
+            }
+          ]
         }
       ],
       "shadow": {
@@ -17,58 +25,83 @@
       },
       "translucency": {
         "enabled": true,
-        "value": 0.35
+        "value": 0.1
       }
     },
     {
       "layers": [
         {
-          "image-name": "b2.svg",
-          "name": "b2",
-          "glass": true
+          "image-name": "left.svg",
+          "name": "left",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "display-p3:0.58000,0.25217,0.31522,1.00000"
+              }
+            }
+          ]
+        },
+        {
+          "image-name": "right.svg",
+          "name": "right",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "display-p3:0.58000,0.25217,0.31522,1.00000"
+              }
+            }
+          ]
         }
       ],
       "shadow": {
         "kind": "layer-color",
         "opacity": 0.5
-      },
-      "translucency": {
-        "enabled": true,
-        "value": 0.35
       }
     },
     {
       "layers": [
         {
-          "image-name": "b1.svg",
-          "name": "b1",
-          "glass": true
+          "image-name": "under.svg",
+          "name": "under",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "display-p3:0.58000,0.25217,0.31522,1.00000"
+              }
+            }
+          ]
         }
       ],
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.5
-      },
-      "translucency": {
-        "enabled": true,
-        "value": 0.35
+        "opacity": 0.3
       }
     },
     {
       "layers": [
         {
-          "image-name": "shelf.svg",
-          "name": "shelf",
-          "glass": true
+          "image-name": "cover.svg",
+          "name": "cover",
+          "glass": true,
+          "fill-specializations": [
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "display-p3:0.58000,0.25217,0.31522,1.00000"
+              }
+            }
+          ]
         }
       ],
       "shadow": {
         "kind": "layer-color",
-        "opacity": 0.5
-      },
-      "translucency": {
-        "enabled": true,
-        "value": 0.35
+        "opacity": 0.4
       }
     }
   ],

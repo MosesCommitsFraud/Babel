@@ -166,6 +166,8 @@ enum ThemeCatalog {
 /// Babels eigene Paletten – ruhige, entsättigte Töne, jeweils hell und dunkel aufeinander abgestimmt.
 enum PaletteID: String, CaseIterable, Identifiable, Sendable {
     case hexagon, parchment, mist, lavender, rose, ink
+    // Die Farben der App-Icons (Einstellungen → App-Icon), in derselben Reihenfolge.
+    case wine, jade, forest, deepSea, midnight, plum, rust, mustard, sand
     var id: String { rawValue }
 
     var label: String {
@@ -176,6 +178,15 @@ enum PaletteID: String, CaseIterable, Identifiable, Sendable {
         case .lavender: String(localized: "Lavendel")
         case .rose: String(localized: "Rosé")
         case .ink: String(localized: "Tinte")
+        case .wine: String(localized: "Weinrot")
+        case .jade: String(localized: "Jade")
+        case .forest: String(localized: "Waldnacht")
+        case .deepSea: String(localized: "Tiefsee")
+        case .midnight: String(localized: "Nachtblau")
+        case .plum: String(localized: "Pflaume")
+        case .rust: String(localized: "Rost")
+        case .mustard: String(localized: "Senf")
+        case .sand: String(localized: "Sand")
         }
     }
 
@@ -187,6 +198,15 @@ enum PaletteID: String, CaseIterable, Identifiable, Sendable {
         case .lavender: String(localized: "Sanftes Violett, leicht verträumt")
         case .rose: String(localized: "Gedecktes Altrosa")
         case .ink: String(localized: "Schwarz auf Weiß, ganz ohne Farbe")
+        case .wine: String(localized: "Dunkles Rot wie ein Leineneinband")
+        case .jade: String(localized: "Frisches Grün mit einem Hauch Blau")
+        case .forest: String(localized: "Tiefes Tannengrün, sehr ruhig")
+        case .deepSea: String(localized: "Dunkles Petrol wie tiefes Wasser")
+        case .midnight: String(localized: "Tiefes Blau wie der Himmel nach Mitternacht")
+        case .plum: String(localized: "Gedecktes Violett mit warmem Rot")
+        case .rust: String(localized: "Warmes Rotbraun wie altes Eisen")
+        case .mustard: String(localized: "Gedecktes Gelb, warm und sonnig")
+        case .sand: String(localized: "Helles Beige, fast ohne Farbe")
         }
     }
 
@@ -198,6 +218,15 @@ enum PaletteID: String, CaseIterable, Identifiable, Sendable {
         case .lavender: .init(screen: 0xF6F5F9, card: 0xEBE8F2, foreground: 0x26232F, secondaryText: 0x6E6A7C, border: 0xDDD9E8, primary: 0x7A6B9E, primaryForeground: 0xFFFFFF)
         case .rose: .init(screen: 0xF9F4F3, card: 0xF0E6E4, foreground: 0x2E2423, secondaryText: 0x7C6B69, border: 0xE5D6D3, primary: 0xA56C68, primaryForeground: 0xFFFFFF)
         case .ink: .init(screen: 0xF7F7F6, card: 0xECECEA, foreground: 0x1C1C1E, secondaryText: 0x6C6C70, border: 0xDBDBD9, primary: 0x3A3A3C, primaryForeground: 0xFFFFFF)
+        case .wine: .init(screen: 0xF9F4F4, card: 0xF0E5E6, foreground: 0x2E2023, secondaryText: 0x7C6669, border: 0xE5D5D7, primary: 0x8A3A48, primaryForeground: 0xFFFFFF)
+        case .jade: .init(screen: 0xF3F7F5, card: 0xE5EEEA, foreground: 0x1E2925, secondaryText: 0x64736D, border: 0xD5E0DB, primary: 0x3A7F70, primaryForeground: 0xFFFFFF)
+        case .forest: .init(screen: 0xF4F6F4, card: 0xE7ECE8, foreground: 0x1F2622, secondaryText: 0x656F69, border: 0xD7DED9, primary: 0x2E4A40, primaryForeground: 0xFFFFFF)
+        case .deepSea: .init(screen: 0xF2F6F7, card: 0xE3ECEE, foreground: 0x1B272B, secondaryText: 0x617176, border: 0xD3DFE2, primary: 0x175463, primaryForeground: 0xFFFFFF)
+        case .midnight: .init(screen: 0xF4F5F9, card: 0xE7E9F1, foreground: 0x1F2230, secondaryText: 0x676B7D, border: 0xD7DAE6, primary: 0x2B3A66, primaryForeground: 0xFFFFFF)
+        case .plum: .init(screen: 0xF8F4F7, card: 0xEEE5EC, foreground: 0x2C2229, secondaryText: 0x786873, border: 0xE2D6DF, primary: 0x7A4A6C, primaryForeground: 0xFFFFFF)
+        case .rust: .init(screen: 0xF9F5F2, card: 0xF0E7E1, foreground: 0x2E231E, secondaryText: 0x7C6B62, border: 0xE5D8CF, primary: 0xA55236, primaryForeground: 0xFFFFFF)
+        case .mustard: .init(screen: 0xF8F6EE, card: 0xEFEAD9, foreground: 0x2B2718, secondaryText: 0x767057, border: 0xE2DBC4, primary: 0x8F7520, primaryForeground: 0xFFFFFF)
+        case .sand: .init(screen: 0xF7F5F0, card: 0xEDE8DE, foreground: 0x29251E, secondaryText: 0x756D60, border: 0xE0D9CB, primary: 0x8A7758, primaryForeground: 0xFFFFFF)
         }
     }
 
@@ -209,6 +238,15 @@ enum PaletteID: String, CaseIterable, Identifiable, Sendable {
         case .lavender: .init(screen: 0x16141B, card: 0x211E28, foreground: 0xEAE7F0, secondaryText: 0xA19CAE, border: 0x2F2B38, primary: 0xB2A4D5, primaryForeground: 0x1B1724)
         case .rose: .init(screen: 0x1A1514, card: 0x251E1D, foreground: 0xEFE5E3, secondaryText: 0xAA9A97, border: 0x352B2A, primary: 0xD39C96, primaryForeground: 0x241817)
         case .ink: .init(screen: 0x0E0E0F, card: 0x1A1A1C, foreground: 0xEDEDEF, secondaryText: 0x98989D, border: 0x2A2A2D, primary: 0xD6D6D8, primaryForeground: 0x161617)
+        case .wine: .init(screen: 0x1A1315, card: 0x261C1F, foreground: 0xF0E4E6, secondaryText: 0xAB979B, border: 0x36292C, primary: 0xDB8E9B, primaryForeground: 0x2A1217)
+        case .jade: .init(screen: 0x121917, card: 0x1B2522, foreground: 0xE4EEEA, secondaryText: 0x94A69F, border: 0x28342F, primary: 0x7CC6B4, primaryForeground: 0x0F2620)
+        case .forest: .init(screen: 0x121614, card: 0x1B211E, foreground: 0xE5EBE7, secondaryText: 0x96A29B, border: 0x29312D, primary: 0x93B8A8, primaryForeground: 0x13211B)
+        case .deepSea: .init(screen: 0x0F171A, card: 0x172226, foreground: 0xE2ECEF, secondaryText: 0x91A4AA, border: 0x243237, primary: 0x72B6C7, primaryForeground: 0x0B222A)
+        case .midnight: .init(screen: 0x12131A, card: 0x1B1D28, foreground: 0xE6E8F1, secondaryText: 0x989CB0, border: 0x292C3B, primary: 0x97A9DE, primaryForeground: 0x131A33)
+        case .plum: .init(screen: 0x181317, card: 0x231C21, foreground: 0xEEE5EB, secondaryText: 0xA898A3, border: 0x332A31, primary: 0xD09CC1, primaryForeground: 0x2A1524)
+        case .rust: .init(screen: 0x1A1512, card: 0x261E1A, foreground: 0xF0E6E0, secondaryText: 0xAB9A90, border: 0x362C26, primary: 0xE49C80, primaryForeground: 0x2D150C)
+        case .mustard: .init(screen: 0x181610, card: 0x232017, foreground: 0xEEE9D8, secondaryText: 0xA8A089, border: 0x343024, primary: 0xDDBF6A, primaryForeground: 0x241D08)
+        case .sand: .init(screen: 0x171512, card: 0x22201B, foreground: 0xECE7DD, secondaryText: 0xA59D90, border: 0x322E27, primary: 0xD6C5A8, primaryForeground: 0x231E15)
         }
     }
 }

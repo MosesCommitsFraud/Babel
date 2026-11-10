@@ -48,6 +48,7 @@ struct SettingsView: View {
             Form {
                 Section {
                     ThemeSettingsRow()
+                    AppIconSettingsRow()
                 }
                 .themedRows()
 
