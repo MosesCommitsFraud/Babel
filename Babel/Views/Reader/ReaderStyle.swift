@@ -171,7 +171,9 @@ struct ReaderStyle {
         p[class^="block"], div[class^="block"] { margin-left: 0 !important; margin-right: 0 !important; }
         \(theme.colorScheme == .dark ? "/* Bücher im dunklen Thema: Strichzeichnungen sind oft schwarz auf durchsichtig und wären unsichtbar – heller Grund dahinter. Die Regel oben (alles durchsichtig) nimmt den Büchern ihren eigenen. Nicht bei Web-Kapiteln (erkennbar an der eingefügten Überschrift). */ body:not(:has(> h1.babel-title)) img { background-color: #fff !important; }" : "")
         /* Blöcke mit Hintergrundbild des Buchs (Klasse und Maße setzt das Seitenskript): Bild oben, Text darunter. */
-        body .babel-bg { box-sizing: content-box; margin: .8em 0 !important; }
+        body .babel-bg { margin: 0 0 .8em 0 !important; }
+        body .babel-bgpic { width: 100%; height: 0; background-size: 100% auto !important; background-repeat: no-repeat !important; margin: .8em 0 .4em 0 !important;
+            break-inside: avoid !important; -webkit-column-break-inside: avoid !important; }
         /* Eigenständige Bilder (Illustrationen) mittig; kleine Bilder im Text (Symbole) bleiben in der Zeile. */
         p > img:only-child, div > img:only-child, a > img:only-child { display: block; margin: .6em auto !important; }
         a { color: \(theme.link) !important; }

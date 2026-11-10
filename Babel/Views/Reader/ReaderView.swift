@@ -317,7 +317,13 @@ final class ReaderModel {
                 el.style.setProperty('width', '100%', 'important');
                 el.style.setProperty('height', 'auto', 'important');
                 el.style.setProperty('min-height', '0', 'important');
-                el.style.setProperty('padding-top', (probe.naturalHeight / probe.naturalWidth * 100) + '%', 'important');
+                // Das Bild als eigener Block vor dem Text: So kann es beim seitenweisen Blättern als Ganzes auf die nächste
+                // Seite rücken, statt mitten durchgeschnitten zu werden (als Polster des Textblocks ging das nicht).
+                var picture = document.createElement('div');
+                picture.className = 'babel-bgpic';
+                picture.style.cssText = 'background-image:' + getComputedStyle(el).backgroundImage + ';padding-top:' + (probe.naturalHeight / probe.naturalWidth * 100) + '%;';
+                el.parentNode.insertBefore(picture, el);
+                el.style.setProperty('background-image', 'none', 'important');
                 el.style.setProperty('background-size', '100% auto', 'important');
                 el.style.setProperty('background-position', 'top center', 'important');
                 el.style.setProperty('background-repeat', 'no-repeat', 'important');
