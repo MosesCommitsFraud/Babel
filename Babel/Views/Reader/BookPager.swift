@@ -132,6 +132,8 @@ final class BookPagerController: UIViewController, ReaderPaging, UIPageViewContr
         model.didShow(index, progress: controller.progress, anchor: controller.anchor, loading: controller.isWaiting, error: controller.errorText)
         Task {
             guard await waitUntilReady(controller, generation: gen) else { return }
+            // Erst wenn Schriften und Bilder stehen, stimmt die Seite zur Lesestelle.
+            await controller.settleRestore()
             let info = await pageInfo(controller)
             guard gen == generation else { return }
             counts[index] = info.count

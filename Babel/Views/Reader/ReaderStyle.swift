@@ -94,6 +94,9 @@ struct ReaderStyle {
             width: auto !important; object-fit: contain;
             break-inside: avoid !important; -webkit-column-break-inside: avoid !important;
         }
+        /* Leerzeilen japanischer Web Novels: beim Blättern höchstens eine am Stück und keine direkt vor einem Bild –
+           sonst rutscht ein seitenhohes Bild noch eine Seite weiter und es bleibt eine leere Seite stehen. */
+        p.babel-gap + p.babel-gap, p.babel-gap:has(+ p > img), p.babel-gap:has(+ p.babel-gap + p > img) { display: none !important; }
         figure, table, .babel-page, div:has(> img:only-child), p:has(> img:only-child) {
             break-inside: avoid !important; -webkit-column-break-inside: avoid !important;
         }
@@ -174,6 +177,8 @@ struct ReaderStyle {
         body .babel-bg { margin: 0 0 .8em 0 !important; }
         body .babel-bgpic { width: 100%; height: 0; background-size: 100% auto !important; background-repeat: no-repeat !important; margin: .8em 0 .4em 0 !important;
             break-inside: avoid !important; -webkit-column-break-inside: avoid !important; }
+        /* Verse nie im Blocksatz: Eine umbrechende Verszeile würde sonst auf volle Breite gesperrt. */
+        .verse, .poem, .poetry, .stanza, [class*="verse"], [class*="poem"], [class*="stanza"], [epub\\:type~="z3998:verse"] { text-align: start !important; }
         /* Eigenständige Bilder (Illustrationen) mittig; kleine Bilder im Text (Symbole) bleiben in der Zeile. */
         p > img:only-child, div > img:only-child, a > img:only-child { display: block; margin: .6em auto !important; }
         a { color: \(theme.link) !important; }

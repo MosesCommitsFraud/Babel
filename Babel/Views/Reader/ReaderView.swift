@@ -514,12 +514,21 @@ final class ReaderModel {
               }
             }
             // Seitenweise: linker/rechter Rand blättert, die Mitte blendet die Leisten ein.
+            // Tippzonen beziehen sich auf die nutzbare Breite: Auf dem iPhone Duo belegt die Leiste von iOS den rechten Rand,
+            // das rechte Viertel des Fensters wäre dort fast ganz verdeckt.
+            var probe = document.getElementById('babel-safe');
+            if (!probe) {
+              probe = document.createElement('div'); probe.id = 'babel-safe';
+              probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);';
+              document.documentElement.appendChild(probe);
+            }
+            var ps = getComputedStyle(probe), safeL = parseFloat(ps.paddingLeft) || 0, safeR = parseFloat(ps.paddingRight) || 0;
             if (window.babelCurl) {
-              var cx = e.clientX, cw = window.innerWidth;
+              var cx = e.clientX - safeL, cw = window.innerWidth - safeL - safeR;
               if (cx < cw * 0.28) { post({ type: 'turn', dir: -1 }); return; }
               if (cx > cw * 0.72) { post({ type: 'turn', dir: 1 }); return; }
             } else if (window.babelPaged) {
-              var x = e.clientX, w = window.innerWidth;
+              var x = e.clientX - safeL, w = window.innerWidth - safeL - safeR;
               if (x < w * 0.28) { if (window.babelTurn(-1) === 'start') post({ type: 'previous' }); return; }
               if (x > w * 0.72) { if (window.babelTurn(1) === 'end') post({ type: 'next' }); return; }
             }

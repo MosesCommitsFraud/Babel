@@ -379,6 +379,7 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         restore = fraction
         progress = fraction
         anchor = nil
+        loadTarget = nil
         if isReady { scroll(to: fraction, anchor: nil) }
     }
 
@@ -424,13 +425,28 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
         applySpeech()
         applyMarks()
         onReady?()
+        loadTarget = (target, targetAnchor)
         guard target > 0 || targetAnchor != nil else { return }
         Task { [weak self] in
-            // Bilder können die Höhe später ändern – noch einmal nachjustieren, solange niemand weitergescrollt hat.
+            // Schriften und Bilder ändern Höhe und Seitenzahl noch kurz nach dem Laden – einmal nachjustieren,
+            // solange niemand scrollt. (Nicht am gemeldeten Fortschritt prüfen: Der weicht genau dann ab,
+            // wenn die erste Wiederherstellung auf dem unfertigen Layout danebenlag.)
             try? await Task.sleep(for: .milliseconds(400))
-            guard let self, abs(self.progress - target) < 0.02 else { return }
+            guard let self else { return }
+            let scroll = self.webView.scrollView
+            guard !scroll.isDragging, !scroll.isDecelerating, self.loadTarget?.0 == target else { return }
             self.scroll(to: target, anchor: targetAnchor)
         }
+    }
+
+    /// Stelle, an der diese Seite beim Laden stehen sollte – der Buch-Modus setzt sie nach dem Einschwingen des Layouts erneut.
+    private var loadTarget: (Double, Double?)?
+
+    func settleRestore() async {
+        guard let (target, targetAnchor) = loadTarget, target > 0 || targetAnchor != nil else { return }
+        try? await Task.sleep(for: .milliseconds(450))
+        scroll(to: target, anchor: targetAnchor)
+        try? await Task.sleep(for: .milliseconds(60))
     }
 
     func webView(_ webView: WKWebView, decidePolicyFor action: WKNavigationAction) async -> WKNavigationActionPolicy {
