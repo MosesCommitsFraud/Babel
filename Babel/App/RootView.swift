@@ -96,6 +96,9 @@ struct RootView: View {
             library.pruneViewed(context: context)
             #if DEBUG
             library.debugForgetLastChapters(context: context)
+            // Zum Testen der Darstellung: `-debugOpenStory <key>` öffnet die Geschichte gleich im Reader. Zusammen mit
+            // `-reader.theme sepia -reader.paged 0` usw. (Startargumente überschreiben die Einstellungen nur für diesen Lauf).
+            if let key = UserDefaults.standard.string(forKey: "debugOpenStory") { notifier.pendingStoryKey = key }
             #endif
             if checkUpdatesOnLaunch { await library.checkAllUpdates(context: context) }
             await FFNAccount.shared.syncIfDue(library: library, context: context)

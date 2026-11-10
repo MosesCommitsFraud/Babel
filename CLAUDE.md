@@ -44,6 +44,9 @@ Abhängigkeit: SwiftSoup (SPM). Swift 5 Language Mode, Deployment Target 26.0.
   - Dunkle Lesethemen: Bilder in Büchern bekommen weißen Grund (`body:not(:has(> h1.babel-title)) img`), sonst sind schwarze Strichzeichnungen auf durchsichtigem Grund unsichtbar (Standard Ebooks); nicht in Web-Kapiteln.
   - Tabellen volle Breite mit Zellrahmen (Statusfenster in Royal-Road-Serien), kein `white-space: pre-wrap` auf Tabellen.
   - Seitenweise: Bilder `width: auto` + `max-height`, `break-inside: avoid`.
+  - `img { filter: none }` und `overrideUserInterfaceStyle` des WebViews nach dem Lesethema: Bücher werten `prefers-color-scheme` aus (Standard Ebooks kehrt Zeichnungen um) – maßgeblich ist das Lesethema, nicht das Gerät.
+  - Umgewandelte Bücher (Calibre, Klassen `calibre…`/`block…`): Fließtext immer `1em`, `letter-/word-spacing: normal`, bei `block…` keine seitlichen Ränder (55 pt beidseitig ließen drei Buchstaben Platz).
+  - Darstellung testen: DEBUG-Startargumente `-debugOpenStory <key> -reader.theme sepia -reader.paged 1` öffnen ein Buch direkt im Reader mit diesen Einstellungen (nur für diesen Lauf). Durchgesehen: neun Bücher/Serien × Hell, Sepia, Schwarz scrollend und Hell, Sepia seitenweise, dazu Stichproben in Dunkel und im Buch-Modus.
   - Geprüft im Reader (dunkles Thema, seitenweise): Royal Road mit Tabellen, Syosetu mit Illustration, Standard Ebooks „Alice“ (Tenniel), Gutenberg „Alice“ und „Struwwelpeter“, Archive-Scan „Orbis pictus“. Ungeprüft: helles Thema, Scroll-Modus, iPad.
 - EPUB-Inhaltsverzeichnis: nur `nav[epub:type=toc]` lesen – die Datei enthält oft auch eine Seitenliste, deren Einträge („[14]“) sonst zu Kapiteltiteln werden.
 - Weiterlesen-Leiste über der Tab-Bar (`ContinueReadingAccessory`): quadratisches Cover wie der Apple-Music-Mini-Player, kein Play-Symbol. Neue Kapitel: Symbol `text.badge.plus` (Chip und Detailansicht).

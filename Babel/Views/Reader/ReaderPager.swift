@@ -257,6 +257,9 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
             view.onMark = { [weak self] withNote in self?.markSelection(withNote: withNote) }
         }
         view.navigationDelegate = self
+        // Hell/Dunkel des WebViews folgt dem Lesethema, nicht dem Gerät – danach richten sich `prefers-color-scheme`
+        // in den Stylesheets der Bücher und die Standardfarben von WebKit.
+        view.overrideUserInterfaceStyle = Self.style(for: background)
         view.isOpaque = false
         view.backgroundColor = background
         view.scrollView.backgroundColor = background
@@ -319,8 +322,15 @@ final class ChapterPageController: UIViewController, WKNavigationDelegate, WKScr
     func setBackground(_ color: UIColor) {
         background = color
         guard isViewLoaded else { return }
+        webView.overrideUserInterfaceStyle = Self.style(for: color)
         webView.backgroundColor = color
         webView.scrollView.backgroundColor = color
+    }
+
+    private static func style(for background: UIColor) -> UIUserInterfaceStyle {
+        var white: CGFloat = 0, alpha: CGFloat = 0
+        background.getWhite(&white, alpha: &alpha)
+        return white < 0.5 ? .dark : .light
     }
 
     /// Eine Bildschirmseite weiter/zurück (mit etwas Überlappung); meldet, ob es schon am Kapitelende stand.

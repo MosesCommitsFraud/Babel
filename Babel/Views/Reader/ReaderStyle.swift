@@ -159,7 +159,16 @@ struct ReaderStyle {
         ruby rt { font-size: .5em; opacity: .8; }
         /* Aus Scans zusammengelegte Seiten (EPUBParser.mergePages): dezente Trennung, kein Seitenumbruch. */
         .babel-page + .babel-page { margin-top: .6em; }
-        img, svg, video { max-width: min(100%, var(--col)) !important; height: auto !important; }
+        /* `filter: none`: Manche Bücher (Standard Ebooks) kehren Zeichnungen im Dunkelmodus des Geräts um – das Lesethema
+           kann aber hell sein, dann stünde die Zeichnung weiß auf schwarz auf der weißen Seite. */
+        img, svg, video { max-width: min(100%, var(--col)) !important; min-width: 0 !important; height: auto !important; filter: none !important; }
+        /* Fließtext immer in der gewählten Schriftgröße: Umgewandelte Bücher (Calibre: Klassen „calibre…“/„block…“) setzen
+           ganze Absätze auf 75 % mit engerem Buchstabenabstand. Überschriften, <small> und Fußnotenzeichen bleiben. */
+        p, li, dd, blockquote, div[class^="calibre"], div[class^="block"], span[class^="calibre"] { font-size: 1em !important; }
+        body * { letter-spacing: normal !important; word-spacing: normal !important; }
+        /* Dieselben Umwandlungen rücken Absätze mit festen Punktwerten von beiden Seiten ein (55 pt) – für eine Buchseite
+           gedacht, auf dem iPhone bleibt eine Spalte von drei Buchstaben. */
+        p[class^="block"], div[class^="block"] { margin-left: 0 !important; margin-right: 0 !important; }
         \(theme.colorScheme == .dark ? "/* Bücher im dunklen Thema: Strichzeichnungen sind oft schwarz auf durchsichtig und wären unsichtbar – heller Grund dahinter. Die Regel oben (alles durchsichtig) nimmt den Büchern ihren eigenen. Nicht bei Web-Kapiteln (erkennbar an der eingefügten Überschrift). */ body:not(:has(> h1.babel-title)) img { background-color: #fff !important; }" : "")
         /* Blöcke mit Hintergrundbild des Buchs (Klasse und Maße setzt das Seitenskript): Bild oben, Text darunter. */
         body .babel-bg { box-sizing: content-box; margin: .8em 0 !important; }
