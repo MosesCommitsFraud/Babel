@@ -425,10 +425,78 @@ final class FFNListModel {
     var hasNext = false
     var isLoading = false
     var error: String?
+    /// Was die geladene Seite zeigt (Fandom-Nummern für Zählungen und Crossover).
+    var context: FFNPageContext?
+    /// Das Fandom, dessen Crossover zur Wahl stehen – steht nach dem ersten Laden fest.
+    var home: FFNCrossRef?
+    /// Seite des Fandoms ohne Crossover; fehlt, wenn ein gespeicherter Crossover-Filter geöffnet wurde
+    /// und das Fandom in den geladenen Listen nicht zu finden ist.
+    var plainPath: String?
+    var crossover: FFNCrossChoice = .none
+    /// Womit die Ansicht geöffnet wurde (zählt nicht als aktiver Filter).
+    private var initialCrossover: FFNCrossChoice = .none
+    private let name: String
 
-    init(url: URL) {
+    init(url: URL, name: String = "") {
         baseURL = url
         currentURL = url
+        self.name = name
+    }
+
+    /// Pfad der offenen Liste ohne Filter – Schlüssel für die Zählungen.
+    var pagePath: String { URLComponents(url: currentURL, resolvingAgainstBaseURL: false)?.percentEncodedPath ?? currentURL.path }
+
+    /// Felder, deren Werte nur zur gerade geladenen Liste passen (Charaktere, Welten, Pairing).
+    static func isListBound(_ name: String) -> Bool {
+        name.contains("characterid") || name.contains("verseid") || name == "pm" || name == "_pm"
+    }
+
+    /// Untertitel, solange eine andere Crossover-Auswahl als beim Öffnen gilt.
+    var crossoverSubtitle: String {
+        guard crossover != initialCrossover else { return "" }
+        switch crossover {
+        case .none: return String(localized: "Ohne Crossover")
+        case .all: return String(localized: "Alle Crossover")
+        case .with(let partner): return "× \(partner.name)"
+        }
+    }
+
+    private func path(for choice: FFNCrossChoice) -> String? {
+        switch choice {
+        case .none: plainPath
+        case .all: home?.allPath
+        case .with(let partner): partner.path
+        }
+    }
+
+    /// Beim ersten Laden: Welches Fandom ist das, und zeigt die Adresse schon Crossover?
+    private func adopt(_ context: FFNPageContext, url: URL) {
+        let encodedPath = URLComponents(url: url, resolvingAgainstBaseURL: false)?.percentEncodedPath ?? url.path
+        if !context.isCrossover {
+            let parts = encodedPath.split(separator: "/").map(String.init)
+            let slug = context.refs.first { $0.id == context.fandomID }?.slug ?? (parts.count > 1 ? parts[1] : "")
+            guard !slug.isEmpty else { return }
+            home = FFNCrossRef(id: context.fandomID, slug: slug,
+                               name: name.isEmpty ? (slug.removingPercentEncoding ?? slug).replacingOccurrences(of: "-", with: " ") : name)
+            plainPath = encodedPath
+            return
+        }
+        // Gespeicherter Filter mit Crossover-Adresse.
+        var ref = context.refs.first { $0.id == context.fandomID }
+        if ref == nil, let m = encodedPath.firstMatch(#"^/(.+)-Crossovers/\d+/0/"#) {
+            ref = FFNCrossRef(id: context.fandomID, slug: m[1], name: (m[1].removingPercentEncoding ?? m[1]).replacingOccurrences(of: "-", with: " "))
+        }
+        guard let ref else { return }
+        home = ref
+        if context.isPair {
+            let other = context.refs.first { $0.id == context.partnerID }
+            crossover = .with(FFNCrossPartner(name: other?.name ?? "", path: encodedPath, count: nil))
+        } else {
+            crossover = .all
+        }
+        initialCrossover = crossover
+        let suffix = "/\(ref.slug)/".lowercased()
+        plainPath = FFNFandomStore.shared.lists.values.joined().first { $0.path.lowercased().hasSuffix(suffix) }?.path
     }
 
     func load() async {
@@ -456,7 +524,27 @@ final class FFNListModel {
         }
     }
 
-    func applyFilters(_ values: [String: String], pairs: [Bool] = [false, false]) async {
+    func applyFilters(_ values: [String: String], pairs: [Bool] = [false, false], crossover choice: FFNCrossChoice? = nil) async {
+        // Andere Crossover-Auswahl = andere Seite mit eigenen Charakteren: Sortierung, Rating, Sprache,
+        // Genre, Länge und Status gehen mit, was an der alten Liste hing, entfällt.
+        if let choice, choice != crossover, let path = path(for: choice) {
+            crossover = choice
+            requiredPairs = []
+            pairToggles = [false, false]
+            isLoading = true
+            error = nil
+            stories = []
+            defer { isLoading = false }
+            do {
+                let kept = values.filter { !Self.isListBound($0.key) }
+                let result = try await FFNService.applyFilters(on: FFNService.url(path: path), values: kept)
+                currentURL = FFNService.setPage(result.url, page: 1)
+                apply(result, replace: true)
+            } catch {
+                self.error = error.localizedDescription
+            }
+            return
+        }
         pairToggles = pairs
         requiredPairs = zip([("characterid1", "characterid2"), ("characterid3", "characterid4")], pairs).compactMap { names, on in
             guard on else { return nil }
@@ -480,6 +568,7 @@ final class FFNListModel {
         requiredPairs = []
         pairToggles = [false, false]
         currentURL = baseURL
+        crossover = initialCrossover
         stories = []
         await load()
     }
@@ -508,6 +597,10 @@ final class FFNListModel {
             let known = Set(stories.map(\.id))
             stories += incoming.filter { !known.contains($0.id) }
         }
+        if let context = result.context {
+            self.context = context
+            if home == nil { adopt(context, url: result.url) }
+        }
         if !result.filters.isEmpty {
             filters = result.filters
             if defaults.isEmpty, currentURL == baseURL {
@@ -519,6 +612,7 @@ final class FFNListModel {
 
     var activeFilterCount: Int {
         filters.filter { $0.selected != (defaults[$0.name] ?? $0.options.first?.value) }.count
+            + (crossover != initialCrossover ? 1 : 0)
     }
 }
 
@@ -535,7 +629,7 @@ struct FFNStoryListView: View {
     init(title: String, url: URL, fandom: FFNFandom? = nil) {
         self.title = title
         self.fandom = fandom
-        _model = State(initialValue: FFNListModel(url: url))
+        _model = State(initialValue: FFNListModel(url: url, name: fandom?.path.contains("?") == false ? title : ""))
     }
 
     private var pinned: [FFNFandom] { (try? JSONDecoder().decode([FFNFandom].self, from: pinnedData)) ?? [] }
@@ -561,6 +655,7 @@ struct FFNStoryListView: View {
         .themedBackground()
         .siteStatusBanner(.ffn)
         .navigationTitle(title)
+        .navigationSubtitle(model.crossoverSubtitle)
         .navigationBarTitleDisplayMode(.inline)
         .overlay {
             if model.isLoading && model.stories.isEmpty {
@@ -596,7 +691,7 @@ struct FFNStoryListView: View {
                 .disabled(model.filters.isEmpty)
                 if model.activeFilterCount > 0 {
                     Button("Filter speichern", systemImage: "bookmark") {
-                        presetName = title
+                        presetName = [title, model.crossoverSubtitle].filter { !$0.isEmpty }.joined(separator: " ")
                         showSave = true
                     }
                 }
@@ -610,8 +705,10 @@ struct FFNStoryListView: View {
             Text("Findest du im FanFiction-Tab unter „Gespeicherte Filter“ wieder.")
         }
         .sheet(isPresented: $showFilters) {
-            FFNFilterSheet(filters: model.filters, pageURL: model.baseURL, pairs: model.pairToggles) { values, pairs in
-                Task { await model.applyFilters(values, pairs: pairs) }
+            FFNFilterSheet(filters: model.filters, pagePath: model.pagePath, context: model.context, home: model.home,
+                           canLeaveCrossover: model.plainPath != nil, crossover: model.crossover,
+                           pairs: model.pairToggles) { values, pairs, crossover in
+                Task { await model.applyFilters(values, pairs: pairs, crossover: crossover) }
             } onReset: {
                 Task { await model.resetFilters() }
             }

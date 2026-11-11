@@ -41,11 +41,80 @@ struct FFNFilterSelect: Identifiable, Hashable, Sendable {
     var isExclusion: Bool { name.hasPrefix("_") }
 }
 
+/// Ein Fandom, wie es FFNs Crossover-Seiten ansprechen: Nummer + Adressteil („Harry-Potter“, 224).
+struct FFNCrossRef: Hashable, Codable, Sendable {
+    var id: String
+    /// Adressteil, so wie FFN ihn schreibt (schon prozentkodiert).
+    var slug: String
+    var name: String
+
+    /// Liste aller Fandoms, mit denen es Crossover gibt (eine Seite, samt Anzahl).
+    var listPath: String { "/crossovers/\(slug)/\(id)/" }
+    /// Alle Crossover dieses Fandoms.
+    var allPath: String { "/\(slug)-Crossovers/\(id)/0/" }
+    /// Crossover mit genau einem zweiten Fandom. FFN verlangt die kleinere Nummer zuerst
+    /// (an 1.974 Links geprüft); der Adressteil davor ist beliebig.
+    func pairPath(with other: FFNCrossRef) -> String {
+        let (a, b) = (Int(id) ?? 0) <= (Int(other.id) ?? 0) ? (self, other) : (other, self)
+        return "/\(a.slug)-and-\(b.slug)-Crossovers/\(a.id)/\(b.id)/"
+    }
+}
+
+/// Zweites Fandom in der Crossover-Auswahl.
+struct FFNCrossPartner: Identifiable, Hashable, Codable, Sendable {
+    var name: String
+    var path: String
+    /// Anzahl gemeinsamer Geschichten; fehlt, wenn FFN die Liste des Fandoms nicht liefert.
+    var count: Int?
+    var id: String { path }
+}
+
+/// Was die Liste zeigt: nur das Fandom, alle seine Crossover oder die mit einem zweiten Fandom.
+enum FFNCrossChoice: Hashable, Sendable {
+    case none, all
+    case with(FFNCrossPartner)
+
+    /// Gleich ist, was dieselbe Liste öffnet – die Anzahl gehört nicht dazu
+    /// (eine aus der Adresse erkannte Paarung kennt sie nicht).
+    private var token: String {
+        switch self {
+        case .none: "none"
+        case .all: "all"
+        case .with(let partner): (partner.path.removingPercentEncoding ?? partner.path).lowercased()
+        }
+    }
+    static func == (a: FFNCrossChoice, b: FFNCrossChoice) -> Bool { a.token == b.token }
+    func hash(into hasher: inout Hasher) { hasher.combine(token) }
+}
+
+/// Worum es auf einer Listen-Seite geht – aus FFNs eigenem Skript (`process_ajax_data`) gelesen.
+struct FFNPageContext: Hashable, Sendable {
+    var fandomID: String
+    /// Zweites Fandom bei Crossover-Seiten („0“ = alle Crossover).
+    var partnerID: String?
+    var isCrossover: Bool
+    /// Fandoms, die die Seite verlinkt (`/crossovers/<Name>/<Nummer>/`).
+    var refs: [FFNCrossRef]
+
+    var isPair: Bool { isCrossover && (partnerID ?? "0") != "0" }
+
+    /// Feste Parameter für `/api/lcount/`.
+    var countBase: [String: String] {
+        var base = ["cid1": fandomID]
+        if isCrossover {
+            base["cross"] = "1"
+            base["cid2"] = partnerID ?? "0"
+        }
+        return base
+    }
+}
+
 struct FFNListPage: Sendable {
     var stories: [RemoteStory]
     var filters: [FFNFilterSelect]
     var url: URL
     var hasNext: Bool
+    var context: FFNPageContext?
 }
 
 enum FFNService {
@@ -227,6 +296,7 @@ enum FFNService {
         "censorid": "r", "languageid": "lan", "length": "len", "statusid": "s",
         "characterid1": "c1", "characterid2": "c2", "characterid3": "c3", "characterid4": "c4",
         "_characterid1": "_c1", "_characterid2": "_c2", "verseid1": "v1", "_verseid1": "_v1",
+        "verseid2": "v2", "_verseid2": "_v2",
         "pm": "pm", "_pm": "_pm",
     ]
 
@@ -250,22 +320,40 @@ enum FFNService {
                                                 "characterid3": "c1", "characterid4": "c1", "_characterid1": "c1",
                                                 "_characterid2": "c1", "genreid1": "g1", "genreid2": "g1", "_genreid1": "g1"]
 
-    /// Zählt für jeden Wert, wie viele Geschichten der Fandom damit hat (alle Ratings, sonst ohne Filter).
-    /// Läuft in der offenen FFN-Seite, fünf Anfragen gleichzeitig (so wie FFNs eigenes Filterfenster live zählt).
-    static func storyCounts(pageURL: URL, param: String, values: [String]) async throws -> [String: Int] {
+    /// Wie `countParams`, nur kennt eine Crossover-Seite mit zwei Fandoms zwei Charakterlisten:
+    /// A/B gehören zum ersten Fandom (`c1`), C/D und „Ohne B“ zum zweiten (`c3`).
+    static func countParam(for name: String, context: FFNPageContext?) -> String? {
+        if context?.isPair == true, ["characterid3", "characterid4", "_characterid2"].contains(name) { return "c3" }
+        return countParams[name]
+    }
+
+    struct CountBatch: Sendable {
+        var counts: [String: Int] = [:]
+        /// Wie viele Anfragen wirklich hinausgingen (zählt für FFNs Grenze).
+        var sent = 0
+        /// FFN hat mit 429 geantwortet: so viele Sekunden warten.
+        var retryAfter: Double?
+    }
+
+    /// Zählt für jeden Wert, wie viele Geschichten es damit gibt (alle Ratings, sonst ohne Filter).
+    /// Läuft per `fetch()` in irgendeiner offenen FFN-Seite, fünf Anfragen gleichzeitig.
+    ///
+    /// Gemessen (Harry Potter, 462 Charaktere): jede Zählung braucht bei FFN ~1 s, mehr als ~5 je Sekunde
+    /// schafft die Seite auch mit 10–12 gleichzeitigen Anfragen nicht, und nach genau 100 Anfragen
+    /// antwortet `/api/` eine Minute lang nur noch mit 429 (`Retry-After: 60`) – normale Seiten sind
+    /// davon nicht betroffen. Deshalb bricht das Skript beim ersten 429 ab und meldet die Wartezeit.
+    static func storyCounts(base: [String: String], param: String, values: [String]) async throws -> CountBatch {
         let script = """
-        const raw = process_ajax_data();
-        const base = Object.fromEntries(new URLSearchParams(typeof raw === 'string' ? raw : $.param(raw)));
-        for (const k of Object.keys(base)) if (k !== 'cid1') base[k] = '0';
-        base.r = '10'; base.srt = '1';
         const out = {};
-        let i = 0;
+        let i = 0, sent = 0, limited = null;
         async function worker() {
-            while (i < values.length) {
+            while (i < values.length && limited === null) {
                 const v = values[i++];
-                const p = Object.assign({}, base); p[param] = v;
+                const p = Object.assign({}, base, { r: '10', srt: '1' }); p[param] = v;
                 try {
+                    sent++;
                     const r = await fetch('/api/lcount/?' + new URLSearchParams(p), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                    if (r.status === 429) { limited = parseFloat(r.headers.get('retry-after')) || 60; break; }
                     let d = JSON.parse(await r.text());
                     if (typeof d === 'string') d = JSON.parse(d);
                     if (!d.error) out[v] = String(d.payload_data);
@@ -273,12 +361,112 @@ enum FFNService {
             }
         }
         await Promise.all([worker(), worker(), worker(), worker(), worker()]);
-        return out;
+        return { counts: out, sent: sent, limited: limited };
         """
-        let page = desktopURL(pageURL) ?? pageURL
-        let result = try await WebFetcher.shared.evaluate(on: page, body: script, arguments: ["param": param, "values": values])
+        let result = try await WebFetcher.shared.evaluate(onSite: Self.base, body: script,
+                                                          arguments: ["base": base, "param": param, "values": values])
         let dict = result as? [String: Any] ?? [:]
-        return dict.compactMapValues { parseCount("\($0)") }
+        var batch = CountBatch()
+        batch.counts = (dict["counts"] as? [String: Any] ?? [:]).compactMapValues { parseCount("\($0)") }
+        batch.sent = (dict["sent"] as? NSNumber)?.intValue ?? values.count
+        batch.retryAfter = (dict["limited"] as? NSNumber)?.doubleValue
+        return batch
+    }
+
+    /// Schätzt, welche Charaktere häufig sind: zählt sie in den 100 beliebtesten Geschichten der Liste
+    /// (vier Seiten, nach Favoriten sortiert, per `fetch()` in der offenen Seite – normale Seiten kosten
+    /// nichts von der Zähl-Grenze). Ergebnis: Wert → Häufigkeit. Damit stehen die wichtigen Charaktere
+    /// sofort oben und werden zuerst gezählt, statt alphabetisch.
+    static func characterSample(path: String, names: [String: String]) async -> [String: Int] {
+        let script = """
+        const freq = {};
+        await Promise.all([1, 2, 3, 4].map(async n => {
+            try {
+                const r = await fetch(path + '?srt=4&r=10' + (n > 1 ? '&p=' + n : ''), { credentials: 'include' });
+                if (!r.ok) return;
+                const doc = new DOMParser().parseFromString(await r.text(), 'text/html');
+                for (const el of doc.querySelectorAll('div.z-list div.z-padtop2')) {
+                    for (const part of el.textContent.split(' - ')) {
+                        if (part.includes(':')) continue;
+                        for (const raw of part.replace(/[\\[\\]]/g, ',').split(',')) {
+                            const v = names[raw.trim()];
+                            if (v) freq[v] = (freq[v] || 0) + 1;
+                        }
+                    }
+                }
+            } catch (e) {}
+        }));
+        return freq;
+        """
+        let result = try? await WebFetcher.shared.evaluate(onSite: base, body: script, arguments: ["path": path, "names": names])
+        return (result as? [String: Any] ?? [:]).compactMapValues { ($0 as? NSNumber)?.intValue }
+    }
+
+    // MARK: - Crossover
+
+    /// `/pfad?query` → Adresse auf FFN. Pfade kommen prozentkodiert von der Seite.
+    static func url(path: String) -> URL { URL(string: path, relativeTo: base)?.absoluteURL ?? base }
+
+    /// Fandoms, mit denen es Crossover gibt, samt Anzahl – eine einzige Seite (`/crossovers/<Name>/<Nummer>/`),
+    /// geholt und ausgewertet in der offenen FFN-Seite. Leer, wenn FFN die Seite nicht liefert:
+    /// Für Harry Potter antwortet sie dauerhaft mit „FanFiction.Net Error Type 1“.
+    static func crossPartners(of ref: FFNCrossRef) async throws -> [FFNCrossPartner] {
+        let rows = try await linkRows(paths: [ref.listPath], selector: "#list_output a[href*=\"-Crossovers/\"]")
+        return rows.map { FFNCrossPartner(name: $0[0], path: $0[1], count: parseCount($0[2])) }
+    }
+
+    /// Alle Fandoms, die überhaupt Crossover haben (die neun Listen `/crossovers/<Kategorie>/`),
+    /// mit der Zahl ihrer Crossover insgesamt. Ersatz, wenn `crossPartners` leer bleibt.
+    static func crossFandoms() async throws -> [(ref: FFNCrossRef, count: Int)] {
+        let rows = try await linkRows(paths: categories.map { "/crossovers/\($0.id)/" }, selector: "#list_output a[href^=\"/crossovers/\"]")
+        var seen = Set<String>()
+        return rows.compactMap { row in
+            guard let m = row[1].firstMatch(#"^/crossovers/([^/]+)/(\d+)/"#), seen.insert(m[2]).inserted else { return nil }
+            return (FFNCrossRef(id: m[2], slug: m[1], name: row[0]), parseCount(row[2]) ?? 0)
+        }
+    }
+
+    /// Links samt der Zahl dahinter aus FFN-Übersichtsseiten: [Name, Adresse, Anzahl].
+    private static func linkRows(paths: [String], selector: String) async throws -> [[String]] {
+        let script = """
+        const out = [], queue = paths.slice();
+        const worker = async () => {
+            while (queue.length) {
+                const path = queue.shift();
+                try {
+                    const r = await fetch(path, { credentials: 'include' });
+                    if (!r.ok) continue;
+                    const doc = new DOMParser().parseFromString(await r.text(), 'text/html');
+                    for (const a of doc.querySelectorAll(selector)) {
+                        const sib = a.nextElementSibling;
+                        const count = (sib && sib.tagName === 'SPAN') ? sib.textContent.replace(/[()\\s]/g, '') : '';
+                        out.push([(a.getAttribute('title') || a.textContent).replace(/\\s+/g, ' ').trim(), a.getAttribute('href') || '', count]);
+                    }
+                } catch (e) {}
+            }
+        };
+        await Promise.all([worker(), worker(), worker()]);
+        return JSON.stringify(out);
+        """
+        let json = try await WebFetcher.shared.evaluate(onSite: base, body: script, arguments: ["paths": paths, "selector": selector]) as? String
+        guard let data = json?.data(using: .utf8), let rows = try? JSONDecoder().decode([[String]].self, from: data) else { return [] }
+        return rows.filter { $0.count == 3 && !$0[0].isEmpty && !$0[1].isEmpty }
+    }
+
+    /// Liest aus einer Listen-Seite, welches Fandom (und bei Crossovern welches zweite) sie zeigt.
+    static func parseContext(html: String, doc parsed: Document? = nil) throws -> FFNPageContext? {
+        let doc = try parsed ?? SwiftSoup.parse(html, base.absoluteString)
+        guard let m = html.firstMatch(#"var t = \{\s*(cross:\s*1,\s*)?cid1:\s*(\d+)(?:,\s*cid2:\s*(\d+))?"#) else { return nil }
+        var refs: [FFNCrossRef] = []
+        for a in try doc.select("a[href^=\"/crossovers/\"]").array() {
+            guard let link = try a.attr("href").firstMatch(#"^/crossovers/([^/]+)/(\d+)/$"#),
+                  !refs.contains(where: { $0.id == link[2] }) else { continue }
+            var name = try a.text().trimmed
+            if name.isEmpty || name == "Crossovers" { name = (link[1].removingPercentEncoding ?? link[1]).replacingOccurrences(of: "-", with: " ") }
+            refs.append(FFNCrossRef(id: link[2], slug: link[1], name: name))
+        }
+        return FFNPageContext(fandomID: m[2], partnerID: m[1].isEmpty ? nil : (m[3].isEmpty ? "0" : m[3]),
+                              isCrossover: !m[1].isEmpty, refs: refs)
     }
 
     /// "434" → 434, "416K" → 416000, "1.2M" → 1200000
@@ -321,7 +509,8 @@ enum FFNService {
             let stories = try parseStories(doc)
             let filters = try parseFilters(doc)
             let hasNext = try doc.select("a").array().contains { (try? $0.text().hasPrefix("Next")) ?? false }
-            return FFNListPage(stories: stories, filters: filters, url: url, hasNext: hasNext || stories.count >= 25)
+            return FFNListPage(stories: stories, filters: filters, url: url, hasNext: hasNext || stories.count >= 25,
+                               context: try parseContext(html: html, doc: doc))
         }.value
     }
 

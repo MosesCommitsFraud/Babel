@@ -387,6 +387,45 @@ final class BabelTests: XCTestCase {
         XCTAssertTrue(story.characters.contains("Ron W."))
     }
 
+    /// Aufbau wie auf fanfiction.net am 11.11.2026 (Fandom-, Alle-Crossover- und Paar-Seite).
+    func testParsesFFNPageContext() throws {
+        let plain = try XCTUnwrap(FFNService.parseContext(html: """
+            <a href="/crossovers/anime/">Anime</a><a href="/crossovers/Naruto/1402/"> Crossovers</a>
+            <script>function process_ajax_data() {\n var t = {cid1: 1402};</script>
+            """))
+        XCTAssertEqual(plain.fandomID, "1402")
+        XCTAssertFalse(plain.isCrossover)
+        XCTAssertEqual(plain.refs.map(\.slug), ["Naruto"])
+        XCTAssertEqual(plain.countBase, ["cid1": "1402"])
+
+        let all = try XCTUnwrap(FFNService.parseContext(html: "<script>var t = {cross:1, cid1: 224, cid2: 0 };</script>"))
+        XCTAssertTrue(all.isCrossover)
+        XCTAssertFalse(all.isPair)
+
+        let pair = try XCTUnwrap(FFNService.parseContext(html: """
+            <a href="/crossovers/Harry-Potter/224/">Harry Potter</a><a href="/crossovers/Naruto/1402/">Naruto</a>
+            <script>var t = {cross:1, cid1: 224, cid2: 1402 };</script>
+            """))
+        XCTAssertTrue(pair.isPair)
+        XCTAssertEqual(pair.refs.map(\.name), ["Harry Potter", "Naruto"])
+        XCTAssertEqual(pair.countBase, ["cid1": "224", "cross": "1", "cid2": "1402"])
+        XCTAssertEqual(FFNService.countParam(for: "characterid3", context: pair), "c3")
+        XCTAssertEqual(FFNService.countParam(for: "characterid3", context: plain), "c1")
+    }
+
+    func testFFNCrossoverPaths() {
+        let potter = FFNCrossRef(id: "224", slug: "Harry-Potter", name: "Harry Potter")
+        let naruto = FFNCrossRef(id: "1402", slug: "Naruto", name: "Naruto")
+        // FFN verlangt die kleinere Nummer zuerst, egal von welchem Fandom man kommt.
+        XCTAssertEqual(naruto.pairPath(with: potter), "/Harry-Potter-and-Naruto-Crossovers/224/1402/")
+        XCTAssertEqual(potter.pairPath(with: naruto), "/Harry-Potter-and-Naruto-Crossovers/224/1402/")
+        XCTAssertEqual(potter.allPath, "/Harry-Potter-Crossovers/224/0/")
+        let known = FFNCrossPartner(name: "Naruto", path: "/Harry-Potter-and-Naruto-Crossovers/224/1402/", count: 2683)
+        let fromURL = FFNCrossPartner(name: "", path: "/Harry-Potter-and-Naruto-Crossovers/224/1402/", count: nil)
+        XCTAssertEqual(FFNCrossChoice.with(known), .with(fromURL))
+        XCTAssertNotEqual(FFNCrossChoice.with(known), .all)
+    }
+
     func testParsesAO3ChapterFraction() {
         XCTAssertTrue(AO3Service.parseChapterFraction("3/10") == (3, 10))
         XCTAssertTrue(AO3Service.parseChapterFraction("12/?") == (12, nil))

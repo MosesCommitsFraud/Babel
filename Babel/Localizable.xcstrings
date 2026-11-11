@@ -1,8 +1,12 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
-    "" : {},
-    "–" : {},
+    "" : {
+
+    },
+    "–" : {
+
+    },
     "„%@“ auf AO3 suchen" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -96,7 +100,9 @@
         }
       }
     },
-    "%@ · %lld %%" : {},
+    "%@ · %lld %%" : {
+
+    },
     "%@ (angepasst)" : {
       "localizations" : {
         "en" : {
@@ -218,8 +224,12 @@
         }
       }
     },
-    "%lld" : {},
-    "%lld %%" : {},
+    "%lld" : {
+
+    },
+    "%lld %%" : {
+
+    },
     "%lld %% gelesen" : {
       "localizations" : {
         "en" : {
@@ -371,7 +381,9 @@
         }
       }
     },
-    "+%lld" : {},
+    "+%lld" : {
+
+    },
     "< 10k" : {
       "localizations" : {
         "en" : {
@@ -382,7 +394,9 @@
         }
       }
     },
-    "> %lld" : {},
+    "> %lld" : {
+
+    },
     "> 150k" : {
       "localizations" : {
         "en" : {
@@ -393,7 +407,9 @@
         }
       }
     },
-    "0" : {},
+    "0" : {
+
+    },
     "1 Geschichte übernommen" : {
       "localizations" : {
         "en" : {
@@ -434,7 +450,9 @@
         }
       }
     },
-    "Aa" : {},
+    "Aa" : {
+
+    },
     "Abbrechen" : {
       "localizations" : {
         "en" : {
@@ -879,7 +897,9 @@
         }
       }
     },
-    "Anime/Manga" : {},
+    "Anime/Manga" : {
+
+    },
     "Anlegen" : {
       "localizations" : {
         "en" : {
@@ -930,7 +950,9 @@
         }
       }
     },
-    "AO3" : {},
+    "AO3" : {
+
+    },
     "AO3 antwortet gerade langsam. Du kannst den Tag auch ganz eintippen und mit ↵ übernehmen." : {
       "localizations" : {
         "en" : {
@@ -991,6 +1013,16 @@
         }
       }
     },
+    "App-Icon" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Icon"
+          }
+        }
+      }
+    },
     "Archiv-Warnungen" : {
       "localizations" : {
         "en" : {
@@ -1007,6 +1039,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archive of Our Own"
+          }
+        }
+      }
+    },
+    "Art" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
           }
         }
       }
@@ -1204,7 +1247,9 @@
         }
       }
     },
-    "Auto" : {},
+    "Auto" : {
+
+    },
     "Autor:in" : {
       "localizations" : {
         "en" : {
@@ -1516,7 +1561,9 @@
         }
       }
     },
-    "Cartoons" : {},
+    "Cartoons" : {
+
+    },
     "Charakter %@" : {
       "localizations" : {
         "en" : {
@@ -1547,8 +1594,12 @@
         }
       }
     },
-    "Comics" : {},
-    "Crossover" : {},
+    "Comics" : {
+
+    },
+    "Crossover" : {
+
+    },
     "Dafür musst du bei FanFiction.net angemeldet sein. Melde dich in den Einstellungen an." : {
       "localizations" : {
         "en" : {
@@ -1595,6 +1646,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The EPUB couldn't be opened: %@"
+          }
+        }
+      }
+    },
+    "Das Icon ließ sich nicht ändern." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The icon couldn’t be changed."
           }
         }
       }
@@ -1720,7 +1781,9 @@
         }
       }
     },
-    "Deutsch" : {},
+    "Deutsch" : {
+
+    },
     "Die Anmeldung läuft direkt auf fanfiction.net. Danach holt Babel deine Favoriten und Follows automatisch in die Bibliothek. Babel speichert kein Passwort." : {
       "localizations" : {
         "en" : {
@@ -1914,8 +1977,12 @@
         }
       }
     },
-    "Downloads" : {},
-    "Drama" : {},
+    "Downloads" : {
+
+    },
+    "Drama" : {
+
+    },
     "Dunkel" : {
       "localizations" : {
         "en" : {
@@ -1932,6 +1999,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Generate matching dark variant"
+          }
+        }
+      }
+    },
+    "Dunkles Petrol wie tiefes Wasser" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark teal, like deep water"
+          }
+        }
+      }
+    },
+    "Dunkles Rot wie ein Leineneinband" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deep red, like a cloth binding"
           }
         }
       }
@@ -2057,7 +2144,9 @@
         }
       }
     },
-    "English" : {},
+    "English" : {
+
+    },
     "Entfernen" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2140,8 +2229,12 @@
         }
       }
     },
-    "Español" : {},
-    "F" : {},
+    "Español" : {
+
+    },
+    "F" : {
+
+    },
     "Fandom merken" : {
       "localizations" : {
         "en" : {
@@ -2153,7 +2246,6 @@
       }
     },
     "Fandom suchen" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2173,9 +2265,15 @@
         }
       }
     },
-    "Fandoms" : {},
-    "Fanfiction" : {},
-    "FanFiction.net" : {},
+    "Fandoms" : {
+
+    },
+    "Fanfiction" : {
+
+    },
+    "FanFiction.net" : {
+
+    },
     "FanFiction.net möchte prüfen, dass du kein Bot bist. Tippe auf das Kästchen – danach geht's automatisch weiter." : {
       "localizations" : {
         "en" : {
@@ -2197,7 +2295,9 @@
         }
       }
     },
-    "Fantasy" : {},
+    "Fantasy" : {
+
+    },
     "Farbe" : {
       "localizations" : {
         "en" : {
@@ -2348,7 +2448,9 @@
         }
       }
     },
-    "FFN" : {},
+    "FFN" : {
+
+    },
     "FFN synchronisiert (%@)" : {
       "localizations" : {
         "en" : {
@@ -2480,7 +2582,9 @@
         }
       }
     },
-    "Follows" : {},
+    "Follows" : {
+
+    },
     "Fortschritt" : {
       "localizations" : {
         "en" : {
@@ -2531,6 +2635,16 @@
         }
       }
     },
+    "Frisches Grün mit einem Hauch Blau" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fresh green with a hint of blue"
+          }
+        }
+      }
+    },
     "Funktioniert mit AO3-Werken, FanFiction.net-Geschichten und direkten .epub-Links." : {
       "localizations" : {
         "en" : {
@@ -2562,7 +2676,9 @@
         }
       }
     },
-    "Games" : {},
+    "Games" : {
+
+    },
     "Ganze Bio anzeigen" : {
       "localizations" : {
         "en" : {
@@ -2600,6 +2716,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Muted dusty rose"
+          }
+        }
+      }
+    },
+    "Gedecktes Gelb, warm und sonnig" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muted yellow, warm and sunny"
+          }
+        }
+      }
+    },
+    "Gedecktes Violett mit warmem Rot" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muted purple with warm red"
           }
         }
       }
@@ -2886,6 +3022,16 @@
         }
       }
     },
+    "Helles Beige, fast ohne Farbe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light beige, almost colourless"
+          }
+        }
+      }
+    },
     "Herunterladen (offline)" : {
       "localizations" : {
         "en" : {
@@ -2966,8 +3112,12 @@
         }
       }
     },
-    "https://…" : {},
-    "https://archiveofourown.org/works/…" : {},
+    "https://…" : {
+
+    },
+    "https://archiveofourown.org/works/…" : {
+
+    },
     "iCloud" : {
       "localizations" : {
         "en" : {
@@ -3018,7 +3168,9 @@
         }
       }
     },
-    "Import" : {},
+    "Import" : {
+
+    },
     "Import fehlgeschlagen" : {
       "localizations" : {
         "en" : {
@@ -3166,6 +3318,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "is overloaded or under maintenance (error 503)"
+          }
+        }
+      }
+    },
+    "Jade" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jade"
           }
         }
       }
@@ -3530,7 +3692,9 @@
         }
       }
     },
-    "Kudos" : {},
+    "Kudos" : {
+
+    },
     "Kudos gegeben" : {
       "localizations" : {
         "en" : {
@@ -3852,6 +4016,17 @@
         }
       }
     },
+    "Lizenz und Herausgeber" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "License and publisher"
+          }
+        }
+      }
+    },
     "Löschen" : {
       "localizations" : {
         "en" : {
@@ -4153,6 +4328,16 @@
         }
       }
     },
+    "Nachtblau" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Midnight Blue"
+          }
+        }
+      }
+    },
     "Name" : {
       "localizations" : {
         "en" : {
@@ -4364,7 +4549,9 @@
         }
       }
     },
-    "No Archive Warnings Apply" : {},
+    "No Archive Warnings Apply" : {
+
+    },
     "Noch keine %@" : {
       "localizations" : {
         "en" : {
@@ -4615,7 +4802,9 @@
         }
       }
     },
-    "OK" : {},
+    "OK" : {
+
+    },
     "OPDS-Adresse, zum Beispiel von deinem Calibre-Web-Server (endet oft auf /opds). Kataloge mit Anmeldung gehen noch nicht." : {
       "localizations" : {
         "en" : {
@@ -4729,6 +4918,16 @@
         }
       }
     },
+    "Pflaume" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plum"
+          }
+        }
+      }
+    },
     "Philosophie" : {
       "localizations" : {
         "en" : {
@@ -4759,7 +4958,9 @@
         }
       }
     },
-    "Project Gutenberg" : {},
+    "Project Gutenberg" : {
+
+    },
     "Prüfe die Schreibweise oder versuche es mit anderen Wörtern." : {
       "localizations" : {
         "en" : {
@@ -4790,7 +4991,9 @@
         }
       }
     },
-    "Rating" : {},
+    "Rating" : {
+
+    },
     "Rating %@" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -4802,7 +5005,9 @@
         }
       }
     },
-    "Reviews" : {},
+    "Reviews" : {
+
+    },
     "Rezensionen" : {
       "localizations" : {
         "en" : {
@@ -4829,6 +5034,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rosé"
+          }
+        }
+      }
+    },
+    "Rost" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rust"
           }
         }
       }
@@ -4869,6 +5084,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Collections"
+          }
+        }
+      }
+    },
+    "Sand" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sand"
           }
         }
       }
@@ -4963,6 +5188,16 @@
         }
       }
     },
+    "Seite %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Page %lld"
+          }
+        }
+      }
+    },
     "Seiten %lld–%lld" : {
       "localizations" : {
         "de" : {
@@ -4999,7 +5234,19 @@
         }
       }
     },
-    "Sepia" : {},
+    "Senf" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mustard"
+          }
+        }
+      }
+    },
+    "Sepia" : {
+
+    },
     "Serie" : {
       "localizations" : {
         "en" : {
@@ -5140,6 +5387,17 @@
         }
       }
     },
+    "Stand" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status"
+          }
+        }
+      }
+    },
     "Standard" : {
       "localizations" : {
         "en" : {
@@ -5191,7 +5449,9 @@
         }
       }
     },
-    "Status" : {},
+    "Status" : {
+
+    },
     "Stichwortsuche" : {
       "localizations" : {
         "en" : {
@@ -5333,8 +5593,12 @@
         }
       }
     },
-    "System" : {},
-    "T" : {},
+    "System" : {
+
+    },
+    "T" : {
+
+    },
     "Tags ausschließen" : {
       "localizations" : {
         "en" : {
@@ -5411,6 +5675,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Subject (e.g. poetry, history)"
+          }
+        }
+      }
+    },
+    "Tiefes Blau wie der Himmel nach Mitternacht" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deep blue, like the sky after midnight"
+          }
+        }
+      }
+    },
+    "Tiefes Tannengrün, sehr ruhig" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deep fir green, very calm"
+          }
+        }
+      }
+    },
+    "Tiefsee" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deep Sea"
           }
         }
       }
@@ -5647,7 +5941,9 @@
         }
       }
     },
-    "Version" : {},
+    "Version" : {
+
+    },
     "Versuch es mit einem anderen Titel." : {
       "localizations" : {
         "en" : {
@@ -5758,12 +6054,32 @@
         }
       }
     },
+    "Waldnacht" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forest Night"
+          }
+        }
+      }
+    },
     "Warmes Papier und Sepia, wie alte Bücher" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Warm paper and sepia, like old books"
+          }
+        }
+      }
+    },
+    "Warmes Rotbraun wie altes Eisen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warm red-brown, like old iron"
           }
         }
       }
@@ -5784,6 +6100,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Web serials and web novels, continued chapter by chapter."
+          }
+        }
+      }
+    },
+    "Weinrot" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burgundy"
           }
         }
       }
@@ -6052,242 +6378,72 @@
         }
       }
     },
-    "Stand" : {
+    "Alle Crossover" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Status"
+            "value" : "All crossovers"
           }
         }
       }
     },
-    "Art" : {
+    "Mit einem zweiten Fandom" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Type"
+            "value" : "With a second fandom"
           }
         }
       }
     },
-    "Lizenz und Herausgeber" : {
+    "Liste der Fandoms konnte nicht geladen werden. Nochmal versuchen" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "License and publisher"
+            "value" : "Couldn't load the list of fandoms. Try again"
           }
         }
       }
     },
-    "Seite %lld" : {
+    "Ohne Crossover" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Page %lld"
+            "value" : "No crossovers"
           }
         }
       }
     },
-    "App-Icon" : {
+    "Charaktere %@ · %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App Icon"
+            "value" : "Characters %1$@ · %2$@"
           }
         }
       }
     },
-    "Weinrot" : {
+    "Charaktere und Welten kannst du wählen, sobald die neue Liste geladen ist – tippe auf „Anwenden“ und öffne den Filter noch einmal." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Burgundy"
+            "value" : "You can pick characters and worlds once the new list has loaded – tap “Apply” and open the filter again."
           }
         }
       }
     },
-    "Jade" : {
+    "FanFiction.net liefert für dieses Fandom keine Crossover-Liste. Hier stehen alle Fandoms mit Crossovern – nicht jedes hat gemeinsame Geschichten." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jade"
-          }
-        }
-      }
-    },
-    "Waldnacht" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Forest Night"
-          }
-        }
-      }
-    },
-    "Tiefsee" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deep Sea"
-          }
-        }
-      }
-    },
-    "Nachtblau" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Midnight Blue"
-          }
-        }
-      }
-    },
-    "Pflaume" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plum"
-          }
-        }
-      }
-    },
-    "Rost" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rust"
-          }
-        }
-      }
-    },
-    "Senf" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mustard"
-          }
-        }
-      }
-    },
-    "Sand" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sand"
-          }
-        }
-      }
-    },
-    "Das Icon ließ sich nicht ändern." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The icon couldn’t be changed."
-          }
-        }
-      }
-    },
-    "Dunkles Rot wie ein Leineneinband" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deep red, like a cloth binding"
-          }
-        }
-      }
-    },
-    "Frisches Grün mit einem Hauch Blau" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fresh green with a hint of blue"
-          }
-        }
-      }
-    },
-    "Tiefes Tannengrün, sehr ruhig" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deep fir green, very calm"
-          }
-        }
-      }
-    },
-    "Dunkles Petrol wie tiefes Wasser" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dark teal, like deep water"
-          }
-        }
-      }
-    },
-    "Tiefes Blau wie der Himmel nach Mitternacht" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deep blue, like the sky after midnight"
-          }
-        }
-      }
-    },
-    "Gedecktes Violett mit warmem Rot" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Muted purple with warm red"
-          }
-        }
-      }
-    },
-    "Warmes Rotbraun wie altes Eisen" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Warm red-brown, like old iron"
-          }
-        }
-      }
-    },
-    "Gedecktes Gelb, warm und sonnig" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Muted yellow, warm and sunny"
-          }
-        }
-      }
-    },
-    "Helles Beige, fast ohne Farbe" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Light beige, almost colourless"
+            "value" : "FanFiction.net doesn't provide a crossover list for this fandom. These are all fandoms with crossovers – not every one shares stories with it."
           }
         }
       }
