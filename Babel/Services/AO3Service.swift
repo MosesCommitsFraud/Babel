@@ -161,6 +161,9 @@ enum AO3Service {
         .init(code: "ru", name: "Русский"), .init(code: "pl", name: "Polski"), .init(code: "nl", name: "Nederlands"), .init(code: "sv", name: "Svenska"),
         .init(code: "tr", name: "Türkçe"), .init(code: "uk", name: "Українська"), .init(code: "vi", name: "Tiếng Việt"), .init(code: "id", name: "Bahasa Indonesia"),
         .init(code: "zh", name: "中文"), .init(code: "ja", name: "日本語"), .init(code: "ko", name: "한국어"),
+        // Auch alle Sprachen aus Einstellungen → Suche (`StoryLanguage`), sonst bleibt die Zeile „Sprache“ im Filter leer.
+        .init(code: "fi", name: "Suomi"), .init(code: "da", name: "Dansk"), .init(code: "no", name: "Norsk"),
+        .init(code: "cs", name: "Čeština"), .init(code: "hu", name: "Magyar"),
     ]
 
     // MARK: - Laden (mit Ausweichweg über den WebView, falls Cloudflare dazwischenfunkt)

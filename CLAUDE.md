@@ -140,3 +140,9 @@ AO3-Suche/Blurbs, FFN-Fandoms/Listen/Filter-Apply/Cover, Gutenberg-Suche + Detai
 
 ## Offene Ideen
 Markierungen (lassen sich als eigenes Modell gleich mit abgleichen), eigene EPUB-Dateien mit abgleichen (bisher nur Eintrag und Lesestelle).
+
+## Notizen 2026-11-15
+- AO3-Tag-Vorschläge (`TagTokenField`): kein `Label` in einem `FlowLayout` innerhalb einer Formularzeile – es bekommt den Listen-Stil und verliert den Text (leere Kapseln mit „+“). Symbol + `Text` verwenden. `FlowLayout` kürzt überlange Chips auf die Zeilenbreite. Mit echtem AO3 im Simulator geprüft.
+- AO3-Filterwand: Die zuletzt benutzten Filter (`ao3.lastFilters`) überschrieben die Standards aus Einstellungen → Suche. `adoptDefaults` übernimmt Sprache/Rating, sobald sich ein Standard ändert (`ao3.appliedDefaults`); eigene Änderungen im Filter bleiben. `AO3Service.languages` muss alle Codes aus `StoryLanguage.all` enthalten.
+- Texteingabe im Simulator: Einfügen geht nicht, aber die Bildschirmtastatur lässt sich Taste für Taste antippen.
+- CloudKit Production fehlt alles seit dem Deploy vom 2026-11-04: `CD_Story.CD_seriesID/CD_seriesName/CD_seriesPosition/CD_readingAnchor` und der Typ `CD_Highlight`. Bis zum nächsten Deploy scheitert der Export in TestFlight („Cannot create or modify field … in production schema“).

@@ -71,6 +71,10 @@ struct AO3FilterWallView: View {
     @State private var loadedPreset: String?
     @State private var keyboardVisible = false
     @Environment(\.theme) private var theme
+    /// Standards aus Einstellungen → Suche. Ändern sie sich, wandern sie in die Filter (siehe `adoptDefaults`).
+    @AppStorage(DefaultRating.key) private var defaultRating: DefaultRating = .all
+    @AppStorage(StoryLanguage.key) private var defaultLanguage = ""
+    @AppStorage("ao3.appliedDefaults") private var appliedDefaults = ""
 
     private var presets: [SavedAO3Search] { AO3Presets.decode(savedData) }
 
@@ -190,10 +194,25 @@ struct AO3FilterWallView: View {
             guard !didLoad else { return }
             didLoad = true
             if let last = try? JSONDecoder().decode(AO3Filters.self, from: lastData) { draft = last }
+            adoptDefaults()
         }
+        .onChange(of: defaultRating) { adoptDefaults() }
+        .onChange(of: defaultLanguage) { adoptDefaults() }
         .onChange(of: draft) { _, new in
             lastData = (try? JSONEncoder().encode(new)) ?? Data()
         }
+    }
+
+    /// Die zuletzt benutzten Filter überdauern den Neustart – ohne das hier kämen die Standards aus den
+    /// Einstellungen nie in der Filterwand an. Übernommen wird nur, wenn sich ein Standard geändert hat
+    /// (oder noch nie übernommen wurde); was man danach im Filter selbst umstellt, bleibt.
+    private func adoptDefaults() {
+        let signature = "\(defaultRating.rawValue)|\(defaultLanguage)"
+        guard signature != appliedDefaults else { return }
+        appliedDefaults = signature
+        let defaults = AO3Filters.withDefaults
+        draft.language = defaults.language
+        draft.ratings = defaults.ratings
     }
 
     private func search(_ filters: AO3Filters, title: String) {

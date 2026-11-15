@@ -269,8 +269,15 @@ struct TagTokenField: View {
                     FlowLayout(spacing: 6) {
                         ForEach(suggestions.prefix(8), id: \.self) { s in
                             Button { add(s) } label: {
-                                Label(s, systemImage: "plus").font(.subheadline).lineLimit(1)
-                                    .padding(.horizontal, 10).padding(.vertical, 6)
+                                // Kein `Label`: In einer Formularzeile bekommt es den Listen-Stil und verliert im
+                                // FlowLayout seinen Text – es blieb nur das „+“ in einer leeren Kapsel.
+                                HStack(spacing: 5) {
+                                    Image(systemName: "plus").font(.caption.weight(.semibold))
+                                    Text(verbatim: s).lineLimit(1)
+                                }
+                                .font(.subheadline)
+                                .foregroundStyle(theme.foreground)
+                                .padding(.horizontal, 10).padding(.vertical, 6)
                             }
                             .buttonStyle(.borderless)
                             .glassEffect(.regular.interactive(), in: .capsule)

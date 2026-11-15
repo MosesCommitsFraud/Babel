@@ -116,7 +116,8 @@ struct FlowLayout: Layout {
         let maxWidth = proposal.width ?? .infinity
         var x: CGFloat = 0, y: CGFloat = 0, rowHeight: CGFloat = 0, widest: CGFloat = 0
         for view in subviews {
-            let size = view.sizeThatFits(.unspecified)
+            var size = view.sizeThatFits(.unspecified)
+            size.width = min(size.width, maxWidth)   // ein überlanger Chip wird gekürzt statt über den Rand zu laufen
             if x > 0, x + size.width > maxWidth {
                 y += rowHeight + spacing
                 x = 0
@@ -132,7 +133,8 @@ struct FlowLayout: Layout {
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         var x = bounds.minX, y = bounds.minY, rowHeight: CGFloat = 0
         for view in subviews {
-            let size = view.sizeThatFits(.unspecified)
+            var size = view.sizeThatFits(.unspecified)
+            size.width = min(size.width, bounds.width)
             if x > bounds.minX, x + size.width > bounds.maxX {
                 y += rowHeight + spacing
                 x = bounds.minX
