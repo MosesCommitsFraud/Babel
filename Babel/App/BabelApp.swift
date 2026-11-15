@@ -10,7 +10,7 @@ struct BabelApp: App {
 
     init() {
         ReaderDefaults.migrate()
-        SettingsSync.shared.start()
+        if LibraryStore.wasWantedAtLaunch { SettingsSync.shared.start() }
     }
 
     private let container = LibraryStore.open()

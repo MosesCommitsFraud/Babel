@@ -261,6 +261,7 @@ struct StoryDetailView: View {
         add(String(localized: "Wörter"), story.words?.grouped, "textformat.size")
         add(String(localized: "Kapitel"), chapterLabel, "list.number")
         if story.source.isOnlineBook { add(String(localized: "Downloads"), story.hits?.compact, "arrow.down.circle") }
+        if story.source == .ao3, let hits = story.hits, hits > 0 { add(String(localized: "Aufrufe"), hits.grouped, "eye") }
         add(String(localized: "Veröffentlicht"), story.published?.formatted(date: .abbreviated, time: .omitted), "calendar")
         add(String(localized: "Aktualisiert"), story.lastUpdated?.formatted(date: .abbreviated, time: .omitted), "arrow.clockwise")
         add(String(localized: "Sprache"), story.language, "globe")
@@ -296,7 +297,7 @@ struct StoryDetailView: View {
             add(String(localized: "Kudos"), story.kudos, "heart.fill", StoryRow.heartRed)
             add(String(localized: "Lesezeichen"), story.bookmarks, "bookmark.fill", StoryRow.followYellow)
             add(String(localized: "Kommentare"), story.comments, "text.bubble.fill", theme.primary, comments: true)
-            add(String(localized: "Aufrufe"), story.hits, "eye.fill", .secondary)
+            // Aufrufe stehen unten bei den Angaben: Zu viert wurde es in der Leiste eng (Wunsch des Nutzers).
         case .syosetu:
             add(String(localized: "Punkte"), story.kudos, "star.fill", StoryRow.followYellow)
             add(String(localized: "Lesezeichen"), story.favs, "bookmark.fill", StoryRow.heartRed)

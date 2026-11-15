@@ -274,8 +274,10 @@ extension Story {
 /// Einstellungen → iCloud.
 struct CloudSyncSection: View {
     @State private var sync = CloudSync.shared
+    @AppStorage(LibraryStore.enabledKey) private var wanted = true
 
     private var statusText: String {
+        guard LibraryStore.wasWantedAtLaunch else { return String(localized: "Aus") }
         guard sync.isEnabled else { return String(localized: "Nicht verfügbar") }
         switch sync.account {
         case .unknown: return "–"
@@ -291,16 +293,22 @@ struct CloudSyncSection: View {
 
     var body: some View {
         Section {
-            LabeledContent {
-                Text(statusText)
-            } label: {
+            Toggle(isOn: $wanted) {
                 Label("iCloud-Sync", systemImage: "icloud")
             }
-            if let lastSync = sync.lastSync {
+            if wanted != LibraryStore.wasWantedAtLaunch {
+                // Die Bibliothek hängt seit dem Start an iCloud (oder nicht) – umstellen lässt sie sich nur beim Öffnen.
+                Text(wanted ? "Wird beim nächsten Start von Babel eingeschaltet." : "Wird beim nächsten Start von Babel ausgeschaltet.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            if LibraryStore.wasWantedAtLaunch {
+                LabeledContent("Status", value: statusText)
+            }
+            if LibraryStore.wasWantedAtLaunch, let lastSync = sync.lastSync {
                 LabeledContent("Zuletzt synchronisiert", value: lastSync.formatted(date: .abbreviated, time: .shortened))
             }
             // Ohne Konto meldet CloudKit nur einen Cocoa-Fehler, „Nicht angemeldet“ sagt schon alles.
-            if sync.account == .available, let error = sync.errorText {
+            if LibraryStore.wasWantedAtLaunch, sync.account == .available, let error = sync.errorText {
                 Text(error).font(.footnote).foregroundStyle(.secondary)
             }
             #if DEBUG
@@ -309,7 +317,7 @@ struct CloudSyncSection: View {
         } header: {
             Text("iCloud")
         } footer: {
-            Text("Kapitel, eigene EPUB-Dateien und Anmeldungen bleiben auf dem jeweiligen Gerät.")
+            Text("Bibliothek, Lesestellen und Einstellungen auf allen deinen Geräten. Kapitel, eigene EPUB-Dateien und Anmeldungen bleiben auf dem jeweiligen Gerät. Ausgeschaltet bleibt auf diesem Gerät alles lokal; was schon in iCloud liegt, bleibt dort.")
         }
         .themedRows()
     }

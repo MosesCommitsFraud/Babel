@@ -167,16 +167,22 @@ struct AO3FilterWallView: View {
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button("Filter speichern …", systemImage: "square.and.arrow.down") {
-                        presetName = loadedPreset ?? draft.summary
-                        showSave = true
+                // Beim Tippen steht hier der Haken, wie in Apples eigenen Apps: Er schließt die Tastatur, damit
+                // Suchen-Knopf und Tab-Leiste wieder erreichbar sind (die Eingabetaste übernimmt den getippten Tag).
+                if keyboardVisible {
+                    Button("Fertig", systemImage: "checkmark") { hideKeyboard() }
+                } else {
+                    Menu {
+                        Button("Filter speichern …", systemImage: "square.and.arrow.down") {
+                            presetName = loadedPreset ?? draft.summary
+                            showSave = true
+                        }
+                        Button("Zurücksetzen", systemImage: "arrow.counterclockwise", role: .destructive) {
+                            withAnimation { draft = AO3Filters.withDefaults; loadedPreset = nil }
+                        }
+                    } label: {
+                        Label("Mehr", systemImage: "ellipsis")
                     }
-                    Button("Zurücksetzen", systemImage: "arrow.counterclockwise", role: .destructive) {
-                        withAnimation { draft = AO3Filters.withDefaults; loadedPreset = nil }
-                    }
-                } label: {
-                    Label("Mehr", systemImage: "ellipsis")
                 }
             }
         }

@@ -3402,12 +3402,32 @@
         }
       }
     },
-    "Kapitel, eigene EPUB-Dateien und Anmeldungen bleiben auf dem jeweiligen Gerät." : {
+    "Bibliothek, Lesestellen und Einstellungen auf allen deinen Geräten. Kapitel, eigene EPUB-Dateien und Anmeldungen bleiben auf dem jeweiligen Gerät. Ausgeschaltet bleibt auf diesem Gerät alles lokal; was schon in iCloud liegt, bleibt dort." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chapters, your own EPUB files and sign-ins stay on each device."
+            "value" : "Library, reading positions and settings on all your devices. Chapters, your own EPUB files and sign-ins stay on each device. When off, everything on this device stays local; what is already in iCloud stays there."
+          }
+        }
+      }
+    },
+    "Wird beim nächsten Start von Babel eingeschaltet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turns on the next time you open Babel."
+          }
+        }
+      }
+    },
+    "Wird beim nächsten Start von Babel ausgeschaltet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turns off the next time you open Babel."
           }
         }
       }

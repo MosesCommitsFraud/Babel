@@ -12,6 +12,11 @@ enum LibraryStore {
     static let containerID = "iCloud.de.babelreader.app"
 
     private static let preparedKey = "cloud.libraryPrepared.v1"
+    /// Schalter in Einstellungen → iCloud (Standard an, gilt je Gerät und wird selbst nicht synchronisiert).
+    static let enabledKey = "cloud.enabled"
+    static var isWanted: Bool { UserDefaults.standard.object(forKey: enabledKey) as? Bool ?? true }
+    /// Stand des Schalters beim Start: Die Bibliothek lässt sich nur beim Öffnen an iCloud hängen oder davon lösen.
+    static let wasWantedAtLaunch = isWanted
     /// `false`, wenn die Bibliothek diesmal nur lokal geöffnet werden konnte.
     private(set) static var isCloudEnabled = false
 
@@ -25,7 +30,7 @@ enum LibraryStore {
         #if DEBUG
         if CommandLine.arguments.contains("-initCloudKitSchema") { initializeCloudKitSchemaAndExit() }
         #endif
-        if prepareExistingLibrary() {
+        if wasWantedAtLaunch, prepareExistingLibrary() {
             do {
                 let container = try ModelContainer(for: schema, configurations: configuration(.private(containerID)))
                 isCloudEnabled = true

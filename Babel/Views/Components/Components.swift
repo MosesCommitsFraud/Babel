@@ -604,3 +604,11 @@ struct SlowLoadingView: View {
         }
     }
 }
+
+/// Schließt die Tastatur, egal welches Feld gerade aktiv ist.
+@MainActor
+func hideKeyboard() {
+    for case let scene as UIWindowScene in UIApplication.shared.connectedScenes {
+        scene.windows.forEach { $0.endEditing(true) }
+    }
+}
