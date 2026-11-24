@@ -18,6 +18,7 @@ struct RootView: View {
     @State private var tab: AppTab = .library
     @State private var ao3Path = NavigationPath()
     @State private var importError: String?
+    @State private var hinge = HingeState.none
 
     var body: some View {
         @Bindable var reader = reader
@@ -55,8 +56,11 @@ struct RootView: View {
                 .allowsHitTesting(false)
         }
         .background(WebFetcherHost().frame(width: 1, height: 1).allowsHitTesting(false))
+        .background(HingeProbe(onChange: { hinge = $0 }).frame(width: 1, height: 1))
+        .environment(\.hinge, hinge)
         .fullScreenCover(item: $reader.story) { story in
             ReaderView(story: story)
+                .environment(\.hinge, hinge)
         }
         .sheet(isPresented: Binding(
             get: { fetcher.needsUserInteraction && self.reader.story == nil },

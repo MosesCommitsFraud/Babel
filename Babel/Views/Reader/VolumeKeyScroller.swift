@@ -11,6 +11,8 @@ final class VolumeKeyScroller {
 
     /// -1 = lauter (zurück), +1 = leiser (weiter).
     var onPress: ((Int) -> Void)?
+    /// Fenster des Readers (gemeldet von einer `HingeProbe`) – dort hängt der unsichtbare `MPVolumeView`.
+    weak var hostWindow: UIWindow?
 
     private var observation: NSKeyValueObservation?
     private var volumeView: MPVolumeView?
@@ -38,7 +40,7 @@ final class VolumeKeyScroller {
         let view = MPVolumeView(frame: CGRect(x: -200, y: -200, width: 100, height: 40))
         view.alpha = 0.01
         view.isUserInteractionEnabled = false
-        keyWindow?.addSubview(view)
+        hostWindow?.addSubview(view)
         volumeView = view
 
         Self.audioQueue.async { [weak self] in
@@ -101,12 +103,5 @@ final class VolumeKeyScroller {
 
     private func setVolume(_ value: Float) {
         slider?.value = value
-    }
-
-    private var keyWindow: UIWindow? {
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .flatMap(\.windows)
-            .first { $0.isKeyWindow }
     }
 }

@@ -5880,6 +5880,26 @@
         }
       }
     },
+    "Halb aufgeklappt wie ein Buch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Half-open like a book"
+          }
+        }
+      }
+    },
+    "Halb aufgeklappt zeigt der Reader zwei Seiten nebeneinander, der Falz liegt zwischen ihnen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When half-open, the reader shows two pages side by side with the fold between them."
+          }
+        }
+      }
+    },
     "Umblättern wie im Buch" : {
       "localizations" : {
         "en" : {

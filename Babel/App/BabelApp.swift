@@ -3,6 +3,7 @@ import SwiftData
 
 @main
 struct BabelApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var reader = ReaderPresenter()
     @State private var library = LibraryManager.shared
     @State private var notifier = UpdateNotifier.shared

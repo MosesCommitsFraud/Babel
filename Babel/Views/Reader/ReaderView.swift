@@ -597,6 +597,9 @@ struct ReaderView: View {
     @AppStorage(VolumeKeyScroller.settingKey) private var volumeScroll = false
     @AppStorage(ReaderDefaults.pagedKey) private var paged = false
     @AppStorage(ReaderDefaults.curlKey) private var curl = false
+    @AppStorage(ReaderDefaults.foldBookKey) private var foldBook = true
+    @Environment(\.hinge) private var hinge
+    @State private var readerWidth: CGFloat = 0
     @State private var volumeKeys = VolumeKeyScroller()
 
     @State private var model: ReaderModel
@@ -613,9 +616,15 @@ struct ReaderView: View {
 
     private var resolvedTheme: ReaderTheme { theme.resolved(colorScheme) }
 
+    /// iPhone Duo halb aufgeklappt, wie ein Buch gehalten: zwei Seiten nebeneinander, der Falz liegt zwischen ihnen
+    /// (sonst liefe die Textspalte über das Scharnier). Nur auf dem breiten Innenbildschirm, wo zwei Seiten Platz haben.
+    private var isPaged: Bool {
+        paged || (foldBook && hinge == .halfOpen && readerWidth >= ReaderStyle.twoPageWidth)
+    }
+
     private var style: ReaderStyle {
         ReaderStyle(theme: resolvedTheme, font: ReaderFont.find(fontID), fontSize: fontSize,
-                    lineHeight: lineHeight, margin: margin, justify: justify, paragraphSpacing: paragraphSpacing, paged: paged)
+                    lineHeight: lineHeight, margin: margin, justify: justify, paragraphSpacing: paragraphSpacing, paged: isPaged)
     }
 
     var body: some View {
@@ -623,9 +632,11 @@ struct ReaderView: View {
             resolvedTheme.swiftUIBackground.ignoresSafeArea()
 
             // Anderer Blättermodus = andere Ansicht: neu aufbauen, an derselben Stelle (siehe `makeUIViewController`).
-            ReaderPager(model: model, css: style.css, background: resolvedTheme.swiftUIBackground, paged: paged, curl: paged && curl)
-                .id(paged ? (curl ? "book" : "paged") : "scroll")
+            ReaderPager(model: model, css: style.css, background: resolvedTheme.swiftUIBackground, paged: isPaged, curl: paged && curl)
+                .id(isPaged ? (paged && curl ? "book" : "paged") : "scroll")
                 .ignoresSafeArea()
+                .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { readerWidth = $0 }
+                .background(HingeProbe(onWindow: { [volumeKeys] in volumeKeys.hostWindow = $0 }).frame(width: 1, height: 1))
 
             if model.isLoading {
                 ProgressView()

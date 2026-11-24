@@ -71,6 +71,8 @@ struct ReaderStyle {
 
     /// Breiteste Textspalte beim Scrollen auf großen Bildschirmen.
     static let readableWidth = 720
+    /// Ab dieser Breite (pt = CSS-px) zeigt der Reader zwei Seiten nebeneinander, siehe `pagedCSS`.
+    static let twoPageWidth: CGFloat = 700
 
     var css: String { baseCSS + (paged ? pagedCSS : "") }
 
@@ -216,6 +218,8 @@ enum ReaderDefaults {
     static let paragraphSpacing = 0.9
     static let pagedKey = "reader.paged"
     static let curlKey = "reader.pageCurl"
+    /// iPhone Duo: halb aufgeklappt zwei Seiten zeigen (Standard an).
+    static let foldBookKey = "reader.foldBook"
 
     /// Einmal auf die neuen Standards umstellen – vorher gespeicherte Werte (alte Standards) würden sonst bleiben.
     static func migrate() {
@@ -242,6 +246,8 @@ struct ReaderSettingsControls: View {
     @AppStorage(VolumeKeyScroller.settingKey) private var volumeScroll = false
     @AppStorage(ReaderDefaults.pagedKey) private var paged = false
     @AppStorage(ReaderDefaults.curlKey) private var curl = false
+    @AppStorage(ReaderDefaults.foldBookKey) private var foldBook = true
+    @Environment(\.hinge) private var hinge
 
     var body: some View {
         Section("Farbe") {
@@ -307,12 +313,17 @@ struct ReaderSettingsControls: View {
             if paged {
                 Toggle("Umblättern wie im Buch", isOn: $curl)
             }
+            if hinge != .none && !paged {
+                Toggle("Halb aufgeklappt wie ein Buch", isOn: $foldBook)
+            }
             Toggle("Mit Lautstärketasten blättern", isOn: $volumeScroll)
         } header: {
             Text("Bedienung")
         } footer: {
             if paged {
                 Text("Tippen am Rand blättert, Tippen in die Mitte blendet die Leisten ein.")
+            } else if hinge != .none && foldBook {
+                Text("Halb aufgeklappt zeigt der Reader zwei Seiten nebeneinander, der Falz liegt zwischen ihnen.")
             }
         }
     }

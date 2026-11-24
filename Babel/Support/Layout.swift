@@ -39,17 +39,24 @@ extension EnvironmentValues {
 /// Auf dem iPhone Duo legt iOS Tab-Leiste und Knöpfe als Leiste an den rechten Rand, der Inhalt ist dort
 /// schmaler als das Fenster (im Simulator ~380 von 466 pt). Auf dem iPad ist außerdem alles
 /// zwei Schriftstufen größer – bei Armlänge wirkt die iPhone-Größe dort klein und lässt viel Fläche leer.
+/// Nicht auf dem aufgeklappten iPhone Duo (quer ~950 × 670 pt): breit, aber in der Hand nah am Auge wie ein iPhone –
+/// deshalb zählt für die größere Schrift auch die Höhe (iPad quer ≥ 744 pt, Duo 670 pt).
 struct LayoutRoot: ViewModifier {
     @Environment(\.dynamicTypeSize) private var typeSize
-    @State private var width: CGFloat = 390
+    @State private var size = CGSize(width: 390, height: 844)
 
     func body(content: Content) -> some View {
-        let layout = LayoutClass(width: width)
+        let layout = LayoutClass(width: size.width)
+        let bump = layout == .wide && size.height >= 740
         content
             .environment(\.layoutClass, layout)
-            .environment(\.layoutWidth, width)
-            .environment(\.dynamicTypeSize, layout == .wide ? Self.bumped(typeSize, by: 2) : typeSize)
-            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
+            .environment(\.layoutWidth, size.width)
+            .environment(\.dynamicTypeSize, bump ? Self.bumped(typeSize, by: 2) : typeSize)
+            // Höhe samt sicherer Ränder (= Fensterhöhe), Breite ohne (= nutzbarer Platz neben der Duo-Leiste).
+            .onGeometryChange(for: CGSize.self) { proxy in
+                CGSize(width: proxy.size.width,
+                       height: proxy.size.height + proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom)
+            } action: { size = $0 }
     }
 
     private static func bumped(_ size: DynamicTypeSize, by steps: Int) -> DynamicTypeSize {
