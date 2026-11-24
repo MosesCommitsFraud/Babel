@@ -6468,26 +6468,6 @@
         }
       }
     },
-    "Fandom A" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fandom A"
-          }
-        }
-      }
-    },
-    "Fandom B" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fandom B"
-          }
-        }
-      }
-    },
     "Die Charaktere der neuen Auswahl konnten nicht geladen werden – tippe auf „Anwenden“ und öffne den Filter noch einmal." : {
       "localizations" : {
         "en" : {
@@ -6498,32 +6478,12 @@
         }
       }
     },
-    "Wähle oben mindestens zwei Charaktere, dann lassen sie sich hier als Paar markieren." : {
+    "Zähle Geschichten …" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pick at least two characters above, then you can mark them as a pairing here."
-          }
-        }
-      }
-    },
-    "Zeigt nur Geschichten, in denen die beiden ein Pairing sind – auch über beide Fandoms hinweg." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Shows only stories where the two are a pairing – across both fandoms too."
-          }
-        }
-      }
-    },
-    "%@ × %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ × %2$@"
+            "value" : "Counting stories …"
           }
         }
       }

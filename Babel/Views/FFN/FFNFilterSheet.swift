@@ -320,6 +320,12 @@ struct FFNFilterSheet: View {
     @State private var values: [String: String]
     /// Als Paar markierte Charakterfelder, z. B. ["characterid1", "characterid3"] = A × C.
     @State private var pairs: [[String]]
+    /// Crossover mit zwei Fandoms: Charakter A–D wählen aus beiden Fandoms („1:<id>“ / „2:<id>“, „0“ = alle).
+    /// FFN verlangt die Charaktere je Fandom in festen Feldern (A/B erstes, C/D zweites) – die Zuordnung
+    /// macht `fieldsForSlots` beim Anwenden.
+    @State private var slots: [String] = ["0", "0", "0", "0"]
+    /// „Als Paar“ für A+B und C+D auf solchen Seiten.
+    @State private var slotPairs: [Bool] = [false, false]
     @State private var crossover: FFNCrossChoice
     /// Auswahlfelder, Pfad (Schlüssel der Zählungen) und Kontext der Seite, für die gerade gefiltert wird.
     @State private var filters: [FFNFilterSelect]
@@ -348,6 +354,12 @@ struct FFNFilterSheet: View {
         _pagePath = State(initialValue: pagePath)
         _context = State(initialValue: context)
         _filtersFor = State(initialValue: crossover)
+        if context?.isPair == true {
+            let initialValues = Dictionary(filters.map { ($0.name, $0.selected) }, uniquingKeysWith: { a, _ in a })
+            let setup = Self.slots(values: initialValues, pairs: !pairs.isEmpty ? pairs : (pm ? [Self.pairNames[0]] : []))
+            _slots = State(initialValue: setup.slots)
+            _slotPairs = State(initialValue: setup.pairs)
+        }
     }
 
     private var canLeaveCrossover: Bool { pathFor(.none) != nil }
@@ -417,27 +429,30 @@ struct FFNFilterSheet: View {
                 .themedRows()
 
                 if !crossoverChanged {
-                    if context?.isPair == true {
-                        crossoverCharacters
-                    } else {
-                        ForEach(Array(Self.pairNames.enumerated()), id: \.offset) { index, names in
-                            let selects = names.compactMap(filter)
-                            if !selects.isEmpty {
-                                Section {
+                    ForEach(Array(Self.pairNames.enumerated()), id: \.offset) { index, names in
+                        let selects = names.compactMap(filter)
+                        if !selects.isEmpty {
+                            Section {
+                                if isPairPage {
+                                    slotRow(index * 2)
+                                    slotRow(index * 2 + 1)
+                                    Toggle("Als Paar", isOn: $slotPairs[index])
+                                        .disabled(slots[index * 2] == "0" || slots[index * 2 + 1] == "0")
+                                } else {
                                     ForEach(selects) { row($0) }
                                     if filter("pm") != nil, selects.count == 2 {
                                         Toggle("Als Paar", isOn: pairBinding(names))
                                             .disabled(names.contains { (values[$0] ?? "0") == "0" })
                                     }
-                                } header: {
-                                    Text("Charaktere \(index == 0 ? "A + B" : "C + D")")
-                                } footer: {
-                                    if index == 0 {
-                                        Text("„Als Paar“ zeigt nur Geschichten, in denen die beiden ein Pairing sind. Jedes Paar lässt sich einzeln einschalten.")
-                                    }
                                 }
-                                .themedRows()
+                            } header: {
+                                Text("Charaktere \(index == 0 ? "A + B" : "C + D")")
+                            } footer: {
+                                if index == 0 {
+                                    Text("„Als Paar“ zeigt nur Geschichten, in denen die beiden ein Pairing sind. Jedes Paar lässt sich einzeln einschalten.")
+                                }
                             }
+                            .themedRows()
                         }
                     }
                 }
@@ -464,6 +479,11 @@ struct FFNFilterSheet: View {
                     Button("Anwenden", systemImage: "checkmark") {
                         var result = values
                         var pairs = activePairs
+                        if !crossoverChanged, isPairPage {
+                            let mapped = fieldsForSlots()
+                            result.merge(mapped.values) { _, new in new }
+                            pairs = mapped.pairs
+                        }
                         if crossoverChanged {
                             // Neue Seite noch nicht da: Charaktere/Welten der alten passen nicht zu ihr.
                             result = result.filter { !FFNListModel.isListBound($0.key) }
@@ -517,6 +537,9 @@ struct FFNFilterSheet: View {
         }
         values = kept
         pairs = choice == loadedCrossover ? pairs : []
+        let setup = Self.slots(values: kept, pairs: pairs)
+        slots = setup.slots
+        slotPairs = setup.pairs
         filters = page.filters
         pagePath = page.path
         context = page.context
@@ -537,43 +560,72 @@ struct FFNFilterSheet: View {
         pairs.filter { $0.allSatisfy { (values[$0] ?? "0") != "0" } }
     }
 
-    private func chosenName(_ field: String) -> String? {
-        guard let value = values[field], value != "0" else { return nil }
-        return filter(field)?.options.first { $0.value == value }?.text
+    private var isPairPage: Bool { context?.isPair == true }
+
+    /// Platz A–D aus den FFN-Feldern: erst die Paare (A+B, C+D), dann die übrigen Charaktere.
+    private static func slots(values: [String: String], pairs: [[String]]) -> (slots: [String], pairs: [Bool]) {
+        func token(_ field: String) -> String? {
+            guard let v = values[field], v != "0" else { return nil }
+            return (["characterid1", "characterid2"].contains(field) ? "1:" : "2:") + v
+        }
+        var slots = ["0", "0", "0", "0"], flags = [false, false], used = Set<String>()
+        for (i, pair) in pairs.prefix(2).enumerated() {
+            let tokens = pair.compactMap(token)
+            guard tokens.count == 2 else { continue }
+            slots[i * 2] = tokens[0]; slots[i * 2 + 1] = tokens[1]
+            flags[i] = true
+            used.formUnion(pair)
+        }
+        for field in characterNames where !used.contains(field) {
+            guard let t = token(field), let free = slots.firstIndex(of: "0") else { continue }
+            slots[free] = t
+        }
+        return (slots, flags)
     }
 
-    /// Crossover mit zwei Fandoms: Charaktere je Fandom, darunter beliebige Paare aus den gewählten –
-    /// auch über die Fandoms hinweg (Harry P. × Edward).
-    @ViewBuilder
-    private var crossoverCharacters: some View {
-        ForEach(Array(Self.pairNames.enumerated()), id: \.offset) { index, names in
-            let selects = names.compactMap(filter)
-            if !selects.isEmpty {
-                Section(pairFandom(index) ?? (index == 0 ? String(localized: "Fandom A") : String(localized: "Fandom B"))) {
-                    ForEach(selects) { row($0) }
-                }
-                .themedRows()
-            }
+    /// Plätze A–D → FFN-Felder: Charaktere des ersten Fandoms in A/B, des zweiten in C/D (je höchstens zwei).
+    private func fieldsForSlots() -> (values: [String: String], pairs: [[String]]) {
+        var result = Dictionary(uniqueKeysWithValues: Self.characterNames.map { ($0, "0") })
+        var free = ["1": ["characterid1", "characterid2"], "2": ["characterid3", "characterid4"]]
+        var fieldOf: [Int: String] = [:]
+        for (i, slot) in slots.enumerated() {
+            let parts = slot.split(separator: ":", maxSplits: 1).map(String.init)
+            guard parts.count == 2, var pool = free[parts[0]], !pool.isEmpty else { continue }
+            let field = pool.removeFirst()
+            free[parts[0]] = pool
+            result[field] = parts[1]
+            fieldOf[i] = field
         }
-        if filter("pm") != nil || Self.characterNames.contains(where: { filter($0) != nil }) {
-            let chosen = Self.characterNames.compactMap { field in chosenName(field).map { (field, $0) } }
-            Section {
-                if chosen.count < 2 {
-                    Text("Wähle oben mindestens zwei Charaktere, dann lassen sie sich hier als Paar markieren.")
-                        .font(.footnote).foregroundStyle(.secondary)
-                } else {
-                    ForEach(0..<chosen.count, id: \.self) { i in
-                        ForEach(i + 1..<chosen.count, id: \.self) { j in
-                            Toggle("\(chosen[i].1) × \(chosen[j].1)", isOn: pairBinding([chosen[i].0, chosen[j].0]))
-                        }
-                    }
-                }
-            } header: {
-                Text("Pairings")
-            } footer: {
-                Text("Zeigt nur Geschichten, in denen die beiden ein Pairing sind – auch über beide Fandoms hinweg.")
-            }
-            .themedRows()
+        let pairs = slotPairs.enumerated().compactMap { i, on -> [String]? in
+            guard on, let a = fieldOf[i * 2], let b = fieldOf[i * 2 + 1] else { return nil }
+            return [a, b]
+        }
+        return (result, pairs)
+    }
+
+    /// Beide Charakterlisten der Seite, je mit Fandom und Zählschlüssel.
+    private var characterSources: [FFNCharacterPicker.Source] {
+        [("1", "characterid1", 0), ("2", "characterid3", 1)].compactMap { prefix, name, index in
+            guard let f = filter(name), let param = FFNService.countParam(for: name, context: context) else { return nil }
+            return .init(prefix: prefix, filter: f, fandom: pairFandom(index) ?? "", countKey: FFNCountStore.key(pagePath, param))
+        }
+    }
+
+    private func slotText(_ slot: String) -> String {
+        guard slot != "0" else { return String(localized: "Alle") }
+        let parts = slot.split(separator: ":", maxSplits: 1).map(String.init)
+        return characterSources.first { $0.prefix == parts.first }?.filter.options.first { $0.value == parts.last }?.text ?? ""
+    }
+
+    private func slotRow(_ i: Int) -> some View {
+        let letter = ["A", "B", "C", "D"][i]
+        // FFN nimmt je Fandom höchstens zwei Charaktere – ist ein Fandom in den anderen Plätzen voll, fehlt es hier.
+        let full = Set(["1", "2"].filter { p in slots.enumerated().filter { $0.offset != i && $0.element.hasPrefix(p + ":") }.count >= 2 })
+        return NavigationLink {
+            FFNCharacterPicker(title: String(localized: "Charakter \(letter)"), sources: characterSources.filter { !full.contains($0.prefix) },
+                               selection: $slots[i])
+        } label: {
+            LabeledContent(String(localized: "Charakter \(letter)"), value: slotText(slots[i]))
         }
     }
 
@@ -701,6 +753,97 @@ struct FFNCountedPicker: View {
                         .foregroundStyle(.secondary)
                 }
                 if selection == option.value {
+                    Image(systemName: "checkmark").foregroundStyle(theme.primary)
+                }
+            }
+            .contentShape(.rect)
+        }
+        .themedRows()
+    }
+}
+
+/// Charaktere beider Fandoms eines Crossovers in einer Liste, meiste zuerst; das Fandom steht klein darunter.
+/// Auswahl als „1:<id>“ (erstes Fandom) bzw. „2:<id>“.
+struct FFNCharacterPicker: View {
+    struct Source {
+        var prefix: String
+        var filter: FFNFilterSelect
+        var fandom: String
+        var countKey: String
+    }
+
+    private struct Item: Identifiable {
+        var id: String
+        var text: String
+        var fandom: String
+        var count: Int?
+        var rank: Int
+    }
+
+    let title: String
+    let sources: [Source]
+    @Binding var selection: String
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.theme) private var theme
+    @State private var store = FFNCountStore.shared
+    @State private var search = ""
+
+    private var items: [Item] {
+        let q = search.trimmed.lowercased()
+        let all = sources.flatMap { source -> [Item] in
+            let counts = store.counts(source.countKey), rank = store.rank(source.countKey)
+            return source.filter.options.dropFirst().map {
+                Item(id: "\(source.prefix):\($0.value)", text: $0.text, fandom: source.fandom, count: counts[$0.value], rank: rank[$0.value] ?? 0)
+            }
+        }
+        let filtered = q.isEmpty ? all : all.filter { $0.text.lowercased().contains(q) }
+        return filtered.sorted { a, b in
+            let ca = a.count ?? -1, cb = b.count ?? -1
+            if ca != cb { return ca > cb }
+            return a.rank != b.rank ? a.rank > b.rank : a.text.localizedStandardCompare(b.text) == .orderedAscending
+        }
+    }
+
+    var body: some View {
+        let progress = sources.compactMap { store.progressText($0.countKey) }
+        List {
+            row(id: "0", text: String(localized: "Alle"), fandom: nil, count: nil)
+            if !progress.isEmpty {
+                HStack(spacing: 8) {
+                    ProgressView().controlSize(.small)
+                    Text("Zähle Geschichten …").font(.footnote).foregroundStyle(.secondary)
+                }
+                .themedRows()
+            }
+            ForEach(items) { item in
+                row(id: item.id, text: item.text, fandom: item.fandom, count: item.count)
+            }
+        }
+        .themedBackground()
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $search, placement: .navigationBarDrawer(displayMode: .always))
+    }
+
+    private func row(id: String, text: String, fandom: String?, count: Int?) -> some View {
+        Button {
+            selection = id
+            dismiss()
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(text).foregroundStyle(.primary)
+                    if let fandom, !fandom.isEmpty {
+                        Text(fandom).font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+                Spacer()
+                if let count {
+                    Text(count.short)
+                        .font(.footnote.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+                if selection == id {
                     Image(systemName: "checkmark").foregroundStyle(theme.primary)
                 }
             }
