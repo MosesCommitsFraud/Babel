@@ -417,8 +417,8 @@ final class FFNListModel {
     /// Paare, die als Pairing gelten sollen (Namen wie „Hinata H.“) – FFN kennt nur ein Häkchen für alle,
     /// deshalb wird zusätzlich hier pro Paar gefiltert.
     var requiredPairs: [[String]] = []
-    /// Welche Paare (1 = A+B, 2 = C+D) im Filter als Pairing markiert sind.
-    var pairToggles: [Bool] = [false, false]
+    /// Im Filter als Pairing markierte Charakterfelder, z. B. ["characterid1", "characterid3"].
+    var pairToggles: [[String]] = []
     /// Was FFN ohne Filter vorauswählt (z. B. „Rated K → T“) – zählt nicht als aktiver Filter.
     var defaults: [String: String] = [:]
     var page = 1
@@ -458,14 +458,6 @@ final class FFNListModel {
         case .none: return String(localized: "Ohne Crossover")
         case .all: return String(localized: "Alle Crossover")
         case .with(let partner): return "× \(partner.name)"
-        }
-    }
-
-    private func path(for choice: FFNCrossChoice) -> String? {
-        switch choice {
-        case .none: plainPath
-        case .all: home?.allPath
-        case .with(let partner): partner.path
         }
     }
 
@@ -511,8 +503,8 @@ final class FFNListModel {
         }
     }
 
-    func loadMore() async {
-        guard hasNext, !isLoading else { return }
+    func loadMore(force: Bool = false) async {
+        guard hasNext, force || !isLoading else { return }
         isLoading = true
         defer { isLoading = false }
         do {
@@ -524,58 +516,64 @@ final class FFNListModel {
         }
     }
 
-    func applyFilters(_ values: [String: String], pairs: [Bool] = [false, false], crossover choice: FFNCrossChoice? = nil) async {
-        // Andere Crossover-Auswahl = andere Seite mit eigenen Charakteren: Sortierung, Rating, Sprache,
-        // Genre, Länge und Status gehen mit, was an der alten Liste hing, entfällt.
-        if let choice, choice != crossover, let path = path(for: choice) {
+    /// Filter anwenden. `shown` sind die Auswahlfelder, aus denen `values` stammen – nach einem
+    /// Crossover-Wechsel die der neuen Seite, die das Filterfenster schon vorab geladen hat.
+    func applyFilters(_ values: [String: String], pairs: [[String]], crossover choice: FFNCrossChoice, shown: [FFNFilterSelect]) async {
+        var target = currentURL
+        // Andere Crossover-Auswahl = andere Seite. Was das Filterfenster nicht schon für die neue Seite
+        // gewählt hat (Charaktere, Welten), hat es vorher herausgenommen.
+        if choice != crossover, let path = path(for: choice) {
             crossover = choice
-            requiredPairs = []
-            pairToggles = [false, false]
-            isLoading = true
-            error = nil
-            stories = []
-            defer { isLoading = false }
-            do {
-                let kept = values.filter { !Self.isListBound($0.key) }
-                let result = try await FFNService.applyFilters(on: FFNService.url(path: path), values: kept)
-                currentURL = FFNService.setPage(result.url, page: 1)
-                apply(result, replace: true)
-            } catch {
-                self.error = error.localizedDescription
-            }
-            return
+            target = FFNService.url(path: path)
         }
         pairToggles = pairs
-        requiredPairs = zip([("characterid1", "characterid2"), ("characterid3", "characterid4")], pairs).compactMap { names, on in
-            guard on else { return nil }
-            let a = optionText(names.0, values[names.0]), b = optionText(names.1, values[names.1])
-            return [a, b].compactMap { $0 }.count == 2 ? [a!, b!] : nil
+        requiredPairs = pairs.compactMap { names in
+            let texts = names.compactMap { Self.optionText(shown, $0, values[$0]) }
+            return texts.count == names.count ? texts : nil
         }
         isLoading = true
         error = nil
         stories = []
+        hasNext = false
         defer { isLoading = false }
         do {
-            let result = try await FFNService.applyFilters(on: currentURL, values: values)
+            let result = try await FFNService.applyFilters(on: target, values: values)
             currentURL = FFNService.setPage(result.url, page: 1)
             apply(result, replace: true)
         } catch {
             self.error = error.localizedDescription
+            return
+        }
+        // Paare filtert die App selbst: Bleibt von einer Seite kaum etwas, gleich weiterladen.
+        var extra = 0
+        while !requiredPairs.isEmpty, stories.count < 10, hasNext, extra < 4, !Task.isCancelled {
+            extra += 1
+            await loadMore(force: true)
         }
     }
 
     func resetFilters() async {
         requiredPairs = []
-        pairToggles = [false, false]
+        pairToggles = []
         currentURL = baseURL
         crossover = initialCrossover
         stories = []
+        hasNext = false
         await load()
     }
 
-    private func optionText(_ filter: String, _ value: String?) -> String? {
+    private static func optionText(_ filters: [FFNFilterSelect], _ filter: String, _ value: String?) -> String? {
         guard let value, value != "0" else { return nil }
         return filters.first { $0.name == filter }?.options.first { $0.value == value }?.text
+    }
+
+    /// Seite zu einer Crossover-Auswahl (ohne Filter).
+    func path(for choice: FFNCrossChoice) -> String? {
+        switch choice {
+        case .none: plainPath
+        case .all: home?.allPath
+        case .with(let partner): partner.path
+        }
     }
 
     /// Geschichte enthält jedes geforderte Paar als Pairing ([A, B] auf FFN).
@@ -638,13 +636,14 @@ struct FFNStoryListView: View {
     var body: some View {
         List {
             ForEach(model.stories) { story in
-                NavigationLink(value: story) { StoryRow(story: story) }
+                NavigationLink(value: story) { StoryRow(story: story, knownFandom: model.home?.name) }
                     .navigationLinkIndicatorVisibility(.hidden)
                     .remoteStoryActions(story)
                     .loadsMore(near: story, in: model.stories) { await model.loadMore() }
             }
             .themedRows(grouped: false)
-            if model.hasNext {
+            // Nur unter geladenen Geschichten – bei leerer Liste zeigt die Mitte das Laden (sonst zwei Kreisel).
+            if model.hasNext && !model.stories.isEmpty {
                 HStack { Spacer(); ProgressView(); Spacer() }
                     .listRowSeparator(.hidden)
                     .themedRows(grouped: false)
@@ -706,9 +705,9 @@ struct FFNStoryListView: View {
         }
         .sheet(isPresented: $showFilters) {
             FFNFilterSheet(filters: model.filters, pagePath: model.pagePath, context: model.context, home: model.home,
-                           canLeaveCrossover: model.plainPath != nil, crossover: model.crossover,
-                           pairs: model.pairToggles) { values, pairs, crossover in
-                Task { await model.applyFilters(values, pairs: pairs, crossover: crossover) }
+                           crossover: model.crossover, pathFor: model.path(for:),
+                           pairs: model.pairToggles) { values, pairs, crossover, shown in
+                Task { await model.applyFilters(values, pairs: pairs, crossover: crossover, shown: shown) }
             } onReset: {
                 Task { await model.resetFilters() }
             }
@@ -757,7 +756,7 @@ struct FFNKeywordSearchView: View {
                     .loadsMore(near: story, in: stories) { if hasNext { await search(page: page + 1) } }
             }
             .themedRows(grouped: false)
-            if hasNext {
+            if hasNext && !stories.isEmpty {
                 HStack { Spacer(); ProgressView(); Spacer() }
                     .listRowSeparator(.hidden)
                     .themedRows(grouped: false)

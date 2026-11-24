@@ -5,7 +5,8 @@ import SwiftUI
 /// FFN zählt nur einzeln (eine Anfrage je Wert, ~1 s) und lässt rund 100 Zählungen pro Minute zu.
 /// Ein Fandom mit 460 Charakteren braucht also in jedem Fall Minuten – schneller wird es nur so:
 /// - Es wird gezählt, sobald das Filterfenster aufgeht, nicht erst auf der Auswahlseite.
-/// - Häufige Charaktere zuerst (`FFNService.characterSample`), die Auswahl zeigt sie sofort oben.
+/// - Bei Charakteren nur die häufigen (`FFNService.characterSample`, höchstens `characterLimit`),
+///   die Auswahl zeigt sie sofort oben; der Rest bleibt ohne Zahl.
 /// - Unter FFNs Grenze bleiben und nach einer Pause weitermachen, statt in 429-Antworten zu laufen
 ///   (früher blieben dann alle weiteren Werte ohne Zahl).
 /// - Zahlen bleiben 60 Tage liegen; nach 7 Tagen werden sie neu gezählt, die alten stehen solange da.
@@ -56,6 +57,8 @@ final class FFNCountStore {
     private var blockedUntil = Date.distantPast
 
     private static let perMinute = 90
+    /// Höchstens so viele Charaktere je Liste zählen (die häufigsten laut Stichprobe).
+    private static let characterLimit = 40
     private static let refreshAfter: TimeInterval = 7 * 24 * 3600
     private static let keepFor: TimeInterval = 60 * 24 * 3600
 
@@ -153,7 +156,8 @@ final class FFNCountStore {
             if job.needsSample {
                 await sample(key, job: &job)
                 guard generation == current else { return }
-                jobs[key] = job
+                jobs[key] = job.pending.isEmpty ? nil : job
+                if job.pending.isEmpty { progress[key] = nil }
                 continue
             }
             let now = Date()
@@ -185,7 +189,8 @@ final class FFNCountStore {
                 job.urgent = max(0, job.urgent - batch.count)
             }
             if job.pending.isEmpty {
-                entry.old = nil
+                // Bei Charakteren ist nur ein Teil neu gezählt – die alten Zahlen der übrigen bleiben stehen.
+                if !job.request.isCharacters { entry.old = nil }
                 entries[key] = entry
                 jobs[key] = nil
                 progress[key] = nil
@@ -219,7 +224,12 @@ final class FFNCountStore {
             let wa = weight[a] ?? 0, wb = weight[b] ?? 0
             return wa != wb ? wa > wb : (position[a] ?? 0) < (position[b] ?? 0)
         }
-        job.urgent = job.pending.prefix { (weight[$0] ?? 0) > 0 }.count
+        // Nur die häufigen zählen: Jeder Charakter kostet eine Anfrage, alle 460 eines großen Fandoms
+        // dauerten Minuten. Die übrigen stehen ohne Zahl darunter (nach Stichprobe, dann alphabetisch).
+        job.pending = Array(job.pending.prefix { (weight[$0] ?? 0) > 0 }.prefix(Self.characterLimit))
+        job.urgent = job.pending.count
+        job.total = job.pending.count
+        progress[key] = (0, job.total)
     }
 
     private func save() {
@@ -295,48 +305,64 @@ final class FFNCrossoverStore {
 
 /// FFN-Filter wie auf der Website, übersichtlich gruppiert.
 /// Charaktere sind in zwei Paaren angeordnet, jedes mit eigenem „Als Paar“-Schalter.
+/// Wechselt die Crossover-Auswahl, lädt das Fenster die neue Seite gleich vorab: Deren Charaktere
+/// (bei zwei Fandoms A/B aus dem einen, C/D aus dem anderen) stehen dann sofort zur Wahl.
 struct FFNFilterSheet: View {
-    let filters: [FFNFilterSelect]
-    /// Pfad der offenen Liste (Schlüssel der Zählungen) und was sie zeigt.
-    let pagePath: String
-    let context: FFNPageContext?
     /// Das Fandom, dessen Crossover zur Wahl stehen; ohne gibt es die Zeile nicht.
     let home: FFNCrossRef?
-    let canLeaveCrossover: Bool
     let loadedCrossover: FFNCrossChoice
-    var onApply: ([String: String], [Bool], FFNCrossChoice) -> Void
+    /// Seite zu einer Crossover-Auswahl; `nil`, wenn es sie nicht gibt (z. B. ohne Crossover bei
+    /// einem gespeicherten Crossover-Filter).
+    let pathFor: (FFNCrossChoice) -> String?
+    var onApply: ([String: String], [[String]], FFNCrossChoice, [FFNFilterSelect]) -> Void
     var onReset: () -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var values: [String: String]
-    @State private var pairs: [Bool]
+    /// Als Paar markierte Charakterfelder, z. B. ["characterid1", "characterid3"] = A × C.
+    @State private var pairs: [[String]]
     @State private var crossover: FFNCrossChoice
+    /// Auswahlfelder, Pfad (Schlüssel der Zählungen) und Kontext der Seite, für die gerade gefiltert wird.
+    @State private var filters: [FFNFilterSelect]
+    @State private var pagePath: String
+    @State private var context: FFNPageContext?
+    /// Für welche Crossover-Auswahl `filters` gelten.
+    @State private var filtersFor: FFNCrossChoice
+    @State private var previewFailed = false
+    private let original: (filters: [FFNFilterSelect], path: String, context: FFNPageContext?)
 
-    init(filters: [FFNFilterSelect], pagePath: String, context: FFNPageContext?, home: FFNCrossRef?, canLeaveCrossover: Bool,
-         crossover: FFNCrossChoice, pairs: [Bool],
-         onApply: @escaping ([String: String], [Bool], FFNCrossChoice) -> Void, onReset: @escaping () -> Void) {
-        self.filters = filters
-        self.pagePath = pagePath
-        self.context = context
+    init(filters: [FFNFilterSelect], pagePath: String, context: FFNPageContext?, home: FFNCrossRef?,
+         crossover: FFNCrossChoice, pathFor: @escaping (FFNCrossChoice) -> String?, pairs: [[String]],
+         onApply: @escaping ([String: String], [[String]], FFNCrossChoice, [FFNFilterSelect]) -> Void, onReset: @escaping () -> Void) {
         self.home = home
-        self.canLeaveCrossover = canLeaveCrossover
         self.loadedCrossover = crossover
+        self.pathFor = pathFor
         self.onApply = onApply
         self.onReset = onReset
+        original = (filters, pagePath, context)
         // Nicht in onAppear: das läuft nach jeder Auswahlseite erneut und würde die Auswahl zurücksetzen.
         _values = State(initialValue: Dictionary(filters.map { ($0.name, $0.selected) }, uniquingKeysWith: { a, _ in a }))
         let pm = filters.first { $0.name == "pm" }?.selected == "1"
-        _pairs = State(initialValue: pairs.contains(true) ? pairs : [pm, false])
+        _pairs = State(initialValue: !pairs.isEmpty ? pairs : (pm ? [Self.pairNames[0]] : []))
         _crossover = State(initialValue: crossover)
+        _filters = State(initialValue: filters)
+        _pagePath = State(initialValue: pagePath)
+        _context = State(initialValue: context)
+        _filtersFor = State(initialValue: crossover)
     }
+
+    private var canLeaveCrossover: Bool { pathFor(.none) != nil }
 
     private static let sortNames = ["sortid", "timerange", "timeid"]
     private static let pairNames = [["characterid1", "characterid2"], ["characterid3", "characterid4"]]
 
     private func filter(_ name: String) -> FFNFilterSelect? { filters.first { $0.name == name } }
 
-    /// Charaktere und Welten gehören zur geladenen Liste: Nach einem Wechsel der Crossover-Auswahl
-    /// passen sie nicht mehr und stehen erst nach dem Anwenden wieder da.
-    private var crossoverChanged: Bool { crossover != loadedCrossover }
+    /// Charaktere und Welten gehören zur Seite: Solange die Seite der neuen Crossover-Auswahl noch lädt,
+    /// passen die angezeigten nicht und bleiben ausgeblendet.
+    private var crossoverChanged: Bool { crossover != filtersFor }
+
+    /// Alle Crossover eines Fandoms: Charaktere werden dort nicht gezählt (nur bei zwei bestimmten Fandoms).
+    private var isAllCrossovers: Bool { context.map { $0.isCrossover && !$0.isPair } ?? false }
 
     private var contentFilters: [FFNFilterSelect] {
         let used = Set(Self.sortNames + Self.pairNames.flatMap { $0 } + ["pm", "_pm"])
@@ -348,6 +374,7 @@ struct FFNFilterSheet: View {
         var seen = Set<String>()
         let requests = filters.compactMap { f -> FFNCountStore.Request? in
             guard let param = FFNService.countParam(for: f.name, context: context) else { return nil }
+            if isAllCrossovers, f.name.contains("characterid") { return nil }
             let request = FFNCountStore.Request(path: pagePath, base: context?.countBase ?? [:], param: param,
                                                 options: f.options, isCharacters: f.name.contains("characterid"))
             return seen.insert(request.key).inserted ? request : nil
@@ -370,9 +397,15 @@ struct FFNFilterSheet: View {
                         } label: {
                             LabeledContent("Crossover", value: crossoverLabel)
                         }
+                        if crossoverChanged && !previewFailed {
+                            HStack(spacing: 8) {
+                                ProgressView().controlSize(.small)
+                                Text("Lade Charaktere …").font(.footnote).foregroundStyle(.secondary)
+                            }
+                        }
                     } footer: {
-                        if crossoverChanged {
-                            Text("Charaktere und Welten kannst du wählen, sobald die neue Liste geladen ist – tippe auf „Anwenden“ und öffne den Filter noch einmal.")
+                        if crossoverChanged && previewFailed {
+                            Text("Die Charaktere der neuen Auswahl konnten nicht geladen werden – tippe auf „Anwenden“ und öffne den Filter noch einmal.")
                         }
                     }
                     .themedRows()
@@ -384,27 +417,27 @@ struct FFNFilterSheet: View {
                 .themedRows()
 
                 if !crossoverChanged {
-                    ForEach(Array(Self.pairNames.enumerated()), id: \.offset) { index, names in
-                        let selects = names.compactMap(filter)
-                        if !selects.isEmpty {
-                            Section {
-                                ForEach(selects) { row($0) }
-                                if filter("pm") != nil, selects.count == 2 {
-                                    Toggle("Als Paar", isOn: Binding(get: { pairs[index] }, set: { pairs[index] = $0 }))
-                                        .disabled(names.contains { (values[$0] ?? "0") == "0" })
-                                }
-                            } header: {
-                                if let name = pairFandom(index) {
-                                    Text("Charaktere \(index == 0 ? "A + B" : "C + D") · \(name)")
-                                } else {
+                    if context?.isPair == true {
+                        crossoverCharacters
+                    } else {
+                        ForEach(Array(Self.pairNames.enumerated()), id: \.offset) { index, names in
+                            let selects = names.compactMap(filter)
+                            if !selects.isEmpty {
+                                Section {
+                                    ForEach(selects) { row($0) }
+                                    if filter("pm") != nil, selects.count == 2 {
+                                        Toggle("Als Paar", isOn: pairBinding(names))
+                                            .disabled(names.contains { (values[$0] ?? "0") == "0" })
+                                    }
+                                } header: {
                                     Text("Charaktere \(index == 0 ? "A + B" : "C + D")")
+                                } footer: {
+                                    if index == 0 {
+                                        Text("„Als Paar“ zeigt nur Geschichten, in denen die beiden ein Pairing sind. Jedes Paar lässt sich einzeln einschalten.")
+                                    }
                                 }
-                            } footer: {
-                                if index == 0 {
-                                    Text("„Als Paar“ zeigt nur Geschichten, in denen die beiden ein Pairing sind. Jedes Paar lässt sich einzeln einschalten.")
-                                }
+                                .themedRows()
                             }
-                            .themedRows()
                         }
                     }
                 }
@@ -430,10 +463,20 @@ struct FFNFilterSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Anwenden", systemImage: "checkmark") {
                         var result = values
-                        // FFN hat nur ein Pairing-Häkchen; welches Paar gemeint ist, filtert die App danach selbst.
-                        if filter("pm") != nil { result["pm"] = pairs.contains(true) ? "1" : "0" }
+                        var pairs = activePairs
+                        if crossoverChanged {
+                            // Neue Seite noch nicht da: Charaktere/Welten der alten passen nicht zu ihr.
+                            result = result.filter { !FFNListModel.isListBound($0.key) }
+                            pairs = []
+                        } else if filter("pm") != nil {
+                            // FFN hat nur ein Pairing-Häkchen (für A+B bzw. C+D); welches Paar gemeint ist,
+                            // filtert die App danach selbst. Paare über zwei Fandoms hinweg kennt FFN nicht –
+                            // dann ohne Häkchen laden und nur hier filtern.
+                            let fits = !pairs.isEmpty && pairs.allSatisfy { Self.pairNames.contains($0) }
+                            result["pm"] = fits ? "1" : "0"
+                        }
                         dismiss()
-                        onApply(result, pairs, crossover)
+                        onApply(result, pairs, crossover, filters)
                     }
                 }
             }
@@ -443,7 +486,95 @@ struct FFNFilterSheet: View {
             FFNCountStore.shared.start(countRequests)
             if let home { await FFNCrossoverStore.shared.load(home) }
         }
+        .task(id: crossover) { await loadFilters(for: crossover) }
         .onDisappear { FFNCountStore.shared.stop() }
+    }
+
+    /// Holt die Auswahlfelder der Seite zur Crossover-Auswahl (zurück zur geladenen: sofort).
+    /// Sortierung, Rating, Sprache usw. bleiben gewählt, Charaktere/Welten fangen leer an.
+    private func loadFilters(for choice: FFNCrossChoice) async {
+        guard choice != filtersFor else { return }
+        previewFailed = false
+        let page: (filters: [FFNFilterSelect], path: String, context: FFNPageContext?)
+        if choice == loadedCrossover {
+            page = original
+        } else {
+            guard let path = pathFor(choice) else { previewFailed = true; return }
+            // Während die Seite lädt, nicht für die alte weiterzählen (beides läuft über denselben WebView).
+            FFNCountStore.shared.stop()
+            guard let result = try? await FFNService.list(url: FFNService.url(path: path)), !Task.isCancelled else {
+                if !Task.isCancelled { previewFailed = true }
+                return
+            }
+            let encoded = URLComponents(url: result.url, resolvingAgainstBaseURL: false)?.percentEncodedPath ?? result.url.path
+            page = (result.filters, encoded, result.context)
+        }
+        guard crossover == choice else { return }
+        var kept = values.filter { !FFNListModel.isListBound($0.key) }
+        for f in page.filters where FFNListModel.isListBound(f.name) || kept[f.name] == nil {
+            // Was die Seite für Charaktere/Welten vorauswählt; die übrigen Felder behalten die Wahl.
+            kept[f.name] = choice == loadedCrossover ? f.selected : (f.options.first?.value ?? "0")
+        }
+        values = kept
+        pairs = choice == loadedCrossover ? pairs : []
+        filters = page.filters
+        pagePath = page.path
+        context = page.context
+        filtersFor = choice
+        FFNCountStore.shared.stop()
+        FFNCountStore.shared.start(countRequests)
+    }
+
+    private func pairBinding(_ names: [String]) -> Binding<Bool> {
+        Binding(get: { pairs.contains(names) },
+                set: { on in pairs.removeAll { $0 == names }; if on { pairs.append(names) } })
+    }
+
+    private static let characterNames = ["characterid1", "characterid2", "characterid3", "characterid4"]
+
+    /// Paare, deren beide Charaktere gewählt sind.
+    private var activePairs: [[String]] {
+        pairs.filter { $0.allSatisfy { (values[$0] ?? "0") != "0" } }
+    }
+
+    private func chosenName(_ field: String) -> String? {
+        guard let value = values[field], value != "0" else { return nil }
+        return filter(field)?.options.first { $0.value == value }?.text
+    }
+
+    /// Crossover mit zwei Fandoms: Charaktere je Fandom, darunter beliebige Paare aus den gewählten –
+    /// auch über die Fandoms hinweg (Harry P. × Edward).
+    @ViewBuilder
+    private var crossoverCharacters: some View {
+        ForEach(Array(Self.pairNames.enumerated()), id: \.offset) { index, names in
+            let selects = names.compactMap(filter)
+            if !selects.isEmpty {
+                Section(pairFandom(index) ?? (index == 0 ? String(localized: "Fandom A") : String(localized: "Fandom B"))) {
+                    ForEach(selects) { row($0) }
+                }
+                .themedRows()
+            }
+        }
+        if filter("pm") != nil || Self.characterNames.contains(where: { filter($0) != nil }) {
+            let chosen = Self.characterNames.compactMap { field in chosenName(field).map { (field, $0) } }
+            Section {
+                if chosen.count < 2 {
+                    Text("Wähle oben mindestens zwei Charaktere, dann lassen sie sich hier als Paar markieren.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                } else {
+                    ForEach(0..<chosen.count, id: \.self) { i in
+                        ForEach(i + 1..<chosen.count, id: \.self) { j in
+                            Toggle("\(chosen[i].1) × \(chosen[j].1)", isOn: pairBinding([chosen[i].0, chosen[j].0]))
+                        }
+                    }
+                }
+            } header: {
+                Text("Pairings")
+            } footer: {
+                Text("Zeigt nur Geschichten, in denen die beiden ein Pairing sind – auch über beide Fandoms hinweg.")
+            }
+            .themedRows()
+        }
     }
 
     /// Auf einer Crossover-Seite mit zwei Fandoms gehören A/B zum einen, C/D zum anderen.

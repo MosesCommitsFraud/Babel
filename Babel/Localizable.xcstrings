@@ -6448,22 +6448,82 @@
         }
       }
     },
-    "Charaktere und Welten kannst du wählen, sobald die neue Liste geladen ist – tippe auf „Anwenden“ und öffne den Filter noch einmal." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You can pick characters and worlds once the new list has loaded – tap “Apply” and open the filter again."
-          }
-        }
-      }
-    },
     "FanFiction.net liefert für dieses Fandom keine Crossover-Liste. Hier stehen alle Fandoms mit Crossovern – nicht jedes hat gemeinsame Geschichten." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "FanFiction.net doesn't provide a crossover list for this fandom. These are all fandoms with crossovers – not every one shares stories with it."
+          }
+        }
+      }
+    },
+    "Lade Charaktere …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading characters …"
+          }
+        }
+      }
+    },
+    "Fandom A" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fandom A"
+          }
+        }
+      }
+    },
+    "Fandom B" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fandom B"
+          }
+        }
+      }
+    },
+    "Die Charaktere der neuen Auswahl konnten nicht geladen werden – tippe auf „Anwenden“ und öffne den Filter noch einmal." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The characters for the new selection couldn’t be loaded – tap “Apply” and open the filter again."
+          }
+        }
+      }
+    },
+    "Wähle oben mindestens zwei Charaktere, dann lassen sie sich hier als Paar markieren." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick at least two characters above, then you can mark them as a pairing here."
+          }
+        }
+      }
+    },
+    "Zeigt nur Geschichten, in denen die beiden ein Pairing sind – auch über beide Fandoms hinweg." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows only stories where the two are a pairing – across both fandoms too."
+          }
+        }
+      }
+    },
+    "%@ × %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ × %2$@"
           }
         }
       }

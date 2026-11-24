@@ -159,6 +159,8 @@ struct StoryRow: View {
     var showSummary = true
     /// Quelle (AO3/FFN …) nur dort zeigen, wo Quellen gemischt sind – nicht auf der jeweiligen Quellen-Seite.
     var showSource = false
+    /// Fandom der offenen Liste: Bei Crossovern steht es hinten, damit das andere nicht abgeschnitten wird.
+    var knownFandom: String? = nil
 
     /// Zusammenfassung neben dem Cover statt darunter: bei Büchern (ihnen fehlen Bewertungen, Pairings und Daten –
     /// neben dem Cover bliebe sonst eine Lücke) und überall, wo die Zeile breit genug ist (Falt-iPhone, iPad).
@@ -407,7 +409,13 @@ struct StoryRow: View {
 
     private var byline: String {
         var parts = [story.author]
-        if let f = story.fandoms.first { parts.append(story.fandoms.count > 1 ? "\(f) +\(story.fandoms.count - 1)" : f) }
+        // Crossover ausgeschrieben („Star Wars × Harry Potter“) statt „+1“; was nicht passt, kürzt die Zeile hinten.
+        var fandoms = story.fandoms
+        if fandoms.count > 1, let knownFandom,
+           let i = fandoms.firstIndex(where: { $0.caseInsensitiveCompare(knownFandom) == .orderedSame }) {
+            fandoms.append(fandoms.remove(at: i))
+        }
+        parts.append(fandoms.joined(separator: " × "))
         return parts.filter { !$0.isEmpty }.joined(separator: " · ")
     }
 
